@@ -1,44 +1,61 @@
 # 3D Portfolio Website
 
-This repository contains my personal portfolio website featuring a modern
-frontend with interactive 3D elements and smooth animations.
+A modern, interactive frontend portfolio showcasing UI craftsmanship, performance-focused React architecture, and real-world frontend engineering practices.
 
-The site is designed to showcase projects, technical skills, and overall
-frontend craftsmanship while maintaining performance and responsiveness.
+🔗 **Live Site:** https://www.upadhyaymanan.in/
 
-🔗 Live Site: https://www.upadhyaymanan.in/
+---
+
+## Overview
+
+This project is a personal frontend-focused portfolio designed to explore advanced UI interactions, 3D rendering on the web, and smooth animation techniques while maintaining performance and responsiveness.
+
+It serves as a sandbox for experimenting with modern frontend tooling and rendering strategies, separate from client production systems.
 
 ---
 
 ## Tech Stack
 
-- React
-- Vite
-- Tailwind CSS
-- JavaScript
-- Deployed on Vercel
+- **React 18**
+- **Vite** (fast dev & optimized builds)
+- **Three.js**
+- **@react-three/fiber**
+- **@react-three/drei**
+- **Framer Motion**
+- **Tailwind CSS**
+- **JavaScript**
+- **Deployed on Vercel**
 
 ---
 
 ## Key Features
 
-- Interactive 3D visuals
+- Interactive 3D visuals using WebGL
+- Smooth animations and transitions
 - Responsive design across devices
-- Optimized asset loading
-- Clean, component-based UI structure
+- Optimized asset loading and rendering
+- Clean, component-driven UI architecture
+- Fast build output with Vite
 
 ---
 
 ## Architecture Notes
 
 - Component-driven React structure
-- Focus on performance and smooth rendering
-- Optimized build output using Vite
-- Tailwind used for rapid, maintainable styling
+- Performance-first rendering mindset
+- Controlled use of animations to avoid frame drops
+- Optimized bundle size and build output using Vite
+- Utility-first styling with Tailwind CSS for maintainability
 
 ---
 
 ## Notes
 
-This project represents my frontend experimentation and UI craftsmanship,
-separate from client production systems.
+This project represents frontend experimentation and UI engineering depth.  
+It is intentionally frontend-only and does not include backend services or APIs.
+
+---
+
+## License
+
+MIT

@@ -1,8 +1,44 @@
-# React + Vite
+# 3D Portfolio Website
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This repository contains my personal portfolio website featuring a modern
+frontend with interactive 3D elements and smooth animations.
 
-Currently, two official plugins are available:
+The site is designed to showcase projects, technical skills, and overall
+frontend craftsmanship while maintaining performance and responsiveness.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+🔗 Live Site: https://www.upadhyaymanan.in/
+
+---
+
+## Tech Stack
+
+- React
+- Vite
+- Tailwind CSS
+- JavaScript
+- Deployed on Vercel
+
+---
+
+## Key Features
+
+- Interactive 3D visuals
+- Responsive design across devices
+- Optimized asset loading
+- Clean, component-based UI structure
+
+---
+
+## Architecture Notes
+
+- Component-driven React structure
+- Focus on performance and smooth rendering
+- Optimized build output using Vite
+- Tailwind used for rapid, maintainable styling
+
+---
+
+## Notes
+
+This project represents my frontend experimentation and UI craftsmanship,
+separate from client production systems.

@@ -2,6 +2,7 @@ import React, { lazy, Suspense } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import { useThemeStore } from './store/useThemeStore';
 import { Navbar, Hero, Loader } from './components';
+import { CommandPalette, EasterEggs } from './components/ui';
 
 // Lazy load heavy sections for better initial load
 const About = lazy(() => import('./components/About'));
@@ -35,11 +36,17 @@ const App = () => {
         {/* Theme-aware background effects */}
         <div className={isDark ? 'aurora-bg' : 'sunrise-bg'} />
         
-        {/* Hero Section - Critical, loaded immediately */}
-        <div className="relative">
-          <Navbar />
-          <Hero />
-        </div>
+        {/* Gamification - Easter Eggs (achievements, Konami code) */}
+        <EasterEggs />
+        
+        {/* Command Palette (Cmd+K) */}
+        <CommandPalette />
+        
+        {/* Navbar - Fixed position */}
+        <Navbar />
+        
+        {/* Hero Section with MacBook */}
+        <Hero />
         
         {/* Lazy-loaded sections */}
         <Suspense fallback={<SectionLoader />}>
@@ -74,6 +81,9 @@ const App = () => {
         <footer className="py-8 text-center border-t border-[var(--color-card-border)]">
           <p className="text-[var(--color-text-muted)] text-sm">
             © {new Date().getFullYear()} Manan Upadhyay. Built with React, Three.js & Framer Motion.
+          </p>
+          <p className="text-[var(--color-text-muted)] text-xs mt-2 opacity-50">
+            Try pressing ⌘+K or ↑↑↓↓←→←→BA 👀
           </p>
         </footer>
       </div>

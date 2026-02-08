@@ -12,6 +12,7 @@ import { experiences } from '../constants';
 import { SectionWrapper } from '../hoc';
 import { textVariant } from '../utils/motion';
 import { useThemeStore } from '../store/useThemeStore';
+import { SplitText, BlurText } from './ui';
 
 const ExperienceCard = ({ experience }) => {
   const { resolvedTheme } = useThemeStore();
@@ -106,20 +107,25 @@ const Experience = () => {
 
   return (
     <>
-      <motion.div variants={textVariant()}>
+      <div className="text-center">
         <p 
-          className={`${styles.sectionSubText} text-center`}
+          className={`${styles.sectionSubText}`}
           style={{ color: 'var(--color-text-muted)' }}
         >
-          What I have done so far
+          <BlurText text="What I have done so far" delay={0} />
         </p>
         <h2 
-          className={`${styles.sectionHeadText} text-center`}
+          className={`${styles.sectionHeadText}`}
           style={{ color: 'var(--color-text)' }}
         >
-          Work Experience.
+          <SplitText 
+            text="Work Experience." 
+            animationType="slide"
+            staggerChildren={0.08}
+            delay={0.2}
+          />
         </h2>
-      </motion.div>
+      </div>
 
       <div className="mt-20 flex flex-col">
         <VerticalTimeline

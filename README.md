@@ -1,61 +1,160 @@
-# 3D Portfolio Website
+# Manan Upadhyay - 3D Portfolio
 
-A modern, interactive frontend portfolio showcasing UI craftsmanship, performance-focused React architecture, and real-world frontend engineering practices.
+A stunning, interactive 3D portfolio website showcasing 4+ years of Full Stack Development experience. Built with React, Three.js, and Framer Motion.
 
-🔗 **Live Site:** https://www.upadhyaymanan.in/
+![Portfolio Preview](./docs/assets/preview.png)
 
----
+## ✨ Features
 
-## Overview
+- **🎨 Dual Theme System** - Morning (sunrise gradients) and Night (aurora/starry) themes with system preference detection
+- **🌐 3D Interactive Elements** - Rotating computer model, 3D tech balls, Earth globe
+- **⚡ Animated UI** - Typing animations, floating orbs, skill bars, glassmorphism cards
+- **📱 Responsive Design** - Optimized for all devices with mobile-specific 3D simplifications
+- **📧 Contact Form** - EmailJS integration for instant messaging
+- **🔗 Social Integration** - LinkedIn, GitHub, Email links
 
-This project is a personal frontend-focused portfolio designed to explore advanced UI interactions, 3D rendering on the web, and smooth animation techniques while maintaining performance and responsiveness.
+## 🚀 Quick Start
 
-It serves as a sandbox for experimenting with modern frontend tooling and rendering strategies, separate from client production systems.
+```bash
+# Clone the repository
+git clone https://github.com/manan-upadhyay/3d-portfolio.git
+cd 3d-portfolio
 
----
+# Install dependencies
+npm install
 
-## Tech Stack
+# Set up environment variables
+cp .env.example .env
+# Edit .env with your EmailJS credentials
 
-- **React 18**
-- **Vite** (fast dev & optimized builds)
-- **Three.js**
-- **@react-three/fiber**
-- **@react-three/drei**
-- **Framer Motion**
-- **Tailwind CSS**
-- **JavaScript**
-- **Deployed on Vercel**
+# Start development server
+npm run dev
 
----
+# Build for production
+npm run build
+```
 
-## Key Features
+## 🛠️ Tech Stack
 
-- Interactive 3D visuals using WebGL
-- Smooth animations and transitions
-- Responsive design across devices
-- Optimized asset loading and rendering
-- Clean, component-driven UI architecture
-- Fast build output with Vite
+| Category | Technologies |
+|----------|-------------|
+| **Frontend** | React 18, Vite, Tailwind CSS |
+| **3D Graphics** | Three.js, React Three Fiber, React Three Drei |
+| **Animations** | Framer Motion |
+| **State Management** | Zustand |
+| **Styling** | CSS Variables, Glassmorphism |
+| **Email** | EmailJS |
 
----
+## 📁 Project Structure
 
-## Architecture Notes
+```
+src/
+├── assets/           # Images, icons, 3D models
+├── components/
+│   ├── canvas/       # 3D components (Computers, Ball, Earth, Stars)
+│   ├── Hero.jsx      # Hero section with typing animation
+│   ├── About.jsx     # About with skill bars
+│   ├── Experience.jsx# Work timeline
+│   ├── Tech.jsx      # Technologies grid
+│   ├── Works.jsx     # Projects showcase
+│   ├── Contact.jsx   # Contact form
+│   ├── Navbar.jsx    # Navigation with theme toggle
+│   └── ThemeToggle.jsx # Sun/moon theme switcher
+├── constants/        # Data (experience, projects, skills)
+├── hoc/              # Higher-order components
+├── store/            # Zustand stores
+├── utils/            # Animation utilities
+└── styles/           # Global styles
+```
 
-- Component-driven React structure
-- Performance-first rendering mindset
-- Controlled use of animations to avoid frame drops
-- Optimized bundle size and build output using Vite
-- Utility-first styling with Tailwind CSS for maintainability
+## 🎨 Customization
 
----
+### Personal Information
 
-## Notes
+Edit `src/constants/index.js`:
 
-This project represents frontend experimentation and UI engineering depth.  
-It is intentionally frontend-only and does not include backend services or APIs.
+- `personalInfo` - Name, email, LinkedIn, GitHub
+- `experiences` - Work history
+- `projects` - Portfolio projects
+- `skillCategories` - Skills with proficiency levels
 
----
+### Theme Colors
 
-## License
+Edit `src/index.css`:
 
-MIT
+- `:root` - Light/morning theme variables
+- `.dark` - Dark/night theme variables
+
+### 3D Models
+
+Replace models in `public/`:
+
+- `desktop_pc/` - Computer model
+- `planet/` - Earth model
+
+## 📋 Environment Variables
+
+```env
+VITE_APP_EMAILJS_SERVICE_ID=your_service_id
+VITE_APP_EMAILJS_TEMPLATE_ID=your_template_id
+VITE_APP_EMAILJS_PUBLIC_KEY=your_public_key
+```
+
+## 🧪 Development
+
+```bash
+# Start dev server
+npm run dev
+
+# Run linting
+npm run lint
+
+# Build for production
+npm run build
+
+# Preview production build
+npm run preview
+```
+
+## 📦 Deployment
+
+### Vercel (Recommended)
+
+```bash
+npm i -g vercel
+vercel
+```
+
+### Netlify
+
+```bash
+npm run build
+# Upload dist/ folder to Netlify
+```
+
+### GitHub Pages
+
+```bash
+npm run build
+# Push dist/ to gh-pages branch
+```
+
+## 📚 Documentation
+
+- [Architecture Overview](./docs/ARCHITECTURE.md)
+- [Contributing Guide](./docs/CONTRIBUTING.md)
+- [Component Documentation](./docs/COMPONENTS.md)
+- [Future Roadmap](./docs/ROADMAP.md)
+- [AI Development Guide](./docs/AI_DEVELOPMENT.md)
+
+## 📄 License
+
+MIT License - feel free to use this as a template for your own portfolio!
+
+## 👤 Author
+
+**Manan Upadhyay**
+
+- LinkedIn: [manan-upadhyay](https://www.linkedin.com/in/manan-upadhyay)
+- GitHub: [@manan-upadhyay](https://github.com/manan-upadhyay)
+- Email: <upadhyaymanan01@gmail.com>

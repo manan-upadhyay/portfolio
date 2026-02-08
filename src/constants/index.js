@@ -13,18 +13,28 @@ import {
   nodejs,
   mongodb,
   git,
-  figma,
   docker,
-  meta,
-  starbucks,
-  tesla,
-  shopify,
-  carrent,
-  jobit,
-  tripguide,
-  threejs,
   nextjs,
 } from '../assets';
+
+// Personal Information
+export const personalInfo = {
+  name: 'Manan Upadhyay',
+  title: 'Full Stack Developer | AI-Augmented Engineer',
+  email: 'upadhyaymanan01@gmail.com',
+  phone: '+91 9173949408',
+  location: 'Ahmedabad, India',
+  linkedin: 'https://www.linkedin.com/in/manan-upadhyay',
+  github: 'https://github.com/manan-upadhyay',
+  resumeLink: '/resume.pdf',
+  bio: `Full Stack Developer with 4+ years of experience delivering scalable, production-grade web platforms across finance, healthcare, and logistics. Strong expertise in frontend and backend architecture, performance optimization, and AI-augmented development.`,
+  taglines: [
+    'Building Production-Grade Web Platforms',
+    'Architecting Scalable Full Stack Solutions',
+    'AI-Augmented Development Expert',
+    'Performance Optimization Specialist',
+  ],
+};
 
 export const navLinks = [
   {
@@ -36,6 +46,10 @@ export const navLinks = [
     title: 'Work',
   },
   {
+    id: 'projects',
+    title: 'Projects',
+  },
+  {
     id: 'contact',
     title: 'Contact',
   },
@@ -43,228 +57,234 @@ export const navLinks = [
 
 const services = [
   {
-    title: 'Frontend Developer',
+    title: 'Full Stack Architecture',
+    description: 'End-to-end web applications with React/Next.js and Node.js/Express/NestJS',
     icon: web,
   },
   {
-    title: 'Backend Developer',
+    title: 'Backend Development',
+    description: 'Scalable APIs with REST, JWT/OAuth, MongoDB, PostgreSQL',
     icon: backend,
   },
   {
-    title: 'React Native Developer',
-    icon: mobile,
+    title: 'AI-Augmented Development',
+    description: 'Leveraging GPT-5.2, Claude, Gemini for accelerated delivery',
+    icon: creator,
   },
   {
-    title: 'Content Creator',
-    icon: creator,
+    title: 'Performance Optimization',
+    description: 'Code-splitting, caching strategies, Core Web Vitals optimization',
+    icon: mobile,
   },
 ];
 
 const technologies = [
+  { name: 'TypeScript', icon: typescript },
+  { name: 'JavaScript', icon: javascript },
+  { name: 'React.js', icon: reactjs },
+  { name: 'Next.js', icon: nextjs },
+  { name: 'Node.js', icon: nodejs },
+  { name: 'Redux Toolkit', icon: redux },
+  { name: 'Tailwind CSS', icon: tailwind },
+  { name: 'MongoDB', icon: mongodb },
+  { name: 'Git', icon: git },
+  { name: 'HTML5', icon: html },
+  { name: 'CSS3', icon: css },
+  { name: 'Docker', icon: docker },
+];
+
+// Additional skills for the skills section
+export const skillCategories = [
   {
-    name: 'HTML 5',
-    icon: html,
+    category: 'Frontend',
+    skills: [
+      { name: 'React.js', level: 95 },
+      { name: 'Next.js', level: 90 },
+      { name: 'TypeScript', level: 90 },
+      { name: 'Tailwind CSS', level: 95 },
+      { name: 'Redux Toolkit', level: 85 },
+      { name: 'Framer Motion', level: 80 },
+    ],
   },
   {
-    name: 'CSS 3',
-    icon: css,
+    category: 'Backend',
+    skills: [
+      { name: 'Node.js', level: 90 },
+      { name: 'Express.js', level: 90 },
+      { name: 'NestJS', level: 85 },
+      { name: 'REST APIs', level: 95 },
+      { name: 'MongoDB', level: 85 },
+      { name: 'PostgreSQL', level: 80 },
+    ],
   },
   {
-    name: 'JavaScript',
-    icon: javascript,
+    category: 'DevOps & Tools',
+    skills: [
+      { name: 'Git/GitHub', level: 95 },
+      { name: 'CI/CD', level: 80 },
+      { name: 'AWS (Basics)', level: 70 },
+      { name: 'Docker', level: 75 },
+      { name: 'Jira', level: 90 },
+      { name: 'Figma', level: 75 },
+    ],
   },
-  {
-    name: 'TypeScript',
-    icon: typescript,
-  },
-  {
-    name: 'React JS',
-    icon: reactjs,
-  },
-  {
-    name: 'Next JS',
-    icon: nextjs,
-  },
-  {
-    name: 'Redux Toolkit',
-    icon: redux,
-  },
-  {
-    name: 'Tailwind CSS',
-    icon: tailwind,
-  },
-  {
-    name: 'Node JS',
-    icon: nodejs,
-  },
-  {
-    name: 'MongoDB',
-    icon: mongodb,
-  },
-  // {
-  //   name: 'Three JS',
-  //   icon: threejs,
-  // },
-  {
-    name: 'git',
-    icon: git,
-  },
-  // {
-  //   name: 'figma',
-  //   icon: figma,
-  // },
-  // {
-  //   name: 'docker',
-  //   icon: docker,
-  // },
 ];
 
 const experiences = [
   {
-    title: 'React.js Developer',
-    company_name: 'Starbucks',
-    icon: starbucks,
+    title: 'Full Stack Developer',
+    company_name: 'Inexture Solutions (via Uplers)',
+    icon: backend, // Replace with actual company logo
+    iconBg: '#1d1836',
+    date: 'January 2022 - Present',
+    points: [
+      'Led end-to-end delivery of modern web applications using React/Next.js and Node/Express/NestJS across finance, healthcare, and logistics domains.',
+      'Designed secure RESTful APIs with JWT/OAuth and integrated third-party services and payment gateways.',
+      'Leveraged AI agents and prompt engineering to accelerate development workflows, reducing feature delivery time by 30-40%.',
+      'Optimized data models in MongoDB and PostgreSQL, improving query performance by 20-25%.',
+      'Mentored junior developers via code reviews and pairing, lowering production defects by 15-20%.',
+    ],
+    technologies: ['React.js', 'Next.js', 'Node.js', 'NestJS', 'MongoDB', 'PostgreSQL', 'JWT', 'AI Agents'],
+  },
+  {
+    title: 'Frontend Developer',
+    company_name: 'Horizon Tour and Travels',
+    icon: web, // Replace with actual company logo
     iconBg: '#383E56',
-    date: 'March 2020 - April 2021',
+    date: 'May 2021 - December 2021',
     points: [
-      'Developing and maintaining web applications using React.js and other related technologies.',
-      'Collaborating with cross-functional teams including designers, product managers, and other developers to create high-quality products.',
-      'Implementing responsive design and ensuring cross-browser compatibility.',
-      'Participating in code reviews and providing constructive feedback to other developers.',
+      'Developed custom CRM modules and responsive UI components using React for customer, lead, and sales workflows.',
+      'Implemented PDF and Excel exports for reporting, cutting manual data work by 16-20 hours per week.',
+      'Optimized client-side rendering to cut initial load time by 38%, delivering 1.2x faster first meaningful paint.',
+      'Translated client requirements into functional UI features, improving stakeholder satisfaction.',
     ],
-  },
-  {
-    title: 'React Native Developer',
-    company_name: 'Tesla',
-    icon: tesla,
-    iconBg: '#E6DEDD',
-    date: 'Jan 2021 - Feb 2022',
-    points: [
-      'Developing and maintaining web applications using React.js and other related technologies.',
-      'Collaborating with cross-functional teams including designers, product managers, and other developers to create high-quality products.',
-      'Implementing responsive design and ensuring cross-browser compatibility.',
-      'Participating in code reviews and providing constructive feedback to other developers.',
-    ],
-  },
-  {
-    title: 'Web Developer',
-    company_name: 'Shopify',
-    icon: shopify,
-    iconBg: '#383E56',
-    date: 'Jan 2022 - Jan 2023',
-    points: [
-      'Developing and maintaining web applications using React.js and other related technologies.',
-      'Collaborating with cross-functional teams including designers, product managers, and other developers to create high-quality products.',
-      'Implementing responsive design and ensuring cross-browser compatibility.',
-      'Participating in code reviews and providing constructive feedback to other developers.',
-    ],
-  },
-  {
-    title: 'Full stack Developer',
-    company_name: 'Meta',
-    icon: meta,
-    iconBg: '#E6DEDD',
-    date: 'Jan 2023 - Present',
-    points: [
-      'Developing and maintaining web applications using React.js and other related technologies.',
-      'Collaborating with cross-functional teams including designers, product managers, and other developers to create high-quality products.',
-      'Implementing responsive design and ensuring cross-browser compatibility.',
-      'Participating in code reviews and providing constructive feedback to other developers.',
-    ],
-  },
-];
-
-const testimonials = [
-  {
-    testimonial:
-      'I thought it was impossible to make a website as beautiful as our product, but Rick proved me wrong.',
-    name: 'Sara Lee',
-    designation: 'CFO',
-    company: 'Acme Co',
-    image: 'https://randomuser.me/api/portraits/women/4.jpg',
-  },
-  {
-    testimonial:
-      "I've never met a web developer who truly cares about their clients' success like Rick does.",
-    name: 'Chris Brown',
-    designation: 'COO',
-    company: 'DEF Corp',
-    image: 'https://randomuser.me/api/portraits/men/5.jpg',
-  },
-  {
-    testimonial:
-      "After Rick optimized our website, our traffic increased by 50%. We can't thank them enough!",
-    name: 'Lisa Wang',
-    designation: 'CTO',
-    company: '456 Enterprises',
-    image: 'https://randomuser.me/api/portraits/women/6.jpg',
+    technologies: ['React.js', 'JavaScript', 'HTML5', 'CSS3', 'Git'],
   },
 ];
 
 const projects = [
   {
-    name: 'Car Rent',
+    name: 'Digital Investor Portfolio',
+    company: 'Capital Group (USA)',
     description:
-      'Web-based platform that allows users to search, book, and manage car rentals from various providers, providing a convenient and efficient solution for transportation needs.',
+      'Digital investment platform with rich user interactions and analytics across frontend and backend modules. Improved page performance by 18-20% and lowered defects by 15-20%.',
     tags: [
-      {
-        name: 'react',
-        color: 'blue-text-gradient',
-      },
-      {
-        name: 'mongodb',
-        color: 'green-text-gradient',
-      },
-      {
-        name: 'tailwind',
-        color: 'pink-text-gradient',
-      },
+      { name: 'react', color: 'blue-text-gradient' },
+      { name: 'next.js', color: 'green-text-gradient' },
+      { name: 'node.js', color: 'pink-text-gradient' },
     ],
-    image: carrent,
-    source_code_link: 'https://github.com/',
+    image: '', // Add project image
+    source_code_link: '',
+    live_demo_link: '',
+    highlights: [
+      'Implemented React Query for server-state management',
+      'Used AI agents for feature development and refactoring',
+      'Generated and maintained technical documentation',
+    ],
   },
   {
-    name: 'Job IT',
+    name: 'Klick Health Platform',
+    company: 'Klick Health (USA)',
     description:
-      'Web application that enables users to search for job openings, view estimated salary ranges for positions, and locate available jobs based on their current location.',
+      'Healthcare platform with performance-optimized, scalable frontend built using Gatsby and React. Cut development time by 25-30% through reusable components.',
     tags: [
-      {
-        name: 'react',
-        color: 'blue-text-gradient',
-      },
-      {
-        name: 'restapi',
-        color: 'green-text-gradient',
-      },
-      {
-        name: 'scss',
-        color: 'pink-text-gradient',
-      },
+      { name: 'gatsby', color: 'blue-text-gradient' },
+      { name: 'react', color: 'green-text-gradient' },
+      { name: 'performance', color: 'pink-text-gradient' },
     ],
-    image: jobit,
-    source_code_link: 'https://github.com/',
+    image: '', // Add project image
+    source_code_link: '',
+    live_demo_link: '',
+    highlights: [
+      'Built reusable components enhancing SEO via static-site optimization',
+      'Automated screenshot tooling cutting manual QA by 5-7 hours/week',
+      'Applied memoization, lazy loading, code splitting',
+    ],
   },
   {
-    name: 'Trip Guide',
+    name: 'Srifin Credit - Microfinance CRM/ERP',
+    company: 'Srifin Credit',
     description:
-      'A comprehensive travel booking platform that allows users to book flights, hotels, and rental cars, and offers curated recommendations for popular destinations.',
+      'Full-stack CRM/ERP for managing financial data, workflows, and identity verification with secure RBAC. Decreased unauthorized access incidents by 100%.',
     tags: [
-      {
-        name: 'nextjs',
-        color: 'blue-text-gradient',
-      },
-      {
-        name: 'supabase',
-        color: 'green-text-gradient',
-      },
-      {
-        name: 'css',
-        color: 'pink-text-gradient',
-      },
+      { name: 'next.js', color: 'blue-text-gradient' },
+      { name: 'node.js', color: 'green-text-gradient' },
+      { name: 'rbac', color: 'pink-text-gradient' },
     ],
-    image: tripguide,
-    source_code_link: 'https://github.com/',
+    image: '', // Add project image
+    source_code_link: '',
+    live_demo_link: '',
+    highlights: [
+      'Engineered RBAC and audit logs for compliance',
+      'Accelerated onboarding by 20-25% with verification APIs',
+      'Led image optimization improving Core Web Vitals',
+    ],
+  },
+  {
+    name: 'Fantasy Cricket Platform',
+    company: 'Personal Project',
+    description:
+      'Real-money fantasy platform with live match syncing, secure payouts, and admin back-office operations. Achieved 99% transaction reliability.',
+    tags: [
+      { name: 'mongodb', color: 'blue-text-gradient' },
+      { name: 'node.js', color: 'green-text-gradient' },
+      { name: 'express', color: 'pink-text-gradient' },
+    ],
+    image: '', // Add project image
+    source_code_link: '',
+    live_demo_link: '',
+    highlights: [
+      'Built cron pipelines for live match states',
+      'Reduced admin intervention by 1.5-2 hours per match',
+      'Used AI-assisted analysis for payout edge cases',
+    ],
+  },
+  {
+    name: 'Xipper - Hotel Management Platform',
+    company: 'Xipper',
+    description:
+      'Multi-tenant hotel management platform with role-based operations, eKYC, booking, services, and billing. Scaled to 40-60 tenants with consistent data integrity.',
+    tags: [
+      { name: 'postgresql', color: 'blue-text-gradient' },
+      { name: 'next.js', color: 'green-text-gradient' },
+      { name: 'multi-tenant', color: 'pink-text-gradient' },
+    ],
+    image: '', // Add project image
+    source_code_link: '',
+    live_demo_link: '',
+    highlights: [
+      'Designed multi-tenant PostgreSQL models and REST APIs',
+      'Cut manual billing adjustments by 30-35%',
+      'Accelerated checkout speed by 15-20%',
+    ],
+  },
+  {
+    name: 'AI Chatbot Platform',
+    company: 'Client Project',
+    description:
+      'Context-aware chatbot UI with real-time interactions using WebSocket and comprehensive end-to-end testing with 65-70% coverage.',
+    tags: [
+      { name: 'next.js', color: 'blue-text-gradient' },
+      { name: 'websocket', color: 'green-text-gradient' },
+      { name: 'redux', color: 'pink-text-gradient' },
+    ],
+    image: '', // Add project image
+    source_code_link: '',
+    live_demo_link: '',
+    highlights: [
+      'Led UI architecture with Next.js/Redux and WebSocket',
+      'Adopted Storybook and Cypress for testing',
+      'Decreased regressions by 25-30%',
+    ],
   },
 ];
 
-export { services, technologies, experiences, testimonials, projects };
+// Stats to showcase achievements
+export const stats = [
+  { value: '4+', label: 'Years Experience' },
+  { value: '15+', label: 'Projects Delivered' },
+  { value: '30-40%', label: 'Faster Delivery with AI' },
+  { value: '99%', label: 'Transaction Reliability' },
+];
+
+export { services, technologies, experiences, projects };

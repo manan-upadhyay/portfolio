@@ -1,25 +1,38 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-  content: ['./src/**/*.{js,jsx}'],
-  mode: 'jit',
+  content: ['./src/**/*.{js,jsx,ts,tsx}', './index.html'],
+  darkMode: 'class',
   theme: {
     extend: {
       colors: {
-        primary: '#050816',
-        secondary: '#aaa6c3',
-        tertiary: '#151030',
-        'black-100': '#100d25',
-        'black-200': '#090325',
-        'white-100': '#f3f3f3',
+        primary: 'var(--color-primary)',
+        secondary: 'var(--color-secondary)',
+        tertiary: 'var(--color-tertiary)',
+        accent: 'var(--color-accent)',
+        'accent-secondary': 'var(--color-accent-secondary)',
+        'text-main': 'var(--color-text)',
+        'text-muted': 'var(--color-text-muted)',
       },
       boxShadow: {
-        card: '0px 35px 120px -15px #211e35',
+        card: 'var(--shadow-card)',
+        glow: 'var(--shadow-glow)',
       },
       screens: {
         xs: '450px',
       },
       backgroundImage: {
-        'hero-pattern': "url('/src/assets/herobg.png')",
+        'hero-pattern': 'var(--gradient-hero)',
+        'gradient-accent': 'var(--gradient-accent)',
+        'gradient-card': 'var(--gradient-card)',
+      },
+      fontFamily: {
+        poppins: ['Poppins', 'sans-serif'],
+      },
+      animation: {
+        'float': 'float 6s ease-in-out infinite',
+        'pulse-glow': 'pulse-glow 3s ease-in-out infinite',
+        'aurora': 'aurora 20s ease-in-out infinite',
+        'sunrise': 'sunrise 15s ease-in-out infinite',
       },
     },
   },

@@ -5,11 +5,14 @@ import { logo, menu, close } from '../assets';
 import { navLinks, personalInfo } from '../constants';
 import ThemeToggle from './ThemeToggle';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useThemeStore } from '../store/useThemeStore';
 
 const Navbar = () => {
   const [active, setActive] = useState('');
   const [toggle, setToggle] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const { resolvedTheme } = useThemeStore();
+  const isDark = resolvedTheme === 'dark';
 
   useEffect(() => {
     const handleScroll = () => {
@@ -25,11 +28,20 @@ const Navbar = () => {
       initial={{ y: -100, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.5, ease: 'easeOut' }}
-      className={`${styles.paddingX} w-full flex items-center py-4 fixed top-0 z-20 transition-all duration-300 ${
-        scrolled
-          ? 'bg-[var(--color-primary)]/80 backdrop-blur-lg shadow-lg'
-          : 'bg-transparent'
-      }`}
+      className={`${styles.paddingX} w-full flex items-center py-4 fixed top-0 z-20 transition-all duration-300`}
+      style={{
+        background: scrolled 
+          ? isDark 
+            ? 'rgba(15, 23, 42, 0.85)' 
+            : 'rgba(248, 250, 252, 0.85)'
+          : 'transparent',
+        backdropFilter: scrolled ? 'blur(20px)' : 'none',
+        boxShadow: scrolled 
+          ? isDark 
+            ? '0 1px 0 rgba(129, 140, 248, 0.1)' 
+            : '0 1px 0 rgba(79, 70, 229, 0.08)'
+          : 'none',
+      }}
     >
       <div className="w-full flex justify-between items-center max-w-7xl mx-auto">
         <Link
@@ -80,7 +92,8 @@ const Navbar = () => {
             href={personalInfo.resumeLink}
             target="_blank"
             rel="noopener noreferrer"
-            className="px-4 py-2 rounded-lg text-sm font-semibold text-[var(--color-primary)] bg-[var(--color-accent)] hover:opacity-90 transition-all duration-300"
+            className="px-4 py-2 rounded-lg text-sm font-semibold text-white transition-all duration-300"
+            style={{ background: 'var(--gradient-accent)' }}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
@@ -102,7 +115,7 @@ const Navbar = () => {
               src={toggle ? close : menu}
               alt="menu"
               className="w-[24px] h-[24px] object-contain cursor-pointer"
-              style={{ filter: 'var(--color-text) === "#1a1a2e" ? "invert(1)" : "none"' }}
+              style={{ filter: isDark ? 'invert(1)' : 'none' }}
             />
           </button>
         </div>
@@ -125,7 +138,7 @@ const Navbar = () => {
                       active === link.title
                         ? 'text-[var(--color-accent)]'
                         : 'text-[var(--color-text-muted)]'
-                    } font-poppins font-medium text-[16px] cursor-pointer transition-colors duration-300`}
+                    } font-medium text-[16px] cursor-pointer transition-colors duration-300`}
                     onClick={() => {
                       setActive(link.title);
                       setToggle(false);
@@ -139,7 +152,8 @@ const Navbar = () => {
                     href={personalInfo.resumeLink}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="px-4 py-2 rounded-lg text-sm font-semibold text-[var(--color-primary)] bg-[var(--color-accent)] inline-block mt-2"
+                    className="px-4 py-2 rounded-lg text-sm font-semibold text-white inline-block mt-2"
+                    style={{ background: 'var(--gradient-accent)' }}
                   >
                     Download Resume
                   </a>

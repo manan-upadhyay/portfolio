@@ -27,7 +27,7 @@ const TechIcon = ({ technology, index }) => {
         <span 
           className="px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap"
           style={{
-            background: isDark ? 'rgba(0,255,163,0.2)' : 'rgba(255,107,53,0.2)',
+            background: isDark ? 'rgba(129, 140, 248, 0.15)' : 'rgba(79, 70, 229, 0.1)',
             color: 'var(--color-accent)',
           }}
         >
@@ -60,13 +60,13 @@ const SkillCategory = ({ category, skills, index }) => {
             key={skill.name}
             className="px-3 py-1.5 rounded-full text-sm font-medium flex items-center gap-2"
             style={{
-              background: isDark ? 'rgba(0,255,163,0.1)' : 'rgba(255,107,53,0.1)',
+              background: isDark ? 'rgba(129, 140, 248, 0.08)' : 'rgba(79, 70, 229, 0.05)',
               color: 'var(--color-text)',
-              border: `1px solid ${isDark ? 'rgba(0,255,163,0.3)' : 'rgba(255,107,53,0.3)'}`,
+              border: `1px solid ${isDark ? 'rgba(129, 140, 248, 0.2)' : 'rgba(79, 70, 229, 0.12)'}`,
             }}
             whileHover={{ 
               scale: 1.05,
-              background: isDark ? 'rgba(0,255,163,0.2)' : 'rgba(255,107,53,0.2)',
+              background: isDark ? 'rgba(129, 140, 248, 0.15)' : 'rgba(79, 70, 229, 0.1)',
             }}
             initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -78,7 +78,7 @@ const SkillCategory = ({ category, skills, index }) => {
               className="text-xs px-1.5 py-0.5 rounded-md"
               style={{ 
                 background: 'var(--gradient-accent)',
-                color: isDark ? '#050816' : '#fff',
+                color: '#ffffff',
               }}
             >
               {skill.level}%

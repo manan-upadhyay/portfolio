@@ -65,6 +65,11 @@ const App = () => {
           <Works />
         </Suspense>
         
+        {/* Feedbacks — hidden for now, uncomment when testimonials are ready */}
+        {/* <Suspense fallback={<SectionLoader />}>
+          <Feedbacks />
+        </Suspense> */}
+        
         {/* Contact with Stars Background (dark mode only) */}
         <div className="relative z-0">
           <Suspense fallback={<SectionLoader />}>
@@ -78,11 +83,20 @@ const App = () => {
         </div>
         
         {/* Footer */}
-        <footer className="py-8 text-center border-t border-[var(--color-card-border)]">
-          <p className="text-[var(--color-text-muted)] text-sm">
+        <footer 
+          className="py-8 text-center border-t"
+          style={{ borderColor: 'var(--color-card-border)' }}
+        >
+          <p 
+            className="text-sm"
+            style={{ color: 'var(--color-text-muted)' }}
+          >
             © {new Date().getFullYear()} Manan Upadhyay. Built with React, Three.js & Framer Motion.
           </p>
-          <p className="text-[var(--color-text-muted)] text-xs mt-2 opacity-50">
+          <p 
+            className="text-xs mt-2 opacity-50"
+            style={{ color: 'var(--color-text-muted)' }}
+          >
             Try pressing ⌘+K or ↑↑↓↓←→←→BA 👀
           </p>
         </footer>

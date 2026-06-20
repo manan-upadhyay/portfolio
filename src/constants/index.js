@@ -20,19 +20,19 @@ import {
 // Personal Information
 export const personalInfo = {
   name: 'Manan Upadhyay',
-  title: 'Full Stack Developer | AI-Augmented Engineer',
+  title: 'Full Stack Developer | React.js, Next.js, Node.js, TypeScript',
   email: 'upadhyaymanan01@gmail.com',
   phone: '+91 9173949408',
   location: 'Ahmedabad, India',
   linkedin: 'https://www.linkedin.com/in/manan-upadhyay',
   github: 'https://github.com/manan-upadhyay',
   resumeLink: '/resume.pdf',
-  bio: `Full Stack Developer with 4+ years of experience delivering scalable, production-grade web platforms across finance, healthcare, and logistics. Strong expertise in frontend and backend architecture, performance optimization, and AI-augmented development.`,
+  bio: `Full Stack Developer with 5+ years of experience building production web applications using React.js, Next.js, Node.js, TypeScript, Express.js, MongoDB, and PostgreSQL. Experienced across finance, healthcare, logistics, CRM/ERP, SaaS, media-heavy, and visualization-driven platforms. Strong in frontend architecture, performance optimization, API integration, authentication/RBAC, reusable UI systems, and end-to-end feature ownership.`,
   taglines: [
     'Building Production-Grade Web Platforms',
     'Architecting Scalable Full Stack Solutions',
-    'AI-Augmented Development Expert',
-    'Performance Optimization Specialist',
+    'Frontend Architecture & Performance',
+    'End-to-End Feature Ownership',
   ],
 };
 
@@ -57,24 +57,24 @@ export const navLinks = [
 
 const services = [
   {
-    title: 'Full Stack Architecture',
-    description: 'End-to-end web applications with React/Next.js and Node.js/Express/NestJS',
+    title: 'Frontend Architecture',
+    description: 'Production-grade UIs with React.js, Next.js, TypeScript, and reusable component systems',
     icon: web,
   },
   {
     title: 'Backend Development',
-    description: 'Scalable APIs with REST, JWT/OAuth, MongoDB, PostgreSQL',
+    description: 'Scalable APIs with Node.js, Express.js, NestJS, REST, JWT/OAuth, and RBAC',
     icon: backend,
   },
   {
-    title: 'AI-Augmented Development',
-    description: 'Leveraging GPT-5.2, Claude, Gemini for accelerated delivery',
-    icon: creator,
+    title: 'Performance Optimization',
+    description: 'Code-splitting, caching, CDN strategies, lazy loading, and Core Web Vitals tuning',
+    icon: mobile,
   },
   {
-    title: 'Performance Optimization',
-    description: 'Code-splitting, caching strategies, Core Web Vitals optimization',
-    icon: mobile,
+    title: 'Full Stack Delivery',
+    description: 'End-to-end ownership from requirement grooming to production monitoring',
+    icon: creator,
   },
 ];
 
@@ -99,11 +99,13 @@ export const skillCategories = [
     category: 'Frontend',
     skills: [
       { name: 'React.js', level: 95 },
-      { name: 'Next.js', level: 90 },
+      { name: 'Next.js', level: 92 },
       { name: 'TypeScript', level: 90 },
-      { name: 'Tailwind CSS', level: 95 },
-      { name: 'Redux Toolkit', level: 85 },
-      { name: 'Framer Motion', level: 80 },
+      { name: 'Tailwind CSS', level: 93 },
+      { name: 'Redux / RTK', level: 88 },
+      { name: 'ShadCN / Material UI', level: 85 },
+      { name: 'Highcharts / Recharts', level: 82 },
+      { name: 'React Query', level: 88 },
     ],
   },
   {
@@ -113,19 +115,23 @@ export const skillCategories = [
       { name: 'Express.js', level: 90 },
       { name: 'NestJS', level: 85 },
       { name: 'REST APIs', level: 95 },
-      { name: 'MongoDB', level: 85 },
-      { name: 'PostgreSQL', level: 80 },
+      { name: 'MongoDB', level: 88 },
+      { name: 'PostgreSQL', level: 82 },
+      { name: 'Firebase', level: 85 },
+      { name: 'WebSocket', level: 78 },
     ],
   },
   {
     category: 'DevOps & Tools',
     skills: [
-      { name: 'Git/GitHub', level: 95 },
-      { name: 'CI/CD', level: 80 },
-      { name: 'AWS (Basics)', level: 70 },
+      { name: 'Git / GitHub', level: 95 },
       { name: 'Docker', level: 75 },
-      { name: 'Jira', level: 90 },
-      { name: 'Figma', level: 75 },
+      { name: 'CI/CD (Harness)', level: 78 },
+      { name: 'Jira / Confluence', level: 92 },
+      { name: 'Cypress / Storybook', level: 80 },
+      { name: 'Splunk', level: 72 },
+      { name: 'LaunchDarkly', level: 80 },
+      { name: 'Cloudflare R2 / CDN', level: 78 },
     ],
   },
 ];
@@ -133,87 +139,146 @@ export const skillCategories = [
 const experiences = [
   {
     title: 'Full Stack Developer',
-    company_name: 'Inexture Solutions (via Uplers)',
-    icon: backend, // Replace with actual company logo
-    iconBg: '#1d1836',
-    date: 'January 2022 - Present',
+    company_name: 'Inexture Solutions',
+    icon: backend,
+    iconBg: '#1E293B',
+    date: 'January 2022 – Present',
     points: [
-      'Led end-to-end delivery of modern web applications using React/Next.js and Node/Express/NestJS across finance, healthcare, and logistics domains.',
-      'Designed secure RESTful APIs with JWT/OAuth and integrated third-party services and payment gateways.',
-      'Leveraged AI agents and prompt engineering to accelerate development workflows, reducing feature delivery time by 30-40%.',
-      'Optimized data models in MongoDB and PostgreSQL, improving query performance by 20-25%.',
-      'Mentored junior developers via code reviews and pairing, lowering production defects by 15-20%.',
+      'Delivered production-grade web applications across finance, healthcare, logistics, CRM/ERP, SaaS, media-heavy, and visualization-driven platforms using React.js, Next.js, Node.js, Express.js, NestJS, MongoDB, and PostgreSQL.',
+      'Built end-to-end frontend features from requirement grooming and task breakdown to implementation, API integration, QA support, release validation, and production monitoring.',
+      'Developed secure authentication and authorization flows using JWT/OAuth, Okta, Auth.js, RBAC, middleware-based access control, and dynamic user access conditions.',
+      'Improved frontend performance through code splitting, lazy loading, caching, image/video optimization, CDN usage, React Query caching, and reusable component architecture.',
+      'Worked with feature flags, CI/CD, observability, and deployment-support tooling including LaunchDarkly, Harness, Docker, Helm, AWS Parameter Store, and Splunk.',
+      'Mentored junior developers through code reviews, reusable patterns, debugging support, and implementation guidance.',
     ],
-    technologies: ['React.js', 'Next.js', 'Node.js', 'NestJS', 'MongoDB', 'PostgreSQL', 'JWT', 'AI Agents'],
+    technologies: ['React.js', 'Next.js', 'Node.js', 'NestJS', 'MongoDB', 'PostgreSQL', 'Okta', 'LaunchDarkly'],
   },
   {
     title: 'Frontend Developer',
     company_name: 'Horizon Tour and Travels',
-    icon: web, // Replace with actual company logo
-    iconBg: '#383E56',
-    date: 'May 2021 - December 2021',
+    icon: web,
+    iconBg: '#334155',
+    date: 'May 2021 – December 2021',
     points: [
-      'Developed custom CRM modules and responsive UI components using React for customer, lead, and sales workflows.',
-      'Implemented PDF and Excel exports for reporting, cutting manual data work by 16-20 hours per week.',
-      'Optimized client-side rendering to cut initial load time by 38%, delivering 1.2x faster first meaningful paint.',
-      'Translated client requirements into functional UI features, improving stakeholder satisfaction.',
+      'Developed CRM modules and responsive React UI components for customer, lead, and sales workflows.',
+      'Implemented PDF and Excel exports for reporting, reducing manual data work by 16–20 hours per week.',
+      'Optimized client-side rendering and UI performance, reducing initial load time by 38%.',
+      'Participated in client demos, requirement discussions, and feedback cycles to improve feature acceptance and delivery speed.',
     ],
     technologies: ['React.js', 'JavaScript', 'HTML5', 'CSS3', 'Git'],
   },
 ];
 
-const projects = [
+// Featured projects — from the strong resume
+const featuredProjects = [
+  {
+    name: 'Advisor Portfolio Snapshot',
+    company: 'Capital Group (USA)',
+    isFeatured: true,
+    description:
+      'Advisor-facing portfolio analysis platform built from scratch with Next.js, Okta authentication, Highcharts data visualization, and enterprise deployment tooling.',
+    tags: [
+      { name: 'next.js', color: 'blue-text-gradient' },
+      { name: 'okta', color: 'green-text-gradient' },
+      { name: 'highcharts', color: 'pink-text-gradient' },
+    ],
+    image: '',
+    source_code_link: '',
+    live_demo_link: '',
+    isNDA: true,
+    highlights: [
+      'Built the frontend application from scratch — system design, reusable UI, route protection, API integration, sprint-wise delivery',
+      'Integrated Okta OAuth with Auth.js and server-side middleware authorization logic',
+      'Built portfolio analysis views with data tables and Highcharts for interactive digital reports',
+      'Integrated LaunchDarkly feature flags, Harness deployments, and Splunk debugging',
+      'Contributed to a Spring Boot backend for server-side PDF report generation',
+    ],
+  },
+  {
+    name: 'Gajaakriti Studio',
+    company: 'Luxury Wedding Photography & Films',
+    isFeatured: true,
+    description:
+      'Dynamic media-heavy website and admin panel for a premium Ahmedabad-based wedding photography and films studio with optimized media delivery.',
+    tags: [
+      { name: 'next.js', color: 'blue-text-gradient' },
+      { name: 'firebase', color: 'green-text-gradient' },
+      { name: 'cloudflare-r2', color: 'pink-text-gradient' },
+    ],
+    image: '',
+    source_code_link: '',
+    live_demo_link: '',
+    isNDA: false,
+    highlights: [
+      'Built a modern Next.js website with dynamic landing pages, portfolio, blogs, testimonials, and admin panel',
+      'Improved performance through caching, CDN strategy, Cloudflare R2, and video streaming optimization',
+      'Implemented Firebase Auth and Firestore for authentication, user management, and content mapping',
+      'Built Bash scripts to batch-compress images and videos, reducing hosting costs while maintaining quality',
+    ],
+  },
+  {
+    name: 'Royal Tiles Playground',
+    company: 'Custom Tile Visualization Tool',
+    isFeatured: true,
+    description:
+      'Interactive tile design and ordering tool where users select layouts, tile designs, fills, preview results live, and download order-ready PDF templates.',
+    tags: [
+      { name: 'react', color: 'blue-text-gradient' },
+      { name: 'tensorflow.js', color: 'green-text-gradient' },
+      { name: 'svg', color: 'pink-text-gradient' },
+    ],
+    image: '',
+    source_code_link: '',
+    live_demo_link: '',
+    isNDA: false,
+    highlights: [
+      'Built a custom floor visualization tool with live preview and downloadable PDF templates',
+      'Programmatically rendered dynamic tile variants — corners, fills, grid patterns',
+      'Built TensorFlow.js image-processing workflow to convert PNGs into region-based SVGs',
+      'Developed an admin panel for managing tile designs, floor layouts, and configurations',
+      'Added product tours, help drawers, and shortcut-key interactions for usability',
+    ],
+  },
   {
     name: 'Digital Investor Portfolio',
     company: 'Capital Group (USA)',
+    isFeatured: true,
     description:
-      'Digital investment platform with rich user interactions and analytics across frontend and backend modules. Improved page performance by 18-20% and lowered defects by 15-20%.',
+      'Digital investment platform with rich user interactions, analytics tracking, and feature modules across frontend and backend.',
     tags: [
       { name: 'react', color: 'blue-text-gradient' },
       { name: 'next.js', color: 'green-text-gradient' },
       { name: 'node.js', color: 'pink-text-gradient' },
     ],
-    image: '', // Add project image
+    image: '',
     source_code_link: '',
     live_demo_link: '',
+    isNDA: true,
     highlights: [
-      'Implemented React Query for server-state management',
-      'Used AI agents for feature development and refactoring',
-      'Generated and maintained technical documentation',
+      'Delivered React/Next.js feature modules and integrated Adobe Analytics tracking',
+      'Supported Node/Express REST API integrations, error handling, and performance improvements',
+      'Implemented React Query for server-state management, reducing redundant API calls',
     ],
   },
+];
+
+// Other projects — real projects from current website
+const otherProjects = [
   {
-    name: 'Klick Health Platform',
-    company: 'Klick Health (USA)',
+    name: 'Srifin Credit',
+    company: 'Microfinance CRM/ERP',
+    isFeatured: false,
     description:
-      'Healthcare platform with performance-optimized, scalable frontend built using Gatsby and React. Cut development time by 25-30% through reusable components.',
-    tags: [
-      { name: 'gatsby', color: 'blue-text-gradient' },
-      { name: 'react', color: 'green-text-gradient' },
-      { name: 'performance', color: 'pink-text-gradient' },
-    ],
-    image: '', // Add project image
-    source_code_link: '',
-    live_demo_link: '',
-    highlights: [
-      'Built reusable components enhancing SEO via static-site optimization',
-      'Automated screenshot tooling cutting manual QA by 5-7 hours/week',
-      'Applied memoization, lazy loading, code splitting',
-    ],
-  },
-  {
-    name: 'Srifin Credit - Microfinance CRM/ERP',
-    company: 'Srifin Credit',
-    description:
-      'Full-stack CRM/ERP for managing financial data, workflows, and identity verification with secure RBAC. Decreased unauthorized access incidents by 100%.',
+      'Full-stack CRM/ERP for managing financial data, workflows, and identity verification with secure RBAC.',
     tags: [
       { name: 'next.js', color: 'blue-text-gradient' },
       { name: 'node.js', color: 'green-text-gradient' },
       { name: 'rbac', color: 'pink-text-gradient' },
     ],
-    image: '', // Add project image
+    image: '',
     source_code_link: '',
     live_demo_link: '',
+    isNDA: false,
     highlights: [
       'Engineered RBAC and audit logs for compliance',
       'Accelerated onboarding by 20-25% with verification APIs',
@@ -221,37 +286,20 @@ const projects = [
     ],
   },
   {
-    name: 'Fantasy Cricket Platform',
-    company: 'Personal Project',
+    name: 'Xipper',
+    company: 'Hotel Management Platform',
+    isFeatured: false,
     description:
-      'Real-money fantasy platform with live match syncing, secure payouts, and admin back-office operations. Achieved 99% transaction reliability.',
-    tags: [
-      { name: 'mongodb', color: 'blue-text-gradient' },
-      { name: 'node.js', color: 'green-text-gradient' },
-      { name: 'express', color: 'pink-text-gradient' },
-    ],
-    image: '', // Add project image
-    source_code_link: '',
-    live_demo_link: '',
-    highlights: [
-      'Built cron pipelines for live match states',
-      'Reduced admin intervention by 1.5-2 hours per match',
-      'Used AI-assisted analysis for payout edge cases',
-    ],
-  },
-  {
-    name: 'Xipper - Hotel Management Platform',
-    company: 'Xipper',
-    description:
-      'Multi-tenant hotel management platform with role-based operations, eKYC, booking, services, and billing. Scaled to 40-60 tenants with consistent data integrity.',
+      'Multi-tenant hotel management platform with role-based operations, eKYC, booking, services, and billing.',
     tags: [
       { name: 'postgresql', color: 'blue-text-gradient' },
       { name: 'next.js', color: 'green-text-gradient' },
       { name: 'multi-tenant', color: 'pink-text-gradient' },
     ],
-    image: '', // Add project image
+    image: '',
     source_code_link: '',
     live_demo_link: '',
+    isNDA: false,
     highlights: [
       'Designed multi-tenant PostgreSQL models and REST APIs',
       'Cut manual billing adjustments by 30-35%',
@@ -261,30 +309,64 @@ const projects = [
   {
     name: 'AI Chatbot Platform',
     company: 'Client Project',
+    isFeatured: false,
     description:
-      'Context-aware chatbot UI with real-time interactions using WebSocket and comprehensive end-to-end testing with 65-70% coverage.',
+      'Context-aware chatbot UI with real-time interactions using WebSocket and comprehensive end-to-end testing.',
     tags: [
       { name: 'next.js', color: 'blue-text-gradient' },
       { name: 'websocket', color: 'green-text-gradient' },
       { name: 'redux', color: 'pink-text-gradient' },
     ],
-    image: '', // Add project image
+    image: '',
     source_code_link: '',
     live_demo_link: '',
+    isNDA: true,
     highlights: [
       'Led UI architecture with Next.js/Redux and WebSocket',
       'Adopted Storybook and Cypress for testing',
       'Decreased regressions by 25-30%',
     ],
   },
+  {
+    name: 'Fantasy Cricket Platform',
+    company: 'Personal Project',
+    isFeatured: false,
+    description:
+      'Real-money fantasy platform with live match syncing, secure payouts, and admin back-office operations.',
+    tags: [
+      { name: 'mongodb', color: 'blue-text-gradient' },
+      { name: 'node.js', color: 'green-text-gradient' },
+      { name: 'express', color: 'pink-text-gradient' },
+    ],
+    image: '',
+    source_code_link: '',
+    live_demo_link: '',
+    isNDA: false,
+    highlights: [
+      'Built cron pipelines for live match states',
+      'Reduced admin intervention by 1.5-2 hours per match',
+      'Achieved 99% transaction reliability',
+    ],
+  },
 ];
+
+// Combine all projects — featured first
+const projects = [...featuredProjects, ...otherProjects];
 
 // Stats to showcase achievements
 export const stats = [
-  { value: '4+', label: 'Years Experience' },
-  { value: '15+', label: 'Projects Delivered' },
-  { value: '30-40%', label: 'Faster Delivery with AI' },
-  { value: '99%', label: 'Transaction Reliability' },
+  { value: '5+', label: 'Years Experience' },
+  { value: '20+', label: 'Projects Delivered' },
+  { value: '6+', label: 'Industry Domains' },
+  { value: '38%', label: 'Faster Load Times' },
 ];
 
-export { services, technologies, experiences, projects };
+// Education
+export const education = {
+  degree: 'Bachelor of Engineering in Information Technology',
+  university: 'Gujarat Technological University',
+  year: '2022',
+  cgpa: '8.36/10',
+};
+
+export { services, technologies, experiences, projects, featuredProjects, otherProjects };

@@ -93,7 +93,7 @@ const Contact = () => {
             href={`mailto:${personalInfo.email}`}
             className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm transition-all hover:scale-105"
             style={{
-              background: isDark ? 'rgba(0,255,163,0.1)' : 'rgba(255,107,53,0.1)',
+              background: isDark ? 'rgba(129, 140, 248, 0.1)' : 'rgba(79, 70, 229, 0.06)',
               color: 'var(--color-accent)',
             }}
           >
@@ -109,7 +109,7 @@ const Contact = () => {
             rel="noopener noreferrer"
             className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm transition-all hover:scale-105"
             style={{
-              background: isDark ? 'rgba(0,255,163,0.1)' : 'rgba(255,107,53,0.1)',
+              background: isDark ? 'rgba(129, 140, 248, 0.1)' : 'rgba(79, 70, 229, 0.06)',
               color: 'var(--color-accent)',
             }}
           >
@@ -124,7 +124,7 @@ const Contact = () => {
             rel="noopener noreferrer"
             className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm transition-all hover:scale-105"
             style={{
-              background: isDark ? 'rgba(0,255,163,0.1)' : 'rgba(255,107,53,0.1)',
+              background: isDark ? 'rgba(129, 140, 248, 0.1)' : 'rgba(79, 70, 229, 0.06)',
               color: 'var(--color-accent)',
             }}
           >
@@ -142,9 +142,9 @@ const Contact = () => {
             animate={{ opacity: 1, y: 0 }}
             className="mt-6 p-4 rounded-lg"
             style={{
-              background: 'rgba(0, 255, 163, 0.1)',
-              border: '1px solid rgba(0, 255, 163, 0.3)',
-              color: 'var(--color-accent)',
+              background: 'rgba(34, 197, 94, 0.1)',
+              border: '1px solid rgba(34, 197, 94, 0.3)',
+              color: '#22C55E',
             }}
           >
             ✓ Thank you! I'll get back to you as soon as possible.
@@ -158,9 +158,9 @@ const Contact = () => {
             animate={{ opacity: 1, y: 0 }}
             className="mt-6 p-4 rounded-lg"
             style={{
-              background: 'rgba(255, 107, 53, 0.1)',
-              border: '1px solid rgba(255, 107, 53, 0.3)',
-              color: '#FF6B35',
+              background: 'rgba(239, 68, 68, 0.1)',
+              border: '1px solid rgba(239, 68, 68, 0.3)',
+              color: '#EF4444',
             }}
           >
             {error}
@@ -187,7 +187,7 @@ const Contact = () => {
               placeholder="What's your name?"
               className="py-4 px-6 rounded-lg outline-none border font-medium transition-all duration-300 focus:border-[var(--color-accent)]"
               style={{
-                background: isDark ? 'rgba(21, 16, 48, 0.8)' : 'rgba(255, 245, 238, 0.8)',
+                background: isDark ? 'rgba(30, 41, 59, 0.8)' : 'rgba(238, 242, 255, 0.8)',
                 borderColor: 'var(--color-card-border)',
                 color: 'var(--color-text)',
               }}
@@ -209,7 +209,7 @@ const Contact = () => {
               placeholder="What's your email?"
               className="py-4 px-6 rounded-lg outline-none border font-medium transition-all duration-300 focus:border-[var(--color-accent)]"
               style={{
-                background: isDark ? 'rgba(21, 16, 48, 0.8)' : 'rgba(255, 245, 238, 0.8)',
+                background: isDark ? 'rgba(30, 41, 59, 0.8)' : 'rgba(238, 242, 255, 0.8)',
                 borderColor: 'var(--color-card-border)',
                 color: 'var(--color-text)',
               }}
@@ -231,7 +231,7 @@ const Contact = () => {
               placeholder="What would you like to discuss?"
               className="py-4 px-6 rounded-lg outline-none border font-medium transition-all duration-300 focus:border-[var(--color-accent)] resize-none"
               style={{
-                background: isDark ? 'rgba(21, 16, 48, 0.8)' : 'rgba(255, 245, 238, 0.8)',
+                background: isDark ? 'rgba(30, 41, 59, 0.8)' : 'rgba(238, 242, 255, 0.8)',
                 borderColor: 'var(--color-card-border)',
                 color: 'var(--color-text)',
               }}
@@ -240,7 +240,7 @@ const Contact = () => {
 
           <motion.button
             type="submit"
-            className="py-4 px-8 rounded-xl outline-none font-bold text-[var(--color-primary)] flex items-center justify-center gap-2"
+            className="py-4 px-8 rounded-xl outline-none font-bold text-white flex items-center justify-center gap-2"
             style={{ background: 'var(--gradient-accent)' }}
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}

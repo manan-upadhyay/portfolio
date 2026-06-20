@@ -5,12 +5,20 @@ import { services, personalInfo, skillCategories, stats } from '../constants';
 import { fadeIn, textVariant } from '../utils/motion';
 import { SectionWrapper } from '../hoc';
 import { useThemeStore } from '../store/useThemeStore';
-import { SplitText, BlurText, TiltCard, ScrollReveal, SpotlightCard } from './ui';
+// Official React Bits components
+import SplitText from './SplitText';
+import BlurText from './BlurText';
+import TiltedCard from './TiltedCard';
+import SpotlightCard from './SpotlightCard';
+import './TiltedCard.css';
+import './SpotlightCard.css';
+// Custom UI components
+import { ScrollReveal } from './ui';
 
 const ServiceCard = ({ index, title, description, icon }) => {
   return (
     <ScrollReveal direction="up" delay={index * 0.15} className="xs:w-[280px] w-full">
-      <TiltCard maxTilt={10} scale={1.02} className="w-full h-full">
+      <TiltedCard maxTilt={10} scale={1.02} className="w-full h-full">
         <SpotlightCard 
           className="w-full p-[1px] rounded-[20px] shadow-card h-full"
           spotlightColor="rgba(var(--color-accent-rgb), 0.15)"
@@ -41,12 +49,15 @@ const ServiceCard = ({ index, title, description, icon }) => {
             </p>
           </div>
         </SpotlightCard>
-      </TiltCard>
+      </TiltedCard>
     </ScrollReveal>
   );
 };
 
 const SkillBar = ({ skill, delay }) => {
+  const { resolvedTheme } = useThemeStore();
+  const isDark = resolvedTheme === 'dark';
+  
   return (
     <motion.div
       initial={{ opacity: 0, x: -20 }}
@@ -65,7 +76,7 @@ const SkillBar = ({ skill, delay }) => {
       </div>
       <div 
         className="w-full h-2 rounded-full overflow-hidden"
-        style={{ background: 'var(--color-card-bg)' }}
+        style={{ background: isDark ? 'rgba(30, 41, 59, 0.8)' : 'rgba(224, 231, 255, 0.8)' }}
       >
         <motion.div
           className="h-full rounded-full"
@@ -82,6 +93,9 @@ const SkillBar = ({ skill, delay }) => {
 
 // Animated Counter Component
 const AnimatedCounter = ({ value, label, delay }) => {
+  const { resolvedTheme } = useThemeStore();
+  const isDark = resolvedTheme === 'dark';
+  
   return (
     <motion.div
       className="glass-card p-4 rounded-xl text-center border border-[var(--color-card-border)]"
@@ -189,7 +203,7 @@ const About = () => {
         </ScrollReveal>
       </div>
 
-      {/* Services with TiltCard and SpotlightCard */}
+      {/* Services with TiltedCard and SpotlightCard */}
       <div className="mt-20 flex flex-wrap justify-center gap-10">
         {services.map((service, index) => (
           <ServiceCard key={service.title} index={index} {...service} />

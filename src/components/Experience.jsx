@@ -12,7 +12,9 @@ import { experiences } from '../constants';
 import { SectionWrapper } from '../hoc';
 import { textVariant } from '../utils/motion';
 import { useThemeStore } from '../store/useThemeStore';
-import { SplitText, BlurText } from './ui';
+// Official React Bits components
+import SplitText from './SplitText';
+import BlurText from './BlurText';
 
 const ExperienceCard = ({ experience }) => {
   const { resolvedTheme } = useThemeStore();
@@ -22,23 +24,23 @@ const ExperienceCard = ({ experience }) => {
     <VerticalTimelineElement
       contentStyle={{
         background: isDark 
-          ? 'rgba(21, 16, 48, 0.9)' 
-          : 'rgba(255, 245, 238, 0.9)',
-        backdropFilter: 'blur(10px)',
-        border: `1px solid ${isDark ? 'rgba(0, 255, 163, 0.2)' : 'rgba(255, 107, 53, 0.2)'}`,
+          ? 'rgba(30, 41, 59, 0.85)' 
+          : 'rgba(255, 255, 255, 0.9)',
+        backdropFilter: 'blur(16px)',
+        border: `1px solid ${isDark ? 'rgba(129, 140, 248, 0.15)' : 'rgba(79, 70, 229, 0.1)'}`,
         borderRadius: '16px',
         boxShadow: isDark 
-          ? '0 20px 40px rgba(0, 0, 0, 0.3)' 
-          : '0 20px 40px rgba(255, 107, 53, 0.1)',
+          ? '0 20px 40px rgba(0, 0, 0, 0.3), 0 0 20px rgba(129, 140, 248, 0.05)' 
+          : '0 20px 40px rgba(79, 70, 229, 0.08)',
       }}
       contentArrowStyle={{ 
-        borderRight: `7px solid ${isDark ? 'rgba(0, 255, 163, 0.5)' : 'rgba(255, 107, 53, 0.5)'}` 
+        borderRight: `7px solid ${isDark ? 'rgba(129, 140, 248, 0.4)' : 'rgba(79, 70, 229, 0.3)'}` 
       }}
       date={experience.date}
       dateClassName="text-[var(--color-text-muted)]"
       iconStyle={{ 
-        background: isDark ? '#151030' : '#FFE5D9',
-        border: `3px solid ${isDark ? 'var(--color-accent)' : 'var(--color-accent)'}`,
+        background: isDark ? '#1E293B' : '#EEF2FF',
+        border: `3px solid var(--color-accent)`,
       }}
       icon={
         <div className="flex justify-center items-center w-full h-full">
@@ -86,10 +88,10 @@ const ExperienceCard = ({ experience }) => {
               className="text-[12px] px-3 py-1 rounded-full"
               style={{
                 background: isDark 
-                  ? 'rgba(0, 255, 163, 0.1)' 
-                  : 'rgba(255, 107, 53, 0.1)',
+                  ? 'rgba(129, 140, 248, 0.1)' 
+                  : 'rgba(79, 70, 229, 0.08)',
                 color: 'var(--color-accent)',
-                border: '1px solid var(--color-accent)',
+                border: `1px solid ${isDark ? 'rgba(129, 140, 248, 0.25)' : 'rgba(79, 70, 229, 0.15)'}`,
               }}
             >
               {tech}
@@ -129,7 +131,7 @@ const Experience = () => {
 
       <div className="mt-20 flex flex-col">
         <VerticalTimeline
-          lineColor={isDark ? 'var(--color-accent)' : 'var(--color-accent)'}
+          lineColor={isDark ? 'rgba(129, 140, 248, 0.3)' : 'rgba(79, 70, 229, 0.2)'}
         >
           {experiences.map((experience, index) => (
             <ExperienceCard

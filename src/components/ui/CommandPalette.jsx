@@ -163,7 +163,7 @@ const CommandPalette = ({
 
 // Simple confetti effect
 function triggerConfetti() {
-  const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#f9ca24', '#6c5ce7'];
+  const colors = ['#6366F1', '#818CF8', '#A78BFA', '#F59E0B', '#22C55E'];
   const confettiCount = 100;
   
   for (let i = 0; i < confettiCount; i++) {

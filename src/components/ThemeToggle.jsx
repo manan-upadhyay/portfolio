@@ -12,8 +12,8 @@ const ThemeToggle = () => {
       className="relative w-14 h-7 rounded-full p-1 transition-colors duration-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/50"
       style={{
         background: isDark
-          ? 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)'
-          : 'linear-gradient(135deg, #FFE5D9 0%, #FFCDB2 50%, #FFB4A2 100%)',
+          ? 'linear-gradient(135deg, #1E293B 0%, #334155 50%, #475569 100%)'
+          : 'linear-gradient(135deg, #E0E7FF 0%, #C7D2FE 50%, #A5B4FC 100%)',
       }}
       whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.95 }}
@@ -53,7 +53,7 @@ const ThemeToggle = () => {
         initial={false}
         animate={{
           x: isDark ? 24 : 0,
-          backgroundColor: isDark ? '#f4f4f5' : '#FFD93D',
+          backgroundColor: isDark ? '#F1F5F9' : '#F59E0B',
         }}
         transition={{
           type: 'spring',

@@ -1,213 +1,120 @@
-import React from 'react';
 import { motion } from 'framer-motion';
-import { styles } from '../styles';
-import { services, personalInfo, skillCategories, stats } from '../constants';
-import { fadeIn, textVariant } from '../utils/motion';
+import { LayoutPanelTop, Server, Gauge, Layers, ScrollText } from 'lucide-react';
+import { services, personalInfo, stats } from '../constants';
 import { SectionWrapper } from '../hoc';
-import { useThemeStore } from '../store/useThemeStore';
-// Official React Bits components
-import SplitText from './SplitText';
-import BlurText from './BlurText';
-import TiltedCard from './TiltedCard';
-import SpotlightCard from './SpotlightCard';
-import './TiltedCard.css';
-import './SpotlightCard.css';
-// Custom UI components
-import { ScrollReveal } from './ui';
+import { ScrollReveal, ChapterHeading, CountUp } from './ui';
 
-const ServiceCard = ({ index, title, description, icon }) => {
+// Discipline → line icon (replaces the old gem PNGs)
+const DISCIPLINE_ICONS = {
+  'Frontend Architecture': LayoutPanelTop,
+  'Backend Development': Server,
+  'Performance Optimization': Gauge,
+  'Full Stack Delivery': Layers,
+};
+
+const PRINCIPLES = [
+  ['End-to-end ownership', 'From requirement grooming and system design to release validation and production monitoring.'],
+  ['Performance as a habit', 'Code-splitting, caching, CDN, and media optimization — measured, not guessed.'],
+  ['Secure by default', 'JWT/OAuth, Okta, RBAC and middleware access control across enterprise apps.'],
+  ['A mentor on the road', 'Code reviews, reusable patterns, and debugging support for the next builders.'],
+];
+
+const StatTile = ({ value, label }) => (
+  <motion.div
+    className="realm-card px-5 py-6 text-center"
+    whileHover={{ y: -4 }}
+    transition={{ type: 'spring', stiffness: 300, damping: 22 }}
+  >
+    <p className="text-[40px] font-chronicle font-bold ember-text-gradient leading-none">
+      <CountUp value={value} />
+    </p>
+    <p className="text-[13px] mt-2" style={{ color: 'var(--color-text-muted)' }}>{label}</p>
+  </motion.div>
+);
+
+const DisciplineCard = ({ index, title, description }) => {
+  const Icon = DISCIPLINE_ICONS[title] || Layers;
   return (
-    <ScrollReveal direction="up" delay={index * 0.15} className="xs:w-[280px] w-full">
-      <TiltedCard maxTilt={10} scale={1.02} className="w-full h-full">
-        <SpotlightCard 
-          className="w-full p-[1px] rounded-[20px] shadow-card h-full"
-          spotlightColor="rgba(var(--color-accent-rgb), 0.15)"
+    <ScrollReveal direction="up" delay={index * 0.1} className="w-full">
+      <motion.div
+        className="realm-card h-full p-7 flex flex-col gap-4"
+        whileHover={{ y: -6 }}
+        transition={{ type: 'spring', stiffness: 300, damping: 22 }}
+        data-cursor="hover"
+      >
+        <span
+          className="grid place-items-center w-12 h-12 rounded-xl"
+          style={{ background: 'rgba(var(--color-ember-rgb), 0.12)', border: '1px solid rgba(var(--color-ember-rgb), 0.3)' }}
         >
-          <div
-            className="glass-card rounded-[20px] py-6 px-8 min-h-[320px] flex justify-between items-center flex-col border border-[var(--color-card-border)]"
-            style={{ background: 'var(--color-card-bg)' }}
-          >
-            <motion.img 
-              src={icon} 
-              alt={title} 
-              className="w-20 h-20 object-contain"
-              style={{ filter: 'drop-shadow(0 0 20px var(--color-accent))' }}
-              whileHover={{ rotate: 360, scale: 1.1 }}
-              transition={{ duration: 0.6 }}
-            />
-            <h3 
-              className="text-[20px] font-bold text-center mt-4"
-              style={{ color: 'var(--color-text)' }}
-            >
-              {title}
-            </h3>
-            <p 
-              className="text-[14px] text-center mt-2"
-              style={{ color: 'var(--color-text-muted)' }}
-            >
-              {description}
-            </p>
-          </div>
-        </SpotlightCard>
-      </TiltedCard>
+          <Icon size={24} style={{ color: 'var(--color-ember)' }} />
+        </span>
+        <h3 className="font-chronicle font-semibold text-[24px] leading-tight" style={{ color: 'var(--color-text)' }}>
+          {title}
+        </h3>
+        <p className="text-[14px] leading-[23px]" style={{ color: 'var(--color-text-muted)' }}>
+          {description}
+        </p>
+      </motion.div>
     </ScrollReveal>
   );
 };
 
-const SkillBar = ({ skill, delay }) => {
-  const { resolvedTheme } = useThemeStore();
-  const isDark = resolvedTheme === 'dark';
-  
-  return (
-    <motion.div
-      initial={{ opacity: 0, x: -20 }}
-      whileInView={{ opacity: 1, x: 0 }}
-      transition={{ duration: 0.5, delay }}
-      viewport={{ once: true }}
-      className="mb-4"
-    >
-      <div className="flex justify-between mb-1">
-        <span className="text-sm font-medium" style={{ color: 'var(--color-text)' }}>
-          {skill.name}
-        </span>
-        <span className="text-sm" style={{ color: 'var(--color-text-muted)' }}>
-          {skill.level}%
-        </span>
-      </div>
-      <div 
-        className="w-full h-2 rounded-full overflow-hidden"
-        style={{ background: isDark ? 'rgba(30, 41, 59, 0.8)' : 'rgba(224, 231, 255, 0.8)' }}
-      >
-        <motion.div
-          className="h-full rounded-full"
-          style={{ background: 'var(--gradient-accent)' }}
-          initial={{ width: 0 }}
-          whileInView={{ width: `${skill.level}%` }}
-          transition={{ duration: 1, delay: delay + 0.3, ease: 'easeOut' }}
-          viewport={{ once: true }}
-        />
-      </div>
-    </motion.div>
-  );
-};
-
-// Animated Counter Component
-const AnimatedCounter = ({ value, label, delay }) => {
-  const { resolvedTheme } = useThemeStore();
-  const isDark = resolvedTheme === 'dark';
-  
-  return (
-    <motion.div
-      className="glass-card p-4 rounded-xl text-center border border-[var(--color-card-border)]"
-      whileHover={{ scale: 1.02, y: -5 }}
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, delay }}
-      viewport={{ once: true }}
-    >
-      <motion.p 
-        className="text-3xl font-bold"
-        style={{
-          background: 'var(--gradient-accent)',
-          WebkitBackgroundClip: 'text',
-          WebkitTextFillColor: 'transparent'
-        }}
-      >
-        {value}
-      </motion.p>
-      <p 
-        className="text-sm mt-1"
-        style={{ color: 'var(--color-text-muted)' }}
-      >
-        {label}
-      </p>
-    </motion.div>
-  );
-};
-
 const About = () => {
-  const { resolvedTheme } = useThemeStore();
-
   return (
     <>
-      {/* Section Header with SplitText */}
-      <div>
-        <p 
-          className={styles.sectionSubText}
-          style={{ color: 'var(--color-text-muted)' }}
-        >
-          <BlurText text="Introduction" delay={0} duration={0.6} />
-        </p>
-        <h2 
-          className={styles.sectionHeadText}
-          style={{ color: 'var(--color-text)' }}
-        >
-          <SplitText 
-            text="About Me." 
-            animationType="slide"
-            staggerChildren={0.05}
-            delay={0.2}
-          />
-        </h2>
-      </div>
+      <ChapterHeading no="01" eyebrow="The Craft" title="Origin." />
 
-      <div className="flex flex-col lg:flex-row gap-10 mt-8">
-        {/* Left: Bio */}
-        <ScrollReveal direction="up" delay={0.3} className="flex-1">
-          <p
-            className="text-[17px] leading-[30px]"
-            style={{ color: 'var(--color-text-muted)' }}
-          >
+      <div className="flex flex-col lg:flex-row gap-12 mt-10 items-start">
+        {/* Left — the tale */}
+        <ScrollReveal direction="up" delay={0.15} className="flex-1">
+          <p className="font-chronicle italic text-[22px] leading-[32px] mb-5" style={{ color: 'var(--color-ember)' }}>
+            “Every realm below began as an empty repository and a blinking cursor.”
+          </p>
+          <p className="text-[17px] leading-[30px]" style={{ color: 'var(--color-text-muted)' }}>
             {personalInfo.bio}
           </p>
-          
-          {/* Stats Grid */}
+
           <div className="grid grid-cols-2 gap-4 mt-8">
-            {stats.map((stat, index) => (
-              <AnimatedCounter
-                key={index}
-                value={stat.value}
-                label={stat.label}
-                delay={index * 0.1 + 0.4}
-              />
+            {stats.map((stat) => (
+              <StatTile key={stat.label} value={stat.value} label={stat.label} />
             ))}
           </div>
         </ScrollReveal>
 
-        {/* Right: Skills */}
-        <ScrollReveal direction="left" delay={0.4} className="flex-1">
-          <h3 
-            className="text-[24px] font-bold mb-6"
-            style={{ color: 'var(--color-text)' }}
-          >
-            <SplitText text="Core Skills" animationType="blur" delay={0.5} />
-          </h3>
-          
-          {skillCategories.slice(0, 2).map((category, catIndex) => (
-            <div key={category.category} className="mb-6">
-              <h4 
-                className="text-[16px] font-semibold mb-3"
-                style={{ color: 'var(--color-accent)' }}
-              >
-                {category.category}
-              </h4>
-              {category.skills.slice(0, 4).map((skill, skillIndex) => (
-                <SkillBar
-                  key={skill.name}
-                  skill={skill}
-                  delay={catIndex * 0.2 + skillIndex * 0.1 + 0.5}
-                />
+        {/* Right — scribe's note */}
+        <ScrollReveal direction="left" delay={0.3} className="flex-1 w-full">
+          <div className="realm-card p-8">
+            <span className="chapter-eyebrow inline-flex items-center gap-2">
+              <ScrollText size={14} style={{ color: 'var(--color-ember)' }} /> The Scribe's Note
+            </span>
+            <ul className="mt-6 space-y-5">
+              {PRINCIPLES.map(([title, desc]) => (
+                <li key={title} className="flex gap-3">
+                  <span className="mt-2 w-2 h-2 rounded-full flex-shrink-0" style={{ background: 'var(--color-ember)', boxShadow: '0 0 10px var(--color-ember)' }} />
+                  <span>
+                    <span className="font-semibold" style={{ color: 'var(--color-text)' }}>{title}.</span>{' '}
+                    <span className="text-[14px] leading-[22px]" style={{ color: 'var(--color-text-muted)' }}>{desc}</span>
+                  </span>
+                </li>
               ))}
-            </div>
-          ))}
+            </ul>
+          </div>
         </ScrollReveal>
       </div>
 
-      {/* Services with TiltedCard and SpotlightCard */}
-      <div className="mt-20 flex flex-wrap justify-center gap-10">
-        {services.map((service, index) => (
-          <ServiceCard key={service.title} index={index} {...service} />
-        ))}
+      {/* Disciplines */}
+      <div className="mt-20">
+        <div className="flex items-end justify-between gap-4 mb-8">
+          <h3 className="font-chronicle font-semibold text-[30px]" style={{ color: 'var(--color-text)' }}>
+            Disciplines
+          </h3>
+          <div className="flex-1 ink-stroke mb-2" />
+        </div>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {services.map((service, index) => (
+            <DisciplineCard key={service.title} index={index} title={service.title} description={service.description} />
+          ))}
+        </div>
       </div>
     </>
   );

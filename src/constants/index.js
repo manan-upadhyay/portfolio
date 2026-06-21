@@ -29,11 +29,24 @@ export const personalInfo = {
   resumeLink: '/resume.pdf',
   bio: `Full Stack Developer with 5+ years of experience building production web applications using React.js, Next.js, Node.js, TypeScript, Express.js, MongoDB, and PostgreSQL. Experienced across finance, healthcare, logistics, CRM/ERP, SaaS, media-heavy, and visualization-driven platforms. Strong in frontend architecture, performance optimization, API integration, authentication/RBAC, reusable UI systems, and end-to-end feature ownership.`,
   taglines: [
-    'Building Production-Grade Web Platforms',
-    'Architecting Scalable Full Stack Solutions',
-    'Frontend Architecture & Performance',
+    'Production-Grade Web Platforms',
+    'Scalable Full Stack Architecture',
+    'Frontend Performance & Craft',
     'End-to-End Feature Ownership',
   ],
+  // Chronicle narrative copy
+  heroTitle: 'Builder of Worlds in Code',
+  heroHook:
+    'Five years charting production systems across six realms — finance, health, logistics, CRM, SaaS, and media.',
+};
+
+// Chronicle chapter labels — section navigation as a story
+export const chapters = {
+  about: { no: '01', label: 'The Craft', sub: 'Origin' },
+  work: { no: '02', label: 'The Journey', sub: 'The Journey So Far' },
+  arsenal: { no: '03', label: 'The Arsenal', sub: 'Tools of the Trade' },
+  projects: { no: '04', label: 'The Realms', sub: 'Worlds I Have Shipped' },
+  contact: { no: '05', label: 'Summon', sub: 'Send a Raven' },
 };
 
 export const navLinks = [
@@ -93,45 +106,50 @@ const technologies = [
   { name: 'Docker', icon: docker },
 ];
 
-// Additional skills for the skills section
+// The Arsenal — single source of truth for skills.
+// No proficiency percentages (intentionally — senior signal). `tier: 'primary'`
+// marks the core stack rendered larger as "primary armaments".
 export const skillCategories = [
   {
     category: 'Frontend',
+    blurb: 'Production UIs & frontend architecture',
     skills: [
-      { name: 'React.js', level: 95 },
-      { name: 'Next.js', level: 92 },
-      { name: 'TypeScript', level: 90 },
-      { name: 'Tailwind CSS', level: 93 },
-      { name: 'Redux / RTK', level: 88 },
-      { name: 'ShadCN / Material UI', level: 85 },
-      { name: 'Highcharts / Recharts', level: 82 },
-      { name: 'React Query', level: 88 },
+      { name: 'React.js', tier: 'primary' },
+      { name: 'Next.js', tier: 'primary' },
+      { name: 'TypeScript', tier: 'primary' },
+      { name: 'Tailwind CSS' },
+      { name: 'Redux / RTK' },
+      { name: 'React Query' },
+      { name: 'ShadCN / Material UI' },
+      { name: 'Highcharts / Recharts' },
     ],
   },
   {
     category: 'Backend',
+    blurb: 'APIs, auth & data',
     skills: [
-      { name: 'Node.js', level: 90 },
-      { name: 'Express.js', level: 90 },
-      { name: 'NestJS', level: 85 },
-      { name: 'REST APIs', level: 95 },
-      { name: 'MongoDB', level: 88 },
-      { name: 'PostgreSQL', level: 82 },
-      { name: 'Firebase', level: 85 },
-      { name: 'WebSocket', level: 78 },
+      { name: 'Node.js', tier: 'primary' },
+      { name: 'Express.js', tier: 'primary' },
+      { name: 'NestJS' },
+      { name: 'REST APIs' },
+      { name: 'MongoDB' },
+      { name: 'PostgreSQL' },
+      { name: 'Firebase' },
+      { name: 'JWT / OAuth / RBAC' },
     ],
   },
   {
-    category: 'DevOps & Tools',
+    category: 'DevOps & Craft',
+    blurb: 'Ship, observe & optimize',
     skills: [
-      { name: 'Git / GitHub', level: 95 },
-      { name: 'Docker', level: 75 },
-      { name: 'CI/CD (Harness)', level: 78 },
-      { name: 'Jira / Confluence', level: 92 },
-      { name: 'Cypress / Storybook', level: 80 },
-      { name: 'Splunk', level: 72 },
-      { name: 'LaunchDarkly', level: 80 },
-      { name: 'Cloudflare R2 / CDN', level: 78 },
+      { name: 'Git / GitHub' },
+      { name: 'Docker' },
+      { name: 'CI/CD · Harness' },
+      { name: 'LaunchDarkly' },
+      { name: 'Cloudflare R2 / CDN' },
+      { name: 'Cypress / Storybook' },
+      { name: 'Splunk' },
+      { name: 'Jira / Confluence' },
     ],
   },
 ];
@@ -166,6 +184,60 @@ const experiences = [
       'Participated in client demos, requirement discussions, and feedback cycles to improve feature acceptance and delivery speed.',
     ],
     technologies: ['React.js', 'JavaScript', 'HTML5', 'CSS3', 'Git'],
+  },
+];
+
+// The Journey — curated waypoints for the pinned horizontal path (chapter 02).
+// Résumé-accurate but trimmed for impact. `kind`: work | edu | cta.
+export const journey = [
+  {
+    year: '2021',
+    chapter: 'The First Trail',
+    role: 'Frontend Developer',
+    org: 'Horizon Tour & Travels',
+    headline: 'Where the road began.',
+    points: [
+      'Built CRM modules & responsive React UIs for sales workflows.',
+      'Shipped PDF/Excel reporting — saved 16–20 hrs/week.',
+      'Cut initial load time by 38%.',
+    ],
+    tech: ['React', 'JavaScript', 'CSS3'],
+    kind: 'work',
+  },
+  {
+    year: '2022',
+    chapter: 'The Oath',
+    role: 'B.E. Information Technology',
+    org: 'Gujarat Technological University',
+    headline: 'Forged the foundations · CGPA 8.36 / 10.',
+    points: ['Engineering degree in Information Technology.'],
+    tech: [],
+    kind: 'edu',
+  },
+  {
+    year: '2022 — Now',
+    chapter: 'The Long Expedition',
+    role: 'Full Stack Developer',
+    org: 'Inexture Solutions',
+    headline: 'Six industries. Production-grade. End to end.',
+    points: [
+      'Delivered apps across finance, health, logistics, CRM, SaaS & media.',
+      'Owned features end to end — grooming to production monitoring.',
+      'Secured apps (JWT/OAuth, Okta, RBAC) and tuned performance.',
+    ],
+    tech: ['Next.js', 'Node.js', 'NestJS', 'PostgreSQL', 'Okta', 'LaunchDarkly'],
+    kind: 'work',
+    current: true,
+  },
+  {
+    year: 'Now',
+    chapter: 'The Horizon Ahead',
+    role: 'Open to the next quest',
+    org: 'Available for senior roles',
+    headline: 'Seeking teams who value craft & ownership.',
+    points: [],
+    tech: [],
+    kind: 'cta',
   },
 ];
 

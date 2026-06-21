@@ -65,6 +65,7 @@ export default {
   		fontFamily: {
   			sans: ['Inter', 'system-ui', 'sans-serif'],
   			display: ['Plus Jakarta Sans', 'Inter', 'sans-serif'],
+  			chronicle: ['Cormorant Garamond', 'Plus Jakarta Sans', 'serif'],
   			poppins: ['Poppins', 'sans-serif'],
   		},
   		animation: {

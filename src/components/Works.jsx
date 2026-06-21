@@ -1,368 +1,200 @@
-import React, { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-
-import { styles } from '../styles';
-import { github } from '../assets';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { Github, ArrowUpRight, Lock, Star } from 'lucide-react';
 import { SectionWrapper } from '../hoc';
 import { projects } from '../constants';
-import { fadeIn, textVariant } from '../utils/motion';
-import { useThemeStore } from '../store/useThemeStore';
-// Official React Bits components
-import SplitText from './SplitText';
-import BlurText from './BlurText';
-import TiltedCard from './TiltedCard';
-import SpotlightCard from './SpotlightCard';
+import { ChapterHeading, ScrollReveal } from './ui';
 import Magnet from './Magnet';
-import './TiltedCard.css';
-import './SpotlightCard.css';
-// Custom UI components
-import { ScrollReveal } from './ui';
 
-const ProjectCard = ({
-  index,
-  name,
-  company,
-  description,
-  tags,
-  image,
-  source_code_link,
-  live_demo_link,
-  highlights,
-  isFeatured,
-  isNDA,
-}) => {
-  const [isExpanded, setIsExpanded] = useState(false);
-  const { resolvedTheme } = useThemeStore();
-  const isDark = resolvedTheme === 'dark';
+gsap.registerPlugin(ScrollTrigger);
+
+const ROMAN = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII'];
+const SLUG = {
+  'Advisor Portfolio Snapshot': 'advisor-portfolio',
+  'Gajaakriti Studio': 'gajaakriti-studio',
+  'Royal Tiles Playground': 'royal-tiles',
+  'Digital Investor Portfolio': 'digital-investor',
+};
+const slugFor = (name) => SLUG[name] || name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+const coverSrc = (name) => `/chronicle/realms/${slugFor(name)}.webp`;
+
+/* ---------- Cover (art or serif-monogram fallback) ---------- */
+const Cover = ({ project, parallaxRef }) => {
+  const [hasArt, setHasArt] = useState(false);
+  useEffect(() => {
+    const img = new Image();
+    img.onload = () => setHasArt(true);
+    img.onerror = () => setHasArt(false);
+    img.src = coverSrc(project.name);
+  }, [project.name]);
 
   return (
-    <ScrollReveal direction="up" delay={index * 0.1} className={isFeatured ? 'sm:w-[380px] w-full' : 'sm:w-[340px] w-full'}>
-      <TiltedCard maxTilt={8} scale={1.02}>
-        <SpotlightCard 
-          className="h-full"
-          spotlightColor={isDark ? 'rgba(129, 140, 248, 0.08)' : 'rgba(79, 70, 229, 0.06)'}
-        >
-          <div className="glass-card p-5 rounded-2xl h-full border border-[var(--color-card-border)]">
-            {/* Project Image */}
-            <div 
-              className="relative w-full h-[200px] rounded-xl overflow-hidden group"
-              style={{
-                background: isDark 
-                  ? 'linear-gradient(135deg, #1E293B 0%, #334155 100%)' 
-                  : 'linear-gradient(135deg, #EEF2FF 0%, #E0E7FF 100%)',
-              }}
-            >
-              {image ? (
-                <img
-                  src={image}
-                  alt={name}
-                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center">
-                  <motion.span 
-                    className="text-6xl font-bold opacity-20"
-                    style={{ color: 'var(--color-accent)' }}
-                    animate={{ rotate: [0, 5, -5, 0] }}
-                    transition={{ duration: 2, repeat: Infinity }}
-                  >
-                    {name.charAt(0)}
-                  </motion.span>
-                </div>
-              )}
-
-              {/* Links overlay - only show if links are available */}
-              {(source_code_link || live_demo_link) && (
-                <motion.div 
-                  className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent flex justify-center items-end pb-4 gap-4"
-                  initial={{ opacity: 0 }}
-                  whileHover={{ opacity: 1 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  {source_code_link && (
-                    <Magnet strength={0.3}>
-                      <motion.div
-                        whileHover={{ scale: 1.15, rotate: 5 }}
-                        whileTap={{ scale: 0.9 }}
-                        onClick={() => window.open(source_code_link, '_blank')}
-                        className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm flex justify-center items-center cursor-pointer border border-white/20"
-                      >
-                        <img
-                          src={github}
-                          alt="source code"
-                          className="w-6 h-6 object-contain invert"
-                        />
-                      </motion.div>
-                    </Magnet>
-                  )}
-                  {live_demo_link && (
-                    <Magnet strength={0.3}>
-                      <motion.div
-                        whileHover={{ scale: 1.15, rotate: -5 }}
-                        whileTap={{ scale: 0.9 }}
-                        onClick={() => window.open(live_demo_link, '_blank')}
-                        className="w-12 h-12 rounded-full flex justify-center items-center cursor-pointer"
-                        style={{ background: 'var(--gradient-accent)' }}
-                      >
-                        <svg 
-                          className="w-5 h-5 text-white" 
-                          fill="none" 
-                          stroke="currentColor" 
-                          viewBox="0 0 24 24"
-                        >
-                          <path 
-                            strokeLinecap="round" 
-                            strokeLinejoin="round" 
-                            strokeWidth={2} 
-                            d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" 
-                          />
-                        </svg>
-                      </motion.div>
-                    </Magnet>
-                  )}
-                </motion.div>
-              )}
-
-              {/* Badges row */}
-              <div className="absolute top-3 left-3 flex gap-2">
-                {/* Featured badge */}
-                {isFeatured && (
-                  <motion.div 
-                    className="featured-badge"
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: index * 0.1 + 0.2 }}
-                  >
-                    <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                    </svg>
-                    Featured
-                  </motion.div>
-                )}
-                
-                {/* NDA badge */}
-                {isNDA && (
-                  <motion.div 
-                    className="nda-badge"
-                    style={{
-                      background: isDark ? 'rgba(245, 158, 11, 0.15)' : 'rgba(245, 158, 11, 0.1)',
-                      color: '#F59E0B',
-                      border: '1px solid rgba(245, 158, 11, 0.3)',
-                    }}
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: index * 0.1 + 0.3 }}
-                  >
-                    <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
-                    </svg>
-                    NDA
-                  </motion.div>
-                )}
-              </div>
-
-              {/* Company badge */}
-              {company && (
-                <motion.div 
-                  className="absolute bottom-3 left-3 px-3 py-1 rounded-full text-xs font-medium"
-                  style={{
-                    background: isDark ? 'rgba(15, 23, 42, 0.85)' : 'rgba(255, 255, 255, 0.9)',
-                    backdropFilter: 'blur(10px)',
-                    color: 'var(--color-accent)',
-                    border: '1px solid var(--color-card-border)',
-                  }}
-                  initial={{ opacity: 0, x: -10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: index * 0.1 + 0.3 }}
-                >
-                  {company}
-                </motion.div>
-              )}
-            </div>
-
-            {/* Content */}
-            <div className="mt-5">
-              <h3 
-                className="font-bold text-[22px]"
-                style={{ color: 'var(--color-text)' }}
-              >
-                {name}
-              </h3>
-              <p 
-                className="mt-2 text-[14px] line-clamp-3"
-                style={{ color: 'var(--color-text-muted)' }}
-              >
-                {description}
-              </p>
-            </div>
-
-            {/* Highlights (expandable) */}
-            {highlights && highlights.length > 0 && (
-              <div className="mt-4">
-                <button
-                  onClick={() => setIsExpanded(!isExpanded)}
-                  className="text-[13px] font-medium flex items-center gap-1 transition-colors hover:opacity-80"
-                  style={{ color: 'var(--color-accent)' }}
-                >
-                  {isExpanded ? 'Hide' : 'Show'} highlights
-                  <motion.span
-                    animate={{ rotate: isExpanded ? 180 : 0 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    ▼
-                  </motion.span>
-                </button>
-                
-                <AnimatePresence>
-                  {isExpanded && (
-                    <motion.ul
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: 'auto' }}
-                      exit={{ opacity: 0, height: 0 }}
-                      className="mt-2 list-disc list-inside space-y-1 overflow-hidden"
-                    >
-                      {highlights.map((highlight, i) => (
-                        <li 
-                          key={i}
-                          className="text-[12px]"
-                          style={{ color: 'var(--color-text-muted)' }}
-                        >
-                          {highlight}
-                        </li>
-                      ))}
-                    </motion.ul>
-                  )}
-                </AnimatePresence>
-              </div>
-            )}
-
-            {/* Tags */}
-            <div className="mt-4 flex flex-wrap gap-2">
-              {tags.map((tag, tagIndex) => (
-                <motion.span
-                  key={`${name}-${tag.name}`}
-                  className={`text-[12px] px-2 py-1 rounded-md ${tag.color}`}
-                  style={{
-                    background: isDark 
-                      ? 'rgba(129, 140, 248, 0.08)' 
-                      : 'rgba(79, 70, 229, 0.06)',
-                  }}
-                  whileHover={{ scale: 1.1 }}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: tagIndex * 0.05 + 0.3 }}
-                >
-                  #{tag.name}
-                </motion.span>
-              ))}
-            </div>
+    <div className="group relative w-full overflow-hidden rounded-3xl realm-card" style={{ aspectRatio: '4 / 3' }} data-cursor="hover">
+      <div ref={parallaxRef} className="absolute inset-0 will-change-transform" style={{ top: '-8%', bottom: '-8%', height: '116%' }}>
+        {hasArt ? (
+          <img src={coverSrc(project.name)} alt={project.name}
+            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+        ) : (
+          <div className="w-full h-full grid place-items-center"
+            style={{ background: 'radial-gradient(120% 120% at 70% 20%, rgba(var(--color-ember-rgb),0.12), transparent 55%), var(--gradient-card)' }}>
+            <span className="font-chronicle font-bold select-none" style={{ fontSize: 'clamp(120px,18vw,220px)', color: 'var(--color-text)', opacity: 0.07 }}>
+              {project.name.charAt(0)}
+            </span>
           </div>
-        </SpotlightCard>
-      </TiltedCard>
-    </ScrollReveal>
+        )}
+      </div>
+      {/* ember sweep on hover */}
+      <div className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+        style={{ background: 'linear-gradient(105deg, transparent 40%, rgba(var(--color-ember-rgb),0.12) 50%, transparent 60%)' }} />
+      {/* seals */}
+      <div className="absolute top-4 left-4 flex gap-2 z-10">
+        {project.isFeatured && <span className="wax-seal wax-seal--featured"><Star size={11} /> Featured</span>}
+        {project.isNDA && <span className="wax-seal wax-seal--nda"><Lock size={11} /> NDA</span>}
+      </div>
+    </div>
   );
 };
 
+/* ---------- Featured plate (alternating, parallax) ---------- */
+const RealmPlate = ({ project, index }) => {
+  const rootRef = useRef(null);
+  const parallaxRef = useRef(null);
+  const flip = index % 2 === 1;
+
+  useEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const ctx = gsap.context(() => {
+      gsap.fromTo(parallaxRef.current, { yPercent: -6 }, {
+        yPercent: 6, ease: 'none',
+        scrollTrigger: { trigger: rootRef.current, start: 'top bottom', end: 'bottom top', scrub: true },
+      });
+    }, rootRef);
+    return () => ctx.revert();
+  }, []);
+
+  const links = [project.live_demo_link, project.source_code_link].filter(Boolean);
+
+  return (
+    <div ref={rootRef} className="grid lg:grid-cols-2 gap-8 lg:gap-14 items-center min-h-[60vh] py-10">
+      {/* cover */}
+      <ScrollReveal direction={flip ? 'left' : 'right'} className={flip ? 'lg:order-2' : ''}>
+        <Cover project={project} parallaxRef={parallaxRef} />
+      </ScrollReveal>
+
+      {/* detail */}
+      <ScrollReveal direction="up" delay={0.1} className={flip ? 'lg:order-1' : ''}>
+        <p className="chapter-eyebrow mb-4">Realm {ROMAN[index]} · {project.company}</p>
+        <h3 className="font-chronicle font-semibold leading-[0.95] text-[clamp(34px,4.5vw,56px)]" style={{ color: 'var(--color-text)' }}>
+          {project.name}
+        </h3>
+        <p className="mt-5 max-w-xl text-[16px] leading-[28px]" style={{ color: 'var(--color-text-muted)' }}>
+          {project.description}
+        </p>
+
+        {project.highlights?.length > 0 && (
+          <ul className="mt-5 space-y-2.5 max-w-xl">
+            {project.highlights.slice(0, 3).map((hgl, i) => (
+              <li key={i} className="flex gap-3 text-[14px] leading-[21px]" style={{ color: 'var(--color-text-muted)' }}>
+                <span className="mt-1.5 w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: 'var(--color-gold)' }} />
+                {hgl}
+              </li>
+            ))}
+          </ul>
+        )}
+
+        <div className="mt-6 flex flex-wrap gap-2">
+          {project.tags.map((t) => (
+            <span key={t.name} className="text-[12px] px-2.5 py-1 rounded-md font-medium"
+              style={{ background: 'rgba(var(--color-accent-rgb),0.08)', color: 'var(--color-accent)' }}>#{t.name}</span>
+          ))}
+        </div>
+
+        <div className="mt-7 flex items-center gap-5">
+          {links.length > 0 ? (
+            <>
+              {project.live_demo_link && (
+                <Magnet strength={0.25}>
+                  <a href={project.live_demo_link} target="_blank" rel="noopener noreferrer" data-cursor="hover"
+                    className="btn-primary inline-flex items-center gap-2">Enter the realm <ArrowUpRight size={16} /></a>
+                </Magnet>
+              )}
+              {project.source_code_link && (
+                <a href={project.source_code_link} target="_blank" rel="noopener noreferrer" data-cursor="hover"
+                  className="inline-flex items-center gap-2 text-[14px] font-medium link-hover" style={{ color: 'var(--color-text)' }}>
+                  <Github size={16} /> Source
+                </a>
+              )}
+            </>
+          ) : (
+            <span className="inline-flex items-center gap-2 text-[13px]" style={{ color: 'var(--color-text-muted)' }}>
+              <Lock size={13} style={{ color: 'var(--color-ember)' }} /> Sealed under NDA — details limited to what's permissible.
+            </span>
+          )}
+        </div>
+      </ScrollReveal>
+    </div>
+  );
+};
+
+/* ---------- Secondary compact card ---------- */
+const RealmCard = ({ project }) => (
+  <ScrollReveal direction="up" className="w-full">
+    <div className="realm-card h-full p-6 flex flex-col" data-cursor="hover">
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <p className="chapter-eyebrow !text-[10px] mb-1">{project.company}</p>
+          <h4 className="font-chronicle font-semibold text-[22px] leading-tight" style={{ color: 'var(--color-text)' }}>{project.name}</h4>
+        </div>
+        {project.isNDA && <span className="wax-seal wax-seal--nda flex-shrink-0"><Lock size={10} /> NDA</span>}
+      </div>
+      <p className="mt-3 text-[13.5px] leading-[21px] flex-1" style={{ color: 'var(--color-text-muted)' }}>{project.description}</p>
+      <div className="mt-4 pt-4 flex flex-wrap gap-2 border-t" style={{ borderColor: 'var(--color-card-border)' }}>
+        {project.tags.map((t) => (
+          <span key={t.name} className="text-[11.5px] px-2 py-0.5 rounded-md font-medium"
+            style={{ background: 'rgba(var(--color-accent-rgb),0.08)', color: 'var(--color-accent)' }}>#{t.name}</span>
+        ))}
+      </div>
+    </div>
+  </ScrollReveal>
+);
+
 const Works = () => {
   const [showAll, setShowAll] = useState(false);
-  const { resolvedTheme } = useThemeStore();
-  const isDark = resolvedTheme === 'dark';
-  
-  const featuredProjects = projects.filter(p => p.isFeatured);
-  const otherProjects = projects.filter(p => !p.isFeatured);
-  const displayedOtherProjects = showAll ? otherProjects : [];
+  const featured = projects.filter((p) => p.isFeatured);
+  const others = projects.filter((p) => !p.isFeatured);
 
   return (
     <>
-      {/* Section Header with SplitText */}
-      <div>
-        <p 
-          className={`${styles.sectionSubText}`}
-          style={{ color: 'var(--color-text-muted)' }}
-        >
-          <BlurText text="My work" delay={0} />
+      <ChapterHeading no="04" eyebrow="The Realms" title="Worlds I've Shipped." />
+      <ScrollReveal delay={0.15} direction="up">
+        <p className="mt-5 max-w-2xl text-[16px] leading-[28px]" style={{ color: 'var(--color-text-muted)' }}>
+          Each realm is a production world charted end to end — across finance, healthcare,
+          logistics, media and visualization. Some lie under NDA; what's shared is what's permissible.
         </p>
-        <h2 
-          className={`${styles.sectionHeadText}`}
-          style={{ color: 'var(--color-text)' }}
-        >
-          <SplitText 
-            text="Projects." 
-            animationType="slide"
-            staggerChildren={0.1}
-            delay={0.2}
-          />
-        </h2>
-      </div>
+      </ScrollReveal>
 
-      <div className="w-full flex">
-        <ScrollReveal delay={0.3} direction="up">
-          <p
-            className="mt-3 text-[17px] max-w-3xl leading-[30px]"
-            style={{ color: 'var(--color-text-muted)' }}
-          >
-            Here are some of the key projects I've delivered across finance, healthcare, 
-            logistics, media, and visualization domains. Each project demonstrates end-to-end 
-            ownership from architecture to production deployment.
-          </p>
-          
-          {/* NDA trust note */}
-          <p
-            className="mt-3 text-[14px] max-w-3xl leading-[24px] flex items-center gap-2"
-            style={{ color: 'var(--color-text-muted)', opacity: 0.7 }}
-          >
-            <svg className="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20" style={{ color: '#F59E0B' }}>
-              <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
-            </svg>
-            Some projects are under NDA — details shared are limited to what's publicly permissible.
-          </p>
-        </ScrollReveal>
-      </div>
-
-      {/* Featured Projects */}
-      <div className="mt-16 flex flex-wrap justify-center gap-8">
-        {featuredProjects.map((project, index) => (
-          <ProjectCard key={`project-${index}`} index={index} {...project} />
+      <div className="mt-10 divide-y" style={{ borderColor: 'var(--color-card-border)' }}>
+        {featured.map((project, i) => (
+          <RealmPlate key={project.name} project={project} index={i} />
         ))}
       </div>
 
-      {/* Other Projects - Toggle */}
-      {otherProjects.length > 0 && (
+      {others.length > 0 && (
         <div className="mt-16">
           <div className="flex items-center justify-center mb-10">
-            <motion.button
-              onClick={() => setShowAll(!showAll)}
-              className="px-8 py-3 rounded-xl font-semibold text-sm border-2 transition-all duration-300 flex items-center gap-2"
-              style={{
-                borderColor: isDark ? 'rgba(129, 140, 248, 0.3)' : 'rgba(79, 70, 229, 0.2)',
-                color: 'var(--color-accent)',
-                background: isDark ? 'rgba(129, 140, 248, 0.05)' : 'rgba(79, 70, 229, 0.03)',
-              }}
-              whileHover={{ scale: 1.05, borderColor: 'var(--color-accent)' }}
-              whileTap={{ scale: 0.95 }}
-            >
-              {showAll ? 'Show Less' : `View ${otherProjects.length} More Projects`}
-              <motion.span
-                animate={{ rotate: showAll ? 180 : 0 }}
-                transition={{ duration: 0.3 }}
-              >
-                ▼
-              </motion.span>
-            </motion.button>
+            <button onClick={() => setShowAll((v) => !v)} data-cursor="hover"
+              className="px-7 py-3 rounded-full font-semibold text-sm border-2 transition-all duration-300"
+              style={{ borderColor: 'rgba(var(--color-ember-rgb),0.4)', color: 'var(--color-ember)', background: 'rgba(var(--color-ember-rgb),0.06)' }}>
+              {showAll ? 'Furl the map' : `Chart ${others.length} more realms`}
+            </button>
           </div>
-
           <AnimatePresence>
             {showAll && (
-              <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
-                exit={{ opacity: 0, height: 0 }}
-                transition={{ duration: 0.5, ease: 'easeInOut' }}
-                className="flex flex-wrap justify-center gap-8 overflow-hidden"
-              >
-                {displayedOtherProjects.map((project, index) => (
-                  <ProjectCard key={`other-project-${index}`} index={index} {...project} />
-                ))}
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {others.map((p) => <RealmCard key={p.name} project={p} />)}
               </motion.div>
             )}
           </AnimatePresence>

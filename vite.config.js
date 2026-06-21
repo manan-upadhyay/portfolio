@@ -25,10 +25,8 @@ export default defineConfig({
         // Manual chunks for better caching
         manualChunks: {
           // Vendor chunks
-          'react-vendor': ['react', 'react-dom', 'react-router-dom'],
-          'three-vendor': ['three', '@react-three/fiber', '@react-three/drei'],
-          'animation-vendor': ['framer-motion'],
-          'ui-vendor': ['react-tilt', 'react-vertical-timeline-component'],
+          'react-vendor': ['react', 'react-dom'],
+          'animation-vendor': ['framer-motion', 'gsap', 'lenis'],
         },
       },
     },

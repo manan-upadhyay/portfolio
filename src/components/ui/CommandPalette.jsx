@@ -15,16 +15,18 @@ const CommandPalette = ({
   const [selectedIndex, setSelectedIndex] = useState(0);
   const inputRef = useRef(null);
 
-  // Default commands
+  // The map — navigation as chapters of the Chronicle
   const defaultCommands = [
-    { id: 'home', label: 'Go to Home', icon: '🏠', action: () => window.scrollTo({ top: 0, behavior: 'smooth' }) },
-    { id: 'about', label: 'Go to About', icon: '👋', action: () => document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' }) },
-    { id: 'work', label: 'View Projects', icon: '💼', action: () => document.getElementById('work')?.scrollIntoView({ behavior: 'smooth' }) },
-    { id: 'contact', label: 'Contact Me', icon: '📧', action: () => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' }) },
-    { id: 'theme', label: 'Toggle Theme', icon: '🌓', action: () => document.querySelector('[data-theme-toggle]')?.click() },
-    { id: 'resume', label: 'Download Resume', icon: '📄', action: () => window.open('/resume.pdf', '_blank') },
+    { id: 'home', label: 'Chapter 00 · Origin', icon: '🏔️', action: () => window.scrollTo({ top: 0, behavior: 'smooth' }) },
+    { id: 'about', label: 'Chapter 01 · The Craft', icon: '✍️', action: () => document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' }) },
+    { id: 'work', label: 'Chapter 02 · Chronicles', icon: '📜', action: () => document.getElementById('work')?.scrollIntoView({ behavior: 'smooth' }) },
+    { id: 'arsenal', label: 'Chapter 03 · The Arsenal', icon: '⚔️', action: () => document.getElementById('arsenal')?.scrollIntoView({ behavior: 'smooth' }) },
+    { id: 'projects', label: 'Chapter 04 · The Realms', icon: '🗺️', action: () => document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth' }) },
+    { id: 'contact', label: 'Chapter 05 · Summon', icon: '🪶', action: () => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' }) },
+    { id: 'theme', label: 'Toggle Day / Night', icon: '🌓', action: () => document.querySelector('[data-theme-toggle]')?.click() },
+    { id: 'resume', label: 'Read the Scroll (Resume)', icon: '📄', action: () => window.open('/resume.pdf', '_blank') },
     { id: 'github', label: 'View GitHub', icon: '🐙', action: () => window.open('https://github.com/mananupadhyay', '_blank') },
-    { id: 'confetti', label: '🎉 Celebrate!', icon: '🎊', action: () => triggerConfetti() },
+    { id: 'confetti', label: 'Cast a spell ✨', icon: '🎊', action: () => triggerConfetti() },
   ];
 
   const allCommands = [...defaultCommands, ...commands];

@@ -1,537 +1,206 @@
-import React, { useState, useEffect, Suspense, useRef, useCallback } from 'react';
-import { motion } from 'framer-motion';
-import { Canvas, useFrame } from '@react-three/fiber';
-import { OrbitControls, Preload, useGLTF, useAnimations, Environment, ContactShadows } from '@react-three/drei';
-import { styles } from '../styles';
-import { personalInfo, stats } from '../constants';
+import { useState, useEffect, useRef } from 'react';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { personalInfo } from '../constants';
 import { useThemeStore } from '../store/useThemeStore';
-import CanvasLoader from './Loader';
-// Official React Bits components
-import SplitText from './SplitText';
-import BlurText from './BlurText';
-import Magnet from './Magnet';
-import GlitchText from './GlitchText';
-// Custom UI components  
-import { ScrollReveal, InteractiveStats } from './ui';
+import { scrollToSection } from '../lib/smoothScroll';
 
-// Typing animation component
-const TypingText = ({ texts, className }) => {
-  const [displayText, setDisplayText] = useState('');
-  const [textIndex, setTextIndex] = useState(0);
-  const [charIndex, setCharIndex] = useState(0);
-  const [isDeleting, setIsDeleting] = useState(false);
+gsap.registerPlugin(ScrollTrigger);
 
-  useEffect(() => {
-    const currentText = texts[textIndex];
-    
-    const timeout = setTimeout(() => {
-      if (!isDeleting) {
-        if (charIndex < currentText.length) {
-          setDisplayText(currentText.slice(0, charIndex + 1));
-          setCharIndex(charIndex + 1);
-        } else {
-          setTimeout(() => setIsDeleting(true), 2000);
-        }
-      } else {
-        if (charIndex > 0) {
-          setDisplayText(currentText.slice(0, charIndex - 1));
-          setCharIndex(charIndex - 1);
-        } else {
-          setIsDeleting(false);
-          setTextIndex((textIndex + 1) % texts.length);
-        }
-      }
-    }, isDeleting ? 50 : 100);
+const BASE = '/chronicle/';
+const ASSETS = { sky: 'hero-sky.webp', mid: 'hero-mid.webp', fog: 'hero-fog.webp', fore: 'hero-fore.webp', portrait: 'portrait.png' };
 
-    return () => clearTimeout(timeout);
-  }, [charIndex, isDeleting, textIndex, texts]);
-
-  return (
-    <span className={className}>
-      {displayText}
-      <motion.span
-        animate={{ opacity: [1, 0] }}
-        transition={{ duration: 0.5, repeat: Infinity }}
-        className="inline-block w-[3px] h-[1em] bg-[var(--color-accent)] ml-1"
-      />
-    </span>
-  );
-};
-
-// MacBook 3D Model Component with scroll-triggered animation
-const MacBook = ({ isMobile, triggerClose, onAnimationComplete, isDark }) => {
-  const { scene, animations } = useGLTF('./desktop_pc/scene.gltf');
-  const { actions, mixer } = useAnimations(animations, scene);
-  const hasPlayedOpen = useRef(false);
-  const hasPlayedClose = useRef(false);
-  
-  // Play opening animation on mount
-  useEffect(() => {
-    const openAnimation = actions['Animation'];
-    if (openAnimation && !hasPlayedOpen.current) {
-      hasPlayedOpen.current = true;
-      openAnimation.reset();
-      openAnimation.setLoop(false, 1);
-      openAnimation.clampWhenFinished = true;
-      openAnimation.timeScale = 1;
-      openAnimation.play();
-    }
-  }, [actions]);
-
-  // Play closing animation when triggered by scroll
-  useEffect(() => {
-    const closeAnimation = actions['Animation'];
-    if (triggerClose && closeAnimation && !hasPlayedClose.current) {
-      hasPlayedClose.current = true;
-      
-      // Reverse the animation to close the MacBook
-      closeAnimation.paused = false;
-      closeAnimation.timeScale = -1.5; // Faster reverse
-      closeAnimation.play();
-      
-      // Listen for animation complete
-      const onFinished = () => {
-        onAnimationComplete?.();
-        mixer.removeEventListener('finished', onFinished);
-      };
-      
-      // Use timeout as backup since reversed animations don't always fire 'finished'
-      setTimeout(() => {
-        onAnimationComplete?.();
-      }, 800); // Animation duration
-    }
-  }, [triggerClose, actions, mixer, onAnimationComplete]);
-
-  // Keep the animation loop running when triggerClose is active
-  useFrame(() => {
-    if (triggerClose) {
-      mixer?.update(0.016); // ~60fps
-    }
+// Probe an image once; resolves true/false (never rejects).
+const probe = (src) =>
+  new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => resolve(true);
+    img.onerror = () => resolve(false);
+    img.src = src;
   });
-
-  return (
-    <group>
-      {/* Ambient fill */}
-      <ambientLight intensity={isDark ? 0.35 : 0.5} />
-
-      {/* Hemisphere — cool slate tones */}
-      <hemisphereLight
-        intensity={isDark ? 0.7 : 0.9}
-        color={isDark ? '#C7D2FE' : '#FEF3C7'}
-        groundColor={isDark ? '#0F172A' : '#EEF2FF'}
-      />
-
-      {/* Key light — indigo in dark, warm amber in light */}
-      <directionalLight
-        position={[5, 5, 5]}
-        intensity={isDark ? 1.4 : 1.6}
-        color={isDark ? '#A5B4FC' : '#F59E0B'}
-        castShadow
-        shadow-mapSize-width={1024}
-        shadow-mapSize-height={1024}
-      />
-
-      {/* Rim / back light for edge highlights */}
-      <directionalLight
-        position={[-1, 3, -5]}
-        intensity={isDark ? 0.5 : 0.35}
-        color={isDark ? '#A78BFA' : '#FDE68A'}
-      />
-
-      {/* Top fill spot */}
-      <spotLight
-        position={[2, 3, -4.2]}
-        angle={0.6}
-        penumbra={1}
-        intensity={isDark ? 1.2 : 1.0}
-        color={isDark ? '#818CF8' : '#F59E0B'}
-        castShadow={false}
-      />
-
-      {/* Subtle accent point light from the front-bottom */}
-      <pointLight
-        position={[0, -2, 4]}
-        intensity={isDark ? 0.3 : 0.25}
-        color={isDark ? '#6366F1' : '#4F46E5'}
-        distance={10}
-        decay={2}
-      />
-
-      <primitive
-        object={scene}
-        scale={isMobile ? 1 : 1.5}
-        position={isMobile ? [0, -1.5, 0] : [0, -1, 0]}
-        rotation={[0.25, -0.5, 0.05]}
-      />
-    </group>
-  );
-};
-
-// MacBook Canvas with animation control
-const MacBookCanvas = ({ triggerClose, onAnimationComplete, isDark, onInteract }) => {
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth < 768);
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
-
-  return (
-    <Canvas
-      frameloop="always"
-      shadows
-      dpr={[1, 2]}
-      camera={{ position: [0, 0, 6], fov: 45 }}
-      gl={{ preserveDrawingBuffer: true, antialias: true, toneMapping: 3 }}
-      onPointerDown={onInteract}
-    >
-      <Suspense fallback={<CanvasLoader />}>
-        <OrbitControls 
-          enableZoom={false}
-          maxPolarAngle={Math.PI / 2}
-          minPolarAngle={Math.PI / 2.5}
-          autoRotate={!triggerClose}
-          autoRotateSpeed={0.5}
-        />
-        <MacBook 
-          isMobile={isMobile} 
-          triggerClose={triggerClose}
-          onAnimationComplete={onAnimationComplete}
-          isDark={isDark}
-        />
-        {/* Environment map for realistic reflections */}
-        <Environment preset={isDark ? 'night' : 'sunset'} />
-      </Suspense>
-      <Preload all />
-    </Canvas>
-  );
-};
 
 const Hero = () => {
   const { resolvedTheme } = useThemeStore();
   const isDark = resolvedTheme === 'dark';
-  
-  // Scroll-triggered animation state
-  const [triggerCloseAnimation, setTriggerCloseAnimation] = useState(false);
-  const [animationComplete, setAnimationComplete] = useState(false);
-  const [hasInteracted, setHasInteracted] = useState(false);
-  const heroRef = useRef(null);
+  const [have, setHave] = useState(null); // null = probing; object once resolved
 
-  // Handle scroll attempt to trigger MacBook close animation
+  const rootRef = useRef(null);
+  const layerRefs = useRef([]);
+  const setLayer = (el) => { if (el) layerRefs.current[+el.dataset.idx] = el; };
+
+  // Probe all optional assets in one pass → single state update.
   useEffect(() => {
-    const handleWheel = (e) => {
-      // Only trigger if scrolling down and animation hasn't been triggered
-      if (e.deltaY > 0 && !triggerCloseAnimation && !animationComplete) {
-        setTriggerCloseAnimation(true);
-      }
-    };
-
-    const handleTouchMove = (e) => {
-      // For mobile touch scroll
-      if (!triggerCloseAnimation && !animationComplete) {
-        setTriggerCloseAnimation(true);
-      }
-    };
-
-    window.addEventListener('wheel', handleWheel, { passive: true });
-    window.addEventListener('touchmove', handleTouchMove, { passive: true });
-    
-    return () => {
-      window.removeEventListener('wheel', handleWheel);
-      window.removeEventListener('touchmove', handleTouchMove);
-    };
-  }, [triggerCloseAnimation, animationComplete]);
-
-  // Handle animation complete
-  const handleAnimationComplete = useCallback(() => {
-    setAnimationComplete(true);
+    let alive = true;
+    Promise.all(Object.entries(ASSETS).map(async ([k, f]) => [k, await probe(BASE + f)]))
+      .then((pairs) => alive && setHave(Object.fromEntries(pairs)));
+    return () => { alive = false; };
   }, []);
 
-  // Add fun facts to stats for easter eggs
-  const statsWithFacts = stats.slice(0, 3).map((stat, i) => ({
-    ...stat,
-    funFact: [
-      "That's countless cups of coffee! ☕",
-      "And still counting! 🚀",
-      "Finance to SaaS to media! 🌐"
-    ][i]
-  }));
+  // Intro timeline + scroll parallax-out (after assets resolve so layers exist).
+  useEffect(() => {
+    if (!have) return;
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const ctx = gsap.context(() => {
+      if (reduce) return; // elements rest at their natural (visible) state
+      gsap.timeline({ defaults: { ease: 'power3.out' } })
+        .from('.hero-layer', { opacity: 0, scale: 1.12, duration: 1.6, stagger: 0.08 })
+        .from('.hero-eyebrow', { opacity: 0, y: 16, duration: 0.7 }, '-=1')
+        .from('.hero-line > span', { yPercent: 120, duration: 1, stagger: 0.12 }, '-=0.6')
+        .from('.hero-sub', { opacity: 0, y: 18, duration: 0.8, stagger: 0.1 }, '-=0.5')
+        .from('.hero-cue', { opacity: 0, duration: 0.8 }, '-=0.3');
+
+      gsap.to('.hero-copy', {
+        yPercent: -16, opacity: 0, ease: 'none',
+        scrollTrigger: { trigger: rootRef.current, start: 'top top', end: 'bottom top', scrub: true },
+      });
+      layerRefs.current.forEach((el, i) => {
+        if (!el) return;
+        gsap.to(el, {
+          yPercent: -6 - i * 5, ease: 'none',
+          scrollTrigger: { trigger: rootRef.current, start: 'top top', end: 'bottom top', scrub: true },
+        });
+      });
+    }, rootRef);
+    return () => ctx.revert();
+  }, [have]);
+
+  // Edge-safe mouse parallax (oversized layers + clamped, eased travel).
+  useEffect(() => {
+    if (!have) return;
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const coarse = window.matchMedia('(hover: none)').matches;
+    if (reduce || coarse) return;
+
+    let tx = 0, ty = 0, cx = 0, cy = 0, raf;
+    const onMove = (e) => {
+      tx = (e.clientX / window.innerWidth - 0.5) * 2;
+      ty = (e.clientY / window.innerHeight - 0.5) * 2;
+    };
+    const loop = () => {
+      cx += (tx - cx) * 0.05;
+      cy += (ty - cy) * 0.05;
+      layerRefs.current.forEach((el) => {
+        if (!el) return;
+        const d = +el.dataset.depth || 0;
+        el.style.transform = `translate3d(${cx * d * 26}px, ${cy * d * 16}px, 0)`;
+      });
+      raf = requestAnimationFrame(loop);
+    };
+    window.addEventListener('pointermove', onMove);
+    raf = requestAnimationFrame(loop);
+    return () => { cancelAnimationFrame(raf); window.removeEventListener('pointermove', onMove); };
+  }, [have]);
 
   const firstName = personalInfo.name.split(' ')[0];
+  const lastName = personalInfo.name.split(' ').slice(1).join(' ');
+  const h = have || {};
+
+  const layerBase = 'hero-layer absolute';
+  const layerStyle = (z) => ({ inset: '-8%', zIndex: z });
 
   return (
-    <section ref={heroRef} className="relative w-full min-h-screen mx-auto overflow-hidden">
-      {/* Animated Background */}
-      <div className={isDark ? 'aurora-bg' : 'sunrise-bg'} />
-      
-      {/* Floating Orbs */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {[...Array(5)].map((_, i) => (
-          <motion.div
-            key={i}
-            className="absolute rounded-full opacity-20"
-            style={{
-              width: `${60 + i * 40}px`,
-              height: `${60 + i * 40}px`,
-              left: `${10 + i * 18}%`,
-              top: `${15 + (i % 3) * 25}%`,
-              background: isDark
-                ? `radial-gradient(circle, rgba(129, 140, 248, 0.3) 0%, transparent 70%)`
-                : `radial-gradient(circle, rgba(79, 70, 229, 0.15) 0%, transparent 70%)`,
-            }}
-            animate={{
-              y: [0, -20, 0],
-              scale: [1, 1.1, 1],
-            }}
-            transition={{
-              duration: 5 + i,
-              repeat: Infinity,
-              ease: 'easeInOut',
-              delay: i * 0.3,
-            }}
-          />
-        ))}
-      </div>
-
-      {/* Main Content - Side by Side Layout */}
-      <div className="max-w-7xl mx-auto h-screen flex items-center px-6 sm:px-16">
-        <div className="flex flex-col lg:flex-row items-center justify-between w-full gap-8 lg:gap-4">
-          
-          {/* Left Side - Text Content */}
-          <div className="flex flex-row items-start gap-5 lg:w-1/2">
-            {/* Accent line */}
-            <div className="flex flex-col justify-center items-center mt-5">
-              <motion.div 
-                className="w-5 h-5 rounded-full"
-                style={{ background: 'var(--gradient-accent)' }}
-                animate={{ 
-                  boxShadow: [
-                    '0 0 20px var(--color-accent)',
-                    '0 0 40px var(--color-accent)',
-                    '0 0 20px var(--color-accent)'
-                  ]
-                }}
-                transition={{ duration: 2, repeat: Infinity }}
-              />
-              <motion.div 
-                className="w-1 sm:h-80 h-40"
-                style={{ background: 'var(--gradient-accent)' }}
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: 'auto', opacity: 1 }}
-                transition={{ duration: 1, delay: 0.5 }}
-              />
+    <section ref={rootRef} className="relative w-full h-screen overflow-hidden" id="origin">
+      <div className="absolute inset-0">
+        {/* 0 — SKY */}
+        <div ref={setLayer} data-idx="0" data-depth="0.12" className={layerBase} style={layerStyle(1)}>
+          {h.sky ? (
+            <img src={BASE + ASSETS.sky} alt="" className="w-full h-full object-cover" />
+          ) : (
+            <div className="w-full h-full" style={{ background: isDark
+              ? 'radial-gradient(120% 100% at 70% 16%, #1B2440 0%, #0E1426 45%, #070A14 100%)'
+              : 'radial-gradient(120% 100% at 70% 16%, #FBEFD8 0%, #F0E2C6 45%, #E4D2B0 100%)' }}>
+              {isDark && [...Array(80)].map((_, i) => (
+                <span key={i} className="absolute rounded-full bg-white"
+                  style={{ width: i % 11 === 0 ? 2.5 : 1.4, height: i % 11 === 0 ? 2.5 : 1.4, left: `${(i * 37) % 100}%`, top: `${(i * 53) % 80}%`, opacity: 0.12 + ((i * 17) % 60) / 100 }} />
+              ))}
             </div>
+          )}
+        </div>
 
-            {/* Text */}
-            <div className="z-10">
-              {/* Available status */}
-              <motion.div
-                className="flex items-center gap-2 mb-4"
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3 }}
-              >
-                <div className="status-dot" />
-                <span 
-                  className="text-xs font-medium tracking-wide uppercase"
-                  style={{ color: 'var(--color-text-muted)' }}
-                >
-                  Available for opportunities
-                </span>
-              </motion.div>
+        {/* 1 — MID (mountains) */}
+        <div ref={setLayer} data-idx="1" data-depth="0.4" className={layerBase} style={layerStyle(2)}>
+          {h.mid ? (
+            <img src={BASE + ASSETS.mid} alt="" className="w-full h-full object-cover" style={{ objectPosition: 'center bottom' }} />
+          ) : (
+            <div className="absolute left-1/2 -translate-x-1/2 bottom-[6%]" style={{ width: '150%', height: '52%', background: isDark
+              ? 'radial-gradient(50% 100% at 50% 100%, #141C30 0%, rgba(20,28,48,0.85) 55%, transparent 80%)'
+              : 'radial-gradient(50% 100% at 50% 100%, rgba(150,128,92,0.7) 0%, rgba(150,128,92,0.4) 55%, transparent 80%)', filter: 'blur(8px)' }} />
+          )}
+        </div>
 
-              {/* Main Heading with SplitText animation */}
-              <h1 className={`${styles.heroHeadText}`} style={{ color: 'var(--color-text)' }}>
-                <SplitText 
-                  text="Hi, I'm" 
-                  animationType="slide"
-                  staggerChildren={0.05}
-                  delay={0.2}
-                />
-                {/* Name with GlitchText - official React Bits component */}
-                <div className="my-0">
-                  <GlitchText
-                    speed={0.7}
-                    enableShadows={true}
-                    enableOnHover={true}
-                    className="text-[clamp(40px,10vw,90px)] font-black leading-none"
-                  >
-                    {firstName}
-                  </GlitchText>
-                </div>
-              </h1>
-              
-              {/* Subtitle with BlurText */}
-              <div className={`${styles.heroSubText} mt-4`} style={{ color: 'var(--color-text-muted)' }}>
-                <BlurText text="Building" delay={0.8} />
-                {' '}
-                <TypingText 
-                  texts={personalInfo.taglines}
-                  className="text-[var(--color-text)]"
-                />
+        {/* 2 — FOG (generated on black → screen blend drops the black) */}
+        <div ref={setLayer} data-idx="2" data-depth="0.6" className={layerBase} style={layerStyle(3)}>
+          {h.fog && (
+            <img src={BASE + ASSETS.fog} alt="" className="absolute bottom-[8%] left-0 w-full object-cover"
+              style={{ height: '40%', mixBlendMode: 'screen', opacity: isDark ? 0.9 : 0.55, animation: 'herofog 26s ease-in-out infinite alternate' }} />
+          )}
+        </div>
+
+        {/* 3 — PORTRAIT */}
+        {h.portrait && (
+          <div ref={setLayer} data-idx="3" data-depth="0.7" className={layerBase} style={layerStyle(4)}>
+            <div className="absolute inset-0 flex items-end justify-center md:justify-end md:pr-[7%]">
+              <div className="relative">
+                <div className="absolute inset-0 -z-10" style={{ filter: 'blur(46px)', background: isDark
+                  ? 'radial-gradient(circle at 50% 42%, rgba(232,150,90,0.28), transparent 60%)'
+                  : 'radial-gradient(circle at 50% 42%, rgba(217,119,46,0.3), transparent 60%)' }} />
+                <img src={BASE + ASSETS.portrait} alt={personalInfo.name}
+                  className="h-[90vh] w-auto object-contain object-bottom select-none" draggable="false" />
               </div>
-
-              {/* Interactive Stats with click easter eggs */}
-              <ScrollReveal delay={1} direction="up">
-                <div className="mt-8">
-                  <InteractiveStats stats={statsWithFacts} />
-                </div>
-              </ScrollReveal>
-
-              {/* CTA Buttons with Magnet effect */}
-              <ScrollReveal delay={1.2} direction="up">
-                <div className="flex gap-4 mt-8">
-                  <Magnet strength={0.2}>
-                    <motion.a
-                      href="#contact"
-                      className="btn-primary"
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                    >
-                      Get In Touch
-                    </motion.a>
-                  </Magnet>
-                  <Magnet strength={0.2}>
-                    <motion.a
-                      href="#work"
-                      className="px-8 py-3 rounded-xl font-semibold border-2 border-[var(--color-accent)] text-[var(--color-accent)] hover:bg-[var(--color-accent)] hover:text-white transition-all duration-300"
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                    >
-                      View Work
-                    </motion.a>
-                  </Magnet>
-                </div>
-              </ScrollReveal>
-
-              {/* Keyboard hint */}
-              <motion.div 
-                className="mt-6 text-xs flex items-center gap-2"
-                style={{ color: 'var(--color-text-muted)' }}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 2 }}
-              >
-                <kbd 
-                  className="px-2 py-1 rounded font-mono text-xs font-semibold"
-                  style={{
-                    background: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.04)',
-                    border: `1px solid ${isDark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.08)'}`,
-                    color: 'var(--color-text)',
-                  }}
-                >
-                  ⌘
-                </kbd>
-                <span style={{ color: 'var(--color-text-muted)' }}>+</span>
-                <kbd 
-                  className="px-2 py-1 rounded font-mono text-xs font-semibold"
-                  style={{
-                    background: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.04)',
-                    border: `1px solid ${isDark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.08)'}`,
-                    color: 'var(--color-text)',
-                  }}
-                >
-                  K
-                </kbd>
-                <span style={{ color: 'var(--color-text-muted)' }}>for quick navigation</span>
-              </motion.div>
-
-              {/* Scroll hint when locked */}
-              {!animationComplete && (
-                <motion.div
-                  className="mt-4 text-sm"
-                  style={{ color: 'var(--color-accent)' }}
-                  animate={{ opacity: [0.5, 1, 0.5] }}
-                  transition={{ duration: 2, repeat: Infinity }}
-                >
-                  ↓ Scroll to continue
-                </motion.div>
-              )}
             </div>
           </div>
+        )}
 
-          {/* Right Side - MacBook 3D Model - Centered vertically */}
-          <motion.div 
-            className="lg:w-1/2 w-full flex items-center justify-center relative"
-            style={{ height: '70vh', minHeight: '500px' }}
-            initial={{ opacity: 0, x: 50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 1, delay: 0.5 }}
-          >
-            <MacBookCanvas 
-              triggerClose={triggerCloseAnimation}
-              onAnimationComplete={handleAnimationComplete}
-              isDark={isDark}
-              onInteract={() => setHasInteracted(true)}
-            />
-
-            {/* Drag-to-rotate interaction hint */}
-            {!hasInteracted && (
-              <motion.div
-                className="drag-hint"
-                initial={{ opacity: 0, y: 10, x: -100 }}
-                animate={{ opacity: 1, y: 20, x: -100 }}
-                exit={{ opacity: 0, y: 10, x: -100 }}
-                transition={{ delay: 1.5, duration: 0.6 }}
-                style={{
-                  background: isDark
-                    ? 'rgba(15, 23, 42, 0.8)'
-                    : 'rgba(248, 250, 252, 0.85)',
-                  border: `1px solid ${isDark ? 'rgba(129, 140, 248, 0.2)' : 'rgba(79, 70, 229, 0.15)'}`,
-                  color: isDark ? 'var(--color-text)' : 'var(--color-text)',
-                }}
-              >
-                {/* Orbit icon */}
-                <svg
-                  className="drag-hint-icon"
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M21 12a9 9 0 1 1-6.219-8.56" />
-                  <polyline points="22 2 22 8 16 8" />
-                </svg>
-                <span>Drag to explore 3D</span>
-              </motion.div>
-            )}
-          </motion.div>
+        {/* 4 — FORE (nearest, darkest) */}
+        <div ref={setLayer} data-idx="4" data-depth="0.95" className={layerBase} style={layerStyle(5)}>
+          {h.fore ? (
+            <img src={BASE + ASSETS.fore} alt="" className="w-full h-full object-cover" style={{ objectPosition: 'center bottom' }} />
+          ) : (
+            <div className="absolute bottom-0 left-0 w-full" style={{ height: '34%', background: isDark
+              ? 'radial-gradient(60% 120% at 50% 100%, #070A14, transparent 75%)'
+              : 'radial-gradient(60% 120% at 50% 100%, #E4D2B0, transparent 75%)', filter: 'blur(10px)' }} />
+          )}
         </div>
       </div>
 
-      {/* Scroll indicator - only show after animation complete */}
-      <motion.div 
-        className="absolute xs:bottom-10 bottom-6 w-full flex justify-center items-center"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: animationComplete ? 1 : 0.3 }}
-        transition={{ duration: 0.5 }}
-      >
-        <a href="#about">
-          <div className="w-[35px] h-[64px] rounded-3xl border-4 border-[var(--color-accent)] flex justify-center items-start p-2">
-            <motion.div
-              animate={{ y: [0, 24, 0] }}
-              transition={{
-                duration: 1.5,
-                repeat: Infinity,
-                repeatType: 'loop',
-              }}
-              className="w-3 h-3 rounded-full mb-1"
-              style={{ background: 'var(--color-accent)' }}
-            />
+      {/* cinematic vignette unifies layers + masks every edge */}
+      <div className="cinematic-vignette" style={{ zIndex: 6 }} />
+
+      {/* ===== Copy ===== */}
+      <div className="hero-copy relative z-10 h-full max-w-7xl mx-auto px-6 sm:px-12 flex flex-col justify-center">
+        <div className={`max-w-2xl ${h.portrait ? '' : 'md:max-w-3xl'}`}>
+          <div className="hero-eyebrow chapter-eyebrow mb-5">Chapter 00 · Origin</div>
+
+          <h1 className="font-chronicle font-semibold leading-[0.86] tracking-tight" style={{ color: 'var(--color-text)' }}>
+            <span className="hero-line block overflow-hidden"><span className="block text-[clamp(56px,12vw,150px)]">{firstName}</span></span>
+            <span className="hero-line block overflow-hidden"><span className="block text-[clamp(56px,12vw,150px)]">{lastName}</span></span>
+          </h1>
+
+          <p className="hero-sub font-chronicle italic mt-3 text-[clamp(20px,3vw,34px)]" style={{ color: 'var(--color-ember)' }}>
+            {personalInfo.heroTitle}
+          </p>
+          <p className="hero-sub mt-5 max-w-md text-[15px] sm:text-[17px] leading-[27px]" style={{ color: 'var(--color-text-muted)' }}>
+            {personalInfo.heroHook}
+          </p>
+
+          <div className="hero-sub mt-9 flex flex-wrap items-center gap-5">
+            <button onClick={() => scrollToSection('about')} data-cursor="hover" className="btn-primary">Begin the Chronicle</button>
+            <button onClick={() => scrollToSection('contact')} data-cursor="hover" className="text-[15px] font-medium link-hover" style={{ color: 'var(--color-text)' }}>
+              Summon me →
+            </button>
           </div>
-        </a>
-      </motion.div>
+        </div>
+      </div>
+
+      {/* scroll cue */}
+      <div className="hero-cue absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2">
+        <span className="text-[10px] tracking-[0.35em] uppercase" style={{ color: 'var(--color-text-muted)' }}>Scroll</span>
+        <div className="w-px h-12 overflow-hidden" style={{ background: 'var(--color-card-border)' }}>
+          <div className="w-px h-5 animate-[scrollcue_1.8s_ease-in-out_infinite]" style={{ background: 'var(--color-ember)' }} />
+        </div>
+      </div>
     </section>
   );
 };
-
-// Preload the model
-useGLTF.preload('./desktop_pc/scene.gltf');
 
 export default Hero;

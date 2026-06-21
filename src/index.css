@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,500;1,600&display=swap");
 
 @tailwind base;
 @tailwind components;
@@ -6,54 +6,72 @@
 
 /* ===== Theme Variables ===== */
 :root {
-  /* Light Theme (Clean, Premium) */
-  --color-primary: #F8FAFC;
-  --color-primary-dark: #F1F5F9;
-  --color-secondary: #64748B;
-  --color-tertiary: #E2E8F0;
-  --color-text: #0F172A;
-  --color-text-muted: #475569;
+  /* Light Theme — "Dawn over the realm" (warm parchment) */
+  --color-primary: #F5F0E6;
+  --color-primary-dark: #ECE4D4;
+  --color-secondary: #6B5E4A;
+  --color-tertiary: #E2D8C4;
+  --color-text: #1F1B16;
+  --color-text-muted: #5C5345;
   --color-accent: #4F46E5;
-  --color-accent-secondary: #F59E0B;
+  --color-accent-secondary: #C2410C;
   --color-accent-rgb: 79, 70, 229;
-  --color-card-bg: rgba(255, 255, 255, 0.85);
-  --color-card-border: rgba(79, 70, 229, 0.12);
+  --color-card-bg: rgba(255, 252, 245, 0.85);
+  --color-card-border: rgba(120, 95, 60, 0.18);
   --color-glow: #6366F1;
-  
+
+  /* Chronicle palette */
+  --color-ember: #D9772E;
+  --color-ember-rgb: 217, 119, 46;
+  --color-gold: #B88A2E;
+  --color-gold-rgb: 184, 138, 46;
+  --color-parchment: #F5F0E6;
+  --color-ink: #1F1B16;
+
   /* Background gradients */
-  --gradient-bg: linear-gradient(135deg, #F8FAFC 0%, #EEF2FF 30%, #E0E7FF 60%, #C7D2FE 100%);
-  --gradient-hero: linear-gradient(180deg, #F8FAFC 0%, #EEF2FF 50%, #E0E7FF 100%);
-  --gradient-card: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(238,242,255,0.9) 100%);
+  --gradient-bg: linear-gradient(135deg, #F8F3E9 0%, #F1E9D8 40%, #EADFC7 70%, #E3D6BC 100%);
+  --gradient-hero: linear-gradient(180deg, #F8F3E9 0%, #F0E7D5 55%, #E7DAC2 100%);
+  --gradient-card: linear-gradient(135deg, rgba(255,252,245,0.92) 0%, rgba(243,236,222,0.92) 100%);
   --gradient-accent: linear-gradient(135deg, #4F46E5 0%, #6366F1 50%, #818CF8 100%);
-  
+  --gradient-map-line: linear-gradient(90deg, transparent, var(--color-ember) 30%, var(--color-gold) 70%, transparent);
+
   /* Shadows */
-  --shadow-card: 0px 20px 60px -20px rgba(79, 70, 229, 0.15), 0px 4px 20px rgba(0, 0, 0, 0.04);
+  --shadow-card: 0px 20px 60px -20px rgba(120, 95, 60, 0.22), 0px 4px 20px rgba(0, 0, 0, 0.05);
   --shadow-glow: 0 0 40px rgba(99, 102, 241, 0.3);
 }
 
 .dark {
-  /* Dark Theme (Sophisticated Slate + Indigo) */
-  --color-primary: #0F172A;
-  --color-primary-dark: #020617;
+  /* Dark Theme — "Starlit realm" (deep ink + arcane indigo + ember) */
+  --color-primary: #0B0F1A;
+  --color-primary-dark: #060911;
   --color-secondary: #94A3B8;
-  --color-tertiary: #1E293B;
-  --color-text: #F1F5F9;
-  --color-text-muted: #94A3B8;
+  --color-tertiary: #161D2E;
+  --color-text: #ECE7DB;
+  --color-text-muted: #9AA3B5;
   --color-accent: #818CF8;
-  --color-accent-secondary: #F59E0B;
+  --color-accent-secondary: #E8965A;
   --color-accent-rgb: 129, 140, 248;
-  --color-card-bg: rgba(30, 41, 59, 0.8);
+  --color-card-bg: rgba(20, 27, 44, 0.8);
   --color-card-border: rgba(129, 140, 248, 0.15);
   --color-glow: #818CF8;
-  
+
+  /* Chronicle palette */
+  --color-ember: #E8965A;
+  --color-ember-rgb: 232, 150, 90;
+  --color-gold: #D9A441;
+  --color-gold-rgb: 217, 164, 65;
+  --color-parchment: #E7DECF;
+  --color-ink: #ECE7DB;
+
   /* Background gradients */
-  --gradient-bg: linear-gradient(135deg, #0F172A 0%, #1E293B 50%, #0F172A 100%);
-  --gradient-hero: linear-gradient(180deg, #0F172A 0%, #1E293B 50%, #0F172A 100%);
-  --gradient-card: linear-gradient(135deg, rgba(30,41,59,0.9) 0%, rgba(15,23,42,0.9) 100%);
+  --gradient-bg: linear-gradient(135deg, #0B0F1A 0%, #141B2C 50%, #0B0F1A 100%);
+  --gradient-hero: linear-gradient(180deg, #0B0F1A 0%, #141B2C 50%, #0B0F1A 100%);
+  --gradient-card: linear-gradient(135deg, rgba(20,27,44,0.9) 0%, rgba(11,15,26,0.9) 100%);
   --gradient-accent: linear-gradient(135deg, #6366F1 0%, #818CF8 50%, #A78BFA 100%);
-  
+  --gradient-map-line: linear-gradient(90deg, transparent, var(--color-ember) 30%, var(--color-gold) 70%, transparent);
+
   /* Shadows */
-  --shadow-card: 0px 25px 80px -15px rgba(0, 0, 0, 0.5), 0px 0px 30px rgba(129, 140, 248, 0.08);
+  --shadow-card: 0px 25px 80px -15px rgba(0, 0, 0, 0.6), 0px 0px 30px rgba(129, 140, 248, 0.08);
   --shadow-glow: 0 0 40px rgba(129, 140, 248, 0.25);
 }
 
@@ -413,6 +431,52 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
+/* ===== Hero scroll cue ===== */
+@keyframes scrollcue {
+  0% { transform: translateY(-20px); }
+  100% { transform: translateY(48px); }
+}
+
+/* ===== Arsenal orbital nodes ===== */
+@keyframes nodefloat {
+  0% { transform: translateY(-6px); }
+  100% { transform: translateY(6px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  [style*="nodefloat"] { animation: none !important; }
+}
+
+/* ===== Journey waypoints ===== */
+.wp .realm-card {
+  opacity: 0.62;
+  transform: scale(0.97);
+  transition: opacity 0.45s ease, transform 0.45s ease, border-color 0.45s ease, box-shadow 0.45s ease;
+}
+.wp-node {
+  transition: background 0.4s ease, box-shadow 0.4s ease, width 0.4s ease, height 0.4s ease;
+}
+.wp-active .realm-card {
+  opacity: 1;
+  transform: scale(1);
+  border-color: rgba(var(--color-ember-rgb), 0.45);
+  box-shadow: var(--shadow-card), 0 0 36px rgba(var(--color-ember-rgb), 0.12);
+}
+.wp-active .wp-node {
+  background: var(--color-ember);
+  box-shadow: 0 0 16px var(--color-ember);
+  width: 16px;
+  height: 16px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .wp .realm-card { opacity: 1; transform: none; }
+}
+
+/* ===== Hero fog drift ===== */
+@keyframes herofog {
+  0% { transform: translateX(-3%); opacity: 0.75; }
+  100% { transform: translateX(3%); opacity: 1; }
+}
+
 /* ===== Floating Animation ===== */
 @keyframes float {
   0%, 100% {
@@ -582,4 +646,151 @@ h1, h2, h3, h4, h5, h6 {
 ::selection {
   background: var(--color-accent);
   color: #ffffff;
+}
+
+/* ===== Chronicle: Typography ===== */
+.font-chronicle {
+  font-family: "Cormorant Garamond", "Plus Jakarta Sans", serif;
+}
+
+.ember-text-gradient {
+  background: linear-gradient(135deg, var(--color-ember) 0%, var(--color-gold) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ===== Chronicle: Chapter eyebrow ===== */
+.chapter-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--color-ember);
+}
+
+.chapter-eyebrow::before {
+  content: '';
+  width: 28px;
+  height: 1px;
+  background: var(--gradient-map-line);
+}
+
+/* ===== Chronicle: Ink / map divider stroke ===== */
+.ink-stroke {
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--color-card-border) 15%, var(--color-card-border) 85%, transparent);
+}
+
+.map-line {
+  height: 2px;
+  background: var(--gradient-map-line);
+  opacity: 0.7;
+}
+
+/* ===== Chronicle: Wax seal badge ===== */
+.wax-seal {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 12px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.wax-seal--featured {
+  background: linear-gradient(135deg, var(--color-ember) 0%, var(--color-gold) 100%);
+  color: #1a1208;
+  box-shadow: 0 0 18px rgba(var(--color-ember-rgb), 0.35);
+}
+
+.wax-seal--nda {
+  background: rgba(var(--color-ember-rgb), 0.12);
+  color: var(--color-ember);
+  border: 1px solid rgba(var(--color-ember-rgb), 0.4);
+}
+
+/* ===== Chronicle: Custom cursor (dot + ring + backlight) ===== */
+.cursor-dot,
+.cursor-ring,
+.cursor-backlight {
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  will-change: transform;
+}
+.cursor-dot {
+  z-index: 10000;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--color-ember);
+}
+.cursor-ring {
+  z-index: 9999;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1.5px solid color-mix(in srgb, var(--color-text) 45%, transparent);
+  transition: opacity 0.3s ease, border-color 0.25s ease;
+}
+.cursor-backlight {
+  z-index: 5;
+  width: 460px;
+  height: 460px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(var(--color-accent-rgb), 0.10) 0%, rgba(var(--color-ember-rgb), 0.05) 38%, transparent 70%);
+  mix-blend-mode: screen;
+  transition: opacity 0.5s ease;
+}
+
+/* Hide native cursor only where we render the custom one */
+@media (hover: hover) and (pointer: fine) {
+  html.has-custom-cursor,
+  html.has-custom-cursor * { cursor: none !important; }
+}
+@media (hover: none), (prefers-reduced-motion: reduce) {
+  .cursor-dot, .cursor-ring, .cursor-backlight { display: none; }
+}
+
+/* ===== Edge-safe cinematic vignette (hero layers never show seams) ===== */
+.cinematic-vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(120% 90% at 50% 30%, transparent 45%, rgba(0,0,0,0.55) 100%),
+    linear-gradient(180deg, transparent 55%, var(--color-primary) 98%);
+}
+.light .cinematic-vignette {
+  background:
+    radial-gradient(120% 90% at 50% 30%, transparent 50%, rgba(60,45,25,0.18) 100%),
+    linear-gradient(180deg, transparent 60%, var(--color-primary) 98%);
+}
+
+/* ===== Chronicle: parchment card accent ===== */
+.realm-card {
+  position: relative;
+  background: var(--gradient-card);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--color-card-border);
+  border-radius: 20px;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.realm-card:hover {
+  border-color: rgba(var(--color-ember-rgb), 0.45);
+  box-shadow: var(--shadow-card), 0 0 30px rgba(var(--color-ember-rgb), 0.08);
 }

@@ -5,6 +5,7 @@ import Hero from './components/Hero';
 import { Cursor, ErrorBoundary, SideRail, MapOverlay, MusicPlayer, DayNightToggle } from './components/ui';
 import { useSmoothScroll } from './lib/smoothScroll';
 import { useActiveSection } from './hooks/useActiveSection';
+import { Analytics } from "@vercel/analytics/next"
 
 const About = lazy(() => import('./components/About'));
 const Experience = lazy(() => import('./components/Experience'));
@@ -77,6 +78,7 @@ const App = () => {
           © {new Date().getFullYear()} Manan Upadhyay · Crafted with React, GSAP & far too much chai.
         </p>
       </footer>
+      <Analytics/>
     </div>
   );
 };

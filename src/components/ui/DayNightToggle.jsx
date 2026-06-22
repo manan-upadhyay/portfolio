@@ -1,4 +1,5 @@
 import { useRef } from 'react';
+import { flushSync } from 'react-dom';
 import { motion } from 'framer-motion';
 import { useThemeStore } from '../../store/useThemeStore';
 
@@ -12,27 +13,45 @@ const DayNightToggle = ({ compact = false }) => {
   const btnRef = useRef(null);
 
   const handleClick = () => {
-    // Radial reveal: a circle wipes from the button outward as the theme flips.
     const btn = btnRef.current;
-    const next = isDark ? '#F5F0E6' : '#0B0F1A';
-    if (btn && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      const rect = btn.getBoundingClientRect();
-      const cx = rect.left + rect.width / 2;
-      const cy = rect.top + rect.height / 2;
-      const r = Math.hypot(Math.max(cx, window.innerWidth - cx), Math.max(cy, window.innerHeight - cy));
-      const ripple = document.createElement('div');
-      ripple.style.cssText = `position:fixed;left:${cx}px;top:${cy}px;width:8px;height:8px;border-radius:50%;background:${next};transform:translate(-50%,-50%) scale(0);z-index:9000;pointer-events:none;`;
-      document.body.appendChild(ripple);
-      const anim = ripple.animate(
-        [{ transform: 'translate(-50%,-50%) scale(0)' }, { transform: `translate(-50%,-50%) scale(${(r / 4) + 2})` }],
-        { duration: 620, easing: 'cubic-bezier(0.7,0,0.3,1)' }
-      );
-      // flip the theme partway through so the new colour is revealed under the wipe
-      setTimeout(toggleTheme, 210);
-      anim.onfinish = () => { ripple.style.opacity = '0'; setTimeout(() => ripple.remove(), 120); };
-    } else {
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // Fallback for reduced-motion or browsers without the View Transitions API:
+    // a plain swap (the body's CSS colour transition gives a gentle cross-fade).
+    if (reduce || !btn || typeof document.startViewTransition !== 'function') {
       toggleTheme();
+      return;
     }
+
+    // breedlove-style radial reveal: the View Transitions API snapshots the old
+    // and new themes; we grow a circular clip-path on the *new* snapshot from the
+    // button outward. The new theme is revealed over the old along the arc — at no
+    // point is content hidden by a solid colour, so it reads as the page changing
+    // theme along with the wipe.
+    const rect = btn.getBoundingClientRect();
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top + rect.height / 2;
+    const endR = Math.hypot(Math.max(cx, window.innerWidth - cx), Math.max(cy, window.innerHeight - cy));
+
+    // Suppress per-element colour transitions during the swap so the captured
+    // "new" snapshot shows the final colours immediately (no mid-transition tint).
+    const root = document.documentElement;
+    root.classList.add('vt-theme-swap');
+
+    const transition = document.startViewTransition(() => {
+      // flushSync so React commits the new theme (aurora, icon, tokens) before
+      // the API captures the new snapshot.
+      flushSync(() => toggleTheme());
+    });
+
+    transition.ready.then(() => {
+      root.animate(
+        { clipPath: [`circle(0px at ${cx}px ${cy}px)`, `circle(${endR}px at ${cx}px ${cy}px)`] },
+        { duration: 480, easing: 'cubic-bezier(0.4, 0, 0.2, 1)', pseudoElement: '::view-transition-new(root)' }
+      );
+    });
+
+    transition.finished.finally(() => root.classList.remove('vt-theme-swap'));
   };
 
   const size = compact ? 30 : 46;

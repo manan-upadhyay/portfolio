@@ -125,10 +125,31 @@ h1, h2, h3, h4, h5, h6 {
 .theme-transition *,
 .theme-transition *::before,
 .theme-transition *::after {
-  transition: background-color 0.5s ease, 
-              border-color 0.3s ease, 
+  transition: background-color 0.5s ease,
+              border-color 0.3s ease,
               color 0.3s ease,
               box-shadow 0.3s ease !important;
+}
+
+/* ===== Theme wipe (View Transitions API) =====
+   The DayNightToggle drives a circular clip-path reveal of the new theme.
+   Disable the default cross-fade and stack the new snapshot above the old so
+   the clip-path reveal shows the new theme growing over the old. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+::view-transition-old(root) { z-index: 0; }
+::view-transition-new(root) { z-index: 1; }
+
+/* While swapping, kill colour transitions so the captured "new" snapshot shows
+   final colours instantly (the clip-path is the only animation). */
+.vt-theme-swap,
+.vt-theme-swap *,
+.vt-theme-swap *::before,
+.vt-theme-swap *::after {
+  transition: none !important;
 }
 
 /* ===== Scrollbar ===== */

@@ -12,3 +12,4 @@ export { default as DayNightToggle } from './DayNightToggle';
 export { default as SideRail } from './SideRail';
 export { default as MapOverlay } from './MapOverlay';
 export { default as MusicPlayer } from './MusicPlayer';
+export { default as CompassRose } from './CompassRose';

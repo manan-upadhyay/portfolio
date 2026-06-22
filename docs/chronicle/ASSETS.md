@@ -31,33 +31,24 @@ horizon (~65% down), same palette hexes, haze-with-distance, dark-empty-left.
 
 ## 1. Hero (chapter 00) — `public/chronicle/`
 
-Wired in `Hero.jsx` (z-order back→front: sky, mid, fog, portrait, fore).
+The hero is the **Astrolabe Title Sequence** (see
+[sections/00-hero.md](sections/00-hero.md)). Its instrument is **generated in
+Canvas2D from theme tokens** — no art needed. The only optional asset is the
+dark-theme starfield backdrop; light theme uses a procedural dawn gradient.
 
 | File | Dim | Format | Notes |
 |---|---|---|---|
-| `portrait.png` | ≥2000px tall | **transparent PNG** | Manan cut out; warm rim-light on his RIGHT edge, cool fill left; haze at feet. Stands in the right third. |
-| `hero-sky.webp` | 2880×1620 | opaque | Sky only; dark/empty left, ember glow low-right; sparse stars upper-left. |
-| `hero-mid.webp` | 3200×1600 | **transparent** | Distant mountains as indigo silhouettes, ember rim on right slopes; taller right, low left; dissolves into mist. Bottom-anchored, wider than screen. |
-| `hero-fog.webp` | 2880×900 | **transparent** (or on black → `mixBlendMode:screen`) | Drifting mist band, warm underglow on right. Sits between mountains and portrait. |
-| `hero-fore.webp` | 3200×1600 | **transparent** | Nearest dark ridge + ground fog, almost-black `#10162A`, slightly soft-focus, taller right. Wraps the figure's base. |
+| `hero-sky.webp` | ≥1536×1024 | opaque | Starfield backdrop (dark theme only). Milky-way into a warm ember sun glow upper-right; dark/empty left for the copy. Probed; missing → procedural starfield. |
 
-**Prompts** (prepend World Bible to each):
+**Prompt** (prepend World Bible):
 
-- **portrait.png** (edit raw photo): "Cleanly cut the person onto transparency
-  (PNG). Grade to belong in this scene: warm ember-gold rim-light tracing their
-  RIGHT edge (hair, shoulder, cheek), cool indigo fill on the left, deep
-  shadows. Faint haze at the lower body so they melt into fog. Natural skin,
-  confident cinematic film-still. Transparent background only."
 - **hero-sky.webp**: "Paint only the SKY: ink-navy filling top and entire LEFT,
-  to indigo `#1B2440`, to a soft warm ember-gold glow low on the RIGHT horizon.
-  Sparse faint stars in the dark upper-left only; a few thin high clouds lit
-  warm on their right edges. Smooth, painterly, no land, no drawn horizon line.
-  2880×1620 opaque."
-- **hero-mid.webp**: "Midground only, transparent: distant mountains as cool
-  indigo-grey silhouettes `#2A3450` through haze, thin warm ember rim-light on
-  right-facing slopes. Taller dramatic peaks RIGHT; low and simple LEFT; one
-  small floating landmass upper-right. No snow. Tops/edges dissolve into
-  transparent mist. Bottom-anchored, 3200×1600 transparent PNG, no sky."
+  to indigo `#1B2440`, to a soft warm ember-gold glow low/upper on the RIGHT.
+  Sparse faint stars + a milky-way band; no land, no drawn horizon line, no
+  people. Smooth, painterly, opaque."
+
+> Removed (dead concept): `portrait.png`, `hero-mid.webp`, `hero-fog.webp`,
+> `hero-fore.webp` — the layered-photo hero was replaced by the astrolabe.
 - **hero-fog.webp**: "A single horizontal band of soft low fog on transparency,
   desaturated indigo-grey `#3A4660` with faint warm ember underglow on the RIGHT
   half. Semi-transparent, wispy, dissolving at all edges. 2880×900 transparent."

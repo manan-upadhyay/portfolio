@@ -1,57 +1,84 @@
 # Section 00 — Origin (Hero)
 
-**Component:** `src/components/Hero.jsx` · **id:** `origin` · **Status:** built,
-polishing. This doc is the source of truth for its behavior.
+**Component:** `src/components/Hero.jsx` · **id:** `origin` · **Status:** built
+(Astrolabe Title Sequence). This doc is the source of truth for its behavior.
 
 ## Purpose
 The title sequence. In one viewport it must say "this person is senior, has
-taste, and tells a story." Minimal copy, maximal atmosphere. The visitor's photo
-stands inside a living, layered landscape.
+taste, and tells a story." Editorial type carries the message; a living
+**astrolabe** instrument carries the wonder and the dwell-time. No human
+photo — the wow is the craft.
+
+> Replaces the old layered-parallax-photo concept (sky/mid/fog/fore +
+> `portrait.png`). Those assets were removed; only `hero-sky.webp` survives as
+> the dark-theme backdrop.
 
 ## Layout
 - Full-bleed `h-screen`, `overflow-hidden`.
-- **Layered parallax stage** (back→front, z 1→5):
-  0 `sky` · 1 `mid` (mountains) · 2 `fog` · 3 `portrait` · 4 `fore`.
-  Each layer wrapper is **oversized `inset:-8%`** so parallax never reveals an
-  edge; a `.cinematic-vignette` (z6) masks seams + fades the bottom into page bg.
-- **Copy block** (z10), left/center: chapter eyebrow → serif name (two masked
-  lines) → italic ember tagline (`heroTitle`) → muted hook (`heroHook`) →
-  primary CTA "Begin the Chronicle" + text link "Summon me".
+- **Backdrop (z0):** dark theme → `hero-sky.webp` (probed; procedural starfield
+  fallback). Light theme → warm "dawn" radial gradient (no dark photo).
+- **Legibility scrim (z1):** left→right gradient in the page bg color — darkens
+  the copy side, leaves the instrument lit. Plus `.cinematic-vignette` (z2).
+- **Astrolabe (z3):** a Canvas2D instrument. Desktop: right side, vertically
+  centered, fully on-screen (`md:right-[4%] w-[min(44vw,560px)]`). Mobile:
+  centered atmospheric backdrop above the copy (`opacity ~0.45`).
+  A shared `ui/CompassRose` SVG sits at its center (DOM overlay above canvas).
+- **Bearing readout (z5):** mono `bearing NNN° · origin|charting`, bottom-right,
+  desktop/pointer only. Updated imperatively from the rAF loop (no re-render).
+- **Copy (z10), left:** chapter eyebrow → serif name (two masked lines) →
+  italic ember tagline with a **rotating middle word** (`Builder of <word> in
+  Code`) → muted hook → CTAs ("Begin the Chronicle" / "Summon me") → mono meta
+  line (`coordinates · location`).
 - **Scroll cue** bottom-center.
-- When `portrait.png` is absent → type-led layout (copy uses wider max-width).
 
-## Motion
-- **Intro (GSAP timeline):** layers fade+scale-in (stagger), eyebrow up, name
-  lines mask up (`yPercent 120 → 0`), sub/hook fade, cue fades. ~1.6s total.
-- **Mouse parallax (rAF):** layers translate by `mouse * depth`, lerp `0.05`,
-  depths `0.12 / 0.4 / 0.6 / 0.7 / 0.95`. Clamped so edges never show. Disabled
-  on touch/reduced-motion.
-- **Scroll-out (ScrollTrigger scrub):** copy drifts up + fades; layers drift up
-  at staggered rates as the chapter leaves.
-- Ambient: drifting `fog` (`herofog`), optional embers, twinkle stars (fallback only).
+## The astrolabe (Canvas2D)
+Drawn from theme tokens read via `getComputedStyle` (re-read on theme change),
+so it's never off-palette. Layers: ember aura · concentric rings · rotating
+degree bezel (72 ticks, majors every 30°) · counter-rotating constellation disc
+(seeded star field + link lines) · fixed cardinal letters (N = "up" = Origin) ·
+the **alidade** (sighting needle) · `CompassRose` hub.
+
+- **Assembly intro (~2.4s):** an "Iron-Man" build — rings scale in with overshoot
+  (`easeOutBack`, staggered), bezel ticks sweep on from N one arc at a time,
+  constellation stars pop with a per-star stagger, cardinals fade, the alidade
+  does a decelerating multi-turn spin and settles pointing up (Origin), then the
+  `CompassRose` springs into the center last.
+- **Interaction:** after assembly the alidade **eases to track the cursor**
+  (shortest-path lerp `0.08`); the bearing readout shows the live heading. On
+  touch/coarse or `mouse===null` → gentle ambient sweep. Reduced-motion → static
+  fully-assembled instrument, needle at N, no rAF loop, no tracking.
+- **Ambient:** very slow bezel drift + constellation counter-drift + star
+  twinkle, all post-assembly and far from the copy.
+
+## Motion (copy)
+- **Intro (GSAP timeline):** eyebrow up → name lines mask up
+  (`yPercent 120→0`) → tagline/hook fade → CTAs/meta → cue. Reduced-motion rests
+  at natural state.
+- **Rotating word:** `personalInfo.heroWords` cycles every 2.6s via Framer
+  `AnimatePresence` (mode `wait`); an invisible sizer reserves the widest word so
+  trailing text never shifts. Paused under reduced-motion.
+- **Scroll-out (ScrollTrigger scrub):** copy drifts up + fades; astrolabe drifts
+  up + fades as the chapter leaves.
 
 ## Content (from `constants.personalInfo`)
-`name`, `heroTitle` ("Builder of Worlds in Code"), `heroHook` (one line),
-`taglines` (only if a typing line is reintroduced — currently omitted to reduce
-clutter). CTAs scroll to `#about` / `#contact`.
+`name`, `heroWords` (rotating tagline words), `heroTitle` (static fallback),
+`heroHook`, `coordinates`, `location`. CTAs scroll to `#about` / `#contact`.
 
 ## Assets
-`portrait.png`, `hero-sky/mid/fog/fore.webp` — see [ASSETS](../ASSETS.md#1-hero-chapter-00).
-Each is probed; missing → procedural fallback.
-
-## States / responsive
-- Mobile: portrait scales/ô-positions (center-bottom), parallax off, copy
-  centered; name clamps down. Keep the figure from covering the headline.
-- Light theme: warm dawn palette; verify text contrast over art (vignette helps).
+`hero-sky.webp` only (dark backdrop) — see [ASSETS](../ASSETS.md#1-hero-chapter-00).
+Probed; missing → procedural starfield. No other hero art.
 
 ## Accessibility / performance
-- Decorative layers `alt=""` / `aria-hidden`. Name is a real `<h1>`.
-- Reduced-motion: no parallax/scrub; static composition; intro becomes a simple fade.
-- Lazy/`fetchpriority` the largest art; everything animates on transform/opacity.
+- Canvas + rose are `aria-hidden`/decorative. Name is a real `<h1>`.
+- Tokens drive all instrument color (AA-safe in both themes via the scrim).
+- Reduced-motion: no parallax/scrub/tracking; static instrument; copy simple
+  fade. Coarse pointer: no cursor tracking. Animate transform/opacity only;
+  canvas is dpr-capped (≤2) and pauses scheduling under reduced-motion.
 
 ## Acceptance criteria
-- [ ] No visible layer edge at any mouse position or width.
-- [ ] Portrait composites with believable light wrap (warm right rim).
-- [ ] Reads as cinematic with AND without art (fallback is still elegant).
-- [ ] Copy legible in both themes; `<h1>` present; cue invites scroll.
-- [ ] 60fps; no console errors; scroll never locks.
+- [x] Astrolabe fully on-screen at all widths (no clipped edge).
+- [x] Instrument assembles in sequence, then the needle tracks the cursor.
+- [x] `CompassRose` shared with the Map overlay (one component).
+- [x] Reads as cinematic with AND without the sky asset (fallback elegant).
+- [x] Copy legible in both themes; `<h1>` present; cue invites scroll.
+- [x] 60fps; no console errors; scroll never locks; `npm run build` clean.

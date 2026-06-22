@@ -48,8 +48,11 @@ export const personalInfo = {
   ],
   // Chronicle narrative copy
   heroTitle: 'Builder of Worlds in Code',
+  // Hero tagline reads "Builder of <word> in Code"; the middle word cycles.
+  heroWords: ['Worlds', 'Systems', 'Realms', 'Platforms'],
   heroHook:
     'Five years charting production systems across six realms — finance, health, logistics, CRM, SaaS, and media.',
+  coordinates: '23.02°N 72.57°E',
 };
 
 // The Summon (chapter 05) — all contact copy lives here; the component is a

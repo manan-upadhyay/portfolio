@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Compass } from 'lucide-react';
 import { scrollToSection, scrollToTop } from '../../lib/smoothScroll';
+import { useThemeStore } from '../../store/useThemeStore';
 
 export const CHAPTERS = [
   { id: 'origin', no: '00', label: 'Origin' },
@@ -69,6 +70,8 @@ const Row = ({ no, glyph, label, kbd, active, expanded, onClick, ariaLabel }) =>
  */
 const SideRail = ({ activeId, onOpenMap, visible }) => {
   const [expanded, setExpanded] = useState(false);
+  const { resolvedTheme } = useThemeStore();
+  const crest = resolvedTheme === 'dark' ? '/logo-dark.png' : '/logo-light.png';
 
   return (
     <motion.nav
@@ -100,12 +103,14 @@ const SideRail = ({ activeId, onOpenMap, visible }) => {
           expanded={expanded}
           label="Manan Upadhyay"
           glyph={
-            <span
-              className="grid place-items-center w-7 h-7 rounded-full font-chronicle text-[14px] font-semibold"
-              style={{ border: '1.5px solid var(--color-ember)', color: 'var(--color-ember)' }}
-            >
-              M
-            </span>
+            <img
+              src={crest}
+              alt="Manan Upadhyay"
+              width={28}
+              height={28}
+              className="w-7 h-7 rounded-lg object-contain"
+              style={{ boxShadow: '0 0 0 1px var(--color-card-border)' }}
+            />
           }
         />
 

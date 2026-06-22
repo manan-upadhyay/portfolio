@@ -2,4 +2,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://mananupadhyay.dev/sitemap.xml
+Sitemap: https://upadhyaymanan.in/sitemap.xml

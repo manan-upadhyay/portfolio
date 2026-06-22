@@ -31,7 +31,7 @@ const Hero = () => {
   const isDark = resolvedTheme === 'dark';
   const prefersReduced = useReducedMotion();
   const [haveSky, setHaveSky] = useState(false);
-  const [wordIdx, setWordIdx] = useState(0);
+  const [phraseIdx, setPhraseIdx] = useState(0);
 
   const rootRef = useRef(null);
   const copyRef = useRef(null);
@@ -39,8 +39,8 @@ const Hero = () => {
   const canvasWrapRef = useRef(null);
   const bearingRef = useRef(null);
 
-  const words = personalInfo.heroWords?.length ? personalInfo.heroWords : ['Worlds'];
-  const longestWord = words.reduce((a, b) => (b.length > a.length ? b : a), words[0]);
+  const phrases = personalInfo.heroPhrases?.length ? personalInfo.heroPhrases : [personalInfo.heroTitle];
+  const longestPhrase = phrases.reduce((a, b) => (b.length > a.length ? b : a), phrases[0]);
 
   // The starfield backdrop is a dark-theme asset; light theme uses a dawn gradient.
   useEffect(() => {
@@ -49,13 +49,13 @@ const Hero = () => {
     return () => { alive = false; };
   }, []);
 
-  // Rotating tagline word (paused under reduced-motion / single word).
+  // Rotating tagline phrase (paused under reduced-motion / single phrase).
   useEffect(() => {
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (reduce || words.length < 2) return;
-    const id = setInterval(() => setWordIdx((i) => (i + 1) % words.length), 2600);
+    if (reduce || phrases.length < 2) return;
+    const id = setInterval(() => setPhraseIdx((i) => (i + 1) % phrases.length), 3200);
     return () => clearInterval(id);
-  }, [words.length]);
+  }, [phrases.length]);
 
   // Intro timeline + scroll-out parallax.
   useEffect(() => {
@@ -372,27 +372,26 @@ const Hero = () => {
           </h1>
 
           <p className="hero-tagline font-chronicle italic mt-3 text-[clamp(20px,3vw,34px)]" style={{ color: 'var(--color-ember)' }}>
-            Builder of{' '}
+            {personalInfo.heroLead}{' '}
             <span className="relative inline-grid align-baseline">
-              {/* invisible sizer reserves the widest word so trailing text never jumps */}
-              <span className="invisible col-start-1 row-start-1 whitespace-nowrap">{longestWord}</span>
-              <span className="col-start-1 row-start-1 overflow-hidden">
+              {/* invisible sizer reserves the widest phrase so the line never reflows */}
+              <span className="invisible col-start-1 row-start-1 whitespace-nowrap">{longestPhrase}</span>
+              <span className="col-start-1 row-start-1">
                 <AnimatePresence mode="wait" initial={false}>
                   <motion.span
-                    key={words[wordIdx]}
-                    initial={{ y: '0.55em', opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    exit={{ y: '-0.55em', opacity: 0 }}
-                    transition={{ duration: 0.42, ease: [0.22, 1, 0.36, 1] }}
+                    key={phrases[phraseIdx]}
+                    initial={{ opacity: 0, filter: 'blur(10px)' }}
+                    animate={{ opacity: 1, filter: 'blur(0px)' }}
+                    exit={{ opacity: 0, filter: 'blur(10px)' }}
+                    transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
                     className="inline-block whitespace-nowrap"
                     style={{ color: 'var(--color-gold)' }}
                   >
-                    {words[wordIdx]}
+                    {phrases[phraseIdx]}
                   </motion.span>
                 </AnimatePresence>
               </span>
-            </span>{' '}
-            in Code
+            </span>
           </p>
 
           <p className="hero-hook mt-5 max-w-md text-[15px] sm:text-[17px] leading-[27px]" style={{ color: 'var(--color-text-muted)' }}>

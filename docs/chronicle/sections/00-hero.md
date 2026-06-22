@@ -25,10 +25,11 @@ photo — the wow is the craft.
   A shared `ui/CompassRose` SVG sits at its center (DOM overlay above canvas).
 - **Bearing readout (z5):** mono `bearing NNN° · origin|charting`, bottom-right,
   desktop/pointer only. Updated imperatively from the rAF loop (no re-render).
-- **Copy (z10), left:** chapter eyebrow → serif name (two masked lines) →
-  italic ember tagline with a **rotating middle word** (`Builder of <word> in
-  Code`) → muted hook → CTAs ("Begin the Chronicle" / "Summon me") → mono meta
-  line (`coordinates · location`).
+- **Copy (z10), left:** chapter eyebrow → serif name (two masked lines; the clip
+  boxes are padded `pb-[0.18em] -mb-[0.14em]` so descenders aren't shaved) →
+  italic tagline = `heroLead` + a **rotating trailing phrase** (`I architect
+  <phrase>`) → muted hook → CTAs ("Begin the Chronicle" / "Summon me") → mono
+  meta line (`coordinates · location`).
 - **Scroll cue** bottom-center.
 
 ## The astrolabe (Canvas2D)
@@ -54,14 +55,15 @@ the **alidade** (sighting needle) · `CompassRose` hub.
 - **Intro (GSAP timeline):** eyebrow up → name lines mask up
   (`yPercent 120→0`) → tagline/hook fade → CTAs/meta → cue. Reduced-motion rests
   at natural state.
-- **Rotating word:** `personalInfo.heroWords` cycles every 2.6s via Framer
-  `AnimatePresence` (mode `wait`); an invisible sizer reserves the widest word so
-  trailing text never shifts. Paused under reduced-motion.
+- **Rotating phrase:** `personalInfo.heroPhrases` cycles every 3.2s via Framer
+  `AnimatePresence` (mode `wait`) with a **blur cross-fade**; the phrase is the
+  last thing on the line (no mid-gap) and an invisible sizer reserves the widest
+  phrase so the line never reflows. Paused under reduced-motion (shows phrase 0).
 - **Scroll-out (ScrollTrigger scrub):** copy drifts up + fades; astrolabe drifts
   up + fades as the chapter leaves.
 
 ## Content (from `constants.personalInfo`)
-`name`, `heroWords` (rotating tagline words), `heroTitle` (static fallback),
+`name`, `heroLead` + `heroPhrases` (rotating tagline), `heroTitle` (fallback),
 `heroHook`, `coordinates`, `location`. CTAs scroll to `#about` / `#contact`.
 
 ## Assets

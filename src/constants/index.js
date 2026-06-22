@@ -48,10 +48,11 @@ export const personalInfo = {
   ],
   // Chronicle narrative copy
   heroTitle: 'Builder of Worlds in Code',
-  // Hero tagline reads "Builder of <word> in Code"; the middle word cycles.
-  heroWords: ['Worlds', 'Systems', 'Realms', 'Platforms'],
+  // Hero tagline reads "<lead> <phrase>"; the trailing phrase cycles.
+  heroLead: 'I architect',
+  heroPhrases: ['production systems', 'scalable platforms', 'resilient APIs', 'reusable UI systems'],
   heroHook:
-    'Five years charting production systems across six realms — finance, health, logistics, CRM, SaaS, and media.',
+    'Five years charting production systems where performance, trust, and craft decide the path.',
   coordinates: '23.02°N 72.57°E',
 };
 

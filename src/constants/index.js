@@ -78,10 +78,34 @@ export const summon = {
   resumeCta: 'Download CV',
   resumeFileName: 'Manan_Upadhyay_Resume.pdf',
   success: 'Your raven has taken flight — I’ll reply as soon as it lands.',
+  // Each error has several on-theme variants; the form picks one at random so
+  // it never feels like the same lifeless validation twice.
   errors: {
-    required: 'Please fill in every field.',
-    email: 'That email looks off — mind checking it?',
-    failed: 'Something went wrong. Please try again.',
+    required: [
+      'The raven refuses to fly with an empty scroll — fill in every field.',
+      'No words, no flight. This raven has standards; fill it all in.',
+      'A blank parchment? The raven just blinked at me. Every field, please.',
+      'Even the swiftest raven needs something to carry. Mind the blanks.',
+    ],
+    email: [
+      'That email reads like Elvish — and not the legible kind. Mind checking it?',
+      'The raven scoured every map and found no such address. Recheck the email?',
+      'Hmm, that email looks a touch cursed. Give it another glance.',
+      'No realm answers to that address. Double-check the email?',
+    ],
+    failed: [
+      'The raven hit a storm mid-flight and limped back. Try again?',
+      'A mischievous goblin snatched the raven. Send another?',
+      'The raven vanished into the mist. One more attempt?',
+      'Something spooked the poor bird. Give it another go.',
+    ],
+    // Shown when EmailJS isn't configured (no .env) — honest, but stays in
+    // character and hands the visitor a working way to reach out.
+    notConfigured: [
+      `The rookery isn’t built yet — no ravens to dispatch. Reach me directly at ${personalInfo.email}.`,
+      `These ravens are still in training. For now, send word to ${personalInfo.email}.`,
+      `This aviary is under construction. Best write to me at ${personalInfo.email}.`,
+    ],
   },
   quote: '“Every great quest begins with a single message.”',
   channels: [

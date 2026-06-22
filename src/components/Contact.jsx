@@ -110,7 +110,7 @@ const Contact = () => {
 
       <div className="grid lg:grid-cols-[1.1fr_0.9fr] gap-8 mt-10">
         {/* ---- Message ---- */}
-        <ScrollReveal direction="up" className="realm-card p-7 sm:p-9">
+        <ScrollReveal direction="up" className="realm-card p-7 sm:p-9 min-w-0">
           <span className="chapter-eyebrow">The Message</span>
 
           {/* inquiry chips */}
@@ -165,7 +165,7 @@ const Contact = () => {
         </ScrollReveal>
 
         {/* ---- Correspondence ---- */}
-        <ScrollReveal direction="up" delay={0.1} className="realm-card p-7 sm:p-9 flex flex-col">
+        <ScrollReveal direction="up" delay={0.1} className="realm-card p-7 sm:p-9 flex flex-col min-w-0">
           <div className="flex items-start justify-between">
             <span className="chapter-eyebrow">Correspondence</span>
             <CompassRose />

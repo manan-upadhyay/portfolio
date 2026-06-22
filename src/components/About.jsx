@@ -1,58 +1,119 @@
-import React from 'react';
-import { styles } from '../styles';
-import { services } from '../constants';
-import { fadeIn, textVariant } from '../utils/motion';
 import { motion } from 'framer-motion';
-import { Tilt } from 'react-tilt';
+import { LayoutPanelTop, Server, Gauge, Layers, ScrollText } from 'lucide-react';
+import { services, stats, craft, chapters } from '../constants';
 import { SectionWrapper } from '../hoc';
+import { ScrollReveal, ChapterHeading, CountUp } from './ui';
 
-const ServiceCard = ({ index, title, icon }) => {
+// Discipline → line icon, keyed by stable `iconKey` from constants
+// (replaces the old gem PNGs; not the title, so copy can change freely).
+const DISCIPLINE_ICONS = {
+  frontend: LayoutPanelTop,
+  backend: Server,
+  performance: Gauge,
+  fullstack: Layers,
+};
+
+const StatTile = ({ value, label }) => (
+  <motion.div
+    className="realm-card px-5 py-6 text-center"
+    whileHover={{ y: -4 }}
+    transition={{ type: 'spring', stiffness: 300, damping: 22 }}
+  >
+    <p className="text-[40px] font-chronicle font-bold ember-text-gradient leading-none">
+      <CountUp value={value} />
+    </p>
+    <p className="text-[13px] mt-2" style={{ color: 'var(--color-text-muted)' }}>{label}</p>
+  </motion.div>
+);
+
+const DisciplineCard = ({ index, iconKey, title, description }) => {
+  const Icon = DISCIPLINE_ICONS[iconKey] || Layers;
   return (
-    <Tilt className="xs:w-[250px] w-full">
+    <ScrollReveal direction="up" delay={index * 0.1} className="w-full">
       <motion.div
-        variants={fadeIn('right', 'spring', 0.5 * index, 0.75)}
-        className="w-full green-pink-gradient p-[1px] rounded-[20px] shadow-card"
+        className="realm-card h-full p-7 flex flex-col gap-4"
+        whileHover={{ y: -6 }}
+        transition={{ type: 'spring', stiffness: 300, damping: 22 }}
+        data-cursor="hover"
       >
-        <div
-          options={{
-            max: 45,
-            scale: 1,
-            speed: 450,
-          }}
-          className="bg-tertiary rounded-[20px] py-5 px-12 min-h-[280px] flex justify-evenly items-center flex-col"
+        <span
+          className="grid place-items-center w-12 h-12 rounded-xl"
+          style={{ background: 'rgba(var(--color-ember-rgb), 0.12)', border: '1px solid rgba(var(--color-ember-rgb), 0.3)' }}
         >
-          <img src={icon} alt={title} className="w-16 h-16 object-contain" />
-          <h3 className="text-white text-[20px] font-bold text-center">
-            {title}
-          </h3>
-        </div>
+          <Icon size={24} style={{ color: 'var(--color-ember)' }} />
+        </span>
+        <h3 className="font-chronicle font-semibold text-[24px] leading-tight" style={{ color: 'var(--color-text)' }}>
+          {title}
+        </h3>
+        <p className="text-[14px] leading-[23px]" style={{ color: 'var(--color-text-muted)' }}>
+          {description}
+        </p>
       </motion.div>
-    </Tilt>
+    </ScrollReveal>
   );
 };
+
 const About = () => {
+  const ch = chapters.about;
   return (
     <>
-      <motion.div variants={textVariant()}>
-        <p className={styles.sectionSubText}>Introduction</p>
-        <p className={styles.sectionHeadText}>Overview.</p>
-      </motion.div>
+      <ChapterHeading no={ch.no} eyebrow={ch.label} title={`${ch.sub}.`} />
 
-      <motion.p
-        variants={fadeIn('', '', 0.1, 1)}
-        className="mt-4 text-secondary text-[17px] max-w-3x1 leading-[30px]"
-      >
-        I'm a skilled software developer with experience in TypeScript and
-        JavaScript, and expertise in frameworks like React, Node. js, and Three.
-        js. I'm a quick learner and collaborate closely with clients to create
-        efficient, scalable, and user-friendly solutions that solve real-world
-        problems. Let's work together to bring your ideas to life!
-      </motion.p>
+      {/* Intro — the tale (left) + the scribe's note (right) */}
+      <div className="grid lg:grid-cols-[1.25fr_1fr] gap-10 lg:gap-12 mt-12 items-start">
+        <ScrollReveal direction="up" delay={0.15}>
+          <p className="font-chronicle italic text-[clamp(20px,2.4vw,26px)] leading-[1.45] mb-6" style={{ color: 'var(--color-ember)' }}>
+            {craft.pullQuote}
+          </p>
+          {craft.intro.map((para) => (
+            <p key={para.slice(0, 24)} className="text-[17px] leading-[30px] mb-4 last:mb-0" style={{ color: 'var(--color-text-muted)' }}>
+              {para}
+            </p>
+          ))}
+        </ScrollReveal>
 
-      <div className="mt-20 flex flex-wrap gap-10">
-        {services.map((service, index) => (
-          <ServiceCard key={service.title} index={index} {...service} />
+        <ScrollReveal direction="left" delay={0.3} className="w-full">
+          <div className="realm-card p-8">
+            <span className="chapter-eyebrow inline-flex items-center gap-2">
+              <ScrollText size={14} style={{ color: 'var(--color-ember)' }} /> The Scribe's Note
+            </span>
+            <ul className="mt-6 space-y-5">
+              {craft.principles.map(({ title, body }) => (
+                <li key={title} className="flex gap-3">
+                  <span className="mt-2 w-2 h-2 rounded-full flex-shrink-0" style={{ background: 'var(--color-ember)', boxShadow: '0 0 10px var(--color-ember)' }} />
+                  <span>
+                    <span className="font-semibold" style={{ color: 'var(--color-text)' }}>{title}.</span>{' '}
+                    <span className="text-[14px] leading-[22px]" style={{ color: 'var(--color-text-muted)' }}>{body}</span>
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </ScrollReveal>
+      </div>
+
+      {/* Proof — full-width stat band (anchors the section, no dead space) */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 mt-12">
+        {stats.map((stat, index) => (
+          <ScrollReveal key={stat.label} direction="up" delay={index * 0.08}>
+            <StatTile value={stat.value} label={stat.label} />
+          </ScrollReveal>
         ))}
+      </div>
+
+      {/* Disciplines */}
+      <div className="mt-20">
+        <div className="flex items-end justify-between gap-4 mb-8">
+          <h3 className="font-chronicle font-semibold text-[30px]" style={{ color: 'var(--color-text)' }}>
+            Disciplines
+          </h3>
+          <div className="flex-1 ink-stroke mb-2" />
+        </div>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {services.map((service, index) => (
+            <DisciplineCard key={service.title} index={index} iconKey={service.iconKey} title={service.title} description={service.description} />
+          ))}
+        </div>
       </div>
     </>
   );

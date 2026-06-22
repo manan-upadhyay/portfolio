@@ -1,0 +1,147 @@
+# CLAUDE.md — The Chronicle (Manan Upadhyay Portfolio)
+
+> **This file is the canonical entry point for any AI/dev work on this repo.**
+> Read it first, then the relevant doc in [`docs/chronicle/`](docs/chronicle/).
+> The `docs/chronicle/` set is the **single source of truth**. The older
+> `docs/*.md` (ARCHITECTURE, COMPONENTS, ROADMAP…) describe the *pre-revamp*
+> template and are **superseded** — do not follow them.
+
+---
+
+## 1. What we are building
+
+A **cinematic, scroll-directed senior-developer portfolio** for Manan Upadhyay
+(Full-Stack Developer, 5+ yrs). Not a template, not a résumé dump — an
+**interactive story** that makes hiring managers, CTOs, and clients feel his
+craft within ten seconds.
+
+**Narrative spine — "The Chronicle":** a cartographer's epic journey. The
+visitor travels through *chapters*; projects are *realms* charted on a map;
+copy carries subtle nods to LOTR / GoT / RDR / Witcher / One Piece — **flavor,
+never cosplay.** Tone: confident, literary, modern. Think a film title sequence
+crossed with a premium editorial site.
+
+**Reference north-stars:** breedlove.xyz (editorial project plates, day/night
+toggle, contact), unabyss.com (cursor backlight, smooth scroll choreography),
+2019.makemepulse.com (multi-layer parallax depth).
+
+**Quality bar:** every section is its own *moment* with intentional motion.
+"Would this survive on awwwards?" If a section is a static list, it's not done.
+
+---
+
+## 2. The canon (do not drift)
+
+**Chapters & section ids** (the `id` is what anchors/nav/map use):
+
+| # | Chapter label | Component | `id` | Concept |
+|---|---|---|---|---|
+| 00 | Origin | `Hero.jsx` | `origin` | Layered cinematic parallax hero |
+| 01 | The Craft | `About.jsx` | `about` | Who he is + disciplines |
+| 02 | The Journey | `Experience.jsx` | `work` | **Pinned horizontal** scrubbed path |
+| 03 | The Arsenal | `Tech.jsx` | `arsenal` | **Interactive orbital** skill field |
+| 04 | The Realms | `Works.jsx` | `projects` | **Editorial cinematic** project plates |
+| 05 | Summon | `Contact.jsx` | `contact` | Statement + form + channels |
+
+Section labels/numbers live in `src/constants/index.js` (`chapters`). **Constants
+are the source of truth for copy** — components must read from there, never
+hardcode strings. Keep `chapters`, nav `LINKS` (in `Navbar.jsx`), and
+`CommandPalette` map entries in sync.
+
+**Palette / theme:** dark-first "starlit realm" + light "dawn over the realm".
+All color via CSS variables in `src/index.css`. See
+[DESIGN-SYSTEM](docs/chronicle/DESIGN-SYSTEM.md).
+
+---
+
+## 3. Tech stack (locked)
+
+- **React 18 + Vite 4**, JSX function components + hooks only (one exception:
+  `ErrorBoundary` class).
+- **Tailwind** for layout/spacing + **CSS variables** for all theme color.
+- **Framer Motion** → component enter/hover/exit + small interactions.
+- **GSAP + ScrollTrigger** → scroll choreography (pin, scrub, parallax-out).
+- **Lenis** → smooth scroll, driven by GSAP ticker (`src/lib/smoothScroll.js`).
+- **Zustand** → theme store (`src/store/useThemeStore.ts`).
+- **lucide-react** → icons. **No emoji in UI.**
+- **❌ Three.js / @react-three/* is being removed.** Do not add new 3D. Depth
+  comes from layered 2D art + parallax + Canvas2D, not WebGL.
+
+---
+
+## 4. Engineering standards (senior-level, non-negotiable)
+
+1. **Reusable & DRY.** Shared visuals = a component in `ui/` or a CSS utility
+   class — never copy-paste. New repeated pattern → extract it.
+2. **Data-driven.** All content from `src/constants/`. Components are pure
+   presenters that take props/constants. No inline prose, no magic numbers for
+   content.
+3. **Theme-token only.** Use `var(--color-*)` / Tailwind tokens. **No raw hex in
+   components** except inside generated-art fallbacks. If you need a new color,
+   add a token to `index.css` (both themes).
+4. **Motion is cleaned up.** Every GSAP setup uses `gsap.context()` scoped to a
+   ref and `ctx.revert()` on unmount. Every listener/`requestAnimationFrame`/
+   `ScrollTrigger` is removed in the effect's cleanup. No leaks.
+5. **Accessibility & input.** Always honor `prefers-reduced-motion` (static
+   fallback) and `(hover: none)` / coarse pointers (no mouse-parallax, no custom
+   cursor). Real semantic elements (`button`/`a`), `aria-label`s, keyboard
+   focus, AA contrast on every heading.
+6. **Performance budget.** Sections are `lazy()` + `Suspense` + `ErrorBoundary`.
+   Lazy-load below-the-fold art. Animate only `transform`/`opacity`. Target:
+   initial JS < ~200KB gz, Lighthouse perf ≥ 90, 60fps scroll. Don't ship dead
+   deps/assets.
+7. **Resilient.** Optional assets are probed and degrade gracefully (see Hero
+   asset-probe pattern). A failing subtree must never white-screen — wrap risky
+   trees in `ErrorBoundary`.
+8. **Consistent structure.** One section = one file in `src/components/`,
+   default-exported, wrapped by `SectionWrapper` (or its own `<section
+   id=…>`). Sub-pieces colocated or promoted to `ui/` when reused.
+
+**Definition of done** for any section: matches its spec in
+`docs/chronicle/sections/`, responsive at 360 / 768 / 1280 / 1920, dark + light
+correct, reduced-motion + touch correct, no console errors, `npm run build`
+clean, and it looks like a *moment* — not a list.
+
+---
+
+## 5. Workflow rules
+
+- **Before building a section,** read its spec in `docs/chronicle/sections/` AND
+  [DESIGN-SYSTEM](docs/chronicle/DESIGN-SYSTEM.md) +
+  [ARCHITECTURE](docs/chronicle/ARCHITECTURE.md).
+- **Cadence:** build/iterate **one section at a time**, verify visually (run dev
+  server, screenshot dark+light), then move on.
+- **Assets:** if a section needs art, it must work with a graceful fallback
+  first; real art is specced in [ASSETS](docs/chronicle/ASSETS.md) and dropped
+  into `public/chronicle/`. Never block a build on missing art.
+- **When you change canon** (a chapter id, a token, a shared component API),
+  update the relevant doc in the same change. Docs and code never diverge.
+- **Verify:** `npm run dev` then drive headless Chrome for screenshots; check
+  `npm run build`. See ARCHITECTURE → "Verification".
+
+---
+
+## 6. Doc index
+
+| Doc | What it governs |
+|---|---|
+| [DESIGN-SYSTEM.md](docs/chronicle/DESIGN-SYSTEM.md) | Color tokens, type scale, spacing, motion language, CSS utilities, component inventory, a11y |
+| [ARCHITECTURE.md](docs/chronicle/ARCHITECTURE.md) | Folder map, libraries, smooth-scroll/GSAP patterns, global shell, perf, verification |
+| [ASSETS.md](docs/chronicle/ASSETS.md) | "World Bible", filenames, dimensions, generation prompts |
+| [sections/00-hero.md](docs/chronicle/sections/00-hero.md) | Origin hero |
+| [sections/01-the-craft.md](docs/chronicle/sections/01-the-craft.md) | About |
+| [sections/02-the-journey.md](docs/chronicle/sections/02-the-journey.md) | Pinned horizontal experience |
+| [sections/03-the-arsenal.md](docs/chronicle/sections/03-the-arsenal.md) | Orbital skill field |
+| [sections/04-the-realms.md](docs/chronicle/sections/04-the-realms.md) | Editorial project plates |
+| [sections/05-summon.md](docs/chronicle/sections/05-summon.md) | Contact |
+| [sections/06-map-overlay.md](docs/chronicle/sections/06-map-overlay.md) | Interactive map (⌘K) |
+
+---
+
+## 7. Commands
+
+```bash
+npm run dev      # vite dev server
+npm run build    # production build (must stay clean)
+npm run preview  # preview the build
+```

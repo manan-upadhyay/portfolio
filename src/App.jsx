@@ -2,10 +2,11 @@ import { lazy, Suspense, useState, useEffect } from 'react';
 import { Compass } from 'lucide-react';
 import { useThemeStore } from './store/useThemeStore';
 import Hero from './components/Hero';
-import { Cursor, ErrorBoundary, SideRail, MapOverlay, MusicPlayer, DayNightToggle } from './components/ui';
+import { Cursor, ErrorBoundary, SideRail, MapOverlay, DayNightToggle } from './components/ui';
+// import { MusicPlayer } from './components/ui'; // ambient audio — disabled for now, re-enable for future use
 import { useSmoothScroll } from './lib/smoothScroll';
 import { useActiveSection } from './hooks/useActiveSection';
-import { Analytics } from "@vercel/analytics/next"
+import { Analytics } from '@vercel/analytics/react';
 
 const About = lazy(() => import('./components/About'));
 const Experience = lazy(() => import('./components/Experience'));
@@ -43,7 +44,7 @@ const App = () => {
       <Cursor />
       <SideRail activeId={activeId} onOpenMap={() => setMapOpen(true)} visible={activeId !== 'origin'} />
       <div className="fixed top-5 right-5 z-40"><DayNightToggle /></div>
-      <MusicPlayer />
+      {/* <MusicPlayer /> — ambient audio toggle (bottom-right), disabled for now; re-enable with the import above */}
       {/* mobile map button (side-rail is desktop-only) */}
       <button onClick={() => setMapOpen(true)} aria-label="Open the map"
         className="md:hidden fixed top-5 left-5 z-40 grid place-items-center w-11 h-11 rounded-full"

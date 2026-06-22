@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Compass } from 'lucide-react';
 import { scrollToSection, scrollToTop } from '../../lib/smoothScroll';
 import { useThemeStore } from '../../store/useThemeStore';
+import CompassRose from './CompassRose';
 
 export const CHAPTERS = [
   { id: 'origin', no: '00', label: 'Origin' },
@@ -136,7 +136,7 @@ const SideRail = ({ activeId, onOpenMap, visible }) => {
           expanded={expanded}
           label="Map"
           kbd
-          glyph={<Compass size={16} style={{ color: 'var(--color-ember)' }} />}
+          glyph={<CompassRose className="w-[18px] h-[18px] opacity-100" />}
         />
       </motion.div>
     </motion.nav>

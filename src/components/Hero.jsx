@@ -231,6 +231,17 @@ const Hero = () => {
         c.fillStyle = gold;
         c.beginPath(); c.arc(-R * 0.8, 0, 4, 0, TWO_PI); c.fill();
         c.restore();
+
+        // Pivot cap — anchors the alidade to the rose's heart so it reads as
+        // pinned and rotating, not floating. Drawn unrotated, on top of the needle.
+        c.globalAlpha = pA;
+        c.fillStyle = `rgba(${emberRgb}, 0.16)`;
+        c.beginPath(); c.arc(0, 0, 9, 0, TWO_PI); c.fill();
+        c.fillStyle = ember;
+        c.beginPath(); c.arc(0, 0, 5, 0, TWO_PI); c.fill();
+        c.fillStyle = gold;
+        c.beginPath(); c.arc(0, 0, 2, 0, TWO_PI); c.fill();
+        c.globalAlpha = 1;
       }
 
       c.restore();

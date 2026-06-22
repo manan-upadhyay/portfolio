@@ -2,10 +2,11 @@ import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { Github, ArrowUpRight, Lock, Star } from 'lucide-react';
+import { Github, ArrowUpRight, Lock, Star, ChevronLeft, ChevronRight } from 'lucide-react';
 import { SectionWrapper } from '../hoc';
 import { projects } from '../constants';
 import { ChapterHeading, ScrollReveal } from './ui';
+import { useThemeStore } from '../store/useThemeStore';
 import Magnet from './Magnet';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -20,20 +21,52 @@ const SLUG = {
 const slugFor = (name) => SLUG[name] || name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
 const coverSrc = (name) => `/chronicle/realms/${slugFor(name)}.webp`;
 
-/* ---------- Cover (art or serif-monogram fallback) ---------- */
+// Build ordered image URLs for a project gallery. Standard flow:
+//   public/realms/<slug>/<file>            → used in every theme
+//   public/realms/<slug>/<light|dark>/<file> → per-theme (themed: true)
+const galleryPaths = (gallery, theme) => {
+  if (!gallery?.images?.length) return [];
+  const dir = gallery.themed ? `/realms/${gallery.slug}/${theme}` : `/realms/${gallery.slug}`;
+  return gallery.images.map((file) => `${dir}/${file}`);
+};
+
+/* ---------- Cover (carousel · single art · serif-monogram fallback) ---------- */
 const Cover = ({ project, parallaxRef }) => {
+  const { resolvedTheme } = useThemeStore();
+  const images = galleryPaths(project.gallery, resolvedTheme);
+  const count = images.length;
+
+  const [index, setIndex] = useState(0);
+  const safe = count ? Math.min(index, count - 1) : 0;
+  const go = (dir) => setIndex((i) => (i + dir + count) % count);
+
   const [hasArt, setHasArt] = useState(false);
   useEffect(() => {
+    if (count) return; // gallery wins — skip the single-cover probe
     const img = new Image();
     img.onload = () => setHasArt(true);
     img.onerror = () => setHasArt(false);
     img.src = coverSrc(project.name);
-  }, [project.name]);
+  }, [project.name, count]);
 
   return (
     <div className="group relative w-full h-full min-h-[320px] lg:min-h-[440px] overflow-hidden rounded-3xl realm-card" data-cursor="hover">
+      {/* parallax layer — carousel image stack lives here so it drifts on scroll */}
       <div ref={parallaxRef} className="absolute inset-0 will-change-transform" style={{ top: '-8%', bottom: '-8%', height: '116%' }}>
-        {hasArt ? (
+        {count > 0 ? (
+          images.map((src, i) => (
+            <img
+              key={src}
+              src={src}
+              alt={`${project.name} — screenshot ${i + 1} of ${count}`}
+              loading={i === 0 ? 'eager' : 'lazy'}
+              decoding="async"
+              aria-hidden={i !== safe}
+              className="absolute inset-0 w-full h-full object-contain transition-all duration-700 group-hover:scale-105"
+              style={{ opacity: i === safe ? 1 : 0 }}
+            />
+          ))
+        ) : hasArt ? (
           <img src={coverSrc(project.name)} alt={project.name}
             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
         ) : (
@@ -45,9 +78,32 @@ const Cover = ({ project, parallaxRef }) => {
           </div>
         )}
       </div>
+
       {/* ember sweep on hover */}
       <div className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
         style={{ background: 'linear-gradient(105deg, transparent 40%, rgba(var(--color-ember-rgb),0.12) 50%, transparent 60%)' }} />
+
+      {/* carousel controls — fixed to the card frame (outside the parallax layer) */}
+      {count > 1 && (
+        <div className="pointer-events-none absolute inset-0 z-20">
+          <button type="button" onClick={() => go(-1)} aria-label="Previous screenshot"
+            data-cursor="hover" className="carousel-ctrl pointer-events-auto absolute left-3 top-1/2">
+            <ChevronLeft size={18} />
+          </button>
+          <button type="button" onClick={() => go(1)} aria-label="Next screenshot"
+            data-cursor="hover" className="carousel-ctrl pointer-events-auto absolute right-3 top-1/2">
+            <ChevronRight size={18} />
+          </button>
+          <div className="pointer-events-auto absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2">
+            {images.map((src, i) => (
+              <button key={src} type="button" onClick={() => setIndex(i)}
+                aria-label={`Go to screenshot ${i + 1}`} aria-current={i === safe}
+                data-cursor="hover" className="carousel-dot" data-active={i === safe} />
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* seals */}
       <div className="absolute top-4 left-4 flex gap-2 z-10">
         {project.isFeatured && <span className="wax-seal wax-seal--featured"><Star size={11} /> Featured</span>}

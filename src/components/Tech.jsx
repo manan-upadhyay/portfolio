@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { Compass, Webhook } from 'lucide-react';
 import { SectionWrapper } from '../hoc';
 import { skillCategories } from '../constants';
-import { ChapterHeading } from './ui';
+import { ChapterHeading, CompassRose } from './ui';
 import { useThemeStore } from '../store/useThemeStore';
 
 // Each category owns one concentric ring (inner → outer), each revolving at its
@@ -146,7 +146,8 @@ const OrbitalField = () => {
           style={{ width: 104, height: 104, background: 'var(--gradient-card)', backdropFilter: 'blur(10px)',
             border: '1px solid rgba(var(--color-ember-rgb),0.4)', boxShadow: '0 0 30px rgba(var(--color-ember-rgb),0.18) inset, 0 0 24px rgba(var(--color-ember-rgb),0.12)' }}>
           <span className="absolute rounded-full" style={{ inset: 9, border: '1px solid rgba(var(--color-ember-rgb),0.18)' }} />
-          <Compass size={40} strokeWidth={1.25} style={{ color: 'var(--color-ember)' }} />
+          {/* <Compass size={40} strokeWidth={1.25} style={{ color: 'var(--color-ember)' }} /> */}
+          <CompassRose />
         </div>
         <span className="absolute whitespace-nowrap" style={{ top: '100%', marginTop: 2, fontSize: 9.5, fontWeight: 600,
           letterSpacing: '0.36em', textTransform: 'uppercase', color: 'var(--color-text-muted)', opacity: 0.7 }}>

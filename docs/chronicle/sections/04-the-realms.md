@@ -40,14 +40,32 @@ dump all), `image`, `source_code_link`, `live_demo_link`, `live_demo_label`
 (optional — overrides the default "Enter the realm" CTA, e.g. "Visit platform"
 for a login-gated build), `isFeatured`, `isNDA`. Featured-array order **is** the
 Realm I..N order; lead with live, clickable realms and close on NDA/enterprise.
-Cover art path convention: `public/chronicle/realms/<slug>.webp` (see
-[ASSETS](../ASSETS.md#2-realms-chapter-04-project-cover-art)). Fallback: serif
-monogram (first letter) on a themed gradient + the existing seals.
+### Cover resolution (in priority order)
+1. **`gallery`** — a multi-shot carousel inside the same plate thumbnail. Shape:
+   ```js
+   gallery: {
+     slug: 'royal-tiles',   // folder under public/realms/
+     themed: true,          // optional — adds a light|dark subfolder split
+     images: ['a.png', 'b.png', …],  // array order IS the display order
+   }
+   ```
+   Resolved paths (standard flow):
+   - `public/realms/<slug>/<file>` — used in **every** theme
+   - `public/realms/<slug>/<light|dark>/<file>` — per-theme when `themed: true`
+     (same filenames must exist in both `light/` and `dark/`)
+   The carousel keeps the exact plate UI and adds subtle dot indicators + in-frame
+   prev/next arrows. Single-image projects just give a 1-element `images` array.
+2. **Single cover webp** — legacy convention `public/chronicle/realms/<slug>.webp`
+   (probed only when no `gallery` is set; see
+   [ASSETS](../ASSETS.md#2-realms-chapter-04-project-cover-art)).
+3. **Fallback** — serif monogram (first letter) on a themed gradient + seals.
 
 ## Components & reuse
 - `ChapterHeading no="04" eyebrow="The Realms" title="Worlds I've Shipped."`.
 - `RealmPlate` (featured) and `RealmCard` (secondary) — colocated; share the
   seal + tag-rune subcomponents. NDA note line stays (trust signal).
+- `RealmCarousel` (colocated in `Cover`) — drives the `gallery` thumbnail
+  carousel (`.carousel-ctrl` arrows + `.carousel-dot` indicators in `index.css`).
 - Reuse `realm-card`, `wax-seal--*`, `Magnet`, `ScrollReveal`/GSAP.
 
 ## States / responsive

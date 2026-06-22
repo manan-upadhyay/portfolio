@@ -804,7 +804,7 @@ h1, h2, h3, h4, h5, h6 {
 
 .wax-seal--featured {
   background: linear-gradient(135deg, var(--color-ember) 0%, var(--color-gold) 100%);
-  color: #1a1208;
+  color: #ffffff;
   box-shadow: 0 0 18px rgba(var(--color-ember-rgb), 0.35);
 }
 
@@ -916,4 +916,60 @@ h1, h2, h3, h4, h5, h6 {
 .realm-card:hover {
   border-color: rgba(var(--color-ember-rgb), 0.45);
   box-shadow: var(--shadow-card), 0 0 30px rgba(var(--color-ember-rgb), 0.08);
+}
+
+/* ===== Realm thumbnail carousel controls ===== */
+.carousel-ctrl {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 9999px;
+  color: var(--color-text);
+  background: var(--color-card-bg);
+  border: 1px solid var(--color-card-border);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  opacity: 0;
+  transform: translateY(-50%) scale(0.9);
+  transition: opacity 0.3s ease, transform 0.3s ease, border-color 0.3s ease, background 0.3s ease;
+}
+
+.group:hover .carousel-ctrl,
+.carousel-ctrl:focus-visible {
+  opacity: 1;
+  transform: translateY(-50%) scale(1);
+}
+
+.carousel-ctrl:hover {
+  border-color: rgba(var(--color-ember-rgb), 0.5);
+  background: var(--gradient-card);
+  color: var(--color-ember);
+}
+
+.carousel-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 9999px;
+  background: var(--color-text);
+  opacity: 0.35;
+  transition: opacity 0.3s ease, width 0.3s ease, background 0.3s ease;
+}
+
+.carousel-dot:hover { opacity: 0.6; }
+
+.carousel-dot[data-active='true'] {
+  width: 20px;
+  opacity: 1;
+  background: var(--color-ember);
+}
+
+/* Touch / no-hover: keep arrows visible since there's no hover affordance */
+@media (hover: none) {
+  .carousel-ctrl { opacity: 1; transform: translateY(-50%) scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .carousel-ctrl,
+  .carousel-dot { transition: none; }
 }

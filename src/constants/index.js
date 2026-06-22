@@ -317,6 +317,21 @@ const featuredProjects = [
     source_code_link: '',
     live_demo_link: 'https://gajaakriti.com/',
     isNDA: false,
+    // Realm screenshots in display order. Lives under public/realms/<slug>/.
+    // `themed: true` swaps to public/realms/<slug>/<light|dark>/ per theme.
+    gallery: {
+      slug: 'gajaakriti',
+      images: [
+        'gajaakriti-hero.png',
+        'gajaakriti-landing-1.png',
+        'gajaakriti-landing-2.png',
+        'gajaakriti-landing-3.png',
+        'gajaakriti-menu.png',
+        'gajaakriti-portfolios.png',
+        'gajaakriti-blogs.png',
+        'gajaakriti-inquire.png',
+      ],
+    },
     highlights: [
       'Built a modern Next.js website with dynamic landing pages, portfolio, blogs, testimonials, and admin panel',
       'Improved performance through caching, CDN strategy, Cloudflare R2, and video streaming optimization',
@@ -340,6 +355,20 @@ const featuredProjects = [
     live_demo_link: 'https://florra.tatkrit.com/login',
     live_demo_label: 'Visit platform',
     isNDA: false,
+    gallery: {
+      slug: 'royal-tiles',
+      themed: true,
+      images: [
+        'royal-tiles-dashboard.png',
+        'royal-tiles-fill-patterns.png',
+        'royal-tiles-floor-grid-list.png',
+        'royal-tiles-floor-grid-tool.png',
+        'royal-tiles-tile-design-list.png',
+        'royal-tiles-regionizer.png',
+        'royal-tiles-user-panel-editor.png',
+        'royal-tiles-user-panel-projects.png',
+      ],
+    },
     highlights: [
       'Built a custom floor visualization tool with live preview and downloadable PDF templates',
       'Programmatically rendered dynamic tile variants — corners, fills, grid patterns',

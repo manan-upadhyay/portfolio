@@ -3,10 +3,7 @@ import {
   backend,
   creator,
   web,
-  javascript,
   typescript,
-  html,
-  css,
   reactjs,
   redux,
   tailwind,
@@ -15,6 +12,21 @@ import {
   git,
   docker,
   nextjs,
+  reactQuery,
+  highcharts,
+  expressjs,
+  expressjsDark,
+  nestjs,
+  nestjsDark,
+  postgresql,
+  firebase,
+  jwt,
+  pipeline,
+  launchdarkly,
+  cloudflare,
+  cypress,
+  splunk,
+  jira,
 } from '../assets';
 
 // Personal Information
@@ -40,10 +52,46 @@ export const personalInfo = {
     'Five years charting production systems across six realms — finance, health, logistics, CRM, SaaS, and media.',
 };
 
+// The Summon (chapter 05) — all contact copy lives here; the component is a
+// pure presenter. Channel icons are mapped by `key` in the component.
+export const summon = {
+  availability: 'Open to senior full-stack roles & collaborations — usually replies within a day.',
+  inquiries: ['Senior role', 'Contract', 'Collaboration', 'Just saying hi'],
+  placeholders: {
+    name: 'Your name',
+    email: 'Your email',
+    message: 'Tell me about the realm you want to build…', // fallback
+  },
+  // Message placeholder shifts to match the selected inquiry chip.
+  messagePlaceholders: {
+    'Senior role': 'Tell me about the team, the role, and the realms you’re building…',
+    Contract: 'Share the scope, timeline, and what you need shipped…',
+    Collaboration: 'What should we build together? Pitch me the idea…',
+    'Just saying hi': 'Say hello — what brought you to this corner of the map?',
+  },
+  submitIdle: 'Dispatch the Raven',
+  submitLoading: 'Sending the raven…',
+  resumeCta: 'Download CV',
+  resumeFileName: 'Manan_Upadhyay_Resume.pdf',
+  success: 'Your raven has taken flight — I’ll reply as soon as it lands.',
+  errors: {
+    required: 'Please fill in every field.',
+    email: 'That email looks off — mind checking it?',
+    failed: 'Something went wrong. Please try again.',
+  },
+  quote: '“Every great quest begins with a single message.”',
+  channels: [
+    { key: 'email', label: 'Email', value: personalInfo.email, href: `mailto:${personalInfo.email}` },
+    { key: 'linkedin', label: 'LinkedIn', value: 'in/manan-upadhyay', href: personalInfo.linkedin },
+    { key: 'github', label: 'GitHub', value: 'manan-upadhyay', href: personalInfo.github },
+    { key: 'location', label: 'Based in', value: `${personalInfo.location} · 23.02°N 72.57°E`, href: null },
+  ],
+};
+
 // Chronicle chapter labels — section navigation as a story
 export const chapters = {
   about: { no: '01', label: 'The Craft', sub: 'Origin' },
-  work: { no: '02', label: 'The Journey', sub: 'The Journey So Far' },
+  work: { no: '02', label: 'The Journey', sub: 'The Path So Far' },
   arsenal: { no: '03', label: 'The Arsenal', sub: 'Tools of the Trade' },
   projects: { no: '04', label: 'The Realms', sub: 'Worlds I Have Shipped' },
   contact: { no: '05', label: 'Summon', sub: 'Send a Raven' },
@@ -73,38 +121,45 @@ const services = [
     title: 'Frontend Architecture',
     description: 'Production-grade UIs with React.js, Next.js, TypeScript, and reusable component systems',
     icon: web,
+    iconKey: 'frontend',
   },
   {
     title: 'Backend Development',
     description: 'Scalable APIs with Node.js, Express.js, NestJS, REST, JWT/OAuth, and RBAC',
     icon: backend,
+    iconKey: 'backend',
   },
   {
     title: 'Performance Optimization',
     description: 'Code-splitting, caching, CDN strategies, lazy loading, and Core Web Vitals tuning',
     icon: mobile,
+    iconKey: 'performance',
   },
   {
     title: 'Full Stack Delivery',
     description: 'End-to-end ownership from requirement grooming to production monitoring',
     icon: creator,
+    iconKey: 'fullstack',
   },
 ];
 
-const technologies = [
-  { name: 'TypeScript', icon: typescript },
-  { name: 'JavaScript', icon: javascript },
-  { name: 'React.js', icon: reactjs },
-  { name: 'Next.js', icon: nextjs },
-  { name: 'Node.js', icon: nodejs },
-  { name: 'Redux Toolkit', icon: redux },
-  { name: 'Tailwind CSS', icon: tailwind },
-  { name: 'MongoDB', icon: mongodb },
-  { name: 'Git', icon: git },
-  { name: 'HTML5', icon: html },
-  { name: 'CSS3', icon: css },
-  { name: 'Docker', icon: docker },
-];
+// The Craft (chapter 01) — narrative copy. Constants are the source of truth for
+// section prose; the component is a pure presenter. Résumé-accurate, but written
+// as story beats (not a keyword dump — skills live only in The Arsenal).
+export const craft = {
+  pullQuote: '“Every realm below began as an empty repository and a blinking cursor.”',
+  intro: [
+    'I build production web platforms the way a storyteller builds worlds — structure beneath the surface, and an obsessive eye on the details a user feels but never sees.',
+    'Five years and twenty-plus releases across six industries. I carry features from an empty repository all the way to production monitoring, and I do my sharpest work where the problem is tangled and the path isn’t obvious.',
+  ],
+  // "The Scribe's Note" — how he works. Each is one concrete, résumé-backed line.
+  principles: [
+    { title: 'End-to-end ownership', body: 'From requirement grooming and system design to release validation and production monitoring.' },
+    { title: 'Detail as discipline', body: 'Reusable UI systems, edge cases, and accessibility — the unglamorous craft that makes products feel solid.' },
+    { title: 'Performance as a habit', body: 'Code-splitting, caching, CDN, and media optimization — measured, not guessed.' },
+    { title: 'Secure by default', body: 'JWT/OAuth, Okta, RBAC and middleware access control across enterprise apps.' },
+  ],
+};
 
 // The Arsenal — single source of truth for skills.
 // No proficiency percentages (intentionally — senior signal). `tier: 'primary'`
@@ -114,42 +169,40 @@ export const skillCategories = [
     category: 'Frontend',
     blurb: 'Production UIs & frontend architecture',
     skills: [
-      { name: 'React.js', tier: 'primary' },
-      { name: 'Next.js', tier: 'primary' },
-      { name: 'TypeScript', tier: 'primary' },
-      { name: 'Tailwind CSS' },
-      { name: 'Redux / RTK' },
-      { name: 'React Query' },
-      { name: 'ShadCN / Material UI' },
-      { name: 'Highcharts / Recharts' },
+      { name: 'React.js', tier: 'primary', icon: reactjs },
+      { name: 'Next.js', tier: 'primary', icon: nextjs },
+      { name: 'TypeScript', tier: 'primary', icon: typescript },
+      { name: 'Tailwind CSS', icon: tailwind },
+      { name: 'Redux / RTK', icon: redux },
+      { name: 'React Query', icon: reactQuery },
+      { name: 'Highcharts / Recharts', icon: highcharts },
     ],
   },
   {
     category: 'Backend',
     blurb: 'APIs, auth & data',
     skills: [
-      { name: 'Node.js', tier: 'primary' },
-      { name: 'Express.js', tier: 'primary' },
-      { name: 'NestJS' },
-      { name: 'REST APIs' },
-      { name: 'MongoDB' },
-      { name: 'PostgreSQL' },
-      { name: 'Firebase' },
-      { name: 'JWT / OAuth / RBAC' },
+      { name: 'Node.js', tier: 'primary', icon: nodejs },
+      { name: 'Express.js', tier: 'primary', icon: expressjs, iconDark: expressjsDark },
+      { name: 'NestJS', icon: nestjs, iconDark: nestjsDark },
+      { name: 'MongoDB', icon: mongodb },
+      { name: 'PostgreSQL', icon: postgresql },
+      { name: 'Firebase', icon: firebase },
+      { name: 'JWT / OAuth / RBAC', icon: jwt },
     ],
   },
   {
     category: 'DevOps & Craft',
     blurb: 'Ship, observe & optimize',
     skills: [
-      { name: 'Git / GitHub' },
-      { name: 'Docker' },
-      { name: 'CI/CD · Harness' },
-      { name: 'LaunchDarkly' },
-      { name: 'Cloudflare R2 / CDN' },
-      { name: 'Cypress / Storybook' },
-      { name: 'Splunk' },
-      { name: 'Jira / Confluence' },
+      { name: 'Git / GitHub', icon: git },
+      { name: 'Docker', icon: docker },
+      { name: 'CI/CD · Harness', icon: pipeline },
+      { name: 'LaunchDarkly', icon: launchdarkly },
+      { name: 'Cloudflare R2 / CDN', icon: cloudflare },
+      { name: 'Cypress / Storybook', icon: cypress },
+      { name: 'Splunk', icon: splunk },
+      { name: 'Jira / Confluence', icon: jira },
     ],
   },
 ];
@@ -201,7 +254,7 @@ export const journey = [
       'Shipped PDF/Excel reporting — saved 16–20 hrs/week.',
       'Cut initial load time by 38%.',
     ],
-    tech: ['React', 'JavaScript', 'CSS3'],
+    tech: ['React', 'Redux', 'Strapi', 'Prisma', 'PostgreSQL'],
     kind: 'work',
   },
   {
@@ -225,7 +278,7 @@ export const journey = [
       'Owned features end to end — grooming to production monitoring.',
       'Secured apps (JWT/OAuth, Okta, RBAC) and tuned performance.',
     ],
-    tech: ['Next.js', 'Node.js', 'NestJS', 'PostgreSQL', 'Okta', 'LaunchDarkly'],
+    tech: ['Next.js', 'Node.js', 'NestJS', 'PostgreSQL', 'MongoDB', 'Auth'],
     kind: 'work',
     current: true,
   },
@@ -241,31 +294,10 @@ export const journey = [
   },
 ];
 
-// Featured projects — from the strong resume
+// Featured realms — ordered to lead with live, clickable proof, then close on
+// enterprise credibility (Capital Group, NDA). Order here IS the Realm I..IV
+// order rendered in The Realms section.
 const featuredProjects = [
-  {
-    name: 'Advisor Portfolio Snapshot',
-    company: 'Capital Group (USA)',
-    isFeatured: true,
-    description:
-      'Advisor-facing portfolio analysis platform built from scratch with Next.js, Okta authentication, Highcharts data visualization, and enterprise deployment tooling.',
-    tags: [
-      { name: 'next.js', color: 'blue-text-gradient' },
-      { name: 'okta', color: 'green-text-gradient' },
-      { name: 'highcharts', color: 'pink-text-gradient' },
-    ],
-    image: '',
-    source_code_link: '',
-    live_demo_link: '',
-    isNDA: true,
-    highlights: [
-      'Built the frontend application from scratch — system design, reusable UI, route protection, API integration, sprint-wise delivery',
-      'Integrated Okta OAuth with Auth.js and server-side middleware authorization logic',
-      'Built portfolio analysis views with data tables and Highcharts for interactive digital reports',
-      'Integrated LaunchDarkly feature flags, Harness deployments, and Splunk debugging',
-      'Contributed to a Spring Boot backend for server-side PDF report generation',
-    ],
-  },
   {
     name: 'Gajaakriti Studio',
     company: 'Luxury Wedding Photography & Films',
@@ -273,13 +305,13 @@ const featuredProjects = [
     description:
       'Dynamic media-heavy website and admin panel for a premium Ahmedabad-based wedding photography and films studio with optimized media delivery.',
     tags: [
-      { name: 'next.js', color: 'blue-text-gradient' },
-      { name: 'firebase', color: 'green-text-gradient' },
-      { name: 'cloudflare-r2', color: 'pink-text-gradient' },
+      { name: 'next.js' },
+      { name: 'firebase' },
+      { name: 'cloudflare-r2' },
     ],
     image: '',
     source_code_link: '',
-    live_demo_link: '',
+    live_demo_link: 'https://gajaakriti.com/',
     isNDA: false,
     highlights: [
       'Built a modern Next.js website with dynamic landing pages, portfolio, blogs, testimonials, and admin panel',
@@ -295,13 +327,14 @@ const featuredProjects = [
     description:
       'Interactive tile design and ordering tool where users select layouts, tile designs, fills, preview results live, and download order-ready PDF templates.',
     tags: [
-      { name: 'react', color: 'blue-text-gradient' },
-      { name: 'tensorflow.js', color: 'green-text-gradient' },
-      { name: 'svg', color: 'pink-text-gradient' },
+      { name: 'react' },
+      { name: 'tensorflow.js' },
+      { name: 'svg' },
     ],
     image: '',
     source_code_link: '',
-    live_demo_link: '',
+    live_demo_link: 'https://florra.tatkrit.com/login',
+    live_demo_label: 'Visit platform',
     isNDA: false,
     highlights: [
       'Built a custom floor visualization tool with live preview and downloadable PDF templates',
@@ -312,15 +345,42 @@ const featuredProjects = [
     ],
   },
   {
-    name: 'Digital Investor Portfolio',
+    name: 'Advisor Portfolio Snapshot',
     company: 'Capital Group (USA)',
     isFeatured: true,
     description:
+      'Advisor-facing portfolio analysis platform built from scratch with Next.js, Okta authentication, Highcharts data visualization, and enterprise deployment tooling.',
+    tags: [
+      { name: 'next.js' },
+      { name: 'okta' },
+      { name: 'highcharts' },
+    ],
+    image: '',
+    source_code_link: '',
+    live_demo_link: '',
+    isNDA: true,
+    highlights: [
+      'Built the frontend application from scratch — system design, reusable UI, route protection, API integration, sprint-wise delivery',
+      'Integrated Okta OAuth with Auth.js and server-side middleware authorization logic',
+      'Built portfolio analysis views with data tables and Highcharts for interactive digital reports',
+      'Integrated LaunchDarkly feature flags, Harness deployments, and Splunk debugging',
+      'Contributed to a Spring Boot backend for server-side PDF report generation',
+    ],
+  },
+];
+
+// Other projects — real projects from current website
+const otherProjects = [
+  {
+    name: 'Digital Investor Portfolio',
+    company: 'Capital Group (USA)',
+    isFeatured: false,
+    description:
       'Digital investment platform with rich user interactions, analytics tracking, and feature modules across frontend and backend.',
     tags: [
-      { name: 'react', color: 'blue-text-gradient' },
-      { name: 'next.js', color: 'green-text-gradient' },
-      { name: 'node.js', color: 'pink-text-gradient' },
+      { name: 'react' },
+      { name: 'next.js' },
+      { name: 'node.js' },
     ],
     image: '',
     source_code_link: '',
@@ -332,10 +392,6 @@ const featuredProjects = [
       'Implemented React Query for server-state management, reducing redundant API calls',
     ],
   },
-];
-
-// Other projects — real projects from current website
-const otherProjects = [
   {
     name: 'Srifin Credit',
     company: 'Microfinance CRM/ERP',
@@ -343,9 +399,9 @@ const otherProjects = [
     description:
       'Full-stack CRM/ERP for managing financial data, workflows, and identity verification with secure RBAC.',
     tags: [
-      { name: 'next.js', color: 'blue-text-gradient' },
-      { name: 'node.js', color: 'green-text-gradient' },
-      { name: 'rbac', color: 'pink-text-gradient' },
+      { name: 'next.js' },
+      { name: 'node.js' },
+      { name: 'rbac' },
     ],
     image: '',
     source_code_link: '',
@@ -364,9 +420,9 @@ const otherProjects = [
     description:
       'Multi-tenant hotel management platform with role-based operations, eKYC, booking, services, and billing.',
     tags: [
-      { name: 'postgresql', color: 'blue-text-gradient' },
-      { name: 'next.js', color: 'green-text-gradient' },
-      { name: 'multi-tenant', color: 'pink-text-gradient' },
+      { name: 'postgresql' },
+      { name: 'next.js' },
+      { name: 'multi-tenant' },
     ],
     image: '',
     source_code_link: '',
@@ -385,9 +441,9 @@ const otherProjects = [
     description:
       'Context-aware chatbot UI with real-time interactions using WebSocket and comprehensive end-to-end testing.',
     tags: [
-      { name: 'next.js', color: 'blue-text-gradient' },
-      { name: 'websocket', color: 'green-text-gradient' },
-      { name: 'redux', color: 'pink-text-gradient' },
+      { name: 'next.js' },
+      { name: 'websocket' },
+      { name: 'redux' },
     ],
     image: '',
     source_code_link: '',
@@ -406,9 +462,9 @@ const otherProjects = [
     description:
       'Real-money fantasy platform with live match syncing, secure payouts, and admin back-office operations.',
     tags: [
-      { name: 'mongodb', color: 'blue-text-gradient' },
-      { name: 'node.js', color: 'green-text-gradient' },
-      { name: 'express', color: 'pink-text-gradient' },
+      { name: 'mongodb' },
+      { name: 'node.js' },
+      { name: 'express' },
     ],
     image: '',
     source_code_link: '',
@@ -441,4 +497,4 @@ export const education = {
   cgpa: '8.36/10',
 };
 
-export { services, technologies, experiences, projects, featuredProjects, otherProjects };
+export { services, experiences, projects, featuredProjects, otherProjects };

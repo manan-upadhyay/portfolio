@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 
 /**
  * ScrollReveal - Wrapper for scroll-triggered reveal animations
@@ -14,6 +14,10 @@ const ScrollReveal = ({
   once = true,
   threshold = 0.1,
 }) => {
+  // Honor prefers-reduced-motion: reveals collapse to a simple opacity fade
+  // (no transform), per the design system's motion-accessibility rule.
+  const shouldReduce = useReducedMotion();
+
   // Calculate initial position based on direction
   const getInitialPosition = () => {
     switch (direction) {
@@ -50,12 +54,12 @@ const ScrollReveal = ({
   return (
     <motion.div
       className={`will-change-transform ${className}`}
-      initial={getInitialPosition()}
-      whileInView={getFinalPosition()}
+      initial={shouldReduce ? { opacity: 0 } : getInitialPosition()}
+      whileInView={shouldReduce ? { opacity: 1 } : getFinalPosition()}
       viewport={{ once, amount: threshold }}
       transition={{
-        duration,
-        delay,
+        duration: shouldReduce ? 0.3 : duration,
+        delay: shouldReduce ? 0 : delay,
         ease: [0.25, 0.4, 0.25, 1],
       }}
     >

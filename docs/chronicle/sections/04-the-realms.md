@@ -36,7 +36,10 @@ featured realms get full plates; the rest get a compact secondary treatment.
 ## Content (from `constants.projects`)
 Each project: `name`, `company`, `description` (use as premise — keep ~2–3
 lines), `tags`, `highlights` (curate the 2–3 strongest as impact chips — don't
-dump all), `image`, `source_code_link`, `live_demo_link`, `isFeatured`, `isNDA`.
+dump all), `image`, `source_code_link`, `live_demo_link`, `live_demo_label`
+(optional — overrides the default "Enter the realm" CTA, e.g. "Visit platform"
+for a login-gated build), `isFeatured`, `isNDA`. Featured-array order **is** the
+Realm I..N order; lead with live, clickable realms and close on NDA/enterprise.
 Cover art path convention: `public/chronicle/realms/<slug>.webp` (see
 [ASSETS](../ASSETS.md#2-realms-chapter-04-project-cover-art)). Fallback: serif
 monogram (first letter) on a themed gradient + the existing seals.

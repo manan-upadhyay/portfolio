@@ -1,9 +1,10 @@
 import { useEffect, useRef } from 'react';
 
 /**
- * Custom cursor: a crisp dot that tracks 1:1, a soft trailing ring, and a
- * large blurred backlight. Grows over interactive elements. Pure DOM + rAF —
- * no React re-renders. Auto-disabled on touch / reduced-motion (via CSS + guard).
+ * Custom cursor: crisp dot (1:1), trailing ring (grows over interactive
+ * elements), and a soft backlight. Pure DOM + rAF. Auto-disabled on touch /
+ * reduced-motion. Robust show/hide: any pointer movement re-reveals it, so it
+ * can never get "stuck" hidden (e.g. after a pointer-capture from a tap).
  */
 const Cursor = () => {
   const dotRef = useRef(null);
@@ -11,66 +12,58 @@ const Cursor = () => {
   const glowRef = useRef(null);
 
   useEffect(() => {
-    const noHover = window.matchMedia('(hover: none)').matches;
+    if (window.matchMedia('(hover: none)').matches) return;
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (noHover) return;
-
     document.documentElement.classList.add('has-custom-cursor');
 
     const dot = dotRef.current;
     const ring = ringRef.current;
     const glow = glowRef.current;
+    const els = [dot, ring, glow];
 
-    let mx = window.innerWidth / 2;
-    let my = window.innerHeight / 2;
-    let rx = mx;
-    let ry = my;
-    let gx = mx;
-    let gy = my;
+    let mx = innerWidth / 2, my = innerHeight / 2;
+    let rx = mx, ry = my, gx = mx, gy = my;
+    let visible = false;
     let raf;
-    let shown = false;
+
+    const show = () => { if (!visible) { visible = true; els.forEach((e) => e && (e.style.opacity = '1')); } };
+    const hide = () => { visible = false; els.forEach((e) => e && (e.style.opacity = '0')); };
 
     const onMove = (e) => {
-      mx = e.clientX;
-      my = e.clientY;
-      if (!shown) {
-        shown = true;
-        [dot, ring, glow].forEach((el) => el && (el.style.opacity = '1'));
-      }
+      mx = e.clientX; my = e.clientY;
+      show();
       if (reduce) {
-        dot.style.transform = `translate(${mx}px, ${my}px) translate(-50%, -50%)`;
-        glow.style.transform = `translate(${mx}px, ${my}px) translate(-50%, -50%)`;
+        dot.style.transform = `translate(${mx}px,${my}px) translate(-50%,-50%)`;
+        glow.style.transform = `translate(${mx}px,${my}px) translate(-50%,-50%)`;
       }
     };
 
     const onOver = (e) => {
-      const interactive = e.target.closest('a, button, [data-cursor="hover"], input, textarea, label');
-      ring.style.setProperty('--scale', interactive ? '1.8' : '1');
-      ring.style.borderColor = interactive
-        ? 'var(--color-ember)'
-        : 'color-mix(in srgb, var(--color-text) 45%, transparent)';
+      const interactive = e.target.closest?.('a, button, [data-cursor="hover"], input, textarea, label, kbd');
+      ring.style.setProperty('--scale', interactive ? '1.7' : '1');
+      ring.style.borderColor = interactive ? 'var(--color-ember)' : 'color-mix(in srgb, var(--color-text) 45%, transparent)';
     };
-
-    const onDown = () => ring.style.setProperty('--press', '0.8');
+    const onDown = () => ring.style.setProperty('--press', '0.82');
     const onUp = () => ring.style.setProperty('--press', '1');
-    const onLeave = () => [dot, ring, glow].forEach((el) => el && (el.style.opacity = '0'));
+    // Only hide when the pointer truly leaves the window (not on capture quirks).
+    const onOut = (e) => { if (!e.relatedTarget && !e.toElement) hide(); };
+    const onBlur = () => hide();
 
     const loop = () => {
-      rx += (mx - rx) * 0.18;
-      ry += (my - ry) * 0.18;
-      gx += (mx - gx) * 0.08;
-      gy += (my - gy) * 0.08;
-      if (!reduce) dot.style.transform = `translate(${mx}px, ${my}px) translate(-50%, -50%)`;
-      ring.style.transform = `translate(${rx}px, ${ry}px) translate(-50%, -50%) scale(calc(var(--scale,1) * var(--press,1)))`;
-      glow.style.transform = `translate(${gx}px, ${gy}px) translate(-50%, -50%)`;
+      rx += (mx - rx) * 0.2; ry += (my - ry) * 0.2;
+      gx += (mx - gx) * 0.08; gy += (my - gy) * 0.08;
+      if (!reduce) dot.style.transform = `translate(${mx}px,${my}px) translate(-50%,-50%)`;
+      ring.style.transform = `translate(${rx}px,${ry}px) translate(-50%,-50%) scale(calc(var(--scale,1) * var(--press,1)))`;
+      glow.style.transform = `translate(${gx}px,${gy}px) translate(-50%,-50%)`;
       raf = requestAnimationFrame(loop);
     };
 
-    window.addEventListener('pointermove', onMove);
-    window.addEventListener('pointerover', onOver);
-    window.addEventListener('pointerdown', onDown);
-    window.addEventListener('pointerup', onUp);
-    document.addEventListener('mouseleave', onLeave);
+    window.addEventListener('pointermove', onMove, { passive: true });
+    window.addEventListener('pointerover', onOver, { passive: true });
+    window.addEventListener('pointerdown', onDown, { passive: true });
+    window.addEventListener('pointerup', onUp, { passive: true });
+    document.addEventListener('mouseout', onOut);
+    window.addEventListener('blur', onBlur);
     raf = requestAnimationFrame(loop);
 
     return () => {
@@ -80,7 +73,8 @@ const Cursor = () => {
       window.removeEventListener('pointerover', onOver);
       window.removeEventListener('pointerdown', onDown);
       window.removeEventListener('pointerup', onUp);
-      document.removeEventListener('mouseleave', onLeave);
+      document.removeEventListener('mouseout', onOut);
+      window.removeEventListener('blur', onBlur);
     };
   }, []);
 

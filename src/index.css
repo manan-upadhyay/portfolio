@@ -20,6 +20,14 @@
   --color-card-border: rgba(120, 95, 60, 0.18);
   --color-glow: #6366F1;
 
+  /* CTA surface — inverts per theme for a single high-contrast button language */
+  --btn-bg: #1F1B16;
+  --btn-fg: #F5F0E6;
+
+  /* Feedback — AA-legible on the light parchment */
+  --color-success: #15803D;
+  --color-error: #DC2626;
+
   /* Chronicle palette */
   --color-ember: #D9772E;
   --color-ember-rgb: 217, 119, 46;
@@ -54,6 +62,14 @@
   --color-card-bg: rgba(20, 27, 44, 0.8);
   --color-card-border: rgba(129, 140, 248, 0.15);
   --color-glow: #818CF8;
+
+  /* CTA surface — light pill on dark ground (inverse of light theme) */
+  --btn-bg: #ECE7DB;
+  --btn-fg: #0B0F1A;
+
+  /* Feedback — brighter on the dark ground */
+  --color-success: #4ADE80;
+  --color-error: #F87171;
 
   /* Chronicle palette */
   --color-ember: #E8965A;
@@ -300,40 +316,101 @@ h1, h2, h3, h4, h5, h6 {
   text-shadow: 0 0 20px var(--color-glow);
 }
 
-/* ===== Button Styles ===== */
+/* ===== Buttons — single source of truth for every CTA (light + dark) ===== */
+/* Primary: a high-contrast "ink" pill that inverts per theme, with an ember
+   sheen sweep + ember glow on hover. Jelly easing (back-out overshoot). */
 .btn-primary {
-  background: var(--gradient-accent);
-  color: #ffffff;
-  padding: 12px 32px;
-  border-radius: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: var(--btn-bg);
+  color: var(--btn-fg);
+  padding: 13px 28px;
+  border-radius: 999px;
   font-weight: 600;
+  font-size: 14px;
+  letter-spacing: 0.01em;
   font-family: "Inter", sans-serif;
-  transition: all 0.3s ease;
   border: none;
   cursor: pointer;
   position: relative;
   overflow: hidden;
+  box-shadow: 0 2px 12px -4px rgba(0, 0, 0, 0.25);
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
+              box-shadow 0.35s ease;
 }
 
 .btn-primary::before {
   content: '';
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, transparent 100%);
-  opacity: 0;
-  transition: opacity 0.3s ease;
+  inset: 0;
+  background: linear-gradient(120deg, transparent 35%, rgba(var(--color-ember-rgb), 0.28) 50%, transparent 65%);
+  transform: translateX(-130%);
+  transition: transform 0.65s ease;
 }
 
-.btn-primary:hover::before {
-  opacity: 1;
-}
+.btn-primary:hover::before { transform: translateX(130%); }
 
 .btn-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-glow);
+  transform: translateY(-3px) scale(1.035);
+  box-shadow: 0 14px 32px -10px rgba(var(--color-ember-rgb), 0.55);
+}
+
+.btn-primary:active { transform: translateY(-1px) scale(0.99); }
+
+/* Secondary: ghost pill, ember on hover — same jelly easing. */
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 24px;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--color-text);
+  background: transparent;
+  border: 1px solid var(--color-card-border);
+  cursor: pointer;
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
+              border-color 0.3s ease, background 0.3s ease, color 0.3s ease;
+}
+
+.btn-secondary:hover {
+  transform: translateY(-3px) scale(1.035);
+  border-color: rgba(var(--color-ember-rgb), 0.5);
+  background: rgba(var(--color-ember-rgb), 0.07);
+  color: var(--color-ember);
+}
+
+.btn-secondary:active { transform: translateY(-1px) scale(0.99); }
+
+/* ===== Volume slider (music player) ===== */
+.vol-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 4px;
+  border-radius: 999px;
+  background: rgba(var(--color-ember-rgb), 0.25);
+  outline: none;
+  cursor: pointer;
+}
+.vol-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--color-ember);
+  box-shadow: 0 0 8px rgba(var(--color-ember-rgb), 0.5);
+}
+.vol-slider::-moz-range-thumb {
+  width: 12px;
+  height: 12px;
+  border: none;
+  border-radius: 50%;
+  background: var(--color-ember);
 }
 
 /* ===== Canvas Loader ===== */
@@ -437,13 +514,32 @@ h1, h2, h3, h4, h5, h6 {
   100% { transform: translateY(48px); }
 }
 
+/* ===== Music equalizer ===== */
+@keyframes eqbar {
+  0%, 100% { height: 4px; }
+  50% { height: 15px; }
+}
+
 /* ===== Arsenal orbital nodes ===== */
 @keyframes nodefloat {
   0% { transform: translateY(-6px); }
   100% { transform: translateY(6px); }
 }
+/* Solar-system revolution: rings rotate; nodes counter-rotate to stay upright */
+@keyframes orbit-cw {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+@keyframes orbit-ccw {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(-360deg); }
+}
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
 @media (prefers-reduced-motion: reduce) {
-  [style*="nodefloat"] { animation: none !important; }
+  [style*="nodefloat"], [style*="orbit-cw"], [style*="orbit-ccw"], [style*="spin-slow"] { animation: none !important; }
 }
 
 /* ===== Journey waypoints ===== */
@@ -716,6 +812,33 @@ h1, h2, h3, h4, h5, h6 {
   background: rgba(var(--color-ember-rgb), 0.12);
   color: var(--color-ember);
   border: 1px solid rgba(var(--color-ember-rgb), 0.4);
+}
+
+/* ===== Chronicle: tag runes (tech-stack chips) ===== */
+/* On-theme ember chips — never the generic UI accent (which is indigo). */
+.tag-rune {
+  display: inline-flex;
+  align-items: center;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1;
+  padding: 5px 11px;
+  border-radius: 8px;
+  background: rgba(var(--color-ember-rgb), 0.10);
+  color: var(--color-ember);
+  border: 1px solid rgba(var(--color-ember-rgb), 0.22);
+  transition: background 0.25s ease, border-color 0.25s ease;
+}
+
+.tag-rune:hover {
+  background: rgba(var(--color-ember-rgb), 0.16);
+  border-color: rgba(var(--color-ember-rgb), 0.42);
+}
+
+.tag-rune--sm {
+  font-size: 11px;
+  padding: 4px 9px;
 }
 
 /* ===== Chronicle: Custom cursor (dot + ring + backlight) ===== */

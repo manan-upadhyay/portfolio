@@ -1,23 +1,17 @@
 import { motion } from 'framer-motion';
 import { LayoutPanelTop, Server, Gauge, Layers, ScrollText } from 'lucide-react';
-import { services, personalInfo, stats } from '../constants';
+import { services, stats, craft, chapters } from '../constants';
 import { SectionWrapper } from '../hoc';
 import { ScrollReveal, ChapterHeading, CountUp } from './ui';
 
-// Discipline → line icon (replaces the old gem PNGs)
+// Discipline → line icon, keyed by stable `iconKey` from constants
+// (replaces the old gem PNGs; not the title, so copy can change freely).
 const DISCIPLINE_ICONS = {
-  'Frontend Architecture': LayoutPanelTop,
-  'Backend Development': Server,
-  'Performance Optimization': Gauge,
-  'Full Stack Delivery': Layers,
+  frontend: LayoutPanelTop,
+  backend: Server,
+  performance: Gauge,
+  fullstack: Layers,
 };
-
-const PRINCIPLES = [
-  ['End-to-end ownership', 'From requirement grooming and system design to release validation and production monitoring.'],
-  ['Performance as a habit', 'Code-splitting, caching, CDN, and media optimization — measured, not guessed.'],
-  ['Secure by default', 'JWT/OAuth, Okta, RBAC and middleware access control across enterprise apps.'],
-  ['A mentor on the road', 'Code reviews, reusable patterns, and debugging support for the next builders.'],
-];
 
 const StatTile = ({ value, label }) => (
   <motion.div
@@ -32,8 +26,8 @@ const StatTile = ({ value, label }) => (
   </motion.div>
 );
 
-const DisciplineCard = ({ index, title, description }) => {
-  const Icon = DISCIPLINE_ICONS[title] || Layers;
+const DisciplineCard = ({ index, iconKey, title, description }) => {
+  const Icon = DISCIPLINE_ICONS[iconKey] || Layers;
   return (
     <ScrollReveal direction="up" delay={index * 0.1} className="w-full">
       <motion.div
@@ -60,46 +54,51 @@ const DisciplineCard = ({ index, title, description }) => {
 };
 
 const About = () => {
+  const ch = chapters.about;
   return (
     <>
-      <ChapterHeading no="01" eyebrow="The Craft" title="Origin." />
+      <ChapterHeading no={ch.no} eyebrow={ch.label} title={`${ch.sub}.`} />
 
-      <div className="flex flex-col lg:flex-row gap-12 mt-10 items-start">
-        {/* Left — the tale */}
-        <ScrollReveal direction="up" delay={0.15} className="flex-1">
-          <p className="font-chronicle italic text-[22px] leading-[32px] mb-5" style={{ color: 'var(--color-ember)' }}>
-            “Every realm below began as an empty repository and a blinking cursor.”
+      {/* Intro — the tale (left) + the scribe's note (right) */}
+      <div className="grid lg:grid-cols-[1.25fr_1fr] gap-10 lg:gap-12 mt-12 items-start">
+        <ScrollReveal direction="up" delay={0.15}>
+          <p className="font-chronicle italic text-[clamp(20px,2.4vw,26px)] leading-[1.45] mb-6" style={{ color: 'var(--color-ember)' }}>
+            {craft.pullQuote}
           </p>
-          <p className="text-[17px] leading-[30px]" style={{ color: 'var(--color-text-muted)' }}>
-            {personalInfo.bio}
-          </p>
-
-          <div className="grid grid-cols-2 gap-4 mt-8">
-            {stats.map((stat) => (
-              <StatTile key={stat.label} value={stat.value} label={stat.label} />
-            ))}
-          </div>
+          {craft.intro.map((para) => (
+            <p key={para.slice(0, 24)} className="text-[17px] leading-[30px] mb-4 last:mb-0" style={{ color: 'var(--color-text-muted)' }}>
+              {para}
+            </p>
+          ))}
         </ScrollReveal>
 
-        {/* Right — scribe's note */}
-        <ScrollReveal direction="left" delay={0.3} className="flex-1 w-full">
+        <ScrollReveal direction="left" delay={0.3} className="w-full">
           <div className="realm-card p-8">
             <span className="chapter-eyebrow inline-flex items-center gap-2">
               <ScrollText size={14} style={{ color: 'var(--color-ember)' }} /> The Scribe's Note
             </span>
             <ul className="mt-6 space-y-5">
-              {PRINCIPLES.map(([title, desc]) => (
+              {craft.principles.map(({ title, body }) => (
                 <li key={title} className="flex gap-3">
                   <span className="mt-2 w-2 h-2 rounded-full flex-shrink-0" style={{ background: 'var(--color-ember)', boxShadow: '0 0 10px var(--color-ember)' }} />
                   <span>
                     <span className="font-semibold" style={{ color: 'var(--color-text)' }}>{title}.</span>{' '}
-                    <span className="text-[14px] leading-[22px]" style={{ color: 'var(--color-text-muted)' }}>{desc}</span>
+                    <span className="text-[14px] leading-[22px]" style={{ color: 'var(--color-text-muted)' }}>{body}</span>
                   </span>
                 </li>
               ))}
             </ul>
           </div>
         </ScrollReveal>
+      </div>
+
+      {/* Proof — full-width stat band (anchors the section, no dead space) */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 mt-12">
+        {stats.map((stat, index) => (
+          <ScrollReveal key={stat.label} direction="up" delay={index * 0.08}>
+            <StatTile value={stat.value} label={stat.label} />
+          </ScrollReveal>
+        ))}
       </div>
 
       {/* Disciplines */}
@@ -112,7 +111,7 @@ const About = () => {
         </div>
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {services.map((service, index) => (
-            <DisciplineCard key={service.title} index={index} title={service.title} description={service.description} />
+            <DisciplineCard key={service.title} index={index} iconKey={service.iconKey} title={service.title} description={service.description} />
           ))}
         </div>
       </div>

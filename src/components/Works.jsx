@@ -31,7 +31,7 @@ const Cover = ({ project, parallaxRef }) => {
   }, [project.name]);
 
   return (
-    <div className="group relative w-full overflow-hidden rounded-3xl realm-card" style={{ aspectRatio: '4 / 3' }} data-cursor="hover">
+    <div className="group relative w-full h-full min-h-[320px] lg:min-h-[440px] overflow-hidden rounded-3xl realm-card" data-cursor="hover">
       <div ref={parallaxRef} className="absolute inset-0 will-change-transform" style={{ top: '-8%', bottom: '-8%', height: '116%' }}>
         {hasArt ? (
           <img src={coverSrc(project.name)} alt={project.name}
@@ -77,14 +77,14 @@ const RealmPlate = ({ project, index }) => {
   const links = [project.live_demo_link, project.source_code_link].filter(Boolean);
 
   return (
-    <div ref={rootRef} className="grid lg:grid-cols-2 gap-8 lg:gap-14 items-center min-h-[60vh] py-10">
+    <div ref={rootRef} className="grid lg:grid-cols-2 gap-8 lg:gap-14 items-stretch min-h-[60vh] py-10">
       {/* cover */}
-      <ScrollReveal direction={flip ? 'left' : 'right'} className={flip ? 'lg:order-2' : ''}>
+      <ScrollReveal direction={flip ? 'left' : 'right'} className={`h-full ${flip ? 'lg:order-2' : ''}`}>
         <Cover project={project} parallaxRef={parallaxRef} />
       </ScrollReveal>
 
       {/* detail */}
-      <ScrollReveal direction="up" delay={0.1} className={flip ? 'lg:order-1' : ''}>
+      <ScrollReveal direction="up" delay={0.1} className={`lg:self-center ${flip ? 'lg:order-1' : ''}`}>
         <p className="chapter-eyebrow mb-4">Realm {ROMAN[index]} · {project.company}</p>
         <h3 className="font-chronicle font-semibold leading-[0.95] text-[clamp(34px,4.5vw,56px)]" style={{ color: 'var(--color-text)' }}>
           {project.name}
@@ -106,33 +106,36 @@ const RealmPlate = ({ project, index }) => {
 
         <div className="mt-6 flex flex-wrap gap-2">
           {project.tags.map((t) => (
-            <span key={t.name} className="text-[12px] px-2.5 py-1 rounded-md font-medium"
-              style={{ background: 'rgba(var(--color-accent-rgb),0.08)', color: 'var(--color-accent)' }}>#{t.name}</span>
+            <span key={t.name} className="tag-rune">#{t.name}</span>
           ))}
         </div>
 
-        <div className="mt-7 flex items-center gap-5">
-          {links.length > 0 ? (
-            <>
-              {project.live_demo_link && (
-                <Magnet strength={0.25}>
-                  <a href={project.live_demo_link} target="_blank" rel="noopener noreferrer" data-cursor="hover"
-                    className="btn-primary inline-flex items-center gap-2">Enter the realm <ArrowUpRight size={16} /></a>
-                </Magnet>
-              )}
-              {project.source_code_link && (
-                <a href={project.source_code_link} target="_blank" rel="noopener noreferrer" data-cursor="hover"
-                  className="inline-flex items-center gap-2 text-[14px] font-medium link-hover" style={{ color: 'var(--color-text)' }}>
-                  <Github size={16} /> Source
-                </a>
-              )}
-            </>
-          ) : (
-            <span className="inline-flex items-center gap-2 text-[13px]" style={{ color: 'var(--color-text-muted)' }}>
-              <Lock size={13} style={{ color: 'var(--color-ember)' }} /> Sealed under NDA — details limited to what's permissible.
-            </span>
-          )}
-        </div>
+        {(links.length > 0 || project.isNDA) && (
+          <div className="mt-7 flex items-center gap-5">
+            {links.length > 0 ? (
+              <>
+                {project.live_demo_link && (
+                  <Magnet strength={0.25}>
+                    <a href={project.live_demo_link} target="_blank" rel="noopener noreferrer" data-cursor="hover"
+                      className="btn-primary">
+                      {project.live_demo_label || 'Enter the realm'} <ArrowUpRight size={16} />
+                    </a>
+                  </Magnet>
+                )}
+                {project.source_code_link && (
+                  <a href={project.source_code_link} target="_blank" rel="noopener noreferrer" data-cursor="hover"
+                    className="btn-secondary">
+                    <Github size={16} /> Source
+                  </a>
+                )}
+              </>
+            ) : (
+              <span className="inline-flex items-center gap-2 text-[13px]" style={{ color: 'var(--color-text-muted)' }}>
+                <Lock size={13} style={{ color: 'var(--color-ember)' }} /> Sealed under NDA — details limited to what's permissible.
+              </span>
+            )}
+          </div>
+        )}
       </ScrollReveal>
     </div>
   );
@@ -152,8 +155,7 @@ const RealmCard = ({ project }) => (
       <p className="mt-3 text-[13.5px] leading-[21px] flex-1" style={{ color: 'var(--color-text-muted)' }}>{project.description}</p>
       <div className="mt-4 pt-4 flex flex-wrap gap-2 border-t" style={{ borderColor: 'var(--color-card-border)' }}>
         {project.tags.map((t) => (
-          <span key={t.name} className="text-[11.5px] px-2 py-0.5 rounded-md font-medium"
-            style={{ background: 'rgba(var(--color-accent-rgb),0.08)', color: 'var(--color-accent)' }}>#{t.name}</span>
+          <span key={t.name} className="tag-rune tag-rune--sm">#{t.name}</span>
         ))}
       </div>
     </div>

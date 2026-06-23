@@ -72,8 +72,7 @@ export default defineConfig(({ mode }) => {
           },
         },
       },
-      // Increase chunk size warning (Three.js is large)
-      chunkSizeWarningLimit: 1000,
+      chunkSizeWarningLimit: 600,
       // Minification using esbuild (built-in, faster than terser)
       minify: 'esbuild',
       // Source maps for production debugging

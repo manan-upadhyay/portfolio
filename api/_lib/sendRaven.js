@@ -6,6 +6,9 @@ import { Resend } from 'resend';
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+// Server-side length caps — reject oversized payloads (abuse / accidental dumps).
+const MAX = { name: 120, email: 200, message: 5000, inquiry: 60 };
+
 // Escape user input before it lands in the email HTML.
 const esc = (s = '') =>
   String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -41,13 +44,21 @@ const emailHtml = ({ name, email, message, inquiry }) => `
 /**
  * @returns {{ ok: true, id?: string } | { ok: false, code: 'NOT_CONFIGURED'|'INVALID'|'SEND_FAILED' }}
  */
-export async function sendRaven({ name, email, message, inquiry } = {}) {
+export async function sendRaven({ name, email, message, inquiry, company } = {}) {
+  // Honeypot: `company` is a hidden field no human fills. If present, a bot
+  // submitted — return success so it moves on, but send nothing.
+  if (company) return { ok: true };
+
   const apiKey = process.env.RESEND_API_KEY;
   // Missing or still the placeholder from .env.example → not wired up yet.
   if (!apiKey || apiKey === 're_xxxxxxxxx') return { ok: false, code: 'NOT_CONFIGURED' };
 
-  // Never trust the client — validate server-side too.
+  // Never trust the client — validate server-side too (presence, email shape, size).
   if (!name || !email || !message || !EMAIL_RE.test(email)) return { ok: false, code: 'INVALID' };
+  if (name.length > MAX.name || email.length > MAX.email || message.length > MAX.message ||
+      (inquiry && inquiry.length > MAX.inquiry)) {
+    return { ok: false, code: 'INVALID' };
+  }
 
   const resend = new Resend(apiKey);
   const to = process.env.RESEND_TO || 'upadhyaymanan01@gmail.com';

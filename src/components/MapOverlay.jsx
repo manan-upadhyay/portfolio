@@ -48,9 +48,9 @@ const MapOverlay = ({ open, onClose, activeId }) => {
   }, [open, onClose]);
 
   const actions = [
-    { id: 'resume', label: 'Read the Scroll (Resume)', icon: FileText, run: () => window.open(personalInfo.resumeLink, '_blank') },
-    { id: 'github', label: 'GitHub', icon: Github, run: () => window.open(personalInfo.github, '_blank') },
-    { id: 'linkedin', label: 'LinkedIn', icon: Linkedin, run: () => window.open(personalInfo.linkedin, '_blank') },
+    { id: 'resume', label: 'Read the Scroll (Resume)', icon: FileText, run: () => window.open(personalInfo.resumeLink, '_blank', 'noopener,noreferrer') },
+    { id: 'github', label: 'GitHub', icon: Github, run: () => window.open(personalInfo.github, '_blank', 'noopener,noreferrer') },
+    { id: 'linkedin', label: 'LinkedIn', icon: Linkedin, run: () => window.open(personalInfo.linkedin, '_blank', 'noopener,noreferrer') },
     { id: 'theme', label: isDark ? 'Light the dawn' : 'Fall to night', icon: isDark ? Sun : Moon, run: toggleTheme },
   ];
 

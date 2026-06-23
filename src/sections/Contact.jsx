@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { Mail, Linkedin, Github, MapPin, ArrowUpRight, Send, Loader2, Check, Download, Copy, Feather } from 'lucide-react';
 import { SectionWrapper } from '../hoc';
@@ -60,8 +60,9 @@ const CopyButton = ({ text }) => {
   );
 };
 
-/* Slowly-rotating compass rose — replaces the old 3D globe (no WebGL) */
-const CompassRose = () => {
+/* Slowly-rotating contact compass — the section's own larger instrument (distinct
+   from the shared `components/CompassRose` sigil). Replaces the old 3D globe. */
+const ContactCompass = () => {
   const reduce = useReducedMotion();
   return (
     <div className="relative grid place-items-center" style={{ width: 132, height: 132 }} aria-hidden="true">
@@ -87,6 +88,7 @@ const CompassRose = () => {
 const Contact = () => {
   const [form, setForm] = useState({ name: '', email: '', message: '' });
   const [inquiry, setInquiry] = useState(summon.inquiries[0]);
+  const honeypotRef = useRef(null); // bot trap — humans never fill this
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState('');
@@ -115,6 +117,7 @@ const Contact = () => {
           email: form.email,
           message: form.message,
           inquiry,
+          company: honeypotRef.current?.value || '',
         }),
       });
       const data = await res.json().catch(() => ({}));
@@ -174,6 +177,16 @@ const Contact = () => {
           </div>
 
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+            {/* Honeypot — visually hidden, off the tab order; a filled value = bot. */}
+            <input
+              ref={honeypotRef}
+              type="text"
+              name="company"
+              tabIndex={-1}
+              autoComplete="off"
+              aria-hidden="true"
+              style={{ position: 'absolute', left: '-9999px', width: 1, height: 1, opacity: 0 }}
+            />
             <div className="grid sm:grid-cols-2 gap-4">
               <input name="name" value={form.name} onChange={handleChange} placeholder={summon.placeholders.name}
                 className={inputCls} style={inputStyle} aria-label="Your name" aria-required="true" />
@@ -209,7 +222,7 @@ const Contact = () => {
         <ScrollReveal direction="up" delay={0.1} className="realm-card p-7 sm:p-9 flex flex-col min-w-0">
           <div className="flex items-start justify-between">
             <span className="chapter-eyebrow">Correspondence</span>
-            <CompassRose />
+            <ContactCompass />
           </div>
 
           <div className="mt-2 flex flex-col divide-y" style={{ borderColor: 'var(--color-card-border)' }}>

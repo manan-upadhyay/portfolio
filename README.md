@@ -1,160 +1,68 @@
-# Manan Upadhyay - 3D Portfolio
+# The Chronicle — Manan Upadhyay Portfolio
 
-A stunning, interactive 3D portfolio website showcasing 4+ years of Full Stack Development experience. Built with React, Three.js, and Framer Motion.
+A cinematic, scroll-directed portfolio for **Manan Upadhyay** (Full-Stack
+Developer, 5+ yrs). Not a template or a résumé dump — an interactive story told as
+a cartographer's journey through *chapters*, with projects charted as *realms* on
+an interactive map.
 
-![Portfolio Preview](./docs/assets/preview.png)
+**Live:** [upadhyaymanan.in](https://upadhyaymanan.in)
 
-## ✨ Features
+## Highlights
 
-- **🎨 Dual Theme System** - Morning (sunrise gradients) and Night (aurora/starry) themes with system preference detection
-- **🌐 3D Interactive Elements** - Rotating computer model, 3D tech balls, Earth globe
-- **⚡ Animated UI** - Typing animations, floating orbs, skill bars, glassmorphism cards
-- **📱 Responsive Design** - Optimized for all devices with mobile-specific 3D simplifications
-- **📧 Contact Form** - EmailJS integration for instant messaging
-- **🔗 Social Integration** - LinkedIn, GitHub, Email links
+- **Cinematic hero** — a pure-CSS starfield (no image) with a hand-built **Canvas2D
+  astrolabe** that assembles on load and tracks the cursor.
+- **Day / night theming** — "starlit realm" (dark) and "dawn over the realm"
+  (light), all color via CSS variables, with a View-Transition radial reveal.
+- **Scroll choreography** — GSAP + ScrollTrigger over Lenis smooth scroll: a pinned
+  horizontal experience timeline, an orbital skill field, editorial project plates.
+- **⌘K map overlay** — fuzzy-searchable navigation across chapters and links.
+- **Server-side contact** — the "Summon" form posts to a **Resend**-backed endpoint;
+  the API key never reaches the client.
+- **Accessible & resilient** — honors `prefers-reduced-motion` and coarse pointers;
+  every section is lazy-loaded behind an `ErrorBoundary`.
 
-## 🚀 Quick Start
+## Tech stack
 
-```bash
-# Clone the repository
-git clone https://github.com/manan-upadhyay/3d-portfolio.git
-cd 3d-portfolio
+React 18 · Vite 4 · Tailwind (layout) + CSS variables (theme) · Framer Motion ·
+GSAP/ScrollTrigger · Lenis · Zustand · lucide-react · Resend · Vercel Analytics.
+**No WebGL/Three.js.** Node 24 (pinned via `engines` + `.nvmrc`).
 
-# Install dependencies
-npm install
-
-# Set up environment variables
-cp .env.example .env
-# Edit .env with your EmailJS credentials
-
-# Start development server
-npm run dev
-
-# Build for production
-npm run build
-```
-
-## 🛠️ Tech Stack
-
-| Category | Technologies |
-|----------|-------------|
-| **Frontend** | React 18, Vite, Tailwind CSS |
-| **3D Graphics** | Three.js, React Three Fiber, React Three Drei |
-| **Animations** | Framer Motion |
-| **State Management** | Zustand |
-| **Styling** | CSS Variables, Glassmorphism |
-| **Email** | EmailJS |
-
-## 📁 Project Structure
+## Project structure
 
 ```
 src/
-├── assets/           # Images, icons, 3D models
-├── components/
-│   ├── canvas/       # 3D components (Computers, Ball, Earth, Stars)
-│   ├── Hero.jsx      # Hero section with typing animation
-│   ├── About.jsx     # About with skill bars
-│   ├── Experience.jsx# Work timeline
-│   ├── Tech.jsx      # Technologies grid
-│   ├── Works.jsx     # Projects showcase
-│   ├── Contact.jsx   # Contact form
-│   ├── Navbar.jsx    # Navigation with theme toggle
-│   └── ThemeToggle.jsx # Sun/moon theme switcher
-├── constants/        # Data (experience, projects, skills)
-├── hoc/              # Higher-order components
-├── store/            # Zustand stores
-├── utils/            # Animation utilities
-└── styles/           # Global styles
+  sections/     Hero, About, Experience, Tech, Works, Contact (the chapters)
+  components/   reusable widgets (SideRail, MapOverlay, Cursor, CompassRose, …)
+  hoc/ hooks/ lib/ store/ constants/ assets/   index.css (theme tokens)
+api/            Resend serverless function + shared sender lib
+public/         production assets only (favicons, og-image, logos, realms/…)
+branding/       brand source/archive — NOT deployed
+tools/          og-image generation template
+docs/chronicle/ source-of-truth design system, architecture & section specs
 ```
 
-## 🎨 Customization
+> Read [`CLAUDE.md`](./CLAUDE.md) first, then [`docs/chronicle/`](./docs/chronicle/).
+> A full code/architecture audit lives in [`docs/AUDIT.md`](./docs/AUDIT.md).
 
-### Personal Information
-
-Edit `src/constants/index.js`:
-
-- `personalInfo` - Name, email, LinkedIn, GitHub
-- `experiences` - Work history
-- `projects` - Portfolio projects
-- `skillCategories` - Skills with proficiency levels
-
-### Theme Colors
-
-Edit `src/index.css`:
-
-- `:root` - Light/morning theme variables
-- `.dark` - Dark/night theme variables
-
-### 3D Models
-
-Replace models in `public/`:
-
-- `desktop_pc/` - Computer model
-- `planet/` - Earth model
-
-## 📋 Environment Variables
-
-```env
-VITE_APP_EMAILJS_SERVICE_ID=your_service_id
-VITE_APP_EMAILJS_TEMPLATE_ID=your_template_id
-VITE_APP_EMAILJS_PUBLIC_KEY=your_public_key
-```
-
-## 🧪 Development
+## Commands
 
 ```bash
-# Start dev server
-npm run dev
-
-# Run linting
-npm run lint
-
-# Build for production
-npm run build
-
-# Preview production build
-npm run preview
+npm run dev      # vite dev server (contact form works via dev middleware)
+npm run build    # production build (must stay clean)
+npm run preview  # preview the production build
+npm run lint     # eslint (must stay green)
 ```
 
-## 📦 Deployment
+## Contact form (Resend) setup
 
-### Vercel (Recommended)
+The "Summon" form needs server-side env vars (never exposed to the browser — no
+`VITE_` prefix). Copy `.env.example` → `.env` and set:
 
-```bash
-npm i -g vercel
-vercel
+```
+RESEND_API_KEY=...                 # https://resend.com/api-keys
+RESEND_TO="you@example.com"        # inbox that receives submissions
+RESEND_FROM="Name <hi@domain.com>" # verified sender (onboarding@resend.dev for tests)
 ```
 
-### Netlify
-
-```bash
-npm run build
-# Upload dist/ folder to Netlify
-```
-
-### GitHub Pages
-
-```bash
-npm run build
-# Push dist/ to gh-pages branch
-```
-
-## 📚 Documentation
-
-- [Architecture Overview](./docs/ARCHITECTURE.md)
-- [Contributing Guide](./docs/CONTRIBUTING.md)
-- [Component Documentation](./docs/COMPONENTS.md)
-- [Future Roadmap](./docs/ROADMAP.md)
-- [AI Development Guide](./docs/AI_DEVELOPMENT.md)
-
-## 📄 License
-
-MIT License - feel free to use this as a template for your own portfolio!
-
-## 👤 Author
-
-**Manan Upadhyay**
-
-- LinkedIn: [manan-upadhyay](https://www.linkedin.com/in/manan-upadhyay)
-- GitHub: [@manan-upadhyay](https://github.com/manan-upadhyay)
-- Email: <upadhyaymanan01@gmail.com>
+Locally, `npm run dev` serves `POST /api/send-raven` via a Vite middleware that
+runs the same handler Vercel uses in production.

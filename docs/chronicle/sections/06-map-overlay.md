@@ -1,7 +1,8 @@
 # Section 06 — The Map (interactive overlay)
 
-**Component:** new `src/components/ui/MapOverlay.jsx` (replaces the list-style
-`CommandPalette` UI) · **Trigger:** ⌘K / Navbar "Map" button · **Status:** build.
+**Component:** `src/components/MapOverlay.jsx` (the realized map; there is no
+`CommandPalette`) · **Trigger:** ⌘K / the SideRail + mobile "Map" buttons ·
+**Status:** built.
 
 ## Purpose
 The site's navigation reimagined as the Chronicle's **map** — not a dropdown
@@ -10,7 +11,7 @@ list. Opening it should feel like unfurling a cartographer's map with glowing
 search, quick actions) underneath the cinematic surface.
 
 ## Behavior
-- Opens on **⌘K** (or Navbar Map). Closes on `Esc`, backdrop click, or selecting
+- Opens on **⌘K** (or the SideRail / mobile Map button). Closes on `Esc`, backdrop click, or selecting
   a destination. Full-screen overlay with blurred dim backdrop.
 - **Unfurl animation:** the map panel scales/clip-reveals open (Framer/GSAP),
   pins drop in with a stagger, the route line draws between them.
@@ -40,11 +41,11 @@ const PINS = [
 - A compass rose + "you are here" indicator reflecting the current scroll section
   (track active section via ScrollTrigger/IO and highlight its pin).
 
-## Migration from CommandPalette
-- Keep `CommandPalette`'s keydown (⌘K/Esc), search filtering, and action list;
-  re-skin the **presentation** into the map. The `App.openMap` handler can stay
-  (dispatch ⌘K) or call an exposed open method. Keep it a single source for
-  navigation actions so canon stays in sync.
+## Implementation notes
+- `MapOverlay` owns the keydown (⌘K/Esc), filtering, and action list; `App.jsx`
+  toggles its `open` state (the ⌘K handler lives there). It's the single source
+  for navigation actions, so keep its entries in sync with canon (`chapters` +
+  `SideRail` `CHAPTERS`).
 
 ## Accessibility / performance
 - `role="dialog" aria-modal="true"`, focus-trap, return focus on close, `Esc`.

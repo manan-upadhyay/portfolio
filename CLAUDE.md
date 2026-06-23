@@ -34,19 +34,23 @@ toggle, contact), unabyss.com (cursor backlight, smooth scroll choreography),
 
 **Chapters & section ids** (the `id` is what anchors/nav/map use):
 
+Section components live in `src/sections/`; reusable widgets in `src/components/`.
+
 | # | Chapter label | Component | `id` | Concept |
 |---|---|---|---|---|
-| 00 | Origin | `Hero.jsx` | `origin` | Layered cinematic parallax hero |
-| 01 | The Craft | `About.jsx` | `about` | Who he is + disciplines |
-| 02 | The Journey | `Experience.jsx` | `work` | **Pinned horizontal** scrubbed path |
-| 03 | The Arsenal | `Tech.jsx` | `arsenal` | **Interactive orbital** skill field |
-| 04 | The Realms | `Works.jsx` | `projects` | **Editorial cinematic** project plates |
-| 05 | Summon | `Contact.jsx` | `contact` | Statement + form + channels |
+| 00 | Origin | `sections/Hero.jsx` | `origin` | Pure-CSS starfield + **Canvas2D astrolabe** (no bg image) |
+| 01 | The Craft | `sections/About.jsx` | `about` | Who he is + disciplines |
+| 02 | The Journey | `sections/Experience.jsx` | `work` | **Pinned horizontal** scrubbed path |
+| 03 | The Arsenal | `sections/Tech.jsx` | `arsenal` | **Interactive orbital** skill field |
+| 04 | The Realms | `sections/Works.jsx` | `projects` | **Editorial cinematic** project plates |
+| 05 | Summon | `sections/Contact.jsx` | `contact` | Statement + form + channels |
 
 Section labels/numbers live in `src/constants/index.js` (`chapters`). **Constants
 are the source of truth for copy** — components must read from there, never
-hardcode strings. Keep `chapters`, nav `LINKS` (in `Navbar.jsx`), and
-`CommandPalette` map entries in sync.
+hardcode strings. Navigation is the collapsible `SideRail.jsx` (its `CHAPTERS`
+const) and the ⌘K `MapOverlay.jsx`; keep `chapters`, `SideRail` `CHAPTERS`, and
+`MapOverlay` entries in sync. (There is no `Navbar`/`CommandPalette` — those
+were superseded by `SideRail` + `MapOverlay`.)
 
 **Palette / theme:** dark-first "starlit realm" + light "dawn over the realm".
 All color via CSS variables in `src/index.css`. See
@@ -57,22 +61,27 @@ All color via CSS variables in `src/index.css`. See
 ## 3. Tech stack (locked)
 
 - **React 18 + Vite 4**, JSX function components + hooks only (one exception:
-  `ErrorBoundary` class).
+  `ErrorBoundary` class). **Node 24** (pinned via `engines` + `.nvmrc`).
 - **Tailwind** for layout/spacing + **CSS variables** for all theme color.
 - **Framer Motion** → component enter/hover/exit + small interactions.
 - **GSAP + ScrollTrigger** → scroll choreography (pin, scrub, parallax-out).
 - **Lenis** → smooth scroll, driven by GSAP ticker (`src/lib/smoothScroll.js`).
+  Framer motion variants live in `src/lib/motion.js`.
 - **Zustand** → theme store (`src/store/useThemeStore.ts`).
-- **lucide-react** → icons. **No emoji in UI.**
-- **❌ Three.js / @react-three/* is being removed.** Do not add new 3D. Depth
-  comes from layered 2D art + parallax + Canvas2D, not WebGL.
+- **lucide-react** → icons (+ custom `CompassRose` SVG). **No emoji in UI.**
+- **Contact** → server-side **Resend** via a Vite dev middleware (`ravenApiDev`
+  in `vite.config.js`) locally / a serverless function in prod; the API key never
+  reaches the client. **Vercel Analytics** (`@vercel/analytics/react`) is mounted
+  in `App.jsx`.
+- **❌ Three.js / @react-three/* has been fully removed.** Do not add WebGL/3D.
+  Depth comes from layered CSS + parallax + Canvas2D (the hero astrolabe).
 
 ---
 
 ## 4. Engineering standards (senior-level, non-negotiable)
 
-1. **Reusable & DRY.** Shared visuals = a component in `ui/` or a CSS utility
-   class — never copy-paste. New repeated pattern → extract it.
+1. **Reusable & DRY.** Shared visuals = a component in `src/components/` or a CSS
+   utility class — never copy-paste. New repeated pattern → extract it.
 2. **Data-driven.** All content from `src/constants/`. Components are pure
    presenters that take props/constants. No inline prose, no magic numbers for
    content.
@@ -90,12 +99,13 @@ All color via CSS variables in `src/index.css`. See
    Lazy-load below-the-fold art. Animate only `transform`/`opacity`. Target:
    initial JS < ~200KB gz, Lighthouse perf ≥ 90, 60fps scroll. Don't ship dead
    deps/assets.
-7. **Resilient.** Optional assets are probed and degrade gracefully (see Hero
-   asset-probe pattern). A failing subtree must never white-screen — wrap risky
-   trees in `ErrorBoundary`.
-8. **Consistent structure.** One section = one file in `src/components/`,
-   default-exported, wrapped by `SectionWrapper` (or its own `<section
-   id=…>`). Sub-pieces colocated or promoted to `ui/` when reused.
+7. **Resilient.** Optional assets are probed and degrade gracefully (e.g. realm
+   covers / map). A failing subtree must never white-screen — wrap risky trees in
+   `ErrorBoundary`. (The hero is now fully procedural — no image to probe.)
+8. **Consistent structure.** One section = one file in `src/sections/`,
+   default-exported, wrapped by `SectionWrapper` (or its own `<section id=…>`).
+   Reusable sub-pieces live in `src/components/` (flat, barrel-exported via
+   `src/components/index.js`); sections barrel is `src/sections/index.js`.
 
 **Definition of done** for any section: matches its spec in
 `docs/chronicle/sections/`, responsive at 360 / 768 / 1280 / 1920, dark + light
@@ -112,8 +122,11 @@ clean, and it looks like a *moment* — not a list.
 - **Cadence:** build/iterate **one section at a time**, verify visually (run dev
   server, screenshot dark+light), then move on.
 - **Assets:** if a section needs art, it must work with a graceful fallback
-  first; real art is specced in [ASSETS](docs/chronicle/ASSETS.md) and dropped
-  into `public/chronicle/`. Never block a build on missing art.
+  first; real art is specced in [ASSETS](docs/chronicle/ASSETS.md). Shipped art
+  lives at the `public/` root (favicons, `og-image.png`, `logo-{light,dark}.png`,
+  `realms/…`); only production-bound files belong there. Brand **source/archive**
+  art lives in `/branding/` (out of `public/`, not deployed); the favicon/og
+  pipeline is in `/tools/og-image/`. Never block a build on missing art.
 - **When you change canon** (a chapter id, a token, a shared component API),
   update the relevant doc in the same change. Docs and code never diverge.
 - **Verify:** `npm run dev` then drive headless Chrome for screenshots; check

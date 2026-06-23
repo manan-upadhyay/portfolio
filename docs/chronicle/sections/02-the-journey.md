@@ -1,7 +1,7 @@
 # Section 02 — The Journey (Experience)
 
-**Component:** `src/components/Experience.jsx` · **id:** `work` · **Status:**
-rebuild (delete the `react-vertical-timeline-component` version entirely).
+**Component:** `src/sections/Experience.jsx` · **id:** `work` · **Status:** built
+(pinned horizontal scrubbed path).
 
 ## Purpose
 His career as a **traveled path**, not a résumé list. A horizontally-scrolling

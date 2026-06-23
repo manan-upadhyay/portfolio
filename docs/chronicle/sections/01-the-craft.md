@@ -1,7 +1,6 @@
 # Section 01 — The Craft (About)
 
-**Component:** `src/components/About.jsx` · **id:** `about` · **Status:** rebuild
-to spec (current version is functional but too "template").
+**Component:** `src/sections/About.jsx` · **id:** `about` · **Status:** built.
 
 ## Purpose
 Establish *who* he is and *how he works* — fast, cinematic, scannable. This is
@@ -37,7 +36,7 @@ copy résumé-accurate.
 
 ## Components & reuse
 `ChapterHeading`, `realm-card` utility, `ScrollReveal`, a shared `StatTile` and
-`DisciplineCard` (local). If `StatTile` is reused elsewhere, promote to `ui/`.
+`DisciplineCard` (local). If `StatTile` is reused elsewhere, promote to `src/components/`.
 
 ## States / responsive
 - 1-col stack on mobile (intro → note → disciplines as 1→2 cols).

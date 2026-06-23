@@ -1,9 +1,12 @@
 # Assets — The Chronicle ("World Bible" + prompts)
 
-All cinematic art lives in `public/chronicle/` and is referenced by absolute
-path. Code probes each file and degrades gracefully if missing
+Runtime art lives at the **`public/` root** and is referenced by absolute path;
+optional art is probed and degrades gracefully
 (see [ARCHITECTURE](ARCHITECTURE.md#6-asset-pipeline)). Prefer **WebP q≈80**,
-each file ideally < ~600KB. **Delete unused originals** — `public/` ships as-is.
+keep files lean. **`public/` ships as-is — production assets only.** Brand
+**source/archive** art (master crests, old icon sets, retired hero skies) lives
+in **`/branding/`** (out of `public/`, not deployed). The favicon/og pipeline is
+in **`/tools/og-image/`**.
 
 ---
 
@@ -29,48 +32,40 @@ horizon (~65% down), same palette hexes, haze-with-distance, dark-empty-left.
 
 ---
 
-## 1. Hero (chapter 00) — `public/chronicle/`
+## 1. Hero (chapter 00) — **no art (fully procedural)**
 
 The hero is the **Astrolabe Title Sequence** (see
-[sections/00-hero.md](sections/00-hero.md)). Its instrument is **generated in
-Canvas2D from theme tokens** — no art needed. The only optional asset is the
-dark-theme starfield backdrop; light theme uses a procedural dawn gradient.
+[sections/00-hero.md](sections/00-hero.md)) and needs **zero image assets**:
 
-| File | Dim | Format | Notes |
-|---|---|---|---|
-| `hero-sky.webp` | ≥1536×1024 | opaque | Starfield backdrop (dark theme only). Milky-way into a warm ember sun glow upper-right; dark/empty left for the copy. Probed; missing → procedural starfield. |
+- **Backdrop:** a pure-CSS starfield — radial ink gradient
+  (`#1B2440 → #0E1426 → #0B0F1A`, bottoming out at the page color for a seamless
+  hand-off) + ~70 procedurally placed stars with a subtle desynced twinkle
+  (`star-twinkle`, reduced-motion safe). Light theme uses a dawn radial gradient.
+- **Instrument:** the astrolabe is drawn in **Canvas2D from theme tokens**.
 
-**Prompt** (prepend World Bible):
-
-- **hero-sky.webp**: "Paint only the SKY: ink-navy filling top and entire LEFT,
-  to indigo `#1B2440`, to a soft warm ember-gold glow low/upper on the RIGHT.
-  Sparse faint stars + a milky-way band; no land, no drawn horizon line, no
-  people. Smooth, painterly, opaque."
-
-> Removed (dead concept): `portrait.png`, `hero-mid.webp`, `hero-fog.webp`,
-> `hero-fore.webp` — the layered-photo hero was replaced by the astrolabe.
-- **hero-fog.webp**: "A single horizontal band of soft low fog on transparency,
-  desaturated indigo-grey `#3A4660` with faint warm ember underglow on the RIGHT
-  half. Semi-transparent, wispy, dissolving at all edges. 2880×900 transparent."
-- **hero-fore.webp**: "Foreground framing, transparent: a dark near ridge /
-  rocky outcrop as an almost-black indigo silhouette `#10162A` along the bottom,
-  thick fog rolling over it, faint ember glow seeping through on the RIGHT.
-  Slightly soft-focus. Lower/broken LEFT, taller RIGHT. Bottom-anchored,
-  3200×1600 transparent PNG, no sky."
+> An image backdrop was trialed and **dropped** — the no-image version is
+> cleaner and makes the glowing instrument the focal point. The generated sky
+> variants are archived in `/branding/hero-sky/` (not deployed) in case we
+> revisit; the old layered-photo concept (`portrait/hero-mid/fog/fore`) is long
+> gone.
 
 ---
 
 ## 2. Realms (chapter 04) — project cover art
 
-One cinematic cover per featured project, themed to its domain but obeying the
-World Bible palette/light. Used as the visual half of each editorial "plate".
+Each realm (project) shows **real product screenshots** from
+`public/realms/<slug>/…` — when a project is themed, per-theme subfolders
+`…/<slug>/light/` and `…/<slug>/dark/` are swapped by `Works.jsx`. An *optional*
+cinematic cover (`/chronicle/realms/<slug>.webp`) is probed for the plate visual
+and **falls back to a serif monogram on a gradient** when absent (the current
+state). The cover prompt below is for if/when we add bespoke cover art.
 
 | File | Dim | Format |
 |---|---|---|
-| `realms/<slug>.webp` | 1600×1200 (4:3) | opaque, q≈80 |
+| `realms/<slug>/<screenshot>.png` | as captured | product screenshots (shipped) |
+| `chronicle/realms/<slug>.webp` *(optional)* | 1600×1200 (4:3) | cinematic cover, probed |
 
-Slugs (match `constants` projects): `advisor-portfolio`, `gajaakriti-studio`,
-`royal-tiles`, `digital-investor` (+ others as needed).
+Slugs match `constants` projects (e.g. `gajaakriti`, `royal-tiles`, …).
 
 **Prompt template** (prepend World Bible):
 > "A cinematic, painterly cover illustration representing **<one-line project
@@ -108,14 +103,23 @@ already handled.)
 
 ---
 
-## 4. Brand mark — `sigil.svg`
+## 4. Brand / icon system — `public/` root + `/tools/og-image/`
 
-A personal cartographer's monogram ("M") / compass-star crest. SVG preferred
-(crisp, themeable via `currentColor`). Used in navbar wordmark, footer, favicon.
+The brand mark is an **"MU" cartographer crest** (compass-star monogram). Two
+grounded variants ship for in-app theme use; a circular "M" badge is the favicon
+source. **Production files (in `public/`):**
 
-**Prompt:** "A minimal elegant monogram crest combining the letter 'M' with a
-compass star / cartographer's mark. Single-color line art, balanced, timeless,
-works at 32px. Transparent SVG, no text."
+| File | Purpose |
+|---|---|
+| `logo-light.png` / `logo-dark.png` | Full MU crest (cream / navy ground). SideRail sigil swaps per theme. |
+| `favicon.ico` (16/32/48) · `favicon-16x16.png` · `favicon-32x32.png` | Browser favicons |
+| `apple-touch-icon.png` (180) · `android-chrome-192x192.png` · `android-chrome-512x512.png` | PWA / mobile (navy tiles, maskable) |
+| `og-image.png` (1200×630) | Open Graph / Twitter share card |
+
+The favicon family is derived from the circular badge; `og-image.png` is rendered
+from an HTML template via headless Chrome. **Regeneration steps + the template
+live in [`/tools/og-image/`](../../tools/og-image/).** Master/source art and the
+previous (v1) icon set are archived in **`/branding/`** (not deployed).
 
 ---
 
@@ -129,6 +133,9 @@ code will prefer it in light theme.
 
 ## 6. Housekeeping
 
-Keep `public/chronicle/` to only the referenced files (the 5 hero assets +
-project covers + map + sigil). Remove generation leftovers (`*-Edited.png`,
-oversized source `*.png`, `Gemini_Generated_*`). Every stray file ships to prod.
+`public/` ships as-is — keep it to **production assets only** (favicon family,
+`og-image.png`, `logo-{light,dark}.png`, `site.webmanifest`, `robots.txt`,
+`sitemap.xml`, `resume.pdf`, `realms/…`). Move source/archive/experiments to
+`/branding/`; remove generation leftovers (`*-Edited.png`, oversized `*.png`,
+`Gemini_Generated_*`, `* copy`, `.DS_Store`). Every stray file in `public/`
+ships to prod and counts against the perf budget.

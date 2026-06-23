@@ -1,7 +1,7 @@
 # Section 05 — Summon (Contact)
 
-**Component:** `src/components/Contact.jsx` · **id:** `contact` · **Status:**
-rebuild + **delete Three.js** (the `EarthCanvas` globe and all `canvas/*`).
+**Component:** `src/sections/Contact.jsx` · **id:** `contact` · **Status:** built
+(server-side Resend; no Three.js).
 
 ## Purpose
 The closing call to action. Confident, editorial, frictionless: a big statement,
@@ -14,7 +14,7 @@ Reference: breedlove contact section.
 - Availability line: open to roles, location/remote, response time.
 - **Two columns:**
   - **Left — the message:** inquiry-type chips (Senior role / Contract / Design /
-    Other), Name, Email, Note, submit ("Dispatch the Raven"). Keep EmailJS.
+    Other), Name, Email, Note, submit ("Dispatch the Raven"). Posts to Resend.
   - **Right — correspondence:** Email, LinkedIn, GitHub, Location (with a subtle
     coordinate flourish), each a row with a lucide icon + `ArrowUpRight`. Optional
     "Copy email" + "Book a call".
@@ -27,15 +27,14 @@ Reference: breedlove contact section.
   success ("Your raven has taken flight…").
 - Subtle ambient on the accent (slow rotate/drift), reduced-motion safe.
 
-## Content (from `constants.personalInfo`)
-`email`, `linkedin`, `github`, `location`, availability copy. Form posts via the
-existing EmailJS setup (keep env keys). Validate required fields + email format.
+## Content (from `constants.personalInfo` + `constants.summon`)
+`email`, `linkedin`, `github`, `location`, availability + all form copy/error
+variants. The form posts to a **server-side Resend** endpoint (Vite dev
+middleware `ravenApiDev` locally / a serverless function in prod) — the API key
+never reaches the client. Validate required fields + email format.
 
-## Three.js removal (do this here)
-- Remove `import { EarthCanvas }` and its usage; delete `src/components/canvas/`
-  and `Loader.jsx` if unused elsewhere; remove `@react-three/*` + `three` +
-  `maath` from `package.json`; drop the `three-vendor` manualChunk in
-  `vite.config`. Verify build shrinks and nothing else imports three.
+> Three.js is fully removed (no `EarthCanvas`, `components/canvas/`, `Loader`, or
+> `@react-three/*`/`three`/`maath`). Do not reintroduce WebGL.
 
 ## Accessibility / performance
 - Labels tied to inputs; errors announced; submit disabled while sending; keyboard
@@ -43,7 +42,7 @@ existing EmailJS setup (keep env keys). Validate required fields + email format.
 - No WebGL. Accent is cheap. Reduced-motion: static.
 
 ## Acceptance criteria
-- [ ] Three.js fully removed from the codebase + bundle; build clean & smaller.
-- [ ] Statement + inquiry chips + form (working EmailJS) + channels + availability.
-- [ ] Themed non-WebGL accent; dark+light correct; responsive.
+- [x] Three.js fully removed from the codebase + bundle; build clean & smaller.
+- [x] Statement + inquiry chips + form (server-side Resend) + channels + availability.
+- [x] Themed non-WebGL accent; dark+light correct; responsive.
 - [ ] Validation, loading, success, and error states all handled.

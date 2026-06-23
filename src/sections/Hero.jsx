@@ -296,13 +296,16 @@ const Hero = () => {
           {isDark && [...Array(70)].map((_, i) => (
             <span
               key={i}
-              className="absolute rounded-full bg-white"
+              className="hero-star absolute rounded-full bg-white"
               style={{
                 width: i % 11 === 0 ? 2.4 : 1.3,
                 height: i % 11 === 0 ? 2.4 : 1.3,
                 left: `${(i * 37) % 100}%`,
                 top: `${(i * 53) % 90}%`,
-                opacity: 0.1 + ((i * 17) % 55) / 100,
+                // Per-star twinkle: stable, desynced timing (see .hero-star in index.css).
+                '--star-o': 0.1 + ((i * 17) % 55) / 100,
+                '--star-dur': `${4.5 + ((i * 13) % 45) / 10}s`,
+                '--star-delay': `${((i * 29) % 80) / 10}s`,
               }}
             />
           ))}

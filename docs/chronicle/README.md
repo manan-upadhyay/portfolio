@@ -11,16 +11,16 @@ older `docs/*.md` (pre-revamp template).
 4. [ASSETS.md](ASSETS.md) — world bible + generation prompts.
 5. `sections/` — per-section specs (build order below).
 
-## Sections & build order
+## Sections (all built; this set is the spec of record)
 | Order | Spec | Component | Status |
 |---|---|---|---|
-| 00 | [Origin / Hero](sections/00-hero.md) | `Hero.jsx` | built, polishing |
-| 01 | [The Craft](sections/01-the-craft.md) | `About.jsx` | rebuild |
-| 02 | [The Journey](sections/02-the-journey.md) | `Experience.jsx` | rebuild (pinned horizontal) |
-| 03 | [The Arsenal](sections/03-the-arsenal.md) | `Tech.jsx` | rebuild (orbital field) |
-| 04 | [The Realms](sections/04-the-realms.md) | `Works.jsx` | rebuild (editorial plates) |
-| 05 | [Summon](sections/05-summon.md) | `Contact.jsx` | rebuild + drop Three.js |
-| 06 | [The Map](sections/06-map-overlay.md) | `ui/MapOverlay.jsx` | build (replace list palette) |
+| 00 | [Origin / Hero](sections/00-hero.md) | `sections/Hero.jsx` | built (procedural starfield + astrolabe) |
+| 01 | [The Craft](sections/01-the-craft.md) | `sections/About.jsx` | built |
+| 02 | [The Journey](sections/02-the-journey.md) | `sections/Experience.jsx` | built (pinned horizontal) |
+| 03 | [The Arsenal](sections/03-the-arsenal.md) | `sections/Tech.jsx` | built (orbital field) |
+| 04 | [The Realms](sections/04-the-realms.md) | `sections/Works.jsx` | built (editorial plates) |
+| 05 | [Summon](sections/05-summon.md) | `sections/Contact.jsx` | built (Resend contact) |
+| 06 | [The Map](sections/06-map-overlay.md) | `components/MapOverlay.jsx` | built (⌘K map) |
 
 Each section spec ends with **Acceptance criteria** — a section is done only when
 all boxes pass in dark+light, at 360/768/1280/1920, with reduced-motion + touch

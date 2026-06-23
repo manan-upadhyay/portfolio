@@ -1,7 +1,7 @@
 # Section 03 — The Arsenal (Tech / Skills)
 
-**Component:** `src/components/Tech.jsx` · **id:** `arsenal` · **Status:**
-rebuild (current icon-grid + category-cards duplicates itself — kill that).
+**Component:** `src/sections/Tech.jsx` · **id:** `arsenal` · **Status:** built
+(interactive orbital skill field).
 
 ## Purpose
 Show the toolkit as a living **constellation/orbital field**, not a list and not

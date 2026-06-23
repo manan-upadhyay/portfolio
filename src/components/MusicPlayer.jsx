@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { Play, Pause, Volume1 } from 'lucide-react';
 
 // Ambient track. To use a file from src/assets, import it and set TRACK to that
-// import, e.g. `import ambient from '../../assets/ambient.mp3'`. Until then this
+// import, e.g. `import ambient from '../assets/ambient.mp3'`. Until then this
 // points at public/ and degrades gracefully if the file is absent.
 const TRACK = '/chronicle/ambient.mp3';
 

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { scrollToSection, scrollToTop } from '../../lib/smoothScroll';
-import { useThemeStore } from '../../store/useThemeStore';
+import { scrollToSection, scrollToTop } from '../lib/smoothScroll';
+import { useThemeStore } from '../store/useThemeStore';
 import CompassRose from './CompassRose';
 
 export const CHAPTERS = [

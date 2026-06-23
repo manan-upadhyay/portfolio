@@ -1,18 +1,18 @@
 import { lazy, Suspense, useState, useEffect } from 'react';
 import { Compass } from 'lucide-react';
 import { useThemeStore } from './store/useThemeStore';
-import Hero from './components/Hero';
-import { Cursor, ErrorBoundary, SideRail, MapOverlay, DayNightToggle } from './components/ui';
-// import { MusicPlayer } from './components/ui'; // ambient audio — disabled for now, re-enable for future use
+import Hero from './sections/Hero';
+import { Cursor, ErrorBoundary, SideRail, MapOverlay, DayNightToggle } from './components';
+// import { MusicPlayer } from './components'; // ambient audio — disabled for now, re-enable for future use
 import { useSmoothScroll } from './lib/smoothScroll';
 import { useActiveSection } from './hooks/useActiveSection';
 import { Analytics } from '@vercel/analytics/react';
 
-const About = lazy(() => import('./components/About'));
-const Experience = lazy(() => import('./components/Experience'));
-const Tech = lazy(() => import('./components/Tech'));
-const Works = lazy(() => import('./components/Works'));
-const Contact = lazy(() => import('./components/Contact'));
+const About = lazy(() => import('./sections/About'));
+const Experience = lazy(() => import('./sections/Experience'));
+const Tech = lazy(() => import('./sections/Tech'));
+const Works = lazy(() => import('./sections/Works'));
+const Contact = lazy(() => import('./sections/Contact'));
 
 const SectionLoader = () => (
   <div className="flex items-center justify-center py-20">

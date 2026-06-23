@@ -24,6 +24,9 @@
             "@/*": [
                 "src/*"
             ],
+            "@/sections/*": [
+                "src/sections/*"
+            ],
             "@/components/*": [
                 "src/components/*"
             ],
@@ -36,11 +39,11 @@
             "@/hooks/*": [
                 "src/hooks/*"
             ],
-            "@/contexts/*": [
-                "src/contexts/*"
+            "@/store/*": [
+                "src/store/*"
             ],
-            "@/utils/*": [
-                "src/utils/*"
+            "@/lib/*": [
+                "src/lib/*"
             ]
         }
     },

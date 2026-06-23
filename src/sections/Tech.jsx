@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { Compass, Webhook } from 'lucide-react';
 import { SectionWrapper } from '../hoc';
 import { skillCategories } from '../constants';
-import { ChapterHeading, CompassRose } from './ui';
+import { ChapterHeading, CompassRose } from '../components';
 import { useThemeStore } from '../store/useThemeStore';
 
 // Each category owns one concentric ring (inner → outer), each revolving at its

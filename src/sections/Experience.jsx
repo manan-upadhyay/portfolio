@@ -3,7 +3,7 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Briefcase, GraduationCap, Compass, ArrowRight } from 'lucide-react';
 import { journey, chapters } from '../constants';
-import { ChapterHeading, ScrollReveal } from './ui';
+import { ChapterHeading, ScrollReveal } from '../components';
 import { scrollToSection } from '../lib/smoothScroll';
 
 gsap.registerPlugin(ScrollTrigger);

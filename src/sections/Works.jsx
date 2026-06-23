@@ -5,9 +5,9 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Github, ArrowUpRight, Lock, Star, ChevronLeft, ChevronRight } from 'lucide-react';
 import { SectionWrapper } from '../hoc';
 import { projects } from '../constants';
-import { ChapterHeading, ScrollReveal } from './ui';
+import { ChapterHeading, ScrollReveal } from '../components';
 import { useThemeStore } from '../store/useThemeStore';
-import Magnet from './Magnet';
+import Magnet from '../components/Magnet';
 
 gsap.registerPlugin(ScrollTrigger);
 

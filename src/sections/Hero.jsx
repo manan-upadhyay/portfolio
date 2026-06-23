@@ -5,7 +5,7 @@ import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { personalInfo } from '../constants';
 import { useThemeStore } from '../store/useThemeStore';
 import { scrollToSection } from '../lib/smoothScroll';
-import CompassRose from './ui/CompassRose';
+import CompassRose from '../components/CompassRose';
 
 gsap.registerPlugin(ScrollTrigger);
 

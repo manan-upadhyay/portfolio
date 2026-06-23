@@ -2,7 +2,7 @@ import { motion } from 'framer-motion';
 import { LayoutPanelTop, Server, Gauge, Layers, ScrollText } from 'lucide-react';
 import { services, stats, craft, chapters } from '../constants';
 import { SectionWrapper } from '../hoc';
-import { ScrollReveal, ChapterHeading, CountUp } from './ui';
+import { ScrollReveal, ChapterHeading, CountUp } from '../components';
 
 // Discipline → line icon, keyed by stable `iconKey` from constants
 // (replaces the old gem PNGs; not the title, so copy can change freely).

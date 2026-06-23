@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, FileText, Github, Linkedin, Sun, Moon, X, CornerDownLeft, Star } from 'lucide-react';
-import { personalInfo } from '../../constants';
-import { scrollToSection } from '../../lib/smoothScroll';
-import { useThemeStore } from '../../store/useThemeStore';
+import { personalInfo } from '../constants';
+import { scrollToSection } from '../lib/smoothScroll';
+import { useThemeStore } from '../store/useThemeStore';
 import CompassRose from './CompassRose';
 
 // Organic waypoints (x,y in 0–100 across the plate) + searchable keywords.

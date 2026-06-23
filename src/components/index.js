@@ -1,8 +1,13 @@
-import Hero from './Hero';
-import About from './About';
-import Tech from './Tech';
-import Experience from './Experience';
-import Works from './Works';
-import Contact from './Contact';
-
-export { Hero, About, Tech, Experience, Works, Contact };
+// Reusable UI components — shared across sections. Import via `from '../components'`.
+export { default as ChapterHeading } from './ChapterHeading';
+export { default as CompassRose } from './CompassRose';
+export { default as CountUp } from './CountUp';
+export { default as Cursor } from './Cursor';
+export { default as DayNightToggle } from './DayNightToggle';
+export { default as ErrorBoundary } from './ErrorBoundary';
+export { default as Magnet } from './Magnet';
+export { default as MapDivider } from './MapDivider';
+export { default as MapOverlay } from './MapOverlay';
+export { default as MusicPlayer } from './MusicPlayer';
+export { default as ScrollReveal } from './ScrollReveal';
+export { default as SideRail } from './SideRail';

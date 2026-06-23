@@ -1,7 +1,7 @@
 import { useRef } from 'react';
 import { flushSync } from 'react-dom';
 import { motion } from 'framer-motion';
-import { useThemeStore } from '../../store/useThemeStore';
+import { useThemeStore } from '../store/useThemeStore';
 
 /**
  * Premium day/night control — orbit ring, sun↔moon morph, spring physics,

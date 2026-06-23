@@ -3,7 +3,7 @@ import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { Mail, Linkedin, Github, MapPin, ArrowUpRight, Send, Loader2, Check, Download, Copy, Feather } from 'lucide-react';
 import { SectionWrapper } from '../hoc';
 import { personalInfo, summon } from '../constants';
-import { ChapterHeading, ScrollReveal } from './ui';
+import { ChapterHeading, ScrollReveal } from '../components';
 
 // Presentational icon map — data (label/value/href) lives in constants.
 const CHANNEL_ICONS = { email: Mail, linkedin: Linkedin, github: Github, location: MapPin };

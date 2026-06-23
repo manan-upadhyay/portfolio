@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { Compass, Webhook } from 'lucide-react';
+import { Webhook } from 'lucide-react';
 import { SectionWrapper } from '../hoc';
 import { skillCategories, chapters } from '../constants';
 import { ChapterHeading, CompassRose } from '../components';

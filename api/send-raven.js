@@ -9,9 +9,9 @@ export default async function handler(req, res) {
   }
 
   const body = typeof req.body === 'string' ? safeParse(req.body) : req.body || {};
-  const { name, email, message, inquiry } = body;
+  const { name, email, message, inquiry, company } = body;
 
-  const result = await sendRaven({ name, email, message, inquiry });
+  const result = await sendRaven({ name, email, message, inquiry, company });
   return res.status(statusFor(result)).json(result);
 }
 

@@ -1,0 +1,15 @@
+# Editor defaults — keeps formatting consistent across editors and prevents the
+# tab/space drift that crept into config files. (Full Prettier is intentionally
+# deferred: it would mass-reformat the hand-tuned cinematic JSX. See docs/AUDIT.md.)
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+indent_style = space
+indent_size = 2
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+[*.md]
+trim_trailing_whitespace = false

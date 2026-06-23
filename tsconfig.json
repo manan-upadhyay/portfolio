@@ -18,34 +18,7 @@
         "strict": true,
         "noUnusedLocals": true,
         "noUnusedParameters": true,
-        "noFallthroughCasesInSwitch": true,
-        "baseUrl": ".",
-        "paths": {
-            "@/*": [
-                "src/*"
-            ],
-            "@/sections/*": [
-                "src/sections/*"
-            ],
-            "@/components/*": [
-                "src/components/*"
-            ],
-            "@/assets/*": [
-                "src/assets/*"
-            ],
-            "@/constants/*": [
-                "src/constants/*"
-            ],
-            "@/hooks/*": [
-                "src/hooks/*"
-            ],
-            "@/store/*": [
-                "src/store/*"
-            ],
-            "@/lib/*": [
-                "src/lib/*"
-            ]
-        }
+        "noFallthroughCasesInSwitch": true
     },
     "include": [
         "src"

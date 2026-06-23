@@ -129,8 +129,8 @@ if (reduce || coarse) { /* static fallback */ return; }
 
 | Component | Contract |
 |---|---|
-| `SideRail({ activeId, onOpenMap, visible })` | Desktop-only collapsible glass rail (left, vertically centered); hidden on the hero (`visible={activeId!=='origin'}`); springs open on hover. Sigil = themed brand crest (`/logo-{light,dark}.png`); chapter rows → `scrollToSection`; Map row uses `CompassRose`. Chapters list = `CHAPTERS` const in `SideRail.jsx` (keep matching canon). |
-| `MapOverlay({ open, onClose, activeId })` | ⌘K interactive map overlay (the realized "Command Palette"). Probes `/chronicle/map/realm-map.webp`, degrades gracefully; commands map to `scrollToSection` + external links. |
+| `SideRail({ activeId, onOpenMap, visible })` | Desktop-only collapsible glass rail (left, vertically centered); hidden on the hero (`visible={activeId!=='origin'}`); springs open on hover. Sigil = themed brand crest (`/logo-{light,dark}.png`); chapter rows → `scrollToSection`; Map row uses `CompassRose`. Chapters come from `constants.chapterList` (single source). |
+| `MapOverlay({ open, onClose, activeId })` | ⌘K interactive map overlay (the realized "Command Palette"). Pins are `constants.chapterList` (each chapter's `x`/`y`/`kw`); probes `/chronicle/map/realm-map.webp`, degrades gracefully; commands map to `scrollToSection` + external links. |
 | `Cursor` | Dot + trailing ring (+grows over `a,button,[data-cursor=hover]`) + backlight. Auto-off on touch/reduced-motion. Add `data-cursor="hover"` to custom interactive targets. |
 | `DayNightToggle({ compact? })` | The only theme toggle (fixed top-right). Sun↔moon morph, orbit ring, spring press, radial View-Transition theme ripple. |
 | `CompassRose({ className })` | Shared ember/gold compass-star SVG. Used at the astrolabe hub, the SideRail map row, and the map overlay. |
@@ -204,5 +204,5 @@ CHROME="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
   shared ones to `src/components/`. Sections live in `src/sections/`.
 - Content from `constants/`; color from CSS vars; icons from lucide / `CompassRose`.
 - Clean up every effect (listeners, rAF, ScrollTrigger, Lenis).
-- Keep `chapters` (constants), `CHAPTERS` (`SideRail.jsx`), and `MapOverlay`
-  entries in sync.
+- Chapters live **once** in `constants.chapters` / `chapterList`; SideRail, the
+  Map overlay, the Hero eyebrow, and section headings all derive from it.

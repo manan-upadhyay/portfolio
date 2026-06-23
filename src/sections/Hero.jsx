@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
-import { personalInfo } from '../constants';
+import { personalInfo, chapters } from '../constants';
 import { useThemeStore } from '../store/useThemeStore';
 import { scrollToSection } from '../lib/smoothScroll';
 import CompassRose from '../components/CompassRose';
@@ -367,7 +367,7 @@ const Hero = () => {
       {/* ===== Copy ===== */}
       <div ref={copyRef} className="relative z-10 h-full max-w-7xl mx-auto px-6 sm:px-12 flex flex-col justify-center">
         <div className="max-w-xl">
-          <div className="hero-eyebrow chapter-eyebrow mb-5">Chapter 00 · Origin</div>
+          <div className="hero-eyebrow chapter-eyebrow mb-5">Chapter {chapters.origin.no} · {chapters.origin.label}</div>
 
           <h1 className="font-chronicle font-semibold leading-[0.86] tracking-tight" style={{ color: 'var(--color-text)' }}>
             <span className="hero-line block overflow-hidden pb-[0.18em] -mb-[0.14em]"><span className="block text-[clamp(56px,12vw,150px)]">{firstName}</span></span>

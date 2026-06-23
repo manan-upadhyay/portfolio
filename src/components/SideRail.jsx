@@ -2,16 +2,8 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { scrollToSection, scrollToTop } from '../lib/smoothScroll';
 import { useThemeStore } from '../store/useThemeStore';
+import { chapterList } from '../constants';
 import CompassRose from './CompassRose';
-
-export const CHAPTERS = [
-  { id: 'origin', no: '00', label: 'Origin' },
-  { id: 'about', no: '01', label: 'The Craft' },
-  { id: 'work', no: '02', label: 'The Journey' },
-  { id: 'arsenal', no: '03', label: 'The Arsenal' },
-  { id: 'projects', no: '04', label: 'The Realms' },
-  { id: 'contact', no: '05', label: 'Summon' },
-];
 
 // Springy "jelly" physics — a touch of overshoot, settles naturally.
 const JELLY = { type: 'spring', stiffness: 320, damping: 22, mass: 0.7 };
@@ -116,7 +108,7 @@ const SideRail = ({ activeId, onOpenMap, visible }) => {
 
         <span className="my-1 h-px mx-2" style={{ background: 'var(--color-card-border)' }} />
 
-        {CHAPTERS.map((c) => (
+        {chapterList.map((c) => (
           <Row
             key={c.id}
             no={c.no}

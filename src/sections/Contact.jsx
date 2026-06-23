@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { Mail, Linkedin, Github, MapPin, ArrowUpRight, Send, Loader2, Check, Download, Copy, Feather } from 'lucide-react';
 import { SectionWrapper } from '../hoc';
-import { personalInfo, summon } from '../constants';
+import { personalInfo, summon, chapters } from '../constants';
 import { ChapterHeading, ScrollReveal } from '../components';
 
 // Presentational icon map — data (label/value/href) lives in constants.
@@ -141,7 +141,7 @@ const Contact = () => {
 
   return (
     <>
-      <ChapterHeading no="05" eyebrow="Summon" title="Send a Raven." />
+      <ChapterHeading no={chapters.contact.no} eyebrow={chapters.contact.label} title={`${chapters.contact.sub}.`} />
       <div className="mt-5 flex items-center gap-2">
         <span className="status-dot" />
         <p className="text-[15px]" style={{ color: 'var(--color-text-muted)' }}>

@@ -116,33 +116,21 @@ export const summon = {
   ],
 };
 
-// Chronicle chapter labels — section navigation as a story
+// Chronicle chapters — THE single source of truth for section navigation.
+// Consumed by: section headings (ChapterHeading via `sub`), the SideRail nav,
+// the Hero eyebrow, and the Map overlay (`x`/`y` = pin position on the 0–100
+// map plate, `kw` = search keywords). Keyed by section `id`; order = story order.
 export const chapters = {
-  about: { no: '01', label: 'The Craft', sub: 'Origin' },
-  work: { no: '02', label: 'The Journey', sub: 'The Path So Far' },
-  arsenal: { no: '03', label: 'The Arsenal', sub: 'Tools of the Trade' },
-  projects: { no: '04', label: 'The Realms', sub: 'Worlds I Have Shipped' },
-  contact: { no: '05', label: 'Summon', sub: 'Send a Raven' },
+  origin:   { no: '00', label: 'Origin',      sub: 'Origin',              x: 12, y: 70, kw: 'home top start intro beginning hero' },
+  about:    { no: '01', label: 'The Craft',   sub: 'Origin',              x: 26, y: 30, kw: 'about bio craft who disciplines story' },
+  work:     { no: '02', label: 'The Journey', sub: 'The Path So Far',     x: 41, y: 58, kw: 'experience journey career timeline history work roles' },
+  arsenal:  { no: '03', label: 'The Arsenal', sub: 'Tools of the Trade',  x: 57, y: 24, kw: 'skills tech stack tools technologies frameworks react node' },
+  projects: { no: '04', label: 'The Realms',  sub: "Worlds I've Shipped", x: 73, y: 52, kw: 'projects realms portfolio work case studies builds' },
+  contact:  { no: '05', label: 'Summon',      sub: 'Send a Raven',        x: 89, y: 28, kw: 'contact email hire summon reach available raven' },
 };
 
-export const navLinks = [
-  {
-    id: 'about',
-    title: 'About',
-  },
-  {
-    id: 'work',
-    title: 'Work',
-  },
-  {
-    id: 'projects',
-    title: 'Projects',
-  },
-  {
-    id: 'contact',
-    title: 'Contact',
-  },
-];
+// Ordered array with `id` injected — for iteration (SideRail rows, Map pins).
+export const chapterList = Object.entries(chapters).map(([id, c]) => ({ id, ...c }));
 
 const services = [
   {

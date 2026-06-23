@@ -43,9 +43,9 @@ const PINS = [
 
 ## Implementation notes
 - `MapOverlay` owns the keydown (⌘K/Esc), filtering, and action list; `App.jsx`
-  toggles its `open` state (the ⌘K handler lives there). It's the single source
-  for navigation actions, so keep its entries in sync with canon (`chapters` +
-  `SideRail` `CHAPTERS`).
+  toggles its `open` state (the ⌘K handler lives there). Its pins come from
+  `constants.chapterList` (each chapter's `x`/`y`/`kw`) — the **same single
+  source** the SideRail uses, so there's nothing to keep in sync.
 
 ## Accessibility / performance
 - `role="dialog" aria-modal="true"`, focus-trap, return focus on close, `Esc`.

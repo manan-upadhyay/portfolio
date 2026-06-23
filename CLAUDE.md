@@ -45,12 +45,13 @@ Section components live in `src/sections/`; reusable widgets in `src/components/
 | 04 | The Realms | `sections/Works.jsx` | `projects` | **Editorial cinematic** project plates |
 | 05 | Summon | `sections/Contact.jsx` | `contact` | Statement + form + channels |
 
-Section labels/numbers live in `src/constants/index.js` (`chapters`). **Constants
-are the source of truth for copy** — components must read from there, never
-hardcode strings. Navigation is the collapsible `SideRail.jsx` (its `CHAPTERS`
-const) and the ⌘K `MapOverlay.jsx`; keep `chapters`, `SideRail` `CHAPTERS`, and
-`MapOverlay` entries in sync. (There is no `Navbar`/`CommandPalette` — those
-were superseded by `SideRail` + `MapOverlay`.)
+Chapters are defined **once** in `src/constants/index.js` — `chapters` (keyed by
+section `id`: `no`, `label`, `sub`, map `x`/`y`, search `kw`) plus the derived
+ordered `chapterList`. **Everything reads from it:** section headings
+(`ChapterHeading` via `sub`), the Hero eyebrow, the collapsible `SideRail.jsx`
+nav, and the ⌘K `MapOverlay.jsx` pins. Add/rename a chapter in one place.
+**Constants are the source of truth for all copy** — never hardcode strings.
+(There is no `Navbar`/`CommandPalette` — superseded by `SideRail` + `MapOverlay`.)
 
 **Palette / theme:** dark-first "starlit realm" + light "dawn over the realm".
 All color via CSS variables in `src/index.css`. See

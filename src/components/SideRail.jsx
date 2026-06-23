@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
+import { Map } from 'lucide-react';
 import { scrollToSection, scrollToTop } from '../lib/smoothScroll';
 import { useThemeStore } from '../store/useThemeStore';
 import { chapterList } from '../constants';
-import CompassRose from './CompassRose';
 
 // Springy "jelly" physics — a touch of overshoot, settles naturally.
 const JELLY = { type: 'spring', stiffness: 320, damping: 22, mass: 0.7 };
@@ -128,7 +128,7 @@ const SideRail = ({ activeId, onOpenMap, visible }) => {
           expanded={expanded}
           label="Map"
           kbd
-          glyph={<CompassRose className="w-[18px] h-[18px] opacity-100" />}
+          glyph={<Map size={17} style={{ color: 'var(--color-ember)' }} />}
         />
       </motion.div>
     </motion.nav>

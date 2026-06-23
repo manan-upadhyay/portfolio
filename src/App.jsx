@@ -1,5 +1,5 @@
 import { lazy, Suspense, useState, useEffect } from 'react';
-import { Compass } from 'lucide-react';
+import { Map } from 'lucide-react';
 import { useThemeStore } from './store/useThemeStore';
 import Hero from './sections/Hero';
 import { Cursor, ErrorBoundary, SideRail, MapOverlay, DayNightToggle } from './components';
@@ -49,7 +49,7 @@ const App = () => {
       <button onClick={() => setMapOpen(true)} aria-label="Open the map"
         className="md:hidden fixed top-5 left-5 z-40 grid place-items-center w-11 h-11 rounded-full"
         style={{ background: 'var(--color-card-bg)', border: '1px solid var(--color-card-border)', backdropFilter: 'blur(20px)' }}>
-        <Compass size={18} style={{ color: 'var(--color-ember)' }} />
+        <Map size={18} style={{ color: 'var(--color-ember)' }} />
       </button>
       <MapOverlay open={mapOpen} onClose={() => setMapOpen(false)} activeId={activeId} />
 

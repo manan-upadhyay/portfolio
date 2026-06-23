@@ -123,8 +123,8 @@ const Hero = () => {
       <div
         ref={canvasWrapRef}
         aria-hidden="true"
-        className="absolute z-[3] pointer-events-none aspect-square left-1/2 -translate-x-1/2 top-[6%] w-[min(82vw,400px)] opacity-[0.45]
-                   md:left-auto md:translate-x-0 md:right-[4%] md:top-1/2 md:-translate-y-1/2 md:w-[min(44vw,560px)] md:opacity-100"
+        className="absolute z-[3] pointer-events-none aspect-square left-1/2 -translate-x-1/2 top-[6%] w-[62vw] max-w-[280px] opacity-60
+                   md:left-auto md:translate-x-0 md:right-[4%] md:top-1/2 md:-translate-y-1/2 md:w-[min(44vw,560px)] md:max-w-none md:opacity-100"
       >
         <canvas ref={canvasRef} className="block w-full h-full" />
         {/* Shared compass rose at the heart of the instrument (assembles in last). */}
@@ -150,7 +150,7 @@ const Hero = () => {
       </div>
 
       {/* ===== Copy ===== */}
-      <div ref={copyRef} className="relative z-10 h-full max-w-7xl mx-auto px-6 sm:px-12 flex flex-col justify-center">
+      <div ref={copyRef} className="relative z-10 h-full max-w-7xl mx-auto px-6 sm:px-12 flex flex-col justify-end pb-28 md:justify-center md:pb-0">
         <div className="max-w-xl">
           <div className="hero-eyebrow chapter-eyebrow mb-5">Chapter {chapters.origin.no} · {chapters.origin.label}</div>
 

@@ -60,12 +60,11 @@ const CopyButton = ({ text }) => {
   );
 };
 
-/* Slowly-rotating contact compass — the section's own larger instrument (distinct
-   from the shared `components/CompassRose` sigil). Replaces the old 3D globe. */
+/* Slowly-rotating contact compass — the section's own larger instrument */
 const ContactCompass = () => {
   const reduce = useReducedMotion();
   return (
-    <div className="relative grid place-items-center" style={{ width: 132, height: 132 }} aria-hidden="true">
+    <div className="relative grid place-items-center flex-shrink-0 overflow-hidden" style={{ width: 132, height: 132 }} aria-hidden="true">
       <div className="absolute inset-0 rounded-full" style={{ background: 'radial-gradient(circle, rgba(var(--color-ember-rgb),0.14), transparent 70%)' }} />
       <motion.svg width="132" height="132" viewBox="0 0 120 120"
         animate={reduce ? undefined : { rotate: 360 }}
@@ -220,9 +219,11 @@ const Contact = () => {
 
         {/* ---- Correspondence ---- */}
         <ScrollReveal direction="up" delay={0.1} className="realm-card p-7 sm:p-9 flex flex-col min-w-0">
-          <div className="flex items-start justify-between">
+          <div className="flex items-start justify-between flex-col sm:flex-row">
             <span className="chapter-eyebrow">Correspondence</span>
+            <span className='mt-6 sm:mt-0 self-center sm:self-end'>
             <ContactCompass />
+            </span>
           </div>
 
           <div className="mt-2 flex flex-col divide-y" style={{ borderColor: 'var(--color-card-border)' }}>

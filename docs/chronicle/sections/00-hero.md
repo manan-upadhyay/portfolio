@@ -24,10 +24,15 @@ photo — the wow is the craft.
   bottom fade pinned to `--color-primary` (z2) for a **seamless hand-off** to the
   next section.
 - **Astrolabe (z3):** a Canvas2D instrument. Desktop: right side, vertically
-  centered, fully on-screen (`md:right-[4%] w-[min(44vw,560px)]`). Mobile:
-  centered atmospheric backdrop above the copy (`opacity ~0.45`).
+  centered, fully on-screen (`md:right-[4%] w-[min(44vw,560px)]`). Mobile: a
+  **contained top accent** (`top-[6%] w-[62vw] max-w-[280px] opacity-60`) so it
+  no longer sits behind the copy.
   A shared `components/CompassRose` SVG sits at its center (DOM overlay above
   canvas), over a small ember/gold **pivot cap** so the alidade reads as anchored.
+- **Mobile layout:** the copy is **bottom-anchored** (`justify-end pb-28`,
+  reverting to `md:justify-center`) so the instrument owns the top and the title
+  reads like a film-title card in the lower third. The supporting `heroHook` line
+  is hidden below `sm` (`hidden sm:block`) to keep small screens uncluttered.
 - **Bearing readout (z5):** mono `bearing NNN° · origin|charting`, bottom-right,
   desktop/pointer only. Updated imperatively from the rAF loop (no re-render).
 - **Copy (z10), left:** chapter eyebrow → serif name (two masked lines; the clip

@@ -90,10 +90,70 @@ not user-facing payload. The payload was already lean (initial JS well under the
 - **C9** split `constants/index.js` (545 lines) into modules.
 - **C10** adopt the `@`-aliases repo-wide or drop them.
 
-## Verification
+## Verification (batch 1)
 - `npm run lint` → **0 problems** (exit 0).
 - `npm run build` → clean.
 - Headless screenshot of `/` → no visual regression (and `rounded-lg` elements now
   render with correct radius).
 - `sendRaven()` unit-checked: honeypot → `{ok:true}` (drops); invalid/oversized/
   missing → `{ok:false, code:'INVALID'}`.
+
+---
+
+# Batch 2 — architecture, types, a11y, hardening
+
+## Metrics
+
+| Metric | Before batch 2 | After | Δ |
+|---|---|---|---|
+| **`Hero.jsx`** | 430 lines (200-line inline Canvas effect) | **215 lines** | **−215** |
+| Lint | 0 | 0 | — |
+| **Typecheck** | not run | **`tsc --noEmit` PASS, enforced** | new gate |
+| Build | clean | clean | — |
+| JS bundle (gzip) | 166.1 KB | 166.1 KB | ~0 |
+| Dead config (`@`-aliases) | 8 unused, drift-prone | **removed** | cleaner |
+| Form keyboard focus | `outline-none`, **no focus ring** (WCAG 2.4.7 gap) | **ember focus-visible ring** | a11y fix |
+
+## What changed (by audit ID)
+
+### ✅ Done
+- **B11 — astrolabe extracted.** Moved the ~200-line Canvas2D engine + PRNG out of
+  `Hero.jsx` into **`src/lib/astrolabe.js`** (`mountAstrolabe(canvas, wrap, {bearingEl})`
+  → cleanup) behind a thin **`src/hooks/useAstrolabe.js`** hook. `Hero.jsx`
+  **430 → 215 lines**; the section is now presentational. Behavior identical
+  (verified by screenshot — rings/bezel/bearing render, re-mounts on theme change).
+- **B3 / C11 — typecheck enforced.** Added `"typecheck": "tsc --noEmit"` (passes
+  today) and wired it into **CI** between lint and build. Keeps the TS surface
+  (`store/useThemeStore.ts` + any future `.tsx`) honest without forcing a full
+  migration.
+- **C10 — dead `@`-aliases removed.** Deleted the 8 unused path aliases from
+  `vite.config.js` (and the now-unused `path` import) **and** the `paths` block from
+  `tsconfig.json`. (They were unused and had already drifted once — pointing at a
+  deleted `src/utils`. Adopting `@`-aliases repo-wide stays a clean future option.)
+- **C4 — dev-middleware body guard.** The `ravenApiDev` middleware now caps the
+  request body at 64 KB and replies `413` instead of buffering unbounded.
+- **C12 — form focus ring (a11y).** The Summon inputs used `outline-none` with no
+  replacement → **no visible keyboard focus**. Added a `.form-field:focus-visible`
+  ember ring in `index.css`. (Inputs already have `aria-label`/`aria-required`.)
+- **C13 — reduced-motion** spot-checked: 11 modules gate on
+  `useReducedMotion`/`prefers-reduced-motion`; the new starfield + astrolabe both
+  honor it. No gaps found.
+- **B2 — `.editorconfig`** added (UTF-8, LF, 2-space, trim trailing) to stop the
+  tab/space drift at the editor level.
+
+### ⏳ Deferred (with rationale)
+- **C9 — split `constants/index.js` (545 lines).** **Deferred deliberately.** The
+  file is cohesive, well-commented data with 14 interdependent exports
+  (`chapterList`←`chapters`, `featured/otherProjects`←`projects`, `skillCategories`←
+  asset imports). Splitting is **organizational only** — no correctness or
+  performance gain — and the churn/risk outweighs the value while it's stable. Best
+  done deliberately if/when the data grows.
+- **B2 (full Prettier)** — intentionally not adopted: a repo-wide `prettier --write`
+  would mass-reformat the hand-tuned cinematic JSX for little gain. `.editorconfig`
+  covers the actual recurrence risk.
+- **C1 (per-IP rate limit)** — still needs durable storage (Vercel KV/Upstash);
+  honeypot + length caps + body guard already cover the common abuse vectors.
+
+## Verification (batch 2)
+- `npm run lint` → 0 · `npm run typecheck` → PASS · `npm run build` → clean.
+- Headless screenshot of `/` → astrolabe renders and animates correctly post-extraction.

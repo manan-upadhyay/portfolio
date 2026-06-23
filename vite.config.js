@@ -1,6 +1,5 @@
 import { defineConfig, loadEnv } from 'vite';
 import react from '@vitejs/plugin-react';
-import path from 'path';
 
 // Dev-only: serve POST /api/send-raven (the same handler Vercel runs in prod) so
 // the contact form works under `npm run dev`, not just `vercel dev`.
@@ -12,13 +11,24 @@ function ravenApiDev() {
       server.middlewares.use('/api/send-raven', (req, res, next) => {
         if (req.method !== 'POST') return next();
         let raw = '';
-        req.on('data', (c) => (raw += c));
+        let aborted = false;
+        const MAX_BODY = 64 * 1024; // 64 KB — generous for a contact form, caps abuse
+        const reply = (status, payload) => {
+          res.statusCode = status;
+          res.setHeader('Content-Type', 'application/json');
+          res.end(JSON.stringify(payload));
+        };
+        req.on('data', (c) => {
+          if (aborted) return;
+          raw += c;
+          if (raw.length > MAX_BODY) {
+            aborted = true;
+            reply(413, { ok: false, code: 'PAYLOAD_TOO_LARGE' });
+            req.destroy();
+          }
+        });
         req.on('end', async () => {
-          const reply = (status, payload) => {
-            res.statusCode = status;
-            res.setHeader('Content-Type', 'application/json');
-            res.end(JSON.stringify(payload));
-          };
+          if (aborted) return;
           try {
             const { sendRaven, statusFor } = await server.ssrLoadModule('/api/_lib/sendRaven.js');
             const body = raw ? JSON.parse(raw) : {};
@@ -45,20 +55,6 @@ export default defineConfig(({ mode }) => {
 
   return {
     plugins: [react(), ravenApiDev()],
-
-    // Path aliases
-    resolve: {
-      alias: {
-        '@': path.resolve(__dirname, './src'),
-        '@sections': path.resolve(__dirname, './src/sections'),
-        '@components': path.resolve(__dirname, './src/components'),
-        '@assets': path.resolve(__dirname, './src/assets'),
-        '@store': path.resolve(__dirname, './src/store'),
-        '@lib': path.resolve(__dirname, './src/lib'),
-        '@hooks': path.resolve(__dirname, './src/hooks'),
-        '@constants': path.resolve(__dirname, './src/constants'),
-      },
-    },
 
     // Build optimizations
     build: {

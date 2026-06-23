@@ -139,7 +139,7 @@ const Contact = () => {
     }
   };
 
-  const inputCls = 'w-full py-3.5 px-4 rounded-xl outline-none border transition-colors duration-300';
+  const inputCls = 'form-field w-full py-3.5 px-4 rounded-xl outline-none border transition-colors duration-300';
   const inputStyle = { background: 'var(--color-card-bg)', borderColor: 'var(--color-card-border)', color: 'var(--color-text)' };
 
   return (

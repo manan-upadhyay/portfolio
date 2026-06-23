@@ -411,6 +411,14 @@ h1, h2, h3, h4, h5, h6 {
 
 .btn-secondary:active { transform: translateY(-1px) scale(0.99); }
 
+/* ===== Form fields ===== */
+/* The Summon inputs clear the default outline; restore a visible keyboard-focus
+   ring (WCAG 2.4.7). box-shadow is used so it shows regardless of inline border. */
+.form-field:focus-visible {
+  border-color: var(--color-ember);
+  box-shadow: 0 0 0 3px rgba(var(--color-ember-rgb), 0.28);
+}
+
 /* ===== Volume slider (music player) ===== */
 .vol-slider {
   -webkit-appearance: none;

@@ -5,11 +5,15 @@
 > Severity: **P0** = fix soon / correctness or trust · **P1** = should fix ·
 > **P2** = nice-to-have / polish.
 >
-> **🟢 STATUS:** Batch 1 done — lint **234 → 0**, 6 dead deps removed, tailwind
-> config + README + dead files fixed, contact endpoint hardened, CI added. See
-> [AUDIT-PROGRESS.md](./AUDIT-PROGRESS.md) for before/after. **Resolved:** A1, A2,
-> B1, B5, B6, B7, B8, B9, B10, C3, C5, C6, C7, C8, B4 + C2 + honeypot.
-> **Remaining:** B3, B11, C1 (rate-limit), C4, C9, C10, C11.
+> **🟢 STATUS:** Batches 1–2 done. See [AUDIT-PROGRESS.md](./AUDIT-PROGRESS.md) for
+> before/after. Lint **234 → 0**; **typecheck enforced**; `Hero.jsx` **430 → 215**
+> (astrolabe extracted); 6 dead deps + 8 dead aliases removed; tailwind/README/dead
+> files fixed; contact endpoint hardened (honeypot + caps + body guard); form focus
+> a11y fixed; CI gates lint+typecheck+build.
+> **Resolved:** A1, A2, B1, B2, B3, B4, B5, B6, B7, B8, B9, B10, B11, C2, C3, C4,
+> C5, C6, C7, C8, C10, C11, C12, C13 (+ honeypot).
+> **Deferred (rationale in progress log):** C1 (per-IP rate-limit — needs KV),
+> C9 (constants split — low ROI), full Prettier.
 
 ## Health snapshot
 

@@ -50,10 +50,12 @@ export default defineConfig(({ mode }) => {
     resolve: {
       alias: {
         '@': path.resolve(__dirname, './src'),
+        '@sections': path.resolve(__dirname, './src/sections'),
         '@components': path.resolve(__dirname, './src/components'),
         '@assets': path.resolve(__dirname, './src/assets'),
         '@store': path.resolve(__dirname, './src/store'),
-        '@utils': path.resolve(__dirname, './src/utils'),
+        '@lib': path.resolve(__dirname, './src/lib'),
+        '@hooks': path.resolve(__dirname, './src/hooks'),
         '@constants': path.resolve(__dirname, './src/constants'),
       },
     },

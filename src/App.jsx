@@ -1,16 +1,18 @@
 import { lazy, Suspense, useState, useEffect } from 'react';
 import { Compass } from 'lucide-react';
 import { useThemeStore } from './store/useThemeStore';
-import Hero from './components/Hero';
-import { Cursor, ErrorBoundary, SideRail, MapOverlay, MusicPlayer, DayNightToggle } from './components/ui';
+import Hero from './sections/Hero';
+import { Cursor, ErrorBoundary, SideRail, MapOverlay, DayNightToggle } from './components';
+// import { MusicPlayer } from './components'; // ambient audio — disabled for now, re-enable for future use
 import { useSmoothScroll } from './lib/smoothScroll';
 import { useActiveSection } from './hooks/useActiveSection';
+import { Analytics } from '@vercel/analytics/react';
 
-const About = lazy(() => import('./components/About'));
-const Experience = lazy(() => import('./components/Experience'));
-const Tech = lazy(() => import('./components/Tech'));
-const Works = lazy(() => import('./components/Works'));
-const Contact = lazy(() => import('./components/Contact'));
+const About = lazy(() => import('./sections/About'));
+const Experience = lazy(() => import('./sections/Experience'));
+const Tech = lazy(() => import('./sections/Tech'));
+const Works = lazy(() => import('./sections/Works'));
+const Contact = lazy(() => import('./sections/Contact'));
 
 const SectionLoader = () => (
   <div className="flex items-center justify-center py-20">
@@ -42,7 +44,7 @@ const App = () => {
       <Cursor />
       <SideRail activeId={activeId} onOpenMap={() => setMapOpen(true)} visible={activeId !== 'origin'} />
       <div className="fixed top-5 right-5 z-40"><DayNightToggle /></div>
-      <MusicPlayer />
+      {/* <MusicPlayer /> — ambient audio toggle (bottom-right), disabled for now; re-enable with the import above */}
       {/* mobile map button (side-rail is desktop-only) */}
       <button onClick={() => setMapOpen(true)} aria-label="Open the map"
         className="md:hidden fixed top-5 left-5 z-40 grid place-items-center w-11 h-11 rounded-full"
@@ -77,6 +79,7 @@ const App = () => {
           © {new Date().getFullYear()} Manan Upadhyay · Crafted with React, GSAP & far too much chai.
         </p>
       </footer>
+      <Analytics/>
     </div>
   );
 };

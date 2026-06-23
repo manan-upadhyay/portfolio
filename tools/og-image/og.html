@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 1200px; height: 630px; }
+  body {
+    position: relative;
+    overflow: hidden;
+    background:
+      radial-gradient(900px 520px at 78% -10%, rgba(232,150,90,0.22), transparent 60%),
+      radial-gradient(700px 480px at 8% 120%, rgba(129,140,248,0.16), transparent 55%),
+      #0B0F1A;
+    font-family: "Inter", sans-serif;
+    color: #ECE7DB;
+  }
+  /* faint star grid */
+  .grid {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(154,163,181,0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(154,163,181,0.05) 1px, transparent 1px);
+    background-size: 60px 60px;
+    mask-image: radial-gradient(circle at 50% 40%, black, transparent 80%);
+  }
+  .frame {
+    position: absolute; inset: 36px;
+    border: 1px solid rgba(217,164,65,0.22);
+    border-radius: 18px;
+  }
+  .wrap {
+    position: relative; z-index: 2;
+    height: 100%;
+    display: flex; align-items: center;
+    padding: 0 92px;
+    gap: 64px;
+  }
+  .crest { width: 300px; height: 300px; flex: none;
+    filter: drop-shadow(0 24px 60px rgba(232,150,90,0.28)); }
+  .crest img { width: 100%; height: 100%; object-fit: contain; }
+  .col { flex: 1; min-width: 0; }
+  .kicker {
+    font-size: 19px; letter-spacing: 0.42em; text-transform: uppercase;
+    font-weight: 600; color: #E8965A; margin-bottom: 22px;
+  }
+  .name {
+    font-family: "Cormorant Garamond", serif;
+    font-weight: 600; font-size: 92px; line-height: 0.98;
+    color: #F5F0E6; letter-spacing: -0.5px;
+  }
+  .rule {
+    width: 120px; height: 2px; margin: 26px 0 24px;
+    background: linear-gradient(90deg, #E8965A, #D9A441 70%, transparent);
+  }
+  .title {
+    font-size: 27px; font-weight: 500; color: #ECE7DB; line-height: 1.35;
+    max-width: 600px;
+  }
+  .title b { color: #D9A441; font-weight: 600; }
+  .meta {
+    position: absolute; left: 92px; right: 92px; bottom: 64px; z-index: 2;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 18px; color: #9AA3B5; letter-spacing: 0.04em;
+  }
+  .meta .coord { font-family: "Cormorant Garamond", serif; font-style: italic; font-size: 22px; color: #9AA3B5; }
+</style>
+</head>
+<body>
+  <div class="grid"></div>
+  <div class="frame"></div>
+  <div class="wrap">
+    <div class="crest"><img src="../../public/logo-dark.png" alt="" /></div>
+    <div class="col">
+      <div class="kicker">The Chronicle</div>
+      <div class="name">Manan Upadhyay</div>
+      <div class="rule"></div>
+      <div class="title">Full&nbsp;Stack Developer — architecting <b>production systems</b>, scalable platforms &amp; resilient APIs with React, Next.js &amp; Node.</div>
+    </div>
+  </div>
+  <div class="meta">
+    <span>upadhyaymanan.in</span>
+    <span class="coord">23.02°N&nbsp;&nbsp;72.57°E · Ahmedabad</span>
+  </div>
+</body>
+</html>

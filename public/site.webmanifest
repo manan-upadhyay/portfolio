@@ -1,20 +1,28 @@
 {
-  "name": "Manan Upadhyay Portfolio",
-  "short_name": "Manan",
-  "description": "Senior Full Stack Developer Portfolio",
+  "name": "Manan Upadhyay — Full Stack Developer",
+  "short_name": "Manan Upadhyay",
+  "description": "Full Stack Developer with 5+ years building production web platforms with React, Next.js, Node.js & TypeScript.",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
-  "theme_color": "#050816",
-  "background_color": "#050816",
+  "theme_color": "#0B0F1A",
+  "background_color": "#0B0F1A",
   "icons": [
     {
       "src": "/android-chrome-192x192.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     },
     {
       "src": "/android-chrome-512x512.png",
       "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
       "type": "image/png"
     }
   ]

@@ -1,20 +1,14 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, FileText, Github, Linkedin, Sun, Moon, X, CornerDownLeft, Star } from 'lucide-react';
-import { personalInfo } from '../constants';
+import { personalInfo, chapterList } from '../constants';
 import { scrollToSection } from '../lib/smoothScroll';
 import { useThemeStore } from '../store/useThemeStore';
 import CompassRose from './CompassRose';
 
-// Organic waypoints (x,y in 0–100 across the plate) + searchable keywords.
-const PINS = [
-  { id: 'origin', no: '00', label: 'Origin', x: 12, y: 70, kw: 'home top start intro beginning hero' },
-  { id: 'about', no: '01', label: 'The Craft', x: 26, y: 30, kw: 'about bio craft who disciplines story' },
-  { id: 'work', no: '02', label: 'The Journey', x: 41, y: 58, kw: 'experience journey career timeline history work roles' },
-  { id: 'arsenal', no: '03', label: 'The Arsenal', x: 57, y: 24, kw: 'skills tech stack tools technologies frameworks react node' },
-  { id: 'projects', no: '04', label: 'The Realms', x: 73, y: 52, kw: 'projects realms portfolio work case studies builds' },
-  { id: 'contact', no: '05', label: 'Summon', x: 89, y: 28, kw: 'contact email hire summon reach available raven' },
-];
+// Map waypoints = the chapters (single source of truth). Each carries its pin
+// position (x,y in 0–100 across the plate) + search keywords from constants.
+const PINS = chapterList;
 const MAP_SRC = '/chronicle/map/realm-map.webp';
 
 // Smooth (Catmull-Rom → bézier) path through the waypoints = a wandering trail.

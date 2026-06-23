@@ -2,23 +2,12 @@ import { useState, useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
-import { personalInfo } from '../constants';
+import { personalInfo, chapters } from '../constants';
 import { useThemeStore } from '../store/useThemeStore';
 import { scrollToSection } from '../lib/smoothScroll';
 import CompassRose from '../components/CompassRose';
 
 gsap.registerPlugin(ScrollTrigger);
-
-const SKY = '/chronicle/hero-sky.webp';
-
-// Probe an image once; resolves true/false (never rejects).
-const probe = (src) =>
-  new Promise((resolve) => {
-    const img = new Image();
-    img.onload = () => resolve(true);
-    img.onerror = () => resolve(false);
-    img.src = src;
-  });
 
 // Deterministic PRNG so the constellation field is stable across renders.
 const makeRng = (seed) => {
@@ -30,7 +19,6 @@ const Hero = () => {
   const { resolvedTheme } = useThemeStore();
   const isDark = resolvedTheme === 'dark';
   const prefersReduced = useReducedMotion();
-  const [haveSky, setHaveSky] = useState(false);
   const [phraseIdx, setPhraseIdx] = useState(0);
 
   const rootRef = useRef(null);
@@ -41,13 +29,6 @@ const Hero = () => {
 
   const phrases = personalInfo.heroPhrases?.length ? personalInfo.heroPhrases : [personalInfo.heroTitle];
   const longestPhrase = phrases.reduce((a, b) => (b.length > a.length ? b : a), phrases[0]);
-
-  // The starfield backdrop is a dark-theme asset; light theme uses a dawn gradient.
-  useEffect(() => {
-    let alive = true;
-    probe(SKY).then((v) => alive && setHaveSky(v));
-    return () => { alive = false; };
-  }, []);
 
   // Rotating tagline phrase (paused under reduced-motion / single phrase).
   useEffect(() => {
@@ -301,34 +282,34 @@ const Hero = () => {
 
   return (
     <section ref={rootRef} id="origin" className="relative w-full h-screen overflow-hidden">
-      {/* ===== Backdrop ===== */}
+      {/* ===== Backdrop — pure CSS starfield (no image); dark = ink gradient + stars,
+          light = dawn gradient. Bottoms out near the page color for a seamless hand-off. */}
       <div className="absolute inset-0 z-0">
-        {isDark && haveSky ? (
-          <img src={SKY} alt="" aria-hidden="true" className="w-full h-full object-cover" />
-        ) : (
-          <div
-            className="w-full h-full"
-            style={{
-              background: isDark
-                ? 'radial-gradient(130% 100% at 75% 12%, #1B2440 0%, #0E1426 48%, #070A14 100%)'
-                : 'radial-gradient(130% 110% at 72% 105%, #FAF1DC 0%, #F2E7CF 45%, #E8D9BD 100%)',
-            }}
-          >
-            {isDark && [...Array(70)].map((_, i) => (
-              <span
-                key={i}
-                className="absolute rounded-full bg-white"
-                style={{
-                  width: i % 11 === 0 ? 2.4 : 1.3,
-                  height: i % 11 === 0 ? 2.4 : 1.3,
-                  left: `${(i * 37) % 100}%`,
-                  top: `${(i * 53) % 90}%`,
-                  opacity: 0.1 + ((i * 17) % 55) / 100,
-                }}
-              />
-            ))}
-          </div>
-        )}
+        <div
+          className="w-full h-full"
+          style={{
+            background: isDark
+              ? 'radial-gradient(130% 100% at 75% 12%, #1B2440 0%, #0E1426 48%, #0B0F1A 100%)'
+              : 'radial-gradient(130% 110% at 72% 105%, #FAF1DC 0%, #F2E7CF 45%, #E8D9BD 100%)',
+          }}
+        >
+          {isDark && [...Array(70)].map((_, i) => (
+            <span
+              key={i}
+              className="hero-star absolute rounded-full bg-white"
+              style={{
+                width: i % 11 === 0 ? 2.4 : 1.3,
+                height: i % 11 === 0 ? 2.4 : 1.3,
+                left: `${(i * 37) % 100}%`,
+                top: `${(i * 53) % 90}%`,
+                // Per-star twinkle: stable, desynced timing (see .hero-star in index.css).
+                '--star-o': 0.1 + ((i * 17) % 55) / 100,
+                '--star-dur': `${4.5 + ((i * 13) % 45) / 10}s`,
+                '--star-delay': `${((i * 29) % 80) / 10}s`,
+              }}
+            />
+          ))}
+        </div>
       </div>
 
       {/* Legibility scrim — darkens the copy side, leaves the instrument lit. */}
@@ -341,6 +322,17 @@ const Hero = () => {
         }}
       />
       <div className="cinematic-vignette" style={{ zIndex: 2 }} />
+
+      {/* Seamless hand-off — pin the lower edge to the exact page background
+          (`--color-primary`) so the vignette's edge-darkening doesn't leave a
+          seam against the sections below. Below the astrolabe (z-3) so the
+          instrument stays crisp. */}
+      {isDark && (
+        <div
+          className="absolute inset-x-0 bottom-0 z-[2] pointer-events-none h-1/3"
+          style={{ background: 'linear-gradient(to bottom, transparent 0%, var(--color-primary) 96%)' }}
+        />
+      )}
 
       {/* ===== The astrolabe ===== */}
       <div
@@ -375,7 +367,7 @@ const Hero = () => {
       {/* ===== Copy ===== */}
       <div ref={copyRef} className="relative z-10 h-full max-w-7xl mx-auto px-6 sm:px-12 flex flex-col justify-center">
         <div className="max-w-xl">
-          <div className="hero-eyebrow chapter-eyebrow mb-5">Chapter 00 · Origin</div>
+          <div className="hero-eyebrow chapter-eyebrow mb-5">Chapter {chapters.origin.no} · {chapters.origin.label}</div>
 
           <h1 className="font-chronicle font-semibold leading-[0.86] tracking-tight" style={{ color: 'var(--color-text)' }}>
             <span className="hero-line block overflow-hidden pb-[0.18em] -mb-[0.14em]"><span className="block text-[clamp(56px,12vw,150px)]">{firstName}</span></span>

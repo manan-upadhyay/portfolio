@@ -4,7 +4,7 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Github, ArrowUpRight, Lock, Star, ChevronLeft, ChevronRight } from 'lucide-react';
 import { SectionWrapper } from '../hoc';
-import { projects } from '../constants';
+import { projects, chapters } from '../constants';
 import { ChapterHeading, ScrollReveal } from '../components';
 import { useThemeStore } from '../store/useThemeStore';
 import Magnet from '../components/Magnet';
@@ -225,7 +225,7 @@ const Works = () => {
 
   return (
     <>
-      <ChapterHeading no="04" eyebrow="The Realms" title="Worlds I've Shipped." />
+      <ChapterHeading no={chapters.projects.no} eyebrow={chapters.projects.label} title={`${chapters.projects.sub}.`} />
       <ScrollReveal delay={0.15} direction="up">
         <p className="mt-5 max-w-2xl text-[16px] leading-[28px]" style={{ color: 'var(--color-text-muted)' }}>
           Each realm is a production world charted end to end — across finance, healthcare,

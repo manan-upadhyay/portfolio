@@ -1,7 +1,7 @@
 # Section 04 — The Realms (Projects)
 
-**Component:** `src/components/Works.jsx` · **id:** `projects` · **Status:**
-rebuild into editorial cinematic **plates** (current small-card grid is weak).
+**Component:** `src/sections/Works.jsx` · **id:** `projects` · **Status:** built
+(editorial cinematic **plates** with per-theme realm galleries).
 
 ## Purpose
 The centerpiece proof of work. Each project is a **realm** presented as a large,

@@ -7,3 +7,6 @@ and og-image are derived).
 
 - `source/branding.png` — master brand artwork (concept sheet / high-res source).
 - `archive/v1/` — the previous (v1) favicon set, logos, and og-image, kept for reference.
+- `hero-sky/` — generated hero-background sky variants. No longer used: the hero
+  renders a pure-CSS ink-gradient starfield (cleaner, zero image weight). Kept in
+  case we revisit an image backdrop.

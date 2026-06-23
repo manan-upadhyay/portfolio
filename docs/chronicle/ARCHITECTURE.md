@@ -8,30 +8,41 @@ How the app is wired, the canonical patterns to copy, and how to verify work.
 
 ```
 src/
-  App.jsx                 # Shell: theme bg, Cursor, CommandPalette, Navbar, sections, footer
+  App.jsx                 # Shell: theme bg + aurora, Cursor, SideRail, DayNightToggle,
+                          #   MapOverlay, sections, footer, Vercel <Analytics/>
   main.jsx                # Entry
   index.css               # Theme tokens + global utilities + keyframes (SOURCE OF TRUTH for style)
-  styles.js               # A few shared className strings (legacy; prefer utilities)
-  constants/index.js      # ALL content: personalInfo, chapters, services, skillCategories,
-                          #   technologies, experiences, projects, stats, education
+  constants/index.js      # ALL content: personalInfo, summon, chapters, services,
+                          #   skillCategories, experiences, projects, stats, education
   store/useThemeStore.ts  # Zustand theme (light|dark|system) → toggles <html> class
   lib/
-    smoothScroll.js       # Lenis + GSAP ticker integration; scrollToSection/scrollToTop
-    utils.ts              # cn() etc.
-  hooks/                  # Custom hooks (add useGsap helpers here)
+    smoothScroll.js       # Lenis + GSAP ticker; scrollToSection/scrollToTop
+    motion.js             # Framer Motion variants (staggerContainer, fadeIn, …)
+  hooks/
+    useActiveSection.js   # Scroll-spy → active chapter id (drives SideRail/MapOverlay)
   hoc/SectionWrapper.jsx  # Standard padded <section> + stagger container
-  components/
+  sections/               # Page chapters (00–05) + index.js barrel
     Hero.jsx About.jsx Experience.jsx Tech.jsx Works.jsx Contact.jsx
-    Navbar.jsx
-    ui/                   # Reusable: ChapterHeading, MapDivider, Cursor, DayNightToggle,
-                          #   CommandPalette, ErrorBoundary, ScrollReveal
-    canvas/               # ⚠️ Three.js — DELETE during Contact rebuild
-  assets/                 # tech/ company/ images (import via assets/index.js)
-public/
-  chronicle/              # Cinematic art (hero layers, portrait, project covers, map). See ASSETS.md
-  resume.pdf
+  components/             # Reusable widgets (flat) + index.js barrel:
+                          #   SideRail, MapOverlay, Cursor, DayNightToggle, CompassRose,
+                          #   ChapterHeading, MapDivider, CountUp, ScrollReveal,
+                          #   ErrorBoundary, MusicPlayer (disabled), Magnet
+  assets/                 # backend/creator/mobile/web pngs + tech/*.svg (import via assets/index.js)
+public/                   # PRODUCTION ASSETS ONLY (everything here ships):
+  favicon.ico favicon-16x16.png favicon-32x32.png apple-touch-icon.png
+  android-chrome-192x192.png android-chrome-512x512.png
+  og-image.png logo-light.png logo-dark.png
+  site.webmanifest robots.txt sitemap.xml resume.pdf
+  realms/<slug>/…         # project gallery screenshots (per-theme subfolders when themed)
+branding/                 # Brand SOURCE/ARCHIVE — NOT deployed (out of public/)
+  source/  archive/v1/  hero-sky/   # master art, old icon sets, retired hero skies
+tools/og-image/           # og-image template + regeneration steps (headless Chrome)
 docs/chronicle/           # THIS documentation set (source of truth)
 ```
+
+> No `src/utils/`, `styles.js`, `lib/utils.ts`, `components/canvas/`, `Navbar`,
+> or `CommandPalette` — all removed. The `@`-path aliases in
+> `vite.config.js`/`tsconfig.json` mirror this tree but code uses relative imports.
 
 ---
 
@@ -41,22 +52,24 @@ docs/chronicle/           # THIS documentation set (source of truth)
 
 ```jsx
 useSmoothScroll();                       // Lenis + GSAP ticker (once)
+const activeId = useActiveSection();     // scroll-spy → active chapter id
 <div bg=theme>
   <div aurora-bg / sunrise-bg />         // ambient background
   <Cursor />                             // custom cursor (fixed, top z)
-  <CommandPalette />                     // ⌘K → becomes Map overlay
-  <Navbar onOpenMap={…} />               // fixed, hides on scroll-down
+  <SideRail activeId visible={activeId!=='origin'} onOpenMap />  // collapsible chapter nav
+  <DayNightToggle />                     // fixed top-right
+  <MapOverlay open activeId />           // ⌘K interactive map
   <Hero />                               // chapter 00 (eager)
   {lazy sections each wrapped in <ErrorBoundary><Suspense>…}
-  <footer/>
+  <footer/> <Analytics/>
 </div>
 ```
 
 - **Sections are `lazy()` + `Suspense` + `ErrorBoundary`.** An `ErrorBoundary`
-  around each guarantees one section failing (e.g. WebGL) never white-screens
-  the site.
-- Import `Navbar`/`Hero` **directly** (not via the `components/index.js` barrel)
-  so the Three-heavy barrel isn't pulled into the initial chunk.
+  around each guarantees one section failing never white-screens the site. `Hero`
+  is eager (above the fold); the rest are lazy via `import('./sections/…')`.
+- `MusicPlayer` (bottom-right ambient audio) is currently **commented out** in
+  `App.jsx` — re-enable the import + mount to restore it.
 
 ---
 
@@ -116,12 +129,14 @@ if (reduce || coarse) { /* static fallback */ return; }
 
 | Component | Contract |
 |---|---|
-| `Navbar({ onOpenMap })` | Fixed; hides on scroll-down (Framer `useScroll`); serif wordmark; numbered chapter links → `scrollToSection`; Map button; `DayNightToggle`; mobile sheet. Links list lives in `Navbar.jsx` `LINKS` and must match canon. |
-| `Cursor` | Dot + trailing ring (+grows over `a,button,[data-cursor=hover]`) + backlight. Adds `has-custom-cursor` to `<html>`. Auto-off on touch/reduced-motion. Add `data-cursor="hover"` to custom interactive targets. |
-| `DayNightToggle({ compact? })` | Sun↔moon morph, orbit ring, spring press, radial theme ripple. |
-| `CommandPalette` | ⌘K palette → **being upgraded to the Map overlay** (see section 06). Commands map to `scrollToSection`. |
+| `SideRail({ activeId, onOpenMap, visible })` | Desktop-only collapsible glass rail (left, vertically centered); hidden on the hero (`visible={activeId!=='origin'}`); springs open on hover. Sigil = themed brand crest (`/logo-{light,dark}.png`); chapter rows → `scrollToSection`; Map row uses `CompassRose`. Chapters come from `constants.chapterList` (single source). |
+| `MapOverlay({ open, onClose, activeId })` | ⌘K interactive map overlay (the realized "Command Palette"). Pins are `constants.chapterList` (each chapter's `x`/`y`/`kw`); probes `/chronicle/map/realm-map.webp`, degrades gracefully; commands map to `scrollToSection` + external links. |
+| `Cursor` | Dot + trailing ring (+grows over `a,button,[data-cursor=hover]`) + backlight. Auto-off on touch/reduced-motion. Add `data-cursor="hover"` to custom interactive targets. |
+| `DayNightToggle({ compact? })` | The only theme toggle (fixed top-right). Sun↔moon morph, orbit ring, spring press, radial View-Transition theme ripple. |
+| `CompassRose({ className })` | Shared ember/gold compass-star SVG. Used at the astrolabe hub, the SideRail map row, and the map overlay. |
+| `MusicPlayer` | Bottom-right ambient-audio toggle. **Currently disabled** (commented out in `App.jsx`). |
 | `ErrorBoundary({ fallback? })` | Class boundary; wrap any risky subtree. |
-| `SectionWrapper(Component, id)` | HOC: padded `max-w-7xl` section, `<span id>` anchor, Framer stagger container. Use for standard sections. |
+| `SectionWrapper(Component, id)` | HOC (`hoc/`): padded `max-w-7xl` section, `<span id>` anchor, Framer stagger container (`lib/motion`). Use for standard sections. |
 | `ChapterHeading({ no, eyebrow, title, align })` | The one section header. Use everywhere; never hand-roll headers. |
 | `MapDivider` | Route-line divider between chapters (optional). |
 
@@ -129,21 +144,26 @@ if (reduce || coarse) { /* static fallback */ return; }
 
 ## 6. Asset pipeline
 
-- Cinematic art lives in `public/chronicle/` and is referenced by absolute path
-  (`/chronicle/x.webp`). It is **not** imported through the bundler.
-- **Probe-and-degrade pattern** (Hero is the reference impl): attempt to load
-  each optional asset; render it only if it loads, else a procedural/typographic
-  fallback. This keeps the site shippable before art exists and resilient if a
-  file 404s.
-- Prefer **WebP** (q≈80), keep each layer < ~600KB. Lazy-load below-the-fold
-  art. **Delete unused originals from `public/`** — everything there ships.
-- Full spec + filenames + prompts: [ASSETS.md](ASSETS.md).
+- Runtime art is referenced by absolute path from `public/` (e.g.
+  `/realms/<slug>/…`, `/logo-dark.png`) and is **not** imported through the
+  bundler. Small bundled images/icons live in `src/assets/` (imported, hashed).
+- **Probe-and-degrade pattern** for *optional* art (realm covers, map): attempt
+  to load each asset; render it only if it loads, else a procedural/typographic
+  fallback. Keeps the site shippable before art exists and resilient on 404.
+  (The hero needs no probe — it's a fully procedural CSS starfield + Canvas2D.)
+- Prefer **WebP** (q≈80); keep images lean and lazy below the fold. **`public/`
+  ships as-is** — keep it to production assets only; brand source/archive go in
+  `/branding/`.
+- Brand/icon assets: the favicon family + `og-image.png` are generated from the
+  brand crest via [`/tools/og-image/`](../../tools/og-image/). Full spec +
+  filenames + prompts: [ASSETS.md](ASSETS.md).
 
 ---
 
 ## 7. Performance budget
 
-- Initial JS < ~200KB gz (Three removal is the big win — keep it out).
+- Initial JS < ~200KB gz (Three.js is gone — keep WebGL out). Vendor split:
+  `react-vendor` + `animation-vendor` (framer/gsap/lenis) via `manualChunks`.
 - Lighthouse perf ≥ 90; 60fps scroll.
 - `transform`/`opacity` only; `will-change` on animated layers; `content-visibility`/lazy for heavy sections.
 - One `IntersectionObserver`/ScrollTrigger per concern; clean them up.
@@ -171,8 +191,9 @@ CHROME="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
 - Confirm no console errors: add `--enable-logging=stderr --v=0 --dump-dom`.
 - Verify reduced-motion (emulate) and that scroll never locks.
 
-> Headless Chrome has no GPU; any remaining WebGL will throw — another reason
-> Three is being removed. The `ErrorBoundary` keeps the page rendering meanwhile.
+> To verify scroll-dependent chrome (the `SideRail`, which is hidden on the hero)
+> you need a scrolled state — drive scroll via CDP or check the rendered DOM.
+> The `ErrorBoundary` keeps the page rendering if any subtree throws.
 
 ---
 
@@ -180,7 +201,8 @@ CHROME="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
 
 - Function components + hooks; `ErrorBoundary` is the only class.
 - Default-export one component per file; colocate small sub-components, promote
-  shared ones to `ui/`.
-- Content from `constants/`; color from CSS vars; icons from lucide.
+  shared ones to `src/components/`. Sections live in `src/sections/`.
+- Content from `constants/`; color from CSS vars; icons from lucide / `CompassRose`.
 - Clean up every effect (listeners, rAF, ScrollTrigger, Lenis).
-- Keep `chapters` (constants), `LINKS` (Navbar), palette commands in sync.
+- Chapters live **once** in `constants.chapters` / `chapterList`; SideRail, the
+  Map overlay, the Hero eyebrow, and section headings all derive from it.

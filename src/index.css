@@ -567,6 +567,24 @@ h1, h2, h3, h4, h5, h6 {
   [style*="nodefloat"], [style*="orbit-cw"], [style*="orbit-ccw"], [style*="spin-slow"] { animation: none !important; }
 }
 
+/* ===== Hero starfield twinkle =====
+   Subtle, classy, desynced. Each star dims/shrinks toward its own base opacity
+   (`--star-o`) on its own slow cadence (`--star-dur`/`--star-delay`, set inline
+   in Hero.jsx). Static at base opacity under reduced motion. */
+.hero-star {
+  opacity: var(--star-o, 0.5);
+}
+@keyframes star-twinkle {
+  0%, 100% { opacity: var(--star-o, 0.5); transform: scale(1); }
+  50%      { opacity: calc(var(--star-o, 0.5) * 0.3); transform: scale(0.82); }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .hero-star {
+    animation: star-twinkle var(--star-dur, 5s) ease-in-out var(--star-delay, 0s) infinite;
+    will-change: opacity, transform;
+  }
+}
+
 /* ===== Journey waypoints ===== */
 .wp .realm-card {
   opacity: 0.62;

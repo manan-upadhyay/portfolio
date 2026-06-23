@@ -115,7 +115,8 @@ The site is *directed*. Motion is intentional, weighty, never decorative jitter.
 ### Principles
 
 1. **Reveal on arrival, settle, rest.** No infinitely-looping distractions near
-   text. Ambient loops (fog, embers, orbit ring) are subtle and far from copy.
+   text. Ambient loops (hero starfield twinkle, aurora drift, orbit ring) are
+   subtle, slow, and far from copy.
 2. **One hero motion per section** — a single memorable mechanic (pin-scrub,
    orbit, plate-reveal), not five competing ones.
 3. **Reduced-motion** → replace scrubbed/parallax motion with a static or simple
@@ -144,35 +145,40 @@ Reuse these; add to this list when you create a new shared visual.
 | `.glass-card`, `.link-hover` | Glass surface, underline-on-hover |
 
 Keyframes available: `scrollcue`, `herofog`, `aurora`, `sunrise`, `float`,
-`pulse-glow`, `status-pulse`.
+`pulse-glow`, `status-pulse`, `star-twinkle` (hero starfield), `orbit-cw` /
+`orbit-ccw`, `spin-slow`, `skill-fill`. All looping keyframes are gated by
+`prefers-reduced-motion`.
 
 ---
 
 ## 6. Iconography
 
-- **lucide-react** only (e.g. `Compass`, `Menu`, `X`, `ArrowUpRight`, `MapPin`).
-  Sized `14–22px`, colored via `style={{ color: 'var(--color-ember)' }}` or
-  `currentColor`. **No emoji in production UI.**
+- **lucide-react** for UI glyphs (e.g. `X`, `ArrowUpRight`, `MapPin`,
+  `FileText`). Sized `14–22px`, colored via `style={{ color: 'var(--color-ember)' }}`
+  or `currentColor`. **No emoji in production UI.**
+- **`CompassRose`** is the custom brand SVG (compass-star) — use it for the
+  cartographer/navigation motif (astrolabe hub, SideRail map row, map overlay)
+  instead of a generic compass glyph.
 - Tech logos (React, Next, …) live in `src/assets/tech/` — use for the Arsenal.
 
 ---
 
 ## 7. Component inventory
 
-### Keep / canonical (`src/components/ui/` unless noted)
-`ChapterHeading` · `MapDivider` · `Cursor` · `DayNightToggle` ·
-`CommandPalette` (→ to be reskinned into Map overlay) · `ErrorBoundary` ·
-`ScrollReveal` · `Magnet` (`components/`) · `SectionWrapper` (`hoc/`).
+### Canonical reusable widgets (`src/components/`, flat, barrel-exported)
+`SideRail` (chapter nav) · `MapOverlay` (⌘K map) · `Cursor` · `DayNightToggle` ·
+`CompassRose` (brand SVG) · `ChapterHeading` (the one section header) ·
+`MapDivider` · `CountUp` · `ScrollReveal` · `ErrorBoundary` · `Magnet` ·
+`MusicPlayer` *(mounted but disabled)*. Plus `SectionWrapper` (`src/hoc/`).
+Page chapters live in `src/sections/`.
 
-### Use sparingly (react-bits; only if they elevate a moment)
-`SplitText`, `BlurText`, `TiltedCard`, `SpotlightCard`. Prefer GSAP/Framer +
-our utilities for consistency. `GlitchText`, `FuzzyText` — avoid (off-theme).
-
-### Deprecated — do not use, remove when touched
-`ThemeToggle.jsx` (→ `DayNightToggle`) · `CustomCursor.jsx` (→ `Cursor`) ·
-`components/canvas/*` + Three deps (being deleted) · `hooks/useParallax.js`
-(Framer parallax — prefer GSAP) · `Feedbacks.jsx` (unused) ·
-`Loader.jsx` (Three loader, unused after canvas removal).
+### Removed (do not reintroduce)
+The react-bits experiments (`SplitText`, `BlurText`, `TiltedCard`,
+`SpotlightCard`, `GlitchText`, `FuzzyText`), `Feedbacks.jsx`, the Three.js
+`components/canvas/*` + `Loader.jsx`, `Navbar`/`CommandPalette` (→ `SideRail` +
+`MapOverlay`), `ThemeToggle`/`CustomCursor` (→ `DayNightToggle`/`Cursor`),
+`hooks/useParallax.js`, `styles.js`, and `lib/utils.ts` — all deleted. Prefer
+GSAP/Framer + our CSS utilities for any new motion.
 
 ---
 

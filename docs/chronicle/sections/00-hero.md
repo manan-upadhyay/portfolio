@@ -1,6 +1,6 @@
 # Section 00 — Origin (Hero)
 
-**Component:** `src/components/Hero.jsx` · **id:** `origin` · **Status:** built
+**Component:** `src/sections/Hero.jsx` · **id:** `origin` · **Status:** built
 (Astrolabe Title Sequence). This doc is the source of truth for its behavior.
 
 ## Purpose
@@ -10,19 +10,24 @@ taste, and tells a story." Editorial type carries the message; a living
 photo — the wow is the craft.
 
 > Replaces the old layered-parallax-photo concept (sky/mid/fog/fore +
-> `portrait.png`). Those assets were removed; only `hero-sky.webp` survives as
-> the dark-theme backdrop.
+> `portrait.png`) **and** a trialed image backdrop — both removed. The hero is
+> now **fully procedural** (no image assets).
 
 ## Layout
 - Full-bleed `h-screen`, `overflow-hidden`.
-- **Backdrop (z0):** dark theme → `hero-sky.webp` (probed; procedural starfield
-  fallback). Light theme → warm "dawn" radial gradient (no dark photo).
+- **Backdrop (z0):** dark theme → a **pure-CSS starfield**: radial ink gradient
+  (`#1B2440 → #0E1426 → #0B0F1A`, ending at the page color) + ~70 procedurally
+  placed stars that **twinkle** (`.hero-star` / `star-twinkle`, desynced, static
+  under reduced motion). Light theme → warm "dawn" radial gradient.
 - **Legibility scrim (z1):** left→right gradient in the page bg color — darkens
-  the copy side, leaves the instrument lit. Plus `.cinematic-vignette` (z2).
+  the copy side, leaves the instrument lit. Plus `.cinematic-vignette` (z2) and a
+  bottom fade pinned to `--color-primary` (z2) for a **seamless hand-off** to the
+  next section.
 - **Astrolabe (z3):** a Canvas2D instrument. Desktop: right side, vertically
   centered, fully on-screen (`md:right-[4%] w-[min(44vw,560px)]`). Mobile:
   centered atmospheric backdrop above the copy (`opacity ~0.45`).
-  A shared `ui/CompassRose` SVG sits at its center (DOM overlay above canvas).
+  A shared `components/CompassRose` SVG sits at its center (DOM overlay above
+  canvas), over a small ember/gold **pivot cap** so the alidade reads as anchored.
 - **Bearing readout (z5):** mono `bearing NNN° · origin|charting`, bottom-right,
   desktop/pointer only. Updated imperatively from the rAF loop (no re-render).
 - **Copy (z10), left:** chapter eyebrow → serif name (two masked lines; the clip
@@ -37,7 +42,8 @@ Drawn from theme tokens read via `getComputedStyle` (re-read on theme change),
 so it's never off-palette. Layers: ember aura · concentric rings · rotating
 degree bezel (72 ticks, majors every 30°) · counter-rotating constellation disc
 (seeded star field + link lines) · fixed cardinal letters (N = "up" = Origin) ·
-the **alidade** (sighting needle) · `CompassRose` hub.
+the **alidade** (sighting needle) · a **pivot cap** (anchor dot) at its center ·
+`CompassRose` hub.
 
 - **Assembly intro (~2.4s):** an "Iron-Man" build — rings scale in with overshoot
   (`easeOutBack`, staggered), bezel ticks sweep on from N one arc at a time,
@@ -67,8 +73,9 @@ the **alidade** (sighting needle) · `CompassRose` hub.
 `heroHook`, `coordinates`, `location`. CTAs scroll to `#about` / `#contact`.
 
 ## Assets
-`hero-sky.webp` only (dark backdrop) — see [ASSETS](../ASSETS.md#1-hero-chapter-00).
-Probed; missing → procedural starfield. No other hero art.
+**None.** The hero is fully procedural — CSS starfield backdrop + Canvas2D
+astrolabe, all from theme tokens. (Trialed sky images are archived in
+`/branding/hero-sky/`, not deployed.) See [ASSETS](../ASSETS.md#1-hero-chapter-00).
 
 ## Accessibility / performance
 - Canvas + rose are `aria-hidden`/decorative. Name is a real `<h1>`.
@@ -81,6 +88,6 @@ Probed; missing → procedural starfield. No other hero art.
 - [x] Astrolabe fully on-screen at all widths (no clipped edge).
 - [x] Instrument assembles in sequence, then the needle tracks the cursor.
 - [x] `CompassRose` shared with the Map overlay (one component).
-- [x] Reads as cinematic with AND without the sky asset (fallback elegant).
+- [x] Reads as cinematic with zero image assets (procedural starfield + twinkle).
 - [x] Copy legible in both themes; `<h1>` present; cue invites scroll.
 - [x] 60fps; no console errors; scroll never locks; `npm run build` clean.

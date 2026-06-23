@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Compass, Webhook } from 'lucide-react';
 import { SectionWrapper } from '../hoc';
-import { skillCategories } from '../constants';
+import { skillCategories, chapters } from '../constants';
 import { ChapterHeading, CompassRose } from '../components';
 import { useThemeStore } from '../store/useThemeStore';
 
@@ -256,7 +256,7 @@ const Tech = () => {
 
   return (
     <>
-      <ChapterHeading no="03" eyebrow="The Arsenal" title="Tools of the Trade." align="center" />
+      <ChapterHeading no={chapters.arsenal.no} eyebrow={chapters.arsenal.label} title={`${chapters.arsenal.sub}.`} align="center" />
       <p className="text-center max-w-xl mx-auto mt-5 text-[15px]" style={{ color: 'var(--color-text-muted)' }}>
         The kit I carry into every campaign — hover a star to trace its constellation.
       </p>

@@ -17,7 +17,7 @@
 | Phase | Feature | Status | Impact | Effort | Risk |
 |---|---|---|---|---|---|
 | 1 | **Voice switcher** (i18next: chronicle + plain, visible menu, sealed-voice teasers) | ✅ | 9 | 6 | low |
-| 2 | **Marginalia** (flavor ↔ substance footnotes) | 🟡 | 8 | 4 | low |
+| 2 | **Marginalia** (flavor ↔ substance footnotes) | ✅ | 8 | 4 | low |
 | 3 | **Time-aware real sky** (5 theme modes + live astrolabe) | 🟡 | 8 | 5 | low |
 | 4 | **Interactive sound design** (Web Audio synth + raven sample) | 🟡 | 7 | 6 | med |
 | 5 | **Expedition recap** (client-side session send-off) | 🟡 | 6 | 4 | low |
@@ -112,7 +112,32 @@ solvable cryptic clue; unlocking one toasts the next clue; unlocks persist.
 
 ---
 
-## 2. Marginalia — flavor meets substance  · Phase 2 · 🟡
+## 2. Marginalia — flavor meets substance  · Phase 2 · ✅ SHIPPED
+
+> **Shipped.** `Marginalia` + `Annotated` (`src/components/Marginalia.jsx`,
+> barrel-exported) render a flavor phrase with a dotted underline + a superscript
+> dagger (†); hover/focus/tap unfolds a margin note with the real engineering
+> fact. **Authoring convention:** wrap the phrase inline in any voice string with
+> the marker `[[id|phrase]]`, then render that string through `<Annotated
+> text={t('…')} />`; strings without a marker pass through untouched (safe
+> everywhere / every voice). The facts are **plain substance**, authored once
+> under `marginalia.<id>` in the `chronicle` bundle (no per-voice overrides — the
+> personality bundles fall back to them). After a review pass the set was trimmed
+> to **5 high-value notes**: About (`endToEnd`, `measured`), Works (`nda`,
+> `regionSvg`), and the Contact submit button (`raven`). (Dropped as low-signal /
+> redundant: `greenfield`, `sixDomains`, `secure`, `stack`.) **The `[[id|…]]`
+> markers are authored into every voice whose copy has the equivalent flavor
+> phrase** — `plain`, `scott`, `dwight` (each wrapping its own wording; the note
+> text stays the shared chronicle fact). `cow` is all "moo" so it carries none;
+> `dwight`'s one-word "Transmit" submit label is skipped for `raven` (the trigger
+> swallows the click, so a button label needs a second word left to submit).
+> Note: the id pattern is `[a-zA-Z0-9-]+` — camelCase ids like `endToEnd` must
+> not be lowercased away. CSS: `.marginalia*`
+> in `index.css`. The note renders through a **portal to `<body>`** (fixed
+> position from the trigger's rect) so an `overflow:hidden` ancestor — e.g. the
+> submit button's shine mask — can't clip it. The inline trigger stops
+> click/Enter propagation so revealing the raven note never also submits the
+> form. Verified: lint + build clean.
 
 **What:** Hover/tap a flavor phrase → a handwritten footnote unfolds with the
 real engineering fact behind it. Makes the fantasy **earn its keep**. Reuses the
@@ -121,15 +146,18 @@ Phase 1 i18n layer.
 ### Decisions (locked)
 - **Phrase selection:** kickoff task is to **scan the constants/i18n copy and
   produce a candidate phrase list**; Manan filters it down to ~6–10 high-signal
-  ones (don't over-annotate).
-- **Visual:** subtle **dotted underline + small rune** trigger.
+  ones (don't over-annotate). *(Resolved: trimmed to 5 after a review pass —
+  endToEnd, measured, nda, regionSvg, raven.)*
+- **Visual:** subtle **dotted underline + small rune** trigger. *(rune = `†`.)*
 - Touch = tap popover (not hover); a11y: focusable, `aria-describedby`.
+- **Footnote voice:** plain facts in **every** voice — the note IS the substance
+  layer, so it deliberately drops the persona (authored once in `chronicle`).
 
 **Tasks**
-- [ ] Generate candidate phrase list from copy → Manan filters.
-- [ ] `Marginalia` component (hover popover + tap, focusable, `aria-describedby`).
-- [ ] Author footnote content (real facts) in i18n.
-- [ ] Place across About / Tech / Works.
+- [x] Generate candidate phrase list from copy → Manan filters.
+- [x] `Marginalia` component (hover popover + tap, focusable, `aria-describedby`).
+- [x] Author footnote content (real facts) in i18n (`marginalia.<id>`, chronicle).
+- [x] Place across About / Tech / Works (+ Contact submit, the bonus 9th).
 
 ---
 

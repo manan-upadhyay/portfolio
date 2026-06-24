@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { LayoutPanelTop, Server, Gauge, Layers, ScrollText } from 'lucide-react';
 import { services, stats, chapters } from '../constants';
 import { SectionWrapper } from '../hoc';
-import { ScrollReveal, ChapterHeading, CountUp } from '../components';
+import { ScrollReveal, ChapterHeading, CountUp, Annotated } from '../components';
 
 // Discipline → line icon, keyed by stable `iconKey` from constants
 // (replaces the old gem PNGs; not the title, so copy can change freely).
@@ -69,7 +69,7 @@ const About = () => {
           </p>
           {t('about.intro', { returnObjects: true }).map((para) => (
             <p key={para.slice(0, 24)} className="text-[17px] leading-[30px] mb-4 last:mb-0" style={{ color: 'var(--color-text-muted)' }}>
-              {para}
+              <Annotated text={para} />
             </p>
           ))}
         </ScrollReveal>
@@ -85,7 +85,7 @@ const About = () => {
                   <span className="mt-2 w-2 h-2 rounded-full flex-shrink-0" style={{ background: 'var(--color-ember)', boxShadow: '0 0 10px var(--color-ember)' }} />
                   <span>
                     <span className="font-semibold" style={{ color: 'var(--color-text)' }}>{title}.</span>{' '}
-                    <span className="text-[14px] leading-[22px]" style={{ color: 'var(--color-text-muted)' }}>{body}</span>
+                    <span className="text-[14px] leading-[22px]" style={{ color: 'var(--color-text-muted)' }}><Annotated text={body} /></span>
                   </span>
                 </li>
               ))}

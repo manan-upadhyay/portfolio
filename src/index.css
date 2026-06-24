@@ -720,6 +720,53 @@ h1, h2, h3, h4, h5, h6 {
   width: 100%;
 }
 
+/* ===== Marginalia — flavor phrase with a substance footnote ===== */
+.marginalia {
+  position: relative;
+  text-decoration: underline dotted rgba(var(--color-ember-rgb), 0.55);
+  text-underline-offset: 3px;
+  transition: color 0.2s ease, text-decoration-color 0.2s ease;
+}
+
+.marginalia:hover,
+.marginalia:focus-visible {
+  color: var(--color-ember);
+  text-decoration-color: var(--color-ember);
+  outline: none;
+}
+
+.marginalia__rune {
+  font-size: 0.62em;
+  font-weight: 600;
+  margin-left: 1px;
+  color: var(--color-ember);
+  vertical-align: super;
+}
+
+/* The unfolding margin note. Portalled to <body> (escapes overflow:hidden
+   ancestors), fixed-positioned above the phrase via inline left/top, then lifted
+   above its own height and centered with the transform below. */
+.marginalia__note {
+  position: fixed;
+  z-index: 60;
+  transform: translate(-50%, calc(-100% - 8px));
+  width: max-content;
+  max-width: min(280px, 78vw);
+  padding: 10px 13px;
+  border-radius: 12px;
+  font-family: 'Inter', sans-serif;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 12.5px;
+  line-height: 1.45;
+  letter-spacing: normal;
+  text-align: left;
+  text-decoration: none;
+  white-space: normal;
+  color: var(--color-text-muted);
+  pointer-events: none;
+}
+
 /* ===== Grain Texture Overlay ===== */
 .dark::before {
   content: '';

@@ -32,14 +32,14 @@ export default {
     pullQuote: '“Would I rather be feared or loved? Easy — both. I want people to be afraid of how much they love me.”',
     intro: [
       'I’m Manan — a friend first, a developer second, and an entertainer third. Five years in, twenty-plus projects deep, somehow also one of the best full-stack engineers you will meet. Don’t make it weird.',
-      'I take an idea from a blank page all the way to production, across six industries, and I make it look easy. It is not easy. I just make it look that way. That’s the whole job.',
+      'I take an idea from a blank page [[endToEnd|all the way to production]], across six industries, and I make it look easy. It is not easy. I just make it look that way. That’s the whole job.',
     ],
     scribeNote: 'Things I Believe',
     disciplines: 'My Many Talents',
     principles: [
       { title: 'People person', body: 'I own every feature end to end — like family. From the first meeting to the last deploy, nobody gets left behind. That is a guarantee.' },
       { title: 'A little stitious', body: 'I’m not superstitious about edge cases. I’m a little stitious. Reusable components, accessibility, the unglamorous stuff that quietly saves the day.' },
-      { title: 'Fast', body: 'Code-splitting, caching, CDNs. Speed. Like a gazelle. A coding gazelle wearing a Bluetooth headset.' },
+      { title: 'Fast', body: 'Code-splitting, caching, CDNs. [[measured|Speed]]. Like a gazelle. A coding gazelle wearing a Bluetooth headset.' },
       { title: 'Locked down', body: 'JWT, OAuth, Okta, RBAC. Nobody gets in unless I say so. I’m basically a bouncer, but for your data.' },
     ],
     services: {
@@ -109,7 +109,7 @@ export default {
     nda: 'Top Secret',
     enterRealm: 'Check it out',
     source: 'The Code',
-    ndaSealed: 'I’d tell you, but then I’d have to… you know. It’s an NDA thing. Very official.',
+    ndaSealed: 'I’d tell you, but then I’d have to… you know. It’s [[nda|an NDA thing]]. Very official.',
     chartMore: 'Show {{count}} more hits',
     furl: 'Okay, that’s enough greatness',
     projects: {
@@ -127,7 +127,7 @@ export default {
         highlights: [
           'Built a floor visualizer with live preview and downloadable PDF templates.',
           'Rendered tile variants on the fly — corners, fills, the whole grid.',
-          'Used TensorFlow.js to turn PNGs into region-based SVGs. Very fancy.',
+          'Used TensorFlow.js to turn PNGs into [[regionSvg|region-based SVGs]]. Very fancy.',
           'Built an admin panel for designs and layouts. Organized.',
           'Added tours and shortcuts so people actually get it.',
         ],
@@ -165,7 +165,7 @@ export default {
       Collaboration: 'Pitch me. I love a good pitch. Let’s make something great together.',
       'Just saying hi': 'Hi! Hello! What’s up! This is already going great.',
     },
-    submitIdle: 'Send it',
+    submitIdle: 'Send [[raven|it]]',
     submitLoading: 'Sending…',
     resumeCta: 'My Résumé',
     success: 'Boom. Roasted. (I mean — message sent! I’ll reply soon, friend.)',

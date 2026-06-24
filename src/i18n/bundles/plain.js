@@ -33,7 +33,7 @@ export default {
     pullQuote: '“Every project below began as an empty repository and a blinking cursor.”',
     intro: [
       'I build production web platforms with a focus on solid architecture and the details users feel but never see.',
-      'Five years and twenty-plus releases across six industries. I own features end to end — from an empty repository to production monitoring — and do my best work on hard, ambiguous problems.',
+      'Five years and twenty-plus releases across six industries. I own features end to end — [[endToEnd|from an empty repository to production monitoring]] — and do my best work on hard, ambiguous problems.',
     ],
     scribeNote: 'How I Work',
     disciplines: 'What I Do',
@@ -41,7 +41,7 @@ export default {
     principles: [
       { title: 'End-to-end ownership', body: 'From requirements and system design to release validation and production monitoring.' },
       { title: 'Detail as discipline', body: 'Reusable UI systems, edge cases, and accessibility — the work that makes products feel solid.' },
-      { title: 'Performance as a habit', body: 'Code-splitting, caching, CDN, and media optimization — measured, not guessed.' },
+      { title: 'Performance as a habit', body: 'Code-splitting, caching, CDN, and media optimization — [[measured|measured, not guessed]].' },
       { title: 'Secure by default', body: 'JWT/OAuth, Okta, RBAC and middleware access control across enterprise apps.' },
     ],
   },
@@ -68,7 +68,7 @@ export default {
       "Selected production projects across finance, healthcare, logistics, media and visualization. Some are under NDA; shared details are limited to what's permissible.",
     realm: 'Project',
     enterRealm: 'View project',
-    ndaSealed: "Under NDA — details limited to what's permissible.",
+    ndaSealed: "[[nda|Under NDA]] — details limited to what's permissible.",
     chartMore: 'Show {{count}} more projects',
     furl: 'Show less',
   },
@@ -86,7 +86,7 @@ export default {
       Collaboration: 'What should we build together? Pitch me the idea…',
       'Just saying hi': 'Say hello — what brought you here?',
     },
-    submitIdle: 'Send message',
+    submitIdle: 'Send [[raven|message]]',
     submitLoading: 'Sending…',
     success: "Thanks — your message is on its way. I'll reply soon.",
     errors: {

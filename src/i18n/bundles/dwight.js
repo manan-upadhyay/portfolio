@@ -30,14 +30,14 @@ export default {
     pullQuote: '“Whenever I’m about to do something, I think ‘would an idiot do that?’ — and if they would, I do not do that thing.”',
     intro: [
       'I am Manan — a full-stack developer, a beet farmer, a black belt, and the owner of Schrute Farms (a five-star agritourism beet plantation). My code does not have bugs. Bugs have my code.',
-      'Five years. Twenty-plus releases. Six industries conquered. I take a feature from requisition to production and I defend it like it is my own land — which, spiritually and legally, it is.',
+      'Five years. Twenty-plus releases. Six industries conquered. I take a feature [[endToEnd|from requisition to production]] and I defend it like it is my own land — which, spiritually and legally, it is.',
     ],
     scribeNote: 'Schrute Principles',
     disciplines: 'Areas of Dominance',
     principles: [
       { title: 'Total ownership', body: 'From specification to production monitoring, there are no loose ends. I find them. I eliminate them. I trust no one with merge access. Loyalty is earned.' },
       { title: 'Vigilance', body: 'Reusable systems, edge cases, accessibility. An unguarded edge case is precisely how the enemy breaches the perimeter. Question everything. Raise your hand first.' },
-      { title: 'Efficiency', body: 'Code-splitting, caching, CDN. Wasted milliseconds are wasted resources. I am faster than 80% of all snakes; my applications are faster than the rest.' },
+      { title: 'Efficiency', body: 'Code-splitting, caching, CDN. Wasted milliseconds are wasted resources. I am faster than 80% of all snakes; my applications are [[measured|faster than the rest]].' },
       { title: 'Security', body: 'JWT, OAuth, Okta, RBAC. Identity theft is not a joke — millions of families suffer every year. Not on my watch. I am also a volunteer sheriff’s deputy.' },
     ],
     services: {
@@ -107,7 +107,7 @@ export default {
     nda: 'Classified',
     enterRealm: 'Enter the territory',
     source: 'Schematics',
-    ndaSealed: 'Classified. I have said too much already. This conversation is over.',
+    ndaSealed: '[[nda|Classified]]. I have said too much already. This conversation is over.',
     chartMore: 'Reveal {{count}} more conquests',
     furl: 'Seal the records',
     projects: {
@@ -125,7 +125,7 @@ export default {
         highlights: [
           'Engineered a floor visualizer with live preview and downloadable PDF templates.',
           'Rendered tile variants programmatically — corners, fills, grids. Exact.',
-          'Built a TensorFlow.js pipeline converting PNGs to region-based SVGs.',
+          'Built a TensorFlow.js pipeline converting PNGs to [[regionSvg|region-based SVGs]].',
           'Constructed an admin panel for designs and layouts.',
           'Deployed product tours and shortcuts. Usability is a weapon.',
         ],

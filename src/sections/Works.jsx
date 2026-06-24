@@ -6,7 +6,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Github, ArrowUpRight, Lock, Star, ChevronLeft, ChevronRight } from 'lucide-react';
 import { SectionWrapper } from '../hoc';
 import { projects, chapters } from '../constants';
-import { ChapterHeading, ScrollReveal } from '../components';
+import { ChapterHeading, ScrollReveal, Annotated } from '../components';
 import { useThemeStore } from '../store/useThemeStore';
 import Magnet from '../components/Magnet';
 
@@ -158,7 +158,7 @@ const RealmPlate = ({ project, index }) => {
             {highlights.slice(0, 3).map((hgl, i) => (
               <li key={i} className="flex gap-3 text-[14px] leading-[21px]" style={{ color: 'var(--color-text-muted)' }}>
                 <span className="mt-1.5 w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: 'var(--color-gold)' }} />
-                {hgl}
+                <span><Annotated text={hgl} /></span>
               </li>
             ))}
           </ul>
@@ -191,7 +191,7 @@ const RealmPlate = ({ project, index }) => {
               </>
             ) : (
               <span className="inline-flex items-center gap-2 text-[13px]" style={{ color: 'var(--color-text-muted)' }}>
-                <Lock size={13} style={{ color: 'var(--color-ember)' }} /> {t('works.ndaSealed')}
+                <Lock size={13} style={{ color: 'var(--color-ember)' }} /> <Annotated text={t('works.ndaSealed')} />
               </span>
             )}
           </div>

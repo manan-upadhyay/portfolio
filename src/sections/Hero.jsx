@@ -26,11 +26,12 @@ const Hero = () => {
   const bearingRef = useRef(null);
 
   // `t(returnObjects)` hands back a fresh array every render — memoize per voice
-  // so it's a stable reference (otherwise the rotation effect churns).
+  // so it's a stable reference (otherwise the rotation effect churns). `t`'s
+  // identity changes on every voice switch, so it alone scopes the memo per voice.
   const phrases = useMemo(() => {
     const p = t('hero.phrases', { returnObjects: true });
     return Array.isArray(p) && p.length ? p : [t('hero.lead')];
-  }, [t, i18n.language]);
+  }, [t]);
   const longestPhrase = phrases.reduce((a, b) => (b.length > a.length ? b : a), phrases[0]);
   // Clamp so the index can never point past the current voice's phrase list.
   const safeIdx = phraseIdx % phrases.length;

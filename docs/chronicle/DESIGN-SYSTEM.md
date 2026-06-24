@@ -143,6 +143,7 @@ Reuse these; add to this list when you create a new shared visual.
 | `.btn-primary` | Indigo gradient primary button |
 | `.status-dot` | Pulsing "available" dot |
 | `.glass-card`, `.link-hover` | Glass surface, underline-on-hover |
+| `.marginalia`, `.marginalia__rune`, `.marginalia__note` | Footnote trigger (dotted underline + `†` rune) and its unfolding margin note |
 
 Keyframes available: `scrollcue`, `herofog`, `aurora`, `sunrise`, `float`,
 `pulse-glow`, `status-pulse`, `star-twinkle` (hero starfield), `orbit-cw` /
@@ -169,8 +170,11 @@ Keyframes available: `scrollcue`, `herofog`, `aurora`, `sunrise`, `float`,
 `SideRail` (chapter nav) · `MapOverlay` (⌘K map) · `Cursor` · `DayNightToggle` ·
 `CompassRose` (brand SVG) · `ChapterHeading` (the one section header) ·
 `MapDivider` · `CountUp` · `ScrollReveal` · `ErrorBoundary` · `Magnet` ·
-`MusicPlayer` *(mounted but disabled)*. Plus `SectionWrapper` (`src/hoc/`).
-Page chapters live in `src/sections/`.
+`Marginalia` + `Annotated` (flavor→substance footnotes; wrap copy with the
+`[[id|phrase]]` marker, render via `<Annotated text={t('…')} />`, facts under
+`marginalia.<id>` in `chronicle`) · `VoiceSwitcher` / `ControlCluster` /
+`EasterEggListener` (the Voice system) · `MusicPlayer` *(mounted but disabled)*.
+Plus `SectionWrapper` (`src/hoc/`). Page chapters live in `src/sections/`.
 
 ### Removed (do not reintroduce)
 The react-bits experiments (`SplitText`, `BlurText`, `TiltedCard`,

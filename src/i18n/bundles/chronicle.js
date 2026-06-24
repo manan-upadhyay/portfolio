@@ -45,13 +45,13 @@ export default {
     pullQuote: '“Every realm below began as an empty repository and a blinking cursor.”',
     intro: [
       'I build production web platforms the way a storyteller builds worlds — structure beneath the surface, and an obsessive eye on the details a user feels but never sees.',
-      'Five years and twenty-plus releases across six industries. I carry features from an empty repository all the way to production monitoring, and I do my sharpest work where the problem is tangled and the path isn’t obvious.',
+      'Five years and twenty-plus releases across six industries. I carry features from an empty repository [[endToEnd|all the way to production monitoring]], and I do my sharpest work where the problem is tangled and the path isn’t obvious.',
     ],
     scribeNote: "The Scribe's Note",
     principles: [
       { title: 'End-to-end ownership', body: 'From requirement grooming and system design to release validation and production monitoring.' },
       { title: 'Detail as discipline', body: 'Reusable UI systems, edge cases, and accessibility — the unglamorous craft that makes products feel solid.' },
-      { title: 'Performance as a habit', body: 'Code-splitting, caching, CDN, and media optimization — measured, not guessed.' },
+      { title: 'Performance as a habit', body: 'Code-splitting, caching, CDN, and media optimization — [[measured|measured, not guessed]].' },
       { title: 'Secure by default', body: 'JWT/OAuth, Okta, RBAC and middleware access control across enterprise apps.' },
     ],
     disciplines: 'Disciplines',
@@ -131,7 +131,7 @@ export default {
     nda: 'NDA',
     enterRealm: 'Enter the realm',
     source: 'Source',
-    ndaSealed: "Sealed under NDA — details limited to what's permissible.",
+    ndaSealed: "[[nda|Sealed under NDA]] — details limited to what's permissible.",
     chartMore: 'Chart {{count}} more realms',
     furl: 'Furl the map',
     // Per-project copy, keyed by the project `id` in constants. `name`,
@@ -151,7 +151,7 @@ export default {
         highlights: [
           'Built a custom floor visualization tool with live preview and downloadable PDF templates',
           'Programmatically rendered dynamic tile variants — corners, fills, grid patterns',
-          'Built TensorFlow.js image-processing workflow to convert PNGs into region-based SVGs',
+          'Built TensorFlow.js image-processing workflow to convert PNGs into [[regionSvg|region-based SVGs]]',
           'Developed an admin panel for managing tile designs, floor layouts, and configurations',
           'Added product tours, help drawers, and shortcut-key interactions for usability',
         ],
@@ -280,6 +280,17 @@ export default {
   footer: {
     quote: '“The journey is the reward.”',
     credit: '© {{year}} Manan Upadhyay · Crafted with React, GSAP & far too much chai.',
+  },
+
+  // Marginalia footnotes (LEGENDARY-ROADMAP §2). Keyed by the `[[id|…]]` marker
+  // embedded in the flavor copy above. These are PLAIN substance — the real
+  // engineering fact behind the flourish — and intentionally stay literal in
+  // every voice (no per-voice overrides; personality bundles fall back here).
+  marginalia: {
+    endToEnd: 'End-to-end ownership: requirement grooming → system design → API integration → release validation → production monitoring.',
+    measured: 'Profiled with Lighthouse and Chrome DevTools and tracked against Core Web Vitals — load time measured before and after, for a real 38% cut, not a guess.',
+    nda: 'Real production work for an enterprise client, shipped under a non-disclosure agreement — the details stay sealed, but the engineering was the real thing.',
+    regionSvg: 'No off-the-shelf library did this — I built a custom tool from scratch that uses TensorFlow.js to turn a flat PNG into an editable, region-segmented SVG.'
   },
 
   voice: {

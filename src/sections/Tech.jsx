@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo, useRef } from 'react';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { Webhook } from 'lucide-react';
 import { SectionWrapper } from '../hoc';
 import { skillCategories, chapters } from '../constants';
@@ -24,6 +25,7 @@ const shortName = (n) => n.split(/[/·]/)[0].trim();
 
 /* ---------------- Orbital field (desktop) ---------------- */
 const OrbitalField = () => {
+  const { t } = useTranslation();
   const { resolvedTheme } = useThemeStore();
   const isDark = resolvedTheme === 'dark';
   const [activeCat, setActiveCat] = useState(null);
@@ -151,7 +153,7 @@ const OrbitalField = () => {
         </div>
         <span className="absolute whitespace-nowrap" style={{ top: '100%', marginTop: 2, fontSize: 9.5, fontWeight: 600,
           letterSpacing: '0.36em', textTransform: 'uppercase', color: 'var(--color-text-muted)', opacity: 0.7 }}>
-          The Arsenal
+          {t('arsenal.coreLabel')}
         </span>
       </div>
 
@@ -242,6 +244,7 @@ const Clusters = () => (
 );
 
 const Tech = () => {
+  const { t } = useTranslation();
   const [orbital, setOrbital] = useState(false);
 
   useEffect(() => {
@@ -256,9 +259,9 @@ const Tech = () => {
 
   return (
     <>
-      <ChapterHeading no={chapters.arsenal.no} eyebrow={chapters.arsenal.label} title={`${chapters.arsenal.sub}.`} align="center" />
+      <ChapterHeading no={chapters.arsenal.no} eyebrow={t('chapters.arsenal.label')} title={`${t('chapters.arsenal.sub')}.`} align="center" />
       <p className="text-center max-w-xl mx-auto mt-5 text-[15px]" style={{ color: 'var(--color-text-muted)' }}>
-        The kit I carry into every campaign — hover a star to trace its constellation.
+        {t('arsenal.subtitle')}
       </p>
 
       {orbital ? (

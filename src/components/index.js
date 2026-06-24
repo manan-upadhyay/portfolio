@@ -1,6 +1,7 @@
 // Reusable UI components — shared across sections. Import via `from '../components'`.
 export { default as ChapterHeading } from './ChapterHeading';
 export { default as CompassRose } from './CompassRose';
+export { default as ControlCluster } from './ControlCluster';
 export { default as CountUp } from './CountUp';
 export { default as Cursor } from './Cursor';
 export { default as DayNightToggle } from './DayNightToggle';

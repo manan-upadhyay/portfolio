@@ -1,5 +1,6 @@
 import { useState, useRef } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { Mail, Linkedin, Github, MapPin, ArrowUpRight, Send, Loader2, Check, Download, Copy, Feather } from 'lucide-react';
 import { SectionWrapper } from '../hoc';
 import { personalInfo, summon, chapters } from '../constants';
@@ -85,8 +86,10 @@ const ContactCompass = () => {
 };
 
 const Contact = () => {
+  const { t } = useTranslation();
+  const inquiries = t('contact.inquiries', { returnObjects: true });
   const [form, setForm] = useState({ name: '', email: '', message: '' });
-  const [inquiry, setInquiry] = useState(summon.inquiries[0]);
+  const [inquiry, setInquiry] = useState(inquiries[0]);
   const honeypotRef = useRef(null); // bot trap — humans never fill this
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -97,7 +100,14 @@ const Contact = () => {
     setError('');
   };
 
-  const fail = (key) => setError(pick(summon.errors[key], error));
+  // Pick a random on-theme error variant; interpolate {{email}} for the
+  // not-configured case (i18next skips interpolation inside returnObjects arrays).
+  const fail = (key) => {
+    const variants = t(`contact.errors.${key}`, { returnObjects: true });
+    let msg = pick(variants, error);
+    if (key === 'notConfigured') msg = msg.replace(/\{\{email\}\}/g, personalInfo.email);
+    setError(msg);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -143,22 +153,22 @@ const Contact = () => {
 
   return (
     <>
-      <ChapterHeading no={chapters.contact.no} eyebrow={chapters.contact.label} title={`${chapters.contact.sub}.`} />
+      <ChapterHeading no={chapters.contact.no} eyebrow={t('chapters.contact.label')} title={`${t('chapters.contact.sub')}.`} />
       <div className="mt-5 flex items-center gap-2">
         <span className="status-dot" />
         <p className="text-[15px]" style={{ color: 'var(--color-text-muted)' }}>
-          {summon.availability}
+          {t('contact.availability')}
         </p>
       </div>
 
       <div className="grid lg:grid-cols-[1.1fr_0.9fr] gap-8 mt-10">
         {/* ---- Message ---- */}
         <ScrollReveal direction="up" className="realm-card p-7 sm:p-9 min-w-0">
-          <span className="chapter-eyebrow">The Message</span>
+          <span className="chapter-eyebrow">{t('contact.theMessage')}</span>
 
           {/* inquiry chips */}
           <div className="flex flex-wrap gap-2 mt-5 mb-7">
-            {summon.inquiries.map((q) => {
+            {inquiries.map((q) => {
               const active = q === inquiry;
               return (
                 <motion.button key={q} type="button" onClick={() => setInquiry(q)} data-cursor="hover"
@@ -187,31 +197,31 @@ const Contact = () => {
               style={{ position: 'absolute', left: '-9999px', width: 1, height: 1, opacity: 0 }}
             />
             <div className="grid sm:grid-cols-2 gap-4">
-              <input name="name" value={form.name} onChange={handleChange} placeholder={summon.placeholders.name}
+              <input name="name" value={form.name} onChange={handleChange} placeholder={t('contact.placeholders.name')}
                 className={inputCls} style={inputStyle} aria-label="Your name" aria-required="true" />
-              <input name="email" type="email" value={form.email} onChange={handleChange} placeholder={summon.placeholders.email}
+              <input name="email" type="email" value={form.email} onChange={handleChange} placeholder={t('contact.placeholders.email')}
                 className={inputCls} style={inputStyle} aria-label="Your email" aria-required="true" />
             </div>
             <textarea name="message" rows={5} value={form.message} onChange={handleChange}
-              placeholder={summon.messagePlaceholders[inquiry] || summon.placeholders.message}
+              placeholder={t('contact.messagePlaceholders', { returnObjects: true })[inquiry] || t('contact.placeholders.message')}
               className={`${inputCls} resize-none`} style={inputStyle} aria-label="Your message" aria-required="true" />
 
             <AnimatePresence mode="wait">
               {error ? (
                 <RavenNotice key={error} type="error">{error}</RavenNotice>
               ) : success ? (
-                <RavenNotice key="success" type="success">{summon.success}</RavenNotice>
+                <RavenNotice key="success" type="success">{t('contact.success')}</RavenNotice>
               ) : null}
             </AnimatePresence>
 
             <div className="mt-2 flex flex-col sm:flex-row gap-3">
               <button type="submit" disabled={loading} data-cursor="hover"
                 className="btn-primary flex-1 disabled:opacity-70">
-                {loading ? (<><Loader2 size={18} className="animate-spin" /> {summon.submitLoading}</>) : (<>{summon.submitIdle} <Send size={16} /></>)}
+                {loading ? (<><Loader2 size={18} className="animate-spin" /> {t('contact.submitLoading')}</>) : (<>{t('contact.submitIdle')} <Send size={16} /></>)}
               </button>
               <a href={personalInfo.resumeLink} download={summon.resumeFileName} data-cursor="hover"
-                className="btn-secondary" aria-label={`${summon.resumeCta} (PDF)`}>
-                <Download size={16} /> {summon.resumeCta}
+                className="btn-secondary" aria-label={`${t('contact.resumeCta')} (PDF)`}>
+                <Download size={16} /> {t('contact.resumeCta')}
               </a>
             </div>
           </form>
@@ -220,15 +230,16 @@ const Contact = () => {
         {/* ---- Correspondence ---- */}
         <ScrollReveal direction="up" delay={0.1} className="realm-card p-7 sm:p-9 flex flex-col min-w-0">
           <div className="flex items-start justify-between flex-col sm:flex-row">
-            <span className="chapter-eyebrow">Correspondence</span>
+            <span className="chapter-eyebrow">{t('contact.correspondence')}</span>
             <span className='mt-6 sm:mt-0 self-center sm:self-end'>
             <ContactCompass />
             </span>
           </div>
 
           <div className="mt-2 flex flex-col divide-y" style={{ borderColor: 'var(--color-card-border)' }}>
-            {summon.channels.map(({ key, label, value, href }) => {
+            {summon.channels.map(({ key, value, href }) => {
               const Icon = CHANNEL_ICONS[key];
+              const label = t(`contact.channels.${key}`);
               const IconBox = (
                 <span className="grid place-items-center w-10 h-10 rounded-xl flex-shrink-0"
                   style={{ background: 'rgba(var(--color-ember-rgb),0.1)', border: '1px solid rgba(var(--color-ember-rgb),0.25)' }}>
@@ -273,7 +284,7 @@ const Contact = () => {
           </div>
 
           <p className="font-chronicle italic text-[17px] mt-auto pt-6" style={{ color: 'var(--color-ember)' }}>
-            {summon.quote}
+            {t('contact.quote')}
           </p>
         </ScrollReveal>
       </div>

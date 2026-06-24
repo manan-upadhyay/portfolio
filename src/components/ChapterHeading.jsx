@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 
 /**
  * ChapterHeading — the shared "story chapter" section header.
@@ -11,6 +12,7 @@ import { motion } from 'framer-motion';
  *  - align:   'left' | 'center'
  */
 const ChapterHeading = ({ no, eyebrow, title, align = 'left', className = '' }) => {
+  const { t } = useTranslation();
   const isCenter = align === 'center';
 
   return (
@@ -22,7 +24,7 @@ const ChapterHeading = ({ no, eyebrow, title, align = 'left', className = '' }) 
         viewport={{ once: true }}
         transition={{ duration: 0.5 }}
       >
-        {no ? `Chapter ${no}` : null}
+        {no ? `${t('common.chapterLabel')} ${no}` : null}
         {no && eyebrow ? <span aria-hidden="true">·</span> : null}
         {eyebrow}
       </motion.span>

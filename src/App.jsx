@@ -1,9 +1,10 @@
 import { lazy, Suspense, useState, useEffect } from 'react';
 import { Map } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useThemeStore } from './store/useThemeStore';
 import Hero from './sections/Hero';
-import { Cursor, ErrorBoundary, SideRail, MapOverlay, DayNightToggle } from './components';
-// import { MusicPlayer } from './components'; // ambient audio — disabled for now, re-enable for future use
+import { Cursor, ErrorBoundary, SideRail, MapOverlay, DayNightToggle, ControlCluster } from './components';
+// import { MusicPlayer } from './components'; // ambient audio — folds into ControlCluster in Phase 4
 import { useSmoothScroll } from './lib/smoothScroll';
 import { useActiveSection } from './hooks/useActiveSection';
 import { Analytics } from '@vercel/analytics/react';
@@ -22,6 +23,7 @@ const SectionLoader = () => (
 );
 
 const App = () => {
+  const { t } = useTranslation();
   const { resolvedTheme } = useThemeStore();
   const isDark = resolvedTheme === 'dark';
   useSmoothScroll();
@@ -45,9 +47,10 @@ const App = () => {
       <Cursor />
       <SideRail activeId={activeId} onOpenMap={() => setMapOpen(true)} visible={activeId !== 'origin'} />
       <div className="fixed top-5 right-5 z-40"><DayNightToggle /></div>
-      {/* <MusicPlayer /> — ambient audio toggle (bottom-right), disabled for now; re-enable with the import above */}
+      {/* bottom-right control cluster — voice switcher (+ audio control in Phase 4) */}
+      <ControlCluster />
       {/* mobile map button (side-rail is desktop-only) */}
-      <button onClick={() => setMapOpen(true)} aria-label="Open the map"
+      <button onClick={() => setMapOpen(true)} aria-label={t('nav.openMap')}
         className="md:hidden fixed top-5 left-5 z-40 grid place-items-center w-11 h-11 rounded-full"
         style={{ background: 'var(--color-card-bg)', border: '1px solid var(--color-card-border)', backdropFilter: 'blur(20px)' }}>
         <Map size={18} style={{ color: 'var(--color-ember)' }} />
@@ -74,10 +77,10 @@ const App = () => {
 
       <footer className="py-10 text-center border-t" style={{ borderColor: 'var(--color-card-border)' }}>
         <p className="font-chronicle italic text-[17px]" style={{ color: 'var(--color-text-muted)' }}>
-          “The journey is the reward.”
+          {t('footer.quote')}
         </p>
         <p className="text-xs mt-2" style={{ color: 'var(--color-text-muted)' }}>
-          © {new Date().getFullYear()} Manan Upadhyay · Crafted with React, GSAP & far too much chai.
+          {t('footer.credit', { year: new Date().getFullYear() })}
         </p>
       </footer>
       <Analytics/>

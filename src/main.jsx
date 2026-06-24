@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App.jsx';
+import './i18n'; // initialize the Voice (i18next) layer before render
 import './index.css';
 
 // Initialize theme before React renders to prevent flash

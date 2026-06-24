@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { Search, FileText, Github, Linkedin, Sun, Moon, X, CornerDownLeft, Star } from 'lucide-react';
 import { personalInfo, chapterList } from '../constants';
 import { scrollToSection } from '../lib/smoothScroll';
@@ -30,8 +31,10 @@ const trailPath = (pts) => {
 };
 
 const MapOverlay = ({ open, onClose, activeId }) => {
+  const { t } = useTranslation();
   const { resolvedTheme, toggleTheme } = useThemeStore();
   const isDark = resolvedTheme === 'dark';
+  const labelOf = (p) => t(`chapters.${p.id}.label`);
   const [query, setQuery] = useState('');
   const [hasMap, setHasMap] = useState(false);
   const inputRef = useRef(null);
@@ -48,14 +51,14 @@ const MapOverlay = ({ open, onClose, activeId }) => {
   }, [open, onClose]);
 
   const actions = [
-    { id: 'resume', label: 'Read the Scroll (Resume)', icon: FileText, run: () => window.open(personalInfo.resumeLink, '_blank', 'noopener,noreferrer') },
-    { id: 'github', label: 'GitHub', icon: Github, run: () => window.open(personalInfo.github, '_blank', 'noopener,noreferrer') },
-    { id: 'linkedin', label: 'LinkedIn', icon: Linkedin, run: () => window.open(personalInfo.linkedin, '_blank', 'noopener,noreferrer') },
-    { id: 'theme', label: isDark ? 'Light the dawn' : 'Fall to night', icon: isDark ? Sun : Moon, run: toggleTheme },
+    { id: 'resume', label: t('map.actions.resume'), icon: FileText, run: () => window.open(personalInfo.resumeLink, '_blank', 'noopener,noreferrer') },
+    { id: 'github', label: t('map.actions.github'), icon: Github, run: () => window.open(personalInfo.github, '_blank', 'noopener,noreferrer') },
+    { id: 'linkedin', label: t('map.actions.linkedin'), icon: Linkedin, run: () => window.open(personalInfo.linkedin, '_blank', 'noopener,noreferrer') },
+    { id: 'theme', label: isDark ? t('map.actions.themeLight') : t('map.actions.themeDark'), icon: isDark ? Sun : Moon, run: toggleTheme },
   ];
 
   const q = query.trim().toLowerCase();
-  const match = (p) => !q || (p.label + ' ' + p.kw).toLowerCase().includes(q);
+  const match = (p) => !q || (labelOf(p) + ' ' + p.kw).toLowerCase().includes(q);
   const pins = PINS.filter(match);
   const acts = q ? actions.filter((a) => a.label.toLowerCase().includes(q)) : actions;
 
@@ -88,7 +91,7 @@ const MapOverlay = ({ open, onClose, activeId }) => {
             <form onSubmit={onSubmit} className="flex items-center gap-3 px-5 py-4 border-b" style={{ borderColor: 'var(--color-card-border)' }}>
               <Search size={18} style={{ color: 'var(--color-ember)' }} />
               <input ref={inputRef} value={query} onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search the map…  try “skills”, “projects”, “contact”"
+                placeholder={t('map.searchPlaceholder')}
                 className="flex-1 bg-transparent outline-none text-[15px]" style={{ color: 'var(--color-text)' }} data-cursor="hover" />
               <button type="button" onClick={onClose} aria-label="Close" data-cursor="hover"
                 className="grid place-items-center w-7 h-7 rounded-lg" style={{ border: '1px solid var(--color-card-border)', color: 'var(--color-text-muted)' }}>
@@ -131,7 +134,7 @@ const MapOverlay = ({ open, onClose, activeId }) => {
                   <button key={p.id} onClick={() => travel(p.id)} data-cursor="hover"
                     className="group absolute -translate-x-1/2 -translate-y-1/2 flex flex-col items-center transition-all duration-200"
                     style={{ left: `${p.x}%`, top: `${p.y}%`, opacity: dim ? 0.22 : 1, zIndex: active ? 3 : 2 }}
-                    aria-label={`Go to ${p.label}`} aria-current={active ? 'true' : undefined}>
+                    aria-label={`Go to ${labelOf(p)}`} aria-current={active ? 'true' : undefined}>
                     {active && <Star size={12} className="mb-0.5" style={{ color: 'var(--color-ember)' }} fill="var(--color-ember)" />}
                     {/* stamp */}
                     <span className="grid place-items-center rounded-full font-chronicle font-semibold transition-transform duration-200 group-hover:scale-110"
@@ -151,7 +154,7 @@ const MapOverlay = ({ open, onClose, activeId }) => {
                         color: active ? 'var(--color-ember)' : 'var(--color-text)',
                         border: '1px solid var(--color-card-border)',
                       }}>
-                      {p.label}
+                      {labelOf(p)}
                     </span>
                   </button>
                 );
@@ -159,7 +162,7 @@ const MapOverlay = ({ open, onClose, activeId }) => {
 
               {q && pins.length === 0 && (
                 <div className="absolute inset-0 grid place-items-center text-[14px]" style={{ color: 'var(--color-text-muted)' }}>
-                  No chapter found — try “skills”, “experience”, or “contact”.
+                  {t('map.noResult')}
                 </div>
               )}
             </div>
@@ -174,7 +177,7 @@ const MapOverlay = ({ open, onClose, activeId }) => {
                 </button>
               ))}
               <span className="ml-auto hidden sm:flex items-center gap-1.5 text-[11px]" style={{ color: 'var(--color-text-muted)' }}>
-                <CornerDownLeft size={12} /> travel · esc to close
+                <CornerDownLeft size={12} /> {t('map.footerHint')}
               </span>
             </div>
           </motion.div>

@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { personalInfo, chapters } from '../constants';
 import { useThemeStore } from '../store/useThemeStore';
 import { scrollToSection } from '../lib/smoothScroll';
@@ -11,6 +12,7 @@ import CompassRose from '../components/CompassRose';
 gsap.registerPlugin(ScrollTrigger);
 
 const Hero = () => {
+  const { t } = useTranslation();
   const { resolvedTheme } = useThemeStore();
   const isDark = resolvedTheme === 'dark';
   const prefersReduced = useReducedMotion();
@@ -22,7 +24,7 @@ const Hero = () => {
   const canvasWrapRef = useRef(null);
   const bearingRef = useRef(null);
 
-  const phrases = personalInfo.heroPhrases?.length ? personalInfo.heroPhrases : [personalInfo.heroTitle];
+  const phrases = t('hero.phrases', { returnObjects: true });
   const longestPhrase = phrases.reduce((a, b) => (b.length > a.length ? b : a), phrases[0]);
 
   // Rotating tagline phrase (paused under reduced-motion / single phrase).
@@ -152,7 +154,7 @@ const Hero = () => {
       {/* ===== Copy ===== */}
       <div ref={copyRef} className="relative z-10 h-full max-w-7xl mx-auto px-6 sm:px-12 flex flex-col justify-end pb-28 md:justify-center md:pb-0">
         <div className="max-w-xl">
-          <div className="hero-eyebrow chapter-eyebrow mb-5">Chapter {chapters.origin.no} · {chapters.origin.label}</div>
+          <div className="hero-eyebrow chapter-eyebrow mb-5">{t('common.chapterLabel')} {chapters.origin.no} · {t('chapters.origin.label')}</div>
 
           <h1 className="font-chronicle font-semibold leading-[0.86] tracking-tight" style={{ color: 'var(--color-text)' }}>
             <span className="hero-line block overflow-hidden pb-[0.18em] -mb-[0.14em]"><span className="block text-[clamp(56px,12vw,150px)]">{firstName}</span></span>
@@ -160,7 +162,7 @@ const Hero = () => {
           </h1>
 
           <p className="hero-tagline font-chronicle italic mt-3 text-[clamp(20px,3vw,34px)]" style={{ color: 'var(--color-ember)' }}>
-            {personalInfo.heroLead}{' '}
+            {t('hero.lead')}{' '}
             <span className="relative inline-grid align-baseline">
               {/* invisible sizer reserves the widest phrase so the line never reflows */}
               <span className="invisible col-start-1 row-start-1 whitespace-nowrap">{longestPhrase}</span>
@@ -183,13 +185,13 @@ const Hero = () => {
           </p>
 
           <p className="hero-hook mt-5 max-w-md text-[15px] sm:text-[17px] leading-[27px]" style={{ color: 'var(--color-text-muted)' }}>
-            {personalInfo.heroHook}
+            {t('hero.hook')}
           </p>
 
           <div className="hero-cta mt-9 flex flex-wrap items-center gap-5">
-            <button onClick={() => scrollToSection('about')} data-cursor="hover" className="btn-primary">Begin the Chronicle</button>
+            <button onClick={() => scrollToSection('about')} data-cursor="hover" className="btn-primary">{t('hero.ctaPrimary')}</button>
             <button onClick={() => scrollToSection('contact')} data-cursor="hover" className="text-[15px] font-medium link-hover" style={{ color: 'var(--color-text)' }}>
-              Summon me →
+              {t('hero.ctaSecondary')}
             </button>
           </div>
 
@@ -203,7 +205,7 @@ const Hero = () => {
 
       {/* Scroll cue */}
       <div className="hero-cue absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2">
-        <span className="text-[10px] tracking-[0.35em] uppercase" style={{ color: 'var(--color-text-muted)' }}>Scroll</span>
+        <span className="text-[10px] tracking-[0.35em] uppercase" style={{ color: 'var(--color-text-muted)' }}>{t('hero.scroll')}</span>
         <div className="w-px h-12 overflow-hidden" style={{ background: 'var(--color-card-border)' }}>
           <div className="w-px h-5 animate-[scrollcue_1.8s_ease-in-out_infinite]" style={{ background: 'var(--color-ember)' }} />
         </div>

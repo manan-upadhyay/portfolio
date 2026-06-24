@@ -46,87 +46,38 @@ export const personalInfo = {
     'Frontend Performance & Craft',
     'End-to-End Feature Ownership',
   ],
-  // Chronicle narrative copy
-  heroTitle: 'Builder of Worlds in Code',
-  // Hero tagline reads "<lead> <phrase>"; the trailing phrase cycles.
-  heroLead: 'I architect',
-  heroPhrases: ['production systems', 'scalable platforms', 'resilient APIs', 'reusable UI systems'],
-  heroHook:
-    'Five years charting production systems where performance, trust, and craft decide the path.',
+  // Hero narrative copy (heroLead / heroPhrases / heroHook) now lives in the
+  // Voice bundles — src/i18n/bundles/* (key group `hero`).
   coordinates: '23.02°N 72.57°E',
 };
 
-// The Summon (chapter 05) — all contact copy lives here; the component is a
-// pure presenter. Channel icons are mapped by `key` in the component.
+// The Summon (chapter 05) — contact COPY now lives in the Voice bundles
+// (src/i18n/bundles/*, key group `contact`). This holds only the non-copy data:
+// the download filename and the contact channels (icons are mapped by `key` in
+// the component; channel labels are translated via `contact.channels.<key>`).
 export const summon = {
-  availability: 'Open to senior full-stack roles & collaborations — usually replies within a day.',
-  inquiries: ['Senior role', 'Contract', 'Collaboration', 'Just saying hi'],
-  placeholders: {
-    name: 'Your name',
-    email: 'Your email',
-    message: 'Tell me about the realm you want to build…', // fallback
-  },
-  // Message placeholder shifts to match the selected inquiry chip.
-  messagePlaceholders: {
-    'Senior role': 'Tell me about the team, the role, and the realms you’re building…',
-    Contract: 'Share the scope, timeline, and what you need shipped…',
-    Collaboration: 'What should we build together? Pitch me the idea…',
-    'Just saying hi': 'Say hello — what brought you to this corner of the map?',
-  },
-  submitIdle: 'Dispatch the Raven',
-  submitLoading: 'Sending the raven…',
-  resumeCta: 'Download CV',
   resumeFileName: 'Manan_Upadhyay_Resume.pdf',
-  success: 'Your raven has taken flight — I’ll reply as soon as it lands.',
-  // Each error has several on-theme variants; the form picks one at random so
-  // it never feels like the same lifeless validation twice.
-  errors: {
-    required: [
-      'The raven refuses to fly with an empty scroll — fill in every field.',
-      'No words, no flight. This raven has standards; fill it all in.',
-      'A blank parchment? The raven just blinked at me. Every field, please.',
-      'Even the swiftest raven needs something to carry. Mind the blanks.',
-    ],
-    email: [
-      'That email reads like Elvish — and not the legible kind. Mind checking it?',
-      'The raven scoured every map and found no such address. Recheck the email?',
-      'Hmm, that email looks a touch cursed. Give it another glance.',
-      'No realm answers to that address. Double-check the email?',
-    ],
-    failed: [
-      'The raven hit a storm mid-flight and limped back. Try again?',
-      'A mischievous goblin snatched the raven. Send another?',
-      'The raven vanished into the mist. One more attempt?',
-      'Something spooked the poor bird. Give it another go.',
-    ],
-    // Shown when EmailJS isn't configured (no .env) — honest, but stays in
-    // character and hands the visitor a working way to reach out.
-    notConfigured: [
-      `The rookery isn’t built yet — no ravens to dispatch. Reach me directly at ${personalInfo.email}.`,
-      `These ravens are still in training. For now, send word to ${personalInfo.email}.`,
-      `This aviary is under construction. Best write to me at ${personalInfo.email}.`,
-    ],
-  },
-  quote: '“Every great quest begins with a single message.”',
   channels: [
-    { key: 'email', label: 'Email', value: personalInfo.email, href: `mailto:${personalInfo.email}` },
-    { key: 'linkedin', label: 'LinkedIn', value: 'in/manan-upadhyay', href: personalInfo.linkedin },
-    { key: 'github', label: 'GitHub', value: 'manan-upadhyay', href: personalInfo.github },
-    { key: 'location', label: 'Based in', value: `${personalInfo.location} · 23.02°N 72.57°E`, href: null },
+    { key: 'email', value: personalInfo.email, href: `mailto:${personalInfo.email}` },
+    { key: 'linkedin', value: 'in/manan-upadhyay', href: personalInfo.linkedin },
+    { key: 'github', value: 'manan-upadhyay', href: personalInfo.github },
+    { key: 'location', value: `${personalInfo.location} · 23.02°N 72.57°E`, href: null },
   ],
 };
 
-// Chronicle chapters — THE single source of truth for section navigation.
-// Consumed by: section headings (ChapterHeading via `sub`), the SideRail nav,
-// the Hero eyebrow, and the Map overlay (`x`/`y` = pin position on the 0–100
-// map plate, `kw` = search keywords). Keyed by section `id`; order = story order.
+// Chronicle chapters — THE single source of truth for section navigation DATA.
+// Consumed by: the SideRail nav, the Hero eyebrow, and the Map overlay
+// (`x`/`y` = pin position on the 0–100 map plate, `kw` = search keywords).
+// Keyed by section `id`; order = story order. The voice-bearing `label` and
+// `sub` (section titles) now live in the Voice bundles — translate them with
+// `t('chapters.<id>.label')` / `t('chapters.<id>.sub')`.
 export const chapters = {
-  origin:   { no: '00', label: 'Origin',      sub: 'Origin',              x: 12, y: 70, kw: 'home top start intro beginning hero' },
-  about:    { no: '01', label: 'The Craft',   sub: 'Origin',              x: 26, y: 30, kw: 'about bio craft who disciplines story' },
-  work:     { no: '02', label: 'The Journey', sub: 'The Path So Far',     x: 41, y: 58, kw: 'experience journey career timeline history work roles' },
-  arsenal:  { no: '03', label: 'The Arsenal', sub: 'Tools of the Trade',  x: 57, y: 24, kw: 'skills tech stack tools technologies frameworks react node' },
-  projects: { no: '04', label: 'The Realms',  sub: "Worlds I've Shipped", x: 73, y: 52, kw: 'projects realms portfolio work case studies builds' },
-  contact:  { no: '05', label: 'Summon',      sub: 'Send a Raven',        x: 89, y: 28, kw: 'contact email hire summon reach available raven' },
+  origin:   { no: '00', x: 12, y: 70, kw: 'home top start intro beginning hero' },
+  about:    { no: '01', x: 26, y: 30, kw: 'about bio craft who disciplines story' },
+  work:     { no: '02', x: 41, y: 58, kw: 'experience journey career timeline history work roles' },
+  arsenal:  { no: '03', x: 57, y: 24, kw: 'skills tech stack tools technologies frameworks react node' },
+  projects: { no: '04', x: 73, y: 52, kw: 'projects realms portfolio work case studies builds' },
+  contact:  { no: '05', x: 89, y: 28, kw: 'contact email hire summon reach available raven' },
 };
 
 // Ordered array with `id` injected — for iteration (SideRail rows, Map pins).
@@ -159,23 +110,9 @@ const services = [
   },
 ];
 
-// The Craft (chapter 01) — narrative copy. Constants are the source of truth for
-// section prose; the component is a pure presenter. Résumé-accurate, but written
-// as story beats (not a keyword dump — skills live only in The Arsenal).
-export const craft = {
-  pullQuote: '“Every realm below began as an empty repository and a blinking cursor.”',
-  intro: [
-    'I build production web platforms the way a storyteller builds worlds — structure beneath the surface, and an obsessive eye on the details a user feels but never sees.',
-    'Five years and twenty-plus releases across six industries. I carry features from an empty repository all the way to production monitoring, and I do my sharpest work where the problem is tangled and the path isn’t obvious.',
-  ],
-  // "The Scribe's Note" — how he works. Each is one concrete, résumé-backed line.
-  principles: [
-    { title: 'End-to-end ownership', body: 'From requirement grooming and system design to release validation and production monitoring.' },
-    { title: 'Detail as discipline', body: 'Reusable UI systems, edge cases, and accessibility — the unglamorous craft that makes products feel solid.' },
-    { title: 'Performance as a habit', body: 'Code-splitting, caching, CDN, and media optimization — measured, not guessed.' },
-    { title: 'Secure by default', body: 'JWT/OAuth, Okta, RBAC and middleware access control across enterprise apps.' },
-  ],
-};
+// The Craft (chapter 01) — narrative copy (pullQuote, intro, principles, the
+// "Scribe's Note" / "Disciplines" headings) now lives in the Voice bundles
+// (src/i18n/bundles/*, key group `about`).
 
 // The Arsenal — single source of truth for skills.
 // No proficiency percentages (intentionally — senior signal). `tier: 'primary'`
@@ -258,13 +195,14 @@ const experiences = [
 
 // The Journey — curated waypoints for the pinned horizontal path (chapter 02).
 // Résumé-accurate but trimmed for impact. `kind`: work | edu | cta.
+// The voice-bearing `chapter` title + `headline` live in the Voice bundles,
+// keyed by `id`: t(`experience.journey.<id>.chapter` / `.headline`).
 export const journey = [
   {
+    id: 'first-trail',
     year: '2021',
-    chapter: 'The First Trail',
     role: 'Frontend Developer',
     org: 'Horizon Tour & Travels',
-    headline: 'Where the road began.',
     points: [
       'Built CRM modules & responsive React UIs for sales workflows.',
       'Shipped PDF/Excel reporting — saved 16–20 hrs/week.',
@@ -274,21 +212,19 @@ export const journey = [
     kind: 'work',
   },
   {
+    id: 'oath',
     year: '2022',
-    chapter: 'The Oath',
     role: 'B.E. Information Technology',
     org: 'Gujarat Technological University',
-    headline: 'Forged the foundations · CGPA 8.36 / 10.',
     points: ['Engineering degree in Information Technology.'],
     tech: [],
     kind: 'edu',
   },
   {
+    id: 'expedition',
     year: '2022 — Now',
-    chapter: 'The Long Expedition',
     role: 'Full Stack Developer',
     org: 'Inexture Solutions',
-    headline: 'Six industries. Production-grade. End to end.',
     points: [
       'Delivered apps across finance, health, logistics, CRM, SaaS & media.',
       'Owned features end to end — grooming to production monitoring.',
@@ -299,11 +235,10 @@ export const journey = [
     current: true,
   },
   {
+    id: 'horizon',
     year: 'Now',
-    chapter: 'The Horizon Ahead',
     role: 'Open to the next quest',
     org: 'Available for senior roles',
-    headline: 'Seeking teams who value craft & ownership.',
     points: [],
     tech: [],
     kind: 'cta',

@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Github, ArrowUpRight, Lock, Star, ChevronLeft, ChevronRight } from 'lucide-react';
@@ -32,6 +33,7 @@ const galleryPaths = (gallery, theme) => {
 
 /* ---------- Cover (carousel · single art · serif-monogram fallback) ---------- */
 const Cover = ({ project, parallaxRef }) => {
+  const { t } = useTranslation();
   const { resolvedTheme } = useThemeStore();
   const images = galleryPaths(project.gallery, resolvedTheme);
   const count = images.length;
@@ -106,8 +108,8 @@ const Cover = ({ project, parallaxRef }) => {
 
       {/* seals */}
       <div className="absolute top-4 left-4 flex gap-2 z-10">
-        {project.isFeatured && <span className="wax-seal wax-seal--featured"><Star size={11} /> Featured</span>}
-        {project.isNDA && <span className="wax-seal wax-seal--nda"><Lock size={11} /> NDA</span>}
+        {project.isFeatured && <span className="wax-seal wax-seal--featured"><Star size={11} /> {t('works.featured')}</span>}
+        {project.isNDA && <span className="wax-seal wax-seal--nda"><Lock size={11} /> {t('works.nda')}</span>}
       </div>
     </div>
   );
@@ -115,6 +117,7 @@ const Cover = ({ project, parallaxRef }) => {
 
 /* ---------- Featured plate (alternating, parallax) ---------- */
 const RealmPlate = ({ project, index }) => {
+  const { t } = useTranslation();
   const rootRef = useRef(null);
   const parallaxRef = useRef(null);
   const flip = index % 2 === 1;
@@ -141,7 +144,7 @@ const RealmPlate = ({ project, index }) => {
 
       {/* detail */}
       <ScrollReveal direction="up" delay={0.1} className={`lg:self-center ${flip ? 'lg:order-1' : ''}`}>
-        <p className="chapter-eyebrow mb-4">Realm {ROMAN[index]} · {project.company}</p>
+        <p className="chapter-eyebrow mb-4">{t('works.realm')} {ROMAN[index]} · {project.company}</p>
         <h3 className="font-chronicle font-semibold leading-[0.95] text-[clamp(34px,4.5vw,56px)]" style={{ color: 'var(--color-text)' }}>
           {project.name}
         </h3>
@@ -161,8 +164,8 @@ const RealmPlate = ({ project, index }) => {
         )}
 
         <div className="mt-6 flex flex-wrap gap-2">
-          {project.tags.map((t) => (
-            <span key={t.name} className="tag-rune">#{t.name}</span>
+          {project.tags.map((tag) => (
+            <span key={tag.name} className="tag-rune">#{tag.name}</span>
           ))}
         </div>
 
@@ -174,20 +177,20 @@ const RealmPlate = ({ project, index }) => {
                   <Magnet strength={0.25}>
                     <a href={project.live_demo_link} target="_blank" rel="noopener noreferrer" data-cursor="hover"
                       className="btn-primary">
-                      {project.live_demo_label || 'Enter the realm'} <ArrowUpRight size={16} />
+                      {project.live_demo_label || t('works.enterRealm')} <ArrowUpRight size={16} />
                     </a>
                   </Magnet>
                 )}
                 {project.source_code_link && (
                   <a href={project.source_code_link} target="_blank" rel="noopener noreferrer" data-cursor="hover"
                     className="btn-secondary">
-                    <Github size={16} /> Source
+                    <Github size={16} /> {t('works.source')}
                   </a>
                 )}
               </>
             ) : (
               <span className="inline-flex items-center gap-2 text-[13px]" style={{ color: 'var(--color-text-muted)' }}>
-                <Lock size={13} style={{ color: 'var(--color-ember)' }} /> Sealed under NDA — details limited to what's permissible.
+                <Lock size={13} style={{ color: 'var(--color-ember)' }} /> {t('works.ndaSealed')}
               </span>
             )}
           </div>
@@ -198,7 +201,9 @@ const RealmPlate = ({ project, index }) => {
 };
 
 /* ---------- Secondary compact card ---------- */
-const RealmCard = ({ project }) => (
+const RealmCard = ({ project }) => {
+  const { t } = useTranslation();
+  return (
   <ScrollReveal direction="up" className="w-full">
     <div className="realm-card h-full p-6 flex flex-col" data-cursor="hover">
       <div className="flex items-start justify-between gap-3">
@@ -206,30 +211,31 @@ const RealmCard = ({ project }) => (
           <p className="chapter-eyebrow !text-[10px] mb-1">{project.company}</p>
           <h4 className="font-chronicle font-semibold text-[22px] leading-tight" style={{ color: 'var(--color-text)' }}>{project.name}</h4>
         </div>
-        {project.isNDA && <span className="wax-seal wax-seal--nda flex-shrink-0"><Lock size={10} /> NDA</span>}
+        {project.isNDA && <span className="wax-seal wax-seal--nda flex-shrink-0"><Lock size={10} /> {t('works.nda')}</span>}
       </div>
       <p className="mt-3 text-[13.5px] leading-[21px] flex-1" style={{ color: 'var(--color-text-muted)' }}>{project.description}</p>
       <div className="mt-4 pt-4 flex flex-wrap gap-2 border-t" style={{ borderColor: 'var(--color-card-border)' }}>
-        {project.tags.map((t) => (
-          <span key={t.name} className="tag-rune tag-rune--sm">#{t.name}</span>
+        {project.tags.map((tag) => (
+          <span key={tag.name} className="tag-rune tag-rune--sm">#{tag.name}</span>
         ))}
       </div>
     </div>
   </ScrollReveal>
-);
+  );
+};
 
 const Works = () => {
+  const { t } = useTranslation();
   const [showAll, setShowAll] = useState(false);
   const featured = projects.filter((p) => p.isFeatured);
   const others = projects.filter((p) => !p.isFeatured);
 
   return (
     <>
-      <ChapterHeading no={chapters.projects.no} eyebrow={chapters.projects.label} title={`${chapters.projects.sub}.`} />
+      <ChapterHeading no={chapters.projects.no} eyebrow={t('chapters.projects.label')} title={`${t('chapters.projects.sub')}.`} />
       <ScrollReveal delay={0.15} direction="up">
         <p className="mt-5 max-w-2xl text-[16px] leading-[28px]" style={{ color: 'var(--color-text-muted)' }}>
-          Each realm is a production world charted end to end — across finance, healthcare,
-          logistics, media and visualization. Some lie under NDA; what's shared is what's permissible.
+          {t('works.intro')}
         </p>
       </ScrollReveal>
 
@@ -245,7 +251,7 @@ const Works = () => {
             <button onClick={() => setShowAll((v) => !v)} data-cursor="hover"
               className="px-7 py-3 rounded-full font-semibold text-sm border-2 transition-all duration-300"
               style={{ borderColor: 'rgba(var(--color-ember-rgb),0.4)', color: 'var(--color-ember)', background: 'rgba(var(--color-ember-rgb),0.06)' }}>
-              {showAll ? 'Furl the map' : `Chart ${others.length} more realms`}
+              {showAll ? t('works.furl') : t('works.chartMore', { count: others.length })}
             </button>
           </div>
           <AnimatePresence>

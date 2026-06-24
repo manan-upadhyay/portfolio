@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { Map } from 'lucide-react';
 import { scrollToSection, scrollToTop } from '../lib/smoothScroll';
 import { useThemeStore } from '../store/useThemeStore';
@@ -61,6 +62,7 @@ const Row = ({ no, glyph, label, kbd, active, expanded, onClick, ariaLabel }) =>
  * chapter labels. Persistent across the whole page.
  */
 const SideRail = ({ activeId, onOpenMap, visible }) => {
+  const { t } = useTranslation();
   const [expanded, setExpanded] = useState(false);
   const { resolvedTheme } = useThemeStore();
   const crest = resolvedTheme === 'dark' ? '/logo-dark.png' : '/logo-light.png';
@@ -90,7 +92,7 @@ const SideRail = ({ activeId, onOpenMap, visible }) => {
         }}
       >
         <Row
-          ariaLabel="To top"
+          ariaLabel={t('nav.toTop')}
           onClick={scrollToTop}
           expanded={expanded}
           label="Manan Upadhyay"
@@ -112,10 +114,10 @@ const SideRail = ({ activeId, onOpenMap, visible }) => {
           <Row
             key={c.id}
             no={c.no}
-            label={c.label}
+            label={t(`chapters.${c.id}.label`)}
             active={activeId === c.id}
             expanded={expanded}
-            ariaLabel={c.label}
+            ariaLabel={t(`chapters.${c.id}.label`)}
             onClick={() => scrollToSection(c.id)}
           />
         ))}
@@ -123,10 +125,10 @@ const SideRail = ({ activeId, onOpenMap, visible }) => {
         <span className="my-1 h-px mx-2" style={{ background: 'var(--color-card-border)' }} />
 
         <Row
-          ariaLabel="Open the map"
+          ariaLabel={t('nav.openMap')}
           onClick={onOpenMap}
           expanded={expanded}
-          label="Map"
+          label={t('nav.map')}
           kbd
           glyph={<Map size={17} style={{ color: 'var(--color-ember)' }} />}
         />

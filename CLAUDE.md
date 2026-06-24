@@ -46,12 +46,21 @@ Section components live in `src/sections/`; reusable widgets in `src/components/
 | 05 | Summon | `sections/Contact.jsx` | `contact` | Statement + form + channels |
 
 Chapters are defined **once** in `src/constants/index.js` — `chapters` (keyed by
-section `id`: `no`, `label`, `sub`, map `x`/`y`, search `kw`) plus the derived
-ordered `chapterList`. **Everything reads from it:** section headings
-(`ChapterHeading` via `sub`), the Hero eyebrow, the collapsible `SideRail.jsx`
-nav, and the ⌘K `MapOverlay.jsx` pins. Add/rename a chapter in one place.
-**Constants are the source of truth for all copy** — never hardcode strings.
-(There is no `Navbar`/`CommandPalette` — superseded by `SideRail` + `MapOverlay`.)
+section `id`: structural **data** only now — `no`, map `x`/`y`, search `kw`) plus
+the derived ordered `chapterList`. The voice-bearing `label` + `sub` live in the
+**Voice bundles** (see below), keyed by id: `t('chapters.<id>.label')` /
+`t('chapters.<id>.sub')`. Add/rename a chapter in `constants` (data) + the
+bundles (labels). The `SideRail.jsx` nav, Hero eyebrow, section headings
+(`ChapterHeading`), and ⌘K `MapOverlay.jsx` pins all read from this pair.
+
+**Copy lives in i18n, not constants.** As of Phase 1 (the Voice switcher), all
+visible copy lives in **`src/i18n/bundles/*`** and is read via `useTranslation`'s
+`t()`. `src/constants/index.js` holds **non-copy data only** — links, icons,
+map coords, chapter `no`/`kw`, project facts, skill names, stat values. Never
+hardcode display strings in components; add the key to the bundles instead.
+(There is no `Navbar`/`CommandPalette` — superseded by `SideRail` + `MapOverlay`.
+The visitor-facing controls are the top-right `DayNightToggle` and the
+bottom-right `ControlCluster` = `VoiceSwitcher` (+ audio control in Phase 4).)
 
 **Palette / theme:** dark-first "starlit realm" + light "dawn over the realm".
 All color via CSS variables in `src/index.css`. See
@@ -68,7 +77,14 @@ All color via CSS variables in `src/index.css`. See
 - **GSAP + ScrollTrigger** → scroll choreography (pin, scrub, parallax-out).
 - **Lenis** → smooth scroll, driven by GSAP ticker (`src/lib/smoothScroll.js`).
   Framer motion variants live in `src/lib/motion.js`.
-- **Zustand** → theme store (`src/store/useThemeStore.ts`).
+- **Zustand** → theme store (`src/store/useThemeStore.ts`) + voice store
+  (`src/store/useVoiceStore.ts`).
+- **i18next + react-i18next** → the **Voice switcher** (multi-personality copy).
+  Each voice = an i18next language; `chronicle` is the complete base/fallback,
+  other voices override only changed keys. Core voices (`chronicle`, `plain`)
+  bundle eagerly; easter-egg personalities are code-split via `loadVoice`
+  (`src/i18n/index.js`). Bundles: `src/i18n/bundles/*`. See
+  [LEGENDARY-ROADMAP](docs/chronicle/LEGENDARY-ROADMAP.md) §1.
 - **lucide-react** → icons (+ custom `CompassRose` SVG). **No emoji in UI.**
 - **Contact** → server-side **Resend** via a Vite dev middleware (`ravenApiDev`
   in `vite.config.js`) locally / a serverless function in prod; the API key never
@@ -83,9 +99,11 @@ All color via CSS variables in `src/index.css`. See
 
 1. **Reusable & DRY.** Shared visuals = a component in `src/components/` or a CSS
    utility class — never copy-paste. New repeated pattern → extract it.
-2. **Data-driven.** All content from `src/constants/`. Components are pure
-   presenters that take props/constants. No inline prose, no magic numbers for
-   content.
+2. **Data-driven.** Display **copy** comes from the i18n bundles
+   (`src/i18n/bundles/*`) via `t()`; structural **data** comes from
+   `src/constants/`. Components are pure presenters — no inline prose, no magic
+   numbers for content, no hardcoded strings. A new string → add a bundle key
+   (and its `plain` override when the wording changes by voice).
 3. **Theme-token only.** Use `var(--color-*)` / Tailwind tokens. **No raw hex in
    components** except inside generated-art fallbacks. If you need a new color,
    add a token to `index.css` (both themes).
@@ -139,6 +157,7 @@ clean, and it looks like a *moment* — not a list.
 
 | Doc | What it governs |
 |---|---|
+| [LEGENDARY-ROADMAP.md](docs/chronicle/LEGENDARY-ROADMAP.md) | Planned "wonder" features — decisions, rationale, open questions, task tracking |
 | [DESIGN-SYSTEM.md](docs/chronicle/DESIGN-SYSTEM.md) | Color tokens, type scale, spacing, motion language, CSS utilities, component inventory, a11y |
 | [ARCHITECTURE.md](docs/chronicle/ARCHITECTURE.md) | Folder map, libraries, smooth-scroll/GSAP patterns, global shell, perf, verification |
 | [ASSETS.md](docs/chronicle/ASSETS.md) | "World Bible", filenames, dimensions, generation prompts |

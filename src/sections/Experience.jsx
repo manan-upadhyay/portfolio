@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { useTranslation } from 'react-i18next';
 import { Briefcase, GraduationCap, Compass, ArrowRight } from 'lucide-react';
 import { journey, chapters } from '../constants';
 import { ChapterHeading, ScrollReveal } from '../components';
@@ -12,6 +13,7 @@ const KIND_ICON = { work: Briefcase, edu: GraduationCap, cta: Compass };
 
 /* ---- Inner card content (shared by both layouts) ---- */
 const WaypointBody = ({ w }) => {
+  const { t } = useTranslation();
   const Icon = KIND_ICON[w.kind] || Briefcase;
   const isCta = w.kind === 'cta';
   return (
@@ -36,13 +38,13 @@ const WaypointBody = ({ w }) => {
         <span className="text-[12px] font-mono tracking-wide" style={{ color: 'var(--color-text-muted)' }}>{w.year}</span>
         {w.current && (
           <span className="ml-auto flex items-center gap-1.5 text-[11px]" style={{ color: 'var(--color-text-muted)' }}>
-            <span className="status-dot" /> Present
+            <span className="status-dot" /> {t('experience.present')}
           </span>
         )}
       </div>
 
       {/* identity block — the single focal point */}
-      <p className="chapter-eyebrow !text-[10.5px] !tracking-[0.26em] !gap-2 mb-2.5">{w.chapter}</p>
+      <p className="chapter-eyebrow !text-[10.5px] !tracking-[0.26em] !gap-2 mb-2.5">{t(`experience.journey.${w.id}.chapter`)}</p>
       <h3 className="font-chronicle font-semibold text-[clamp(24px,2.2vw,30px)] leading-[1.05]" style={{ color: 'var(--color-text)' }}>
         {w.role}
       </h3>
@@ -50,7 +52,7 @@ const WaypointBody = ({ w }) => {
 
       {/* the beat — one emotional line, the only ember sentence */}
       <p className="font-chronicle italic text-[16.5px] leading-snug mt-4" style={{ color: 'var(--color-ember)' }}>
-        {w.headline}
+        {t(`experience.journey.${w.id}.headline`)}
       </p>
 
       {/* proof — curated, breathable */}
@@ -71,7 +73,7 @@ const WaypointBody = ({ w }) => {
           data-cursor="hover"
           className="btn-primary inline-flex items-center gap-2 mt-7 self-start"
         >
-          Summon me <ArrowRight size={16} />
+          {t('experience.summonCta')} <ArrowRight size={16} />
         </button>
       )}
 
@@ -101,6 +103,7 @@ const WaypointBody = ({ w }) => {
 };
 
 const Experience = () => {
+  const { t } = useTranslation();
   const ch = chapters.work;
   const [horizontal, setHorizontal] = useState(false);
   const rootRef = useRef(null);
@@ -191,11 +194,10 @@ const Experience = () => {
     return () => io.disconnect();
   }, [horizontal]);
 
-  const heading = <ChapterHeading no={ch.no} eyebrow={ch.label} title={`${ch.sub}.`} />;
+  const heading = <ChapterHeading no={ch.no} eyebrow={t('chapters.work.label')} title={`${t('chapters.work.sub')}.`} />;
   const intro = (
     <p className="mt-6 max-w-xl text-[17px] leading-[28px]" style={{ color: 'var(--color-text-muted)' }}>
-      Every expedition leaves a trail. Keep scrolling to travel mine — from the
-      first commit to the present campaign.
+      {t('experience.intro')}
     </p>
   );
 
@@ -208,7 +210,7 @@ const Experience = () => {
           {heading}
           {intro}
           <div className="mt-7 flex items-center gap-3 text-[13px] tracking-[0.15em] uppercase" style={{ color: 'var(--color-ember)' }}>
-            Travel the trail <ArrowRight size={18} className="animate-pulse" />
+            {t('experience.travelTrail')} <ArrowRight size={18} className="animate-pulse" />
           </div>
         </div>
 
@@ -235,7 +237,7 @@ const Experience = () => {
 
             {journey.map((w) => (
               <div
-                key={w.chapter}
+                key={w.id}
                 className="wp shrink-0 relative flex items-center justify-center px-3"
                 style={{ width: 'var(--card-w)' }}
               >
@@ -271,7 +273,7 @@ const Experience = () => {
         <div className="absolute left-[7px] top-2 bottom-2 w-px" style={{ background: 'var(--gradient-map-line)', opacity: 0.5 }} />
         <div className="space-y-8">
           {journey.map((w) => (
-            <ScrollReveal key={w.chapter} direction="up" className="relative pl-10">
+            <ScrollReveal key={w.id} direction="up" className="relative pl-10">
               <span className="absolute left-0 top-3 rotate-45 w-3.5 h-3.5" style={{ background: 'var(--color-gold)' }} />
               <WaypointBody w={w} />
             </ScrollReveal>

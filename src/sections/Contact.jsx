@@ -185,7 +185,11 @@ const Contact = () => {
             })}
           </div>
 
-          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          {/* noValidate: we run our own (voice-aware) validation in handleSubmit,
+              so suppress the browser's native bubbles — otherwise an invalid
+              type="email" value is caught natively and our custom error (and
+              every voice's variant of it) never gets a chance to show. */}
+          <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-4">
             {/* Honeypot — visually hidden, off the tab order; a filled value = bot. */}
             <input
               ref={honeypotRef}
@@ -214,7 +218,7 @@ const Contact = () => {
               ) : null}
             </AnimatePresence>
 
-            <div className="mt-2 flex flex-col sm:flex-row gap-3">
+            <div className="mt-auto flex flex-col sm:flex-row gap-3">
               <button type="submit" disabled={loading} data-cursor="hover"
                 className="btn-primary flex-1 disabled:opacity-70">
                 {loading ? (<><Loader2 size={18} className="animate-spin" /> {t('contact.submitLoading')}</>) : (<>{t('contact.submitIdle')} <Send size={16} /></>)}

@@ -168,10 +168,29 @@ export default {
     resumeCta: 'Service Record',
     success: 'Transmission received. Acknowledged. Filed in triplicate. I will respond.',
     errors: {
-      required: ['Incomplete transmission. A field is empty. Unacceptable. Complete it.'],
-      email: ['That address is invalid. Fact. Correct it and try again.'],
-      failed: ['Transmission failed. Likely sabotage — possibly Jim. Attempt again.'],
-      notConfigured: ['The transmitter is not yet operational. Contact me directly: {{email}}.'],
+      required: [
+        'Incomplete transmission. A field is empty. Unacceptable. Complete it.',
+        'You have left a field blank. This is a vulnerability. Fill every field.',
+        'An empty field is a weakness. Weakness is unacceptable. Complete the form.',
+        'Question: did you fill every field? Answer: no. Correct this immediately.',
+      ],
+      email: [
+        'That address is invalid. Fact. Correct it and try again.',
+        'That is not a valid email. I have verified this. I am never wrong. Fix it.',
+        'False. That email does not exist. I checked. Re-enter a real one.',
+        'An invalid address. The server cannot deliver it. Correct it.',
+      ],
+      failed: [
+        'Transmission failed. Likely sabotage — possibly Jim. Attempt again.',
+        'The message did not send. Sabotage is suspected. I will investigate. You: retry.',
+        'Delivery failed. This will be noted in my report. Resend immediately.',
+        'Failure. Unacceptable, but recoverable. Submit the form again.',
+      ],
+      notConfigured: [
+        'The transmitter is not yet operational. Contact me directly: {{email}}.',
+        'The system is not yet armed. Until then, transmit directly to {{email}}.',
+        'The relay is offline — a temporary tactical disadvantage. Reach me at {{email}}.',
+      ],
     },
     quote: '“Not everything is a lesson. Sometimes it is just an enjoyable experience. This contact form is both.”',
     channels: { location: 'Headquarters' },

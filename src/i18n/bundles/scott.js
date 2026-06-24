@@ -170,10 +170,29 @@ export default {
     resumeCta: 'My Résumé',
     success: 'Boom. Roasted. (I mean — message sent! I’ll reply soon, friend.)',
     errors: {
-      required: ['You left a field empty. That’s a no from me. Fill it all in and we’re golden.'],
-      email: ['That email is not an email. I’m not even mad — honestly, I’m impressed. Fix it?'],
-      failed: ['It didn’t send. Not great, Bob. Let’s try that again.'],
-      notConfigured: ['The form isn’t hooked up yet — that one’s on me. Just email me directly at {{email}}.'],
+      required: [
+        'You left a field empty. That’s a no from me. Fill it all in and we’re golden.',
+        'An empty field? No, no, no. I need the whole thing. I’m a giver, but I’m also a taker.',
+        'You skipped one. I don’t skip people, and I don’t skip fields. Fill them all in.',
+        'Blank space — and not the fun Taylor Swift kind. Every field, please.',
+      ],
+      email: [
+        'That email is not an email. I’m not even mad — honestly, I’m impressed. Fix it?',
+        'That is not a real email. I would know. I have an email. Mine works. Try again?',
+        'I typed that into my brain and got an error. Give the email another shot.',
+        'That email and I are not friends yet. Double-check it for me?',
+      ],
+      failed: [
+        'It didn’t send. Not great, Bob. Let’s try that again.',
+        'Something broke. Probably Toby. It’s always Toby. Hit send again.',
+        'That did not go through. Awkward. Let’s pretend it didn’t happen and retry.',
+        'It failed. I’m gonna need you to do the thing again. The send thing.',
+      ],
+      notConfigured: [
+        'The form isn’t hooked up yet — that one’s on me. Just email me directly at {{email}}.',
+        'Okay, full transparency: the form isn’t wired up. Email me straight at {{email}}.',
+        'The form is taking a personal day. Reach me directly at {{email}}.',
+      ],
     },
     quote: '“Sometimes I’ll start an email and I don’t know where it’s going. Send it anyway.”',
     channels: { location: 'My Office' },

@@ -19,26 +19,41 @@ const Hero = () => {
   const [phraseIdx, setPhraseIdx] = useState(0);
 
   const rootRef = useRef(null);
+  const langRef = useRef(i18n.language);
   const copyRef = useRef(null);
   const canvasRef = useRef(null);
   const canvasWrapRef = useRef(null);
   const bearingRef = useRef(null);
 
-  const phrases = t('hero.phrases', { returnObjects: true });
+  // `t(returnObjects)` hands back a fresh array every render — memoize per voice
+  // so it's a stable reference (otherwise the rotation effect churns).
+  const phrases = useMemo(() => {
+    const p = t('hero.phrases', { returnObjects: true });
+    return Array.isArray(p) && p.length ? p : [t('hero.lead')];
+  }, [t, i18n.language]);
   const longestPhrase = phrases.reduce((a, b) => (b.length > a.length ? b : a), phrases[0]);
+  // Clamp so the index can never point past the current voice's phrase list.
+  const safeIdx = phraseIdx % phrases.length;
+  const current = phrases[safeIdx];
 
-  // Restart the rotation at the first phrase whenever the voice changes, so the
-  // tagline never shows a stale phrase from the previous voice paired with the
-  // new lead (e.g. "I am basically scalable platforms").
-  useEffect(() => { setPhraseIdx(0); }, [i18n.language]);
+  // Reset to the first phrase the instant the voice (i18n language) changes —
+  // DURING render, not in an effect. This collapses the language flip and the
+  // index reset into one committed render (key `lang:0`). Resetting in an effect
+  // produced two rapid commits (`lang:oldIdx` then `lang:0`) that interrupted
+  // AnimatePresence's `mode="wait"` exit and left it permanently desynced after a
+  // UI voice switch — the phrase froze, blanked, then repeated.
+  if (langRef.current !== i18n.language) {
+    langRef.current = i18n.language;
+    setPhraseIdx(0);
+  }
 
-  // Rotating tagline phrase (paused under reduced-motion / single phrase).
+  // (Re)start the rotation whenever the voice's phrase list changes.
   useEffect(() => {
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (reduce || phrases.length < 2) return;
     const id = setInterval(() => setPhraseIdx((i) => (i + 1) % phrases.length), 3200);
     return () => clearInterval(id);
-  }, [phrases.length, i18n.language]);
+  }, [phrases]);
 
   // Intro timeline + scroll-out parallax.
   useEffect(() => {
@@ -174,15 +189,15 @@ const Hero = () => {
               <span className="col-start-1 row-start-1">
                 <AnimatePresence mode="wait" initial={false}>
                   <motion.span
-                    key={phrases[phraseIdx]}
+                    key={`${i18n.language}:${safeIdx}`}
                     initial={{ opacity: 0, filter: 'blur(10px)' }}
                     animate={{ opacity: 1, filter: 'blur(0px)' }}
                     exit={{ opacity: 0, filter: 'blur(10px)' }}
-                    transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+                    transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
                     className="inline-block whitespace-nowrap"
                     style={{ color: 'var(--color-gold)' }}
                   >
-                    {phrases[phraseIdx]}
+                    {current}
                   </motion.span>
                 </AnimatePresence>
               </span>

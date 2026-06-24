@@ -7,7 +7,7 @@ import { Cursor, ErrorBoundary, SideRail, MapOverlay, DayNightToggle } from './c
 import { useSmoothScroll } from './lib/smoothScroll';
 import { useActiveSection } from './hooks/useActiveSection';
 import { Analytics } from '@vercel/analytics/react';
-import { SpeedInsights } from "@vercel/speed-insights/next"
+import { SpeedInsights } from "@vercel/speed-insights/react"
 
 const About = lazy(() => import('./sections/About'));
 const Experience = lazy(() => import('./sections/Experience'));

@@ -21,7 +21,7 @@
 | 3 | **Time-aware real sky** (5 theme modes + live astrolabe) | 🟡 | 8 | 5 | low |
 | 4 | **Interactive sound design** (Web Audio synth + raven sample) | 🟡 | 7 | 6 | med |
 | 5 | **Expedition recap** (client-side session send-off) | 🟡 | 6 | 4 | low |
-| 1b | **Voice easter eggs** (scott / dwight / cow + unlock system) | 🟡 | 6 | 4 | low |
+| 1b | **Voice easter eggs** (scott / dwight / cow + unlock system) | ✅ | 6 | 4 | low |
 | 6 | **Lantern cursor** (invisible-ink reveal; can host a voice-unlock) | 🔵 | 8 | 6 | med |
 
 **Guiding principle:** every feature must either *serve a skeptical/impatient
@@ -85,21 +85,30 @@ initial JS.
 
 ---
 
-## 1b. Voice easter eggs — personalities + unlock system  · Phase 1b · 🟡
+## 1b. Voice easter eggs — personalities + unlock system  · Phase 1b · ✅ SHIPPED
+
+> **Shipped.** Three lazy-loaded personality bundles — `scott` (World's Best
+> Boss), `dwight` (Assistant (to the) Manager), `cow` (Moo) — plus the
+> `EasterEggListener`: type a secret word anywhere (not in form fields) to
+> unlock + auto-switch to that voice, with a toast that hints toward the next
+> sealed voice. Locked menu rows show each voice's cryptic `hint`; unlocks
+> persist. Triggers: `boss` → Scott, `beets` → Dwight, `moo` → Cow. Verified via
+> CDP: each trigger unlocks + switches + persists; chaining ends at `3/3
+> discovered`; bundles ship as separate chunks (out of initial JS).
 
 **Discoverability — *signal existence, hide the trigger*** (solves "99% skip it"):
-the `Sealed Voices · 0/3` teaser advertises the game from Phase 1; unlocking one
-reveals a hint toward the next; unlocks persist in `localStorage`.
+the `Sealed Voices · n/3` teaser advertises the game; each locked row shows a
+solvable cryptic clue; unlocking one toasts the next clue; unlocks persist.
 
 ### Decisions (locked)
-- Triggers kept simple & on-theme (e.g. click CompassRose ×3, type a keyword,
-  open the map a certain way). The Lantern (#6), if built, becomes an *additional*
-  trigger carrier — never a hard dependency.
+- Triggers = **typed secret words** (simple, reliable, touch-agnostic via the
+  cryptic hints). The Lantern (#6), if built, can become an *additional* trigger
+  carrier — never a hard dependency.
 
 **Tasks**
-- [ ] Pluggable easter-egg trigger system → unlocks a voice.
-- [ ] Author `scott` / `dwight` / `cow` bundles (lazy-loaded).
-- [ ] Unlock animation + hint-toward-next-voice on discovery.
+- [x] Pluggable easter-egg trigger system → unlocks a voice (`EasterEggListener`).
+- [x] Author `scott` / `dwight` / `cow` bundles (lazy-loaded / code-split).
+- [x] Unlock toast + hint-toward-next-voice on discovery; locked rows show hints.
 
 ---
 

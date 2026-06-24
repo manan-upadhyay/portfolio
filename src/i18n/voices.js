@@ -7,6 +7,9 @@
 //
 // `locked: true` marks an easter-egg personality: it renders as a sealed teaser
 // in the menu and its bundle is lazy-loaded only once unlocked (see ./index.js).
+// Sealed voices carry a `trigger` (the secret word the visitor types to unlock —
+// see EasterEggListener) and a `hint` (the cryptic clue shown on the locked row,
+// so discovery is a solvable game, not a guess).
 
 export const DEFAULT_VOICE = 'chronicle';
 
@@ -28,18 +31,39 @@ export const voices = [
     label: 'World’s Best Boss',
     sample: 'That’s what she said.',
     locked: true,
+    trigger: 'boss',
+    hint: 'Type what’s printed on the world’s best mug.',
+    info: {
+      name: 'Michael Scott',
+      source: 'The Office (US)',
+      note: 'Regional Manager of Dunder Mifflin, Scranton. Self-proclaimed World’s Best Boss.',
+    },
   },
   {
     id: 'dwight',
     label: 'Assistant (to the) Manager',
     sample: 'Fact. Bears. Beets.',
     locked: true,
+    trigger: 'beets',
+    hint: 'Type what grows in rows at Schrute Farms.',
+    info: {
+      name: 'Dwight Schrute',
+      source: 'The Office (US)',
+      note: 'Assistant (to the) Regional Manager. Beet farmer, black belt, owner of Schrute Farms.',
+    },
   },
   {
     id: 'cow',
     label: 'Moo',
     sample: 'Moo moo, moo moo moo.',
     locked: true,
+    trigger: 'moo',
+    hint: 'Type what the cow says.',
+    info: {
+      name: 'A cow',
+      source: 'Planet Earth',
+      note: 'Says moo. That’s the whole bit. Surprisingly relaxing.',
+    },
   },
 ];
 

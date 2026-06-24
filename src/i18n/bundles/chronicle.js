@@ -55,6 +55,20 @@ export default {
       { title: 'Secure by default', body: 'JWT/OAuth, Okta, RBAC and middleware access control across enterprise apps.' },
     ],
     disciplines: 'Disciplines',
+    // Discipline cards (keyed by the service `iconKey` in constants).
+    services: {
+      frontend: { title: 'Frontend Architecture', description: 'Production-grade UIs with React.js, Next.js, TypeScript, and reusable component systems.' },
+      backend: { title: 'Backend Development', description: 'Scalable APIs with Node.js, Express.js, NestJS, REST, JWT/OAuth, and RBAC.' },
+      performance: { title: 'Performance Optimization', description: 'Code-splitting, caching, CDN strategies, lazy loading, and Core Web Vitals tuning.' },
+      fullstack: { title: 'Full Stack Delivery', description: 'End-to-end ownership from requirement grooming to production monitoring.' },
+    },
+    // Stat-band labels (keyed by the stat `key` in constants; values are data).
+    stats: {
+      years: 'Years Experience',
+      projects: 'Projects Delivered',
+      domains: 'Industry Domains',
+      load: 'Faster Load Times',
+    },
   },
 
   experience: {
@@ -62,12 +76,44 @@ export default {
       'Every expedition leaves a trail. Keep scrolling to travel mine — from the first commit to the present campaign.',
     travelTrail: 'Travel the trail',
     present: 'Present',
-    // Flavor copy per waypoint, keyed by the journey item `id` in constants.
+    // Per-waypoint copy, keyed by the journey item `id` in constants.
     journey: {
-      'first-trail': { chapter: 'The First Trail', headline: 'Where the road began.' },
-      oath: { chapter: 'The Oath', headline: 'Forged the foundations · CGPA 8.36 / 10.' },
-      expedition: { chapter: 'The Long Expedition', headline: 'Six industries. Production-grade. End to end.' },
-      horizon: { chapter: 'The Horizon Ahead', headline: 'Seeking teams who value craft & ownership.' },
+      'first-trail': {
+        chapter: 'The First Trail',
+        headline: 'Where the road began.',
+        role: 'Frontend Developer',
+        org: 'Horizon Tour & Travels',
+        points: [
+          'Built CRM modules & responsive React UIs for sales workflows.',
+          'Shipped PDF/Excel reporting — saved 16–20 hrs/week.',
+          'Cut initial load time by 38%.',
+        ],
+      },
+      oath: {
+        chapter: 'The Oath',
+        headline: 'Forged the foundations · CGPA 8.36 / 10.',
+        role: 'B.E. Information Technology',
+        org: 'Gujarat Technological University',
+        points: ['Engineering degree in Information Technology.'],
+      },
+      expedition: {
+        chapter: 'The Long Expedition',
+        headline: 'Six industries. Production-grade. End to end.',
+        role: 'Full Stack Developer',
+        org: 'Inexture Solutions',
+        points: [
+          'Delivered apps across finance, health, logistics, CRM, SaaS & media.',
+          'Owned features end to end — grooming to production monitoring.',
+          'Secured apps (JWT/OAuth, Okta, RBAC) and tuned performance.',
+        ],
+      },
+      horizon: {
+        chapter: 'The Horizon Ahead',
+        headline: 'Seeking teams who value craft & ownership.',
+        role: 'Open to the next quest',
+        org: 'Available for senior roles',
+        points: [],
+      },
     },
     summonCta: 'Summon me',
   },
@@ -88,6 +134,79 @@ export default {
     ndaSealed: "Sealed under NDA — details limited to what's permissible.",
     chartMore: 'Chart {{count}} more realms',
     furl: 'Furl the map',
+    // Per-project copy, keyed by the project `id` in constants. `name`,
+    // `company`, `tags`, links and gallery stay data in constants.
+    projects: {
+      gajaakriti: {
+        description: 'Dynamic media-heavy website and admin panel for a premium Ahmedabad-based wedding photography and films studio with optimized media delivery.',
+        highlights: [
+          'Built a modern Next.js website with dynamic landing pages, portfolio, blogs, testimonials, and admin panel',
+          'Improved performance through caching, CDN strategy, Cloudflare R2, and video streaming optimization',
+          'Implemented Firebase Auth and Firestore for authentication, user management, and content mapping',
+          'Built Bash scripts to batch-compress images and videos, reducing hosting costs while maintaining quality',
+        ],
+      },
+      'royal-tiles': {
+        description: 'Interactive tile design and ordering tool where users select layouts, tile designs, fills, preview results live, and download order-ready PDF templates.',
+        highlights: [
+          'Built a custom floor visualization tool with live preview and downloadable PDF templates',
+          'Programmatically rendered dynamic tile variants — corners, fills, grid patterns',
+          'Built TensorFlow.js image-processing workflow to convert PNGs into region-based SVGs',
+          'Developed an admin panel for managing tile designs, floor layouts, and configurations',
+          'Added product tours, help drawers, and shortcut-key interactions for usability',
+        ],
+      },
+      'advisor-portfolio': {
+        description: 'Advisor-facing portfolio analysis platform built from scratch with Next.js, Okta authentication, Highcharts data visualization, and enterprise deployment tooling.',
+        highlights: [
+          'Built the frontend application from scratch — system design, reusable UI, route protection, API integration, sprint-wise delivery',
+          'Integrated Okta OAuth with Auth.js and server-side middleware authorization logic',
+          'Built portfolio analysis views with data tables and Highcharts for interactive digital reports',
+          'Integrated LaunchDarkly feature flags, Harness deployments, and Splunk debugging',
+          'Contributed to a Spring Boot backend for server-side PDF report generation',
+        ],
+      },
+      'digital-investor': {
+        description: 'Digital investment platform with rich user interactions, analytics tracking, and feature modules across frontend and backend.',
+        highlights: [
+          'Delivered React/Next.js feature modules and integrated Adobe Analytics tracking',
+          'Supported Node/Express REST API integrations, error handling, and performance improvements',
+          'Implemented React Query for server-state management, reducing redundant API calls',
+        ],
+      },
+      srifin: {
+        description: 'Full-stack CRM/ERP for managing financial data, workflows, and identity verification with secure RBAC.',
+        highlights: [
+          'Engineered RBAC and audit logs for compliance',
+          'Accelerated onboarding by 20-25% with verification APIs',
+          'Led image optimization improving Core Web Vitals',
+        ],
+      },
+      xipper: {
+        description: 'Multi-tenant hotel management platform with role-based operations, eKYC, booking, services, and billing.',
+        highlights: [
+          'Designed multi-tenant PostgreSQL models and REST APIs',
+          'Cut manual billing adjustments by 30-35%',
+          'Accelerated checkout speed by 15-20%',
+        ],
+      },
+      'ai-chatbot': {
+        description: 'Context-aware chatbot UI with real-time interactions using WebSocket and comprehensive end-to-end testing.',
+        highlights: [
+          'Led UI architecture with Next.js/Redux and WebSocket',
+          'Adopted Storybook and Cypress for testing',
+          'Decreased regressions by 25-30%',
+        ],
+      },
+      'fantasy-cricket': {
+        description: 'Real-money fantasy platform with live match syncing, secure payouts, and admin back-office operations.',
+        highlights: [
+          'Built cron pipelines for live match states',
+          'Reduced admin intervention by 1.5-2 hours per match',
+          'Achieved 99% transaction reliability',
+        ],
+      },
+    },
   },
 
   contact: {

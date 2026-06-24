@@ -134,6 +134,7 @@ const RealmPlate = ({ project, index }) => {
   }, []);
 
   const links = [project.live_demo_link, project.source_code_link].filter(Boolean);
+  const highlights = t(`works.projects.${project.id}.highlights`, { returnObjects: true });
 
   return (
     <div ref={rootRef} className="grid lg:grid-cols-2 gap-8 lg:gap-14 items-stretch min-h-[60vh] py-10">
@@ -149,12 +150,12 @@ const RealmPlate = ({ project, index }) => {
           {project.name}
         </h3>
         <p className="mt-5 max-w-xl text-[16px] leading-[28px]" style={{ color: 'var(--color-text-muted)' }}>
-          {project.description}
+          {t(`works.projects.${project.id}.description`)}
         </p>
 
-        {project.highlights?.length > 0 && (
+        {highlights?.length > 0 && (
           <ul className="mt-5 space-y-2.5 max-w-xl">
-            {project.highlights.slice(0, 3).map((hgl, i) => (
+            {highlights.slice(0, 3).map((hgl, i) => (
               <li key={i} className="flex gap-3 text-[14px] leading-[21px]" style={{ color: 'var(--color-text-muted)' }}>
                 <span className="mt-1.5 w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: 'var(--color-gold)' }} />
                 {hgl}
@@ -213,7 +214,7 @@ const RealmCard = ({ project }) => {
         </div>
         {project.isNDA && <span className="wax-seal wax-seal--nda flex-shrink-0"><Lock size={10} /> {t('works.nda')}</span>}
       </div>
-      <p className="mt-3 text-[13.5px] leading-[21px] flex-1" style={{ color: 'var(--color-text-muted)' }}>{project.description}</p>
+      <p className="mt-3 text-[13.5px] leading-[21px] flex-1" style={{ color: 'var(--color-text-muted)' }}>{t(`works.projects.${project.id}.description`)}</p>
       <div className="mt-4 pt-4 flex flex-wrap gap-2 border-t" style={{ borderColor: 'var(--color-card-border)' }}>
         {project.tags.map((tag) => (
           <span key={tag.name} className="tag-rune tag-rune--sm">#{tag.name}</span>

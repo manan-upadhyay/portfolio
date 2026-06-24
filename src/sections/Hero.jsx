@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
@@ -12,7 +12,7 @@ import CompassRose from '../components/CompassRose';
 gsap.registerPlugin(ScrollTrigger);
 
 const Hero = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { resolvedTheme } = useThemeStore();
   const isDark = resolvedTheme === 'dark';
   const prefersReduced = useReducedMotion();
@@ -27,13 +27,18 @@ const Hero = () => {
   const phrases = t('hero.phrases', { returnObjects: true });
   const longestPhrase = phrases.reduce((a, b) => (b.length > a.length ? b : a), phrases[0]);
 
+  // Restart the rotation at the first phrase whenever the voice changes, so the
+  // tagline never shows a stale phrase from the previous voice paired with the
+  // new lead (e.g. "I am basically scalable platforms").
+  useEffect(() => { setPhraseIdx(0); }, [i18n.language]);
+
   // Rotating tagline phrase (paused under reduced-motion / single phrase).
   useEffect(() => {
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (reduce || phrases.length < 2) return;
     const id = setInterval(() => setPhraseIdx((i) => (i + 1) % phrases.length), 3200);
     return () => clearInterval(id);
-  }, [phrases.length]);
+  }, [phrases.length, i18n.language]);
 
   // Intro timeline + scroll-out parallax.
   useEffect(() => {

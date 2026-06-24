@@ -3,7 +3,7 @@ import { Map } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useThemeStore } from './store/useThemeStore';
 import Hero from './sections/Hero';
-import { Cursor, ErrorBoundary, SideRail, MapOverlay, DayNightToggle, ControlCluster } from './components';
+import { Cursor, ErrorBoundary, SideRail, MapOverlay, DayNightToggle, ControlCluster, EasterEggListener } from './components';
 // import { MusicPlayer } from './components'; // ambient audio — folds into ControlCluster in Phase 4
 import { useSmoothScroll } from './lib/smoothScroll';
 import { useActiveSection } from './hooks/useActiveSection';
@@ -49,6 +49,8 @@ const App = () => {
       <div className="fixed top-5 right-5 z-40"><DayNightToggle /></div>
       {/* bottom-right control cluster — voice switcher (+ audio control in Phase 4) */}
       <ControlCluster />
+      {/* listens for secret trigger words → unlocks the sealed voices */}
+      <EasterEggListener />
       {/* mobile map button (side-rail is desktop-only) */}
       <button onClick={() => setMapOpen(true)} aria-label={t('nav.openMap')}
         className="md:hidden fixed top-5 left-5 z-40 grid place-items-center w-11 h-11 rounded-full"

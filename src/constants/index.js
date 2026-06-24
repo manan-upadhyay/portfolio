@@ -1,7 +1,5 @@
 import {
-  mobile,
   backend,
-  creator,
   web,
   typescript,
   reactjs,
@@ -83,31 +81,13 @@ export const chapters = {
 // Ordered array with `id` injected — for iteration (SideRail rows, Map pins).
 export const chapterList = Object.entries(chapters).map(([id, c]) => ({ id, ...c }));
 
+// Disciplines (chapter 01). `iconKey` maps to a line icon in the component and
+// also keys the copy: t(`about.services.<iconKey>.title` / `.description`).
 const services = [
-  {
-    title: 'Frontend Architecture',
-    description: 'Production-grade UIs with React.js, Next.js, TypeScript, and reusable component systems',
-    icon: web,
-    iconKey: 'frontend',
-  },
-  {
-    title: 'Backend Development',
-    description: 'Scalable APIs with Node.js, Express.js, NestJS, REST, JWT/OAuth, and RBAC',
-    icon: backend,
-    iconKey: 'backend',
-  },
-  {
-    title: 'Performance Optimization',
-    description: 'Code-splitting, caching, CDN strategies, lazy loading, and Core Web Vitals tuning',
-    icon: mobile,
-    iconKey: 'performance',
-  },
-  {
-    title: 'Full Stack Delivery',
-    description: 'End-to-end ownership from requirement grooming to production monitoring',
-    icon: creator,
-    iconKey: 'fullstack',
-  },
+  { iconKey: 'frontend' },
+  { iconKey: 'backend' },
+  { iconKey: 'performance' },
+  { iconKey: 'fullstack' },
 ];
 
 // The Craft (chapter 01) — narrative copy (pullQuote, intro, principles, the
@@ -194,55 +174,14 @@ const experiences = [
 ];
 
 // The Journey — curated waypoints for the pinned horizontal path (chapter 02).
-// Résumé-accurate but trimmed for impact. `kind`: work | edu | cta.
-// The voice-bearing `chapter` title + `headline` live in the Voice bundles,
-// keyed by `id`: t(`experience.journey.<id>.chapter` / `.headline`).
+// Data only (`id`, `year`, `tech`, `kind`, `current`). The voice-bearing copy —
+// `chapter`, `headline`, `role`, `org`, `points` — lives in the Voice bundles,
+// keyed by `id`: t(`experience.journey.<id>.<field>`).
 export const journey = [
-  {
-    id: 'first-trail',
-    year: '2021',
-    role: 'Frontend Developer',
-    org: 'Horizon Tour & Travels',
-    points: [
-      'Built CRM modules & responsive React UIs for sales workflows.',
-      'Shipped PDF/Excel reporting — saved 16–20 hrs/week.',
-      'Cut initial load time by 38%.',
-    ],
-    tech: ['React', 'Redux', 'Strapi', 'Prisma', 'PostgreSQL'],
-    kind: 'work',
-  },
-  {
-    id: 'oath',
-    year: '2022',
-    role: 'B.E. Information Technology',
-    org: 'Gujarat Technological University',
-    points: ['Engineering degree in Information Technology.'],
-    tech: [],
-    kind: 'edu',
-  },
-  {
-    id: 'expedition',
-    year: '2022 — Now',
-    role: 'Full Stack Developer',
-    org: 'Inexture Solutions',
-    points: [
-      'Delivered apps across finance, health, logistics, CRM, SaaS & media.',
-      'Owned features end to end — grooming to production monitoring.',
-      'Secured apps (JWT/OAuth, Okta, RBAC) and tuned performance.',
-    ],
-    tech: ['Next.js', 'Node.js', 'NestJS', 'PostgreSQL', 'MongoDB', 'Auth'],
-    kind: 'work',
-    current: true,
-  },
-  {
-    id: 'horizon',
-    year: 'Now',
-    role: 'Open to the next quest',
-    org: 'Available for senior roles',
-    points: [],
-    tech: [],
-    kind: 'cta',
-  },
+  { id: 'first-trail', year: '2021', tech: ['React', 'Redux', 'Strapi', 'Prisma', 'PostgreSQL'], kind: 'work' },
+  { id: 'oath', year: '2022', tech: [], kind: 'edu' },
+  { id: 'expedition', year: '2022 — Now', tech: ['Next.js', 'Node.js', 'NestJS', 'PostgreSQL', 'MongoDB', 'Auth'], kind: 'work', current: true },
+  { id: 'horizon', year: 'Now', tech: [], kind: 'cta' },
 ];
 
 // Featured realms — ordered to lead with live, clickable proof, then close on
@@ -250,11 +189,10 @@ export const journey = [
 // order rendered in The Realms section.
 const featuredProjects = [
   {
+    id: 'gajaakriti',
     name: 'Gajaakriti Studio',
     company: 'Luxury Wedding Photography & Films',
     isFeatured: true,
-    description:
-      'Dynamic media-heavy website and admin panel for a premium Ahmedabad-based wedding photography and films studio with optimized media delivery.',
     tags: [
       { name: 'next.js' },
       { name: 'firebase' },
@@ -279,19 +217,12 @@ const featuredProjects = [
         'gajaakriti-inquire.png',
       ],
     },
-    highlights: [
-      'Built a modern Next.js website with dynamic landing pages, portfolio, blogs, testimonials, and admin panel',
-      'Improved performance through caching, CDN strategy, Cloudflare R2, and video streaming optimization',
-      'Implemented Firebase Auth and Firestore for authentication, user management, and content mapping',
-      'Built Bash scripts to batch-compress images and videos, reducing hosting costs while maintaining quality',
-    ],
   },
   {
+    id: 'royal-tiles',
     name: 'Royal Tiles Playground',
     company: 'Custom Tile Visualization Tool',
     isFeatured: true,
-    description:
-      'Interactive tile design and ordering tool where users select layouts, tile designs, fills, preview results live, and download order-ready PDF templates.',
     tags: [
       { name: 'react' },
       { name: 'tensorflow.js' },
@@ -316,20 +247,12 @@ const featuredProjects = [
         'royal-tiles-user-panel-projects.png',
       ],
     },
-    highlights: [
-      'Built a custom floor visualization tool with live preview and downloadable PDF templates',
-      'Programmatically rendered dynamic tile variants — corners, fills, grid patterns',
-      'Built TensorFlow.js image-processing workflow to convert PNGs into region-based SVGs',
-      'Developed an admin panel for managing tile designs, floor layouts, and configurations',
-      'Added product tours, help drawers, and shortcut-key interactions for usability',
-    ],
   },
   {
+    id: 'advisor-portfolio',
     name: 'Advisor Portfolio Snapshot',
     company: 'Capital Group (USA)',
     isFeatured: true,
-    description:
-      'Advisor-facing portfolio analysis platform built from scratch with Next.js, Okta authentication, Highcharts data visualization, and enterprise deployment tooling.',
     tags: [
       { name: 'next.js' },
       { name: 'okta' },
@@ -339,24 +262,16 @@ const featuredProjects = [
     source_code_link: '',
     live_demo_link: '',
     isNDA: true,
-    highlights: [
-      'Built the frontend application from scratch — system design, reusable UI, route protection, API integration, sprint-wise delivery',
-      'Integrated Okta OAuth with Auth.js and server-side middleware authorization logic',
-      'Built portfolio analysis views with data tables and Highcharts for interactive digital reports',
-      'Integrated LaunchDarkly feature flags, Harness deployments, and Splunk debugging',
-      'Contributed to a Spring Boot backend for server-side PDF report generation',
-    ],
   },
 ];
 
 // Other projects — real projects from current website
 const otherProjects = [
   {
+    id: 'digital-investor',
     name: 'Digital Investor Portfolio',
     company: 'Capital Group (USA)',
     isFeatured: false,
-    description:
-      'Digital investment platform with rich user interactions, analytics tracking, and feature modules across frontend and backend.',
     tags: [
       { name: 'react' },
       { name: 'next.js' },
@@ -366,18 +281,12 @@ const otherProjects = [
     source_code_link: '',
     live_demo_link: '',
     isNDA: true,
-    highlights: [
-      'Delivered React/Next.js feature modules and integrated Adobe Analytics tracking',
-      'Supported Node/Express REST API integrations, error handling, and performance improvements',
-      'Implemented React Query for server-state management, reducing redundant API calls',
-    ],
   },
   {
+    id: 'srifin',
     name: 'Srifin Credit',
     company: 'Microfinance CRM/ERP',
     isFeatured: false,
-    description:
-      'Full-stack CRM/ERP for managing financial data, workflows, and identity verification with secure RBAC.',
     tags: [
       { name: 'next.js' },
       { name: 'node.js' },
@@ -387,18 +296,12 @@ const otherProjects = [
     source_code_link: '',
     live_demo_link: '',
     isNDA: false,
-    highlights: [
-      'Engineered RBAC and audit logs for compliance',
-      'Accelerated onboarding by 20-25% with verification APIs',
-      'Led image optimization improving Core Web Vitals',
-    ],
   },
   {
+    id: 'xipper',
     name: 'Xipper',
     company: 'Hotel Management Platform',
     isFeatured: false,
-    description:
-      'Multi-tenant hotel management platform with role-based operations, eKYC, booking, services, and billing.',
     tags: [
       { name: 'postgresql' },
       { name: 'next.js' },
@@ -408,18 +311,12 @@ const otherProjects = [
     source_code_link: '',
     live_demo_link: '',
     isNDA: false,
-    highlights: [
-      'Designed multi-tenant PostgreSQL models and REST APIs',
-      'Cut manual billing adjustments by 30-35%',
-      'Accelerated checkout speed by 15-20%',
-    ],
   },
   {
+    id: 'ai-chatbot',
     name: 'AI Chatbot Platform',
     company: 'Client Project',
     isFeatured: false,
-    description:
-      'Context-aware chatbot UI with real-time interactions using WebSocket and comprehensive end-to-end testing.',
     tags: [
       { name: 'next.js' },
       { name: 'websocket' },
@@ -429,18 +326,12 @@ const otherProjects = [
     source_code_link: '',
     live_demo_link: '',
     isNDA: true,
-    highlights: [
-      'Led UI architecture with Next.js/Redux and WebSocket',
-      'Adopted Storybook and Cypress for testing',
-      'Decreased regressions by 25-30%',
-    ],
   },
   {
+    id: 'fantasy-cricket',
     name: 'Fantasy Cricket Platform',
     company: 'Personal Project',
     isFeatured: false,
-    description:
-      'Real-money fantasy platform with live match syncing, secure payouts, and admin back-office operations.',
     tags: [
       { name: 'mongodb' },
       { name: 'node.js' },
@@ -450,23 +341,19 @@ const otherProjects = [
     source_code_link: '',
     live_demo_link: '',
     isNDA: false,
-    highlights: [
-      'Built cron pipelines for live match states',
-      'Reduced admin intervention by 1.5-2 hours per match',
-      'Achieved 99% transaction reliability',
-    ],
   },
 ];
 
 // Combine all projects — featured first
 const projects = [...featuredProjects, ...otherProjects];
 
-// Stats to showcase achievements
+// Stats to showcase achievements. `value` is data; the label is voice-bearing —
+// t(`about.stats.<key>`).
 export const stats = [
-  { value: '5+', label: 'Years Experience' },
-  { value: '20+', label: 'Projects Delivered' },
-  { value: '6+', label: 'Industry Domains' },
-  { value: '38%', label: 'Faster Load Times' },
+  { value: '5+', key: 'years' },
+  { value: '20+', key: 'projects' },
+  { value: '6+', key: 'domains' },
+  { value: '38%', key: 'load' },
 ];
 
 // Education

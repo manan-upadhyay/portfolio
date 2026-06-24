@@ -97,8 +97,8 @@ const About = () => {
       {/* Proof — full-width stat band (anchors the section, no dead space) */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 mt-12">
         {stats.map((stat, index) => (
-          <ScrollReveal key={stat.label} direction="up" delay={index * 0.08}>
-            <StatTile value={stat.value} label={stat.label} />
+          <ScrollReveal key={stat.key} direction="up" delay={index * 0.08}>
+            <StatTile value={stat.value} label={t(`about.stats.${stat.key}`)} />
           </ScrollReveal>
         ))}
       </div>
@@ -113,7 +113,13 @@ const About = () => {
         </div>
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {services.map((service, index) => (
-            <DisciplineCard key={service.title} index={index} iconKey={service.iconKey} title={service.title} description={service.description} />
+            <DisciplineCard
+              key={service.iconKey}
+              index={index}
+              iconKey={service.iconKey}
+              title={t(`about.services.${service.iconKey}.title`)}
+              description={t(`about.services.${service.iconKey}.description`)}
+            />
           ))}
         </div>
       </div>

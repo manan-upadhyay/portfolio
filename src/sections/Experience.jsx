@@ -16,6 +16,7 @@ const WaypointBody = ({ w }) => {
   const { t } = useTranslation();
   const Icon = KIND_ICON[w.kind] || Briefcase;
   const isCta = w.kind === 'cta';
+  const points = t(`experience.journey.${w.id}.points`, { returnObjects: true });
   return (
     <div className="realm-card relative h-full p-7 flex flex-col overflow-hidden">
       {/* watermark era marker — fully contained, sits behind the foot as texture */}
@@ -46,9 +47,9 @@ const WaypointBody = ({ w }) => {
       {/* identity block — the single focal point */}
       <p className="chapter-eyebrow !text-[10.5px] !tracking-[0.26em] !gap-2 mb-2.5">{t(`experience.journey.${w.id}.chapter`)}</p>
       <h3 className="font-chronicle font-semibold text-[clamp(24px,2.2vw,30px)] leading-[1.05]" style={{ color: 'var(--color-text)' }}>
-        {w.role}
+        {t(`experience.journey.${w.id}.role`)}
       </h3>
-      <p className="text-[13.5px] mt-1.5" style={{ color: 'var(--color-text-muted)' }}>{w.org}</p>
+      <p className="text-[13.5px] mt-1.5" style={{ color: 'var(--color-text-muted)' }}>{t(`experience.journey.${w.id}.org`)}</p>
 
       {/* the beat — one emotional line, the only ember sentence */}
       <p className="font-chronicle italic text-[16.5px] leading-snug mt-4" style={{ color: 'var(--color-ember)' }}>
@@ -56,9 +57,9 @@ const WaypointBody = ({ w }) => {
       </p>
 
       {/* proof — curated, breathable */}
-      {w.points.length > 0 && (
+      {points.length > 0 && (
         <ul className="mt-5 space-y-3">
-          {w.points.map((p, i) => (
+          {points.map((p, i) => (
             <li key={i} className="flex gap-3 text-[13px] leading-[1.55]" style={{ color: 'var(--color-text-muted)' }}>
               <span className="mt-[7px] w-1 h-1 rounded-full flex-shrink-0" style={{ background: 'var(--color-ember)' }} />
               <span>{p}</span>

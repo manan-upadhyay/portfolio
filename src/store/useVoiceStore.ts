@@ -47,15 +47,10 @@ export const useVoiceStore = create<VoiceState>()(
     {
       name: 'voice-storage',
       partialize: (s) => ({ voice: s.voice, unlocked: s.unlocked }),
-      // i18n reads the persisted voice synchronously at init (see i18n/index.js);
-      // re-sync the language on rehydrate in case anything raced.
-      onRehydrateStorage: () => (state) => {
-        if (state?.voice && i18n.language !== state.voice) {
-          if (OPEN_VOICES.includes(state.voice) || state.unlocked?.includes(state.voice)) {
-            state.setVoice(state.voice);
-          }
-        }
-      },
+      // The i18n layer reads the persisted voice at init and (for a sealed,
+      // unlocked voice) lazy-loads its bundle + switches — see i18n/index.js.
+      // The store's `voice` rehydrates from the same storage, so menu + content
+      // stay in sync without a second changeLanguage here.
     }
   )
 );

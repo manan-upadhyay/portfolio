@@ -36,8 +36,14 @@ const readInitialVoice = () => {
   }
 };
 
+// The saved voice may be a sealed personality (only valid if unlocked). Its
+// bundle is code-split, so we can't load it synchronously — boot at an
+// always-available voice, then async-load + switch to the sealed one below.
+const initialVoice = readInitialVoice();
+const bootVoice = OPEN_VOICES.includes(initialVoice) ? initialVoice : DEFAULT_VOICE;
+
 i18n.use(initReactI18next).init({
-  lng: readInitialVoice(),
+  lng: bootVoice,
   fallbackLng: DEFAULT_VOICE,
   ns: ['translation'],
   defaultNS: 'translation',
@@ -61,8 +67,15 @@ export async function loadVoice(id) {
     loaded.add(id);
     return true;
   } catch {
-    return false; // bundle not authored yet (Phase 1b) — caller can ignore
+    return false; // bundle not authored yet — caller can ignore
   }
+}
+
+// Bootstrap a persisted sealed (unlocked) voice: load its code-split bundle and
+// switch so refreshed content matches the saved choice (not the chronicle
+// fallback). Fixes the "menu shows X but content reverts to chronicle" gap.
+if (initialVoice !== bootVoice) {
+  loadVoice(initialVoice).then((ok) => { if (ok) i18n.changeLanguage(initialVoice); });
 }
 
 export default i18n;

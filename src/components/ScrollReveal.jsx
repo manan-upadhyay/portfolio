@@ -1,4 +1,9 @@
+import { useEffect, useState } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
+
+// Below this width the left/right cards stack full-width, so a horizontal
+// reveal would translate them past the viewport edge — collapse it to vertical.
+const STACK_QUERY = '(max-width: 1023px)';
 
 /**
  * ScrollReveal - Wrapper for scroll-triggered reveal animations
@@ -18,9 +23,22 @@ const ScrollReveal = ({
   // (no transform), per the design system's motion-accessibility rule.
   const shouldReduce = useReducedMotion();
 
-  // Calculate initial position based on direction
+  const [stacked, setStacked] = useState(
+    () => typeof window !== 'undefined' && window.matchMedia(STACK_QUERY).matches
+  );
+  useEffect(() => {
+    const mq = window.matchMedia(STACK_QUERY);
+    const update = () => setStacked(mq.matches);
+    update();
+    mq.addEventListener('change', update);
+    return () => mq.removeEventListener('change', update);
+  }, []);
+
+  const horizontal = direction === 'left' || direction === 'right';
+  const dir = stacked && horizontal ? 'up' : direction;
+
   const getInitialPosition = () => {
-    switch (direction) {
+    switch (dir) {
       case 'up':
         return { y: distance, opacity: 0 };
       case 'down':
@@ -37,7 +55,7 @@ const ScrollReveal = ({
   };
 
   const getFinalPosition = () => {
-    switch (direction) {
+    switch (dir) {
       case 'up':
       case 'down':
         return { y: 0, opacity: 1 };

@@ -300,4 +300,20 @@ export default {
     locked: 'Locked',
     ariaOpen: 'Choose a voice',
   },
+
+  // Time-aware sky (LEGENDARY-ROADMAP §3). `auto` reads the visitor's real local
+  // sky; the others are manual. Mode names feed the `SkyControl` menu + chip and
+  // stay literal across voices — the personality bundles fall back here.
+  sky: {
+    menuTitle: 'Sky',
+    ariaOpen: 'Choose the sky',
+    autoFollowing: 'following {{sky}}',
+    modes: {
+      auto: 'Auto',
+      dawn: 'Dawn',
+      day: 'Day',
+      dusk: 'Dusk',
+      night: 'Night',
+    },
+  },
 };

@@ -15,10 +15,12 @@ photo — the wow is the craft.
 
 ## Layout
 - Full-bleed `h-screen`, `overflow-hidden`.
-- **Backdrop (z0):** dark theme → a **pure-CSS starfield**: radial ink gradient
-  (`#1B2440 → #0E1426 → #0B0F1A`, ending at the page color) + ~70 procedurally
-  placed stars that **twinkle** (`.hero-star` / `star-twinkle`, desynced, static
-  under reduced motion). Light theme → warm "dawn" radial gradient.
+- **Backdrop (z0):** a **pure-CSS** time-aware backdrop driven by the
+  `--hero-backdrop` / `--hero-scrim-rgb` **sky tokens** (Phase 3), so it shifts
+  per sky mode (dawn/day/dusk/night) with no per-mode branching. Dark-base skies
+  (`night`/`dusk`) add ~70 procedurally placed **twinkling** stars (`.hero-star`
+  / `star-twinkle`, desynced, static under reduced motion); light-base skies
+  (`dawn`/`day`) show the warm gradient alone.
 - **Legibility scrim (z1):** left→right gradient in the page bg color — darkens
   the copy side, leaves the instrument lit. Plus `.cinematic-vignette` (z2) and a
   bottom fade pinned to `--color-primary` (z2) for a **seamless hand-off** to the
@@ -43,6 +45,12 @@ photo — the wow is the craft.
 - **Scroll cue** bottom-center.
 
 ## The astrolabe (Canvas2D)
+> **Phase 3 decision (locked):** the astrolabe stays the **abstract seeded
+> constellation field** — the "real sky" spike (moon-phase + luminary vs. real
+> constellations) was reviewed and **rejected in favor of keeping the current
+> instrument**. The time-aware *palette* + the live-sky *status line* deliver the
+> "time-aware" wonder; the instrument itself is intentionally not literal.
+
 Drawn from theme tokens read via `getComputedStyle` (re-read on theme change),
 so it's never off-palette. Layers: ember aura · concentric rings · rotating
 degree bezel (72 ticks, majors every 30°) · counter-rotating constellation disc

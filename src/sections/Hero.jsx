@@ -95,11 +95,7 @@ const Hero = () => {
       <div className="absolute inset-0 z-0">
         <div
           className="w-full h-full"
-          style={{
-            background: isDark
-              ? 'radial-gradient(130% 100% at 75% 12%, #1B2440 0%, #0E1426 48%, #0B0F1A 100%)'
-              : 'radial-gradient(130% 110% at 72% 105%, #FAF1DC 0%, #F2E7CF 45%, #E8D9BD 100%)',
-          }}
+          style={{ background: 'var(--hero-backdrop)' }}
         >
           {isDark && [...Array(70)].map((_, i) => (
             <span
@@ -125,8 +121,8 @@ const Hero = () => {
         className="absolute inset-0 z-[1] pointer-events-none"
         style={{
           background: isDark
-            ? 'linear-gradient(90deg, rgba(7,10,20,0.93) 0%, rgba(7,10,20,0.55) 40%, rgba(7,10,20,0) 70%)'
-            : 'linear-gradient(90deg, rgba(245,240,230,0.92) 0%, rgba(245,240,230,0.5) 42%, rgba(245,240,230,0) 72%)',
+            ? 'linear-gradient(90deg, rgba(var(--hero-scrim-rgb),0.93) 0%, rgba(var(--hero-scrim-rgb),0.55) 40%, rgba(var(--hero-scrim-rgb),0) 70%)'
+            : 'linear-gradient(90deg, rgba(var(--hero-scrim-rgb),0.92) 0%, rgba(var(--hero-scrim-rgb),0.5) 42%, rgba(var(--hero-scrim-rgb),0) 72%)',
         }}
       />
       <div className="cinematic-vignette" style={{ zIndex: 2 }} />

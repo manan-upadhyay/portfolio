@@ -1,94 +1,110 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+// @ts-expect-error — sky.js is plain JS (no types); the runtime shape is stable.
+import { resolveSkyMode, SKY_BASE } from '../lib/sky';
 
-export type Theme = 'light' | 'dark' | 'system';
+// Phase 3 — the theme is now a 5-mode "sky": `auto` (time-driven) resolves to one
+// of four palettes (dawn/day/dusk/night), each sitting on a light or dark base.
+// `resolvedTheme` (light|dark) is kept as a derived alias so every existing
+// `isDark` consumer keeps working unchanged.
+export type SkyMode = 'auto' | 'dawn' | 'day' | 'dusk' | 'night';
+export type ResolvedSky = 'dawn' | 'day' | 'dusk' | 'night';
 export type ResolvedTheme = 'light' | 'dark';
 
 interface ThemeState {
-  theme: Theme;
+  mode: SkyMode;
+  resolvedSky: ResolvedSky;
   resolvedTheme: ResolvedTheme;
-  setTheme: (theme: Theme) => void;
+  setMode: (mode: SkyMode) => void;
   toggleTheme: () => void;
+  refreshAuto: () => void;
 }
 
-const getSystemTheme = (): ResolvedTheme => {
-  if (typeof window === 'undefined') return 'dark';
-  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+const baseOf = (sky: ResolvedSky): ResolvedTheme => SKY_BASE[sky] as ResolvedTheme;
+
+// `auto` → resolve from the visitor's real local sky; a fixed mode is itself.
+const resolveSky = (mode: SkyMode): ResolvedSky =>
+  mode === 'auto' ? (resolveSkyMode() as ResolvedSky) : mode;
+
+// The sun/moon toggle flips the base while preserving the "warmth tier" the
+// visitor is in — dawn↔dusk (golden), day↔night (plain). It always commits to a
+// manual mode (leaves `auto`).
+const FLIP: Record<ResolvedSky, ResolvedSky> = {
+  dawn: 'dusk',
+  dusk: 'dawn',
+  day: 'night',
+  night: 'day',
 };
 
-const resolveTheme = (theme: Theme): ResolvedTheme => {
-  if (theme === 'system') return getSystemTheme();
-  return theme;
+const updateDocumentTheme = (sky: ResolvedSky) => {
+  if (typeof document === 'undefined') return;
+  const root = document.documentElement;
+  const base = baseOf(sky);
+  root.classList.remove('light', 'dark');
+  root.classList.add(base);
+  root.dataset.sky = sky;
+  root.style.colorScheme = base;
 };
 
 export const useThemeStore = create<ThemeState>()(
   persist(
     (set, get) => ({
-      theme: 'system',
-      resolvedTheme: getSystemTheme(),
-      setTheme: (theme: Theme) => {
-        const resolvedTheme = resolveTheme(theme);
-        set({ theme, resolvedTheme });
-        updateDocumentTheme(resolvedTheme);
+      mode: 'auto',
+      resolvedSky: 'night',
+      resolvedTheme: 'dark',
+      setMode: (mode: SkyMode) => {
+        const resolvedSky = resolveSky(mode);
+        set({ mode, resolvedSky, resolvedTheme: baseOf(resolvedSky) });
+        updateDocumentTheme(resolvedSky);
       },
       toggleTheme: () => {
-        const current = get().resolvedTheme;
-        const newTheme: Theme = current === 'dark' ? 'light' : 'dark';
-        get().setTheme(newTheme);
+        get().setMode(FLIP[get().resolvedSky]);
+      },
+      refreshAuto: () => {
+        if (get().mode !== 'auto') return;
+        const resolvedSky = resolveSky('auto');
+        if (resolvedSky === get().resolvedSky) return;
+        set({ resolvedSky, resolvedTheme: baseOf(resolvedSky) });
+        updateDocumentTheme(resolvedSky);
       },
     }),
     {
       name: 'theme-storage',
+      version: 2,
+      // Only the user's choice is persisted; the resolved sky is recomputed.
+      partialize: (state) => ({ mode: state.mode }),
+      // v1 stored `theme: light|dark|system`; map it onto the new modes.
+      migrate: (persisted: any, version: number) => {
+        if (version >= 2 || !persisted) return persisted;
+        const legacy = persisted.theme;
+        const mode: SkyMode =
+          legacy === 'light' ? 'day' : legacy === 'dark' ? 'night' : 'auto';
+        return { mode };
+      },
       onRehydrateStorage: () => (state) => {
-        if (state) {
-          const resolvedTheme = resolveTheme(state.theme);
-          state.resolvedTheme = resolvedTheme;
-          updateDocumentTheme(resolvedTheme);
-        }
+        if (!state) return;
+        const resolvedSky = resolveSky(state.mode);
+        state.resolvedSky = resolvedSky;
+        state.resolvedTheme = baseOf(resolvedSky);
+        updateDocumentTheme(resolvedSky);
       },
     }
   )
 );
 
-const updateDocumentTheme = (theme: ResolvedTheme) => {
-  if (typeof document === 'undefined') return;
-  
-  const root = document.documentElement;
-  root.classList.remove('light', 'dark');
-  root.classList.add(theme);
-  
-  // Update color-scheme for native elements
-  root.style.colorScheme = theme;
-};
-
-// Initialize theme on load
+// Initialize on load + keep `auto` honest: re-resolve when the tab returns to
+// the foreground (so leaving the page open across dawn/dusk catches up).
 if (typeof window !== 'undefined') {
-  const initTheme = () => {
-    const stored = localStorage.getItem('theme-storage');
-    let theme: Theme = 'system';
-    
-    if (stored) {
-      try {
-        const parsed = JSON.parse(stored);
-        theme = parsed.state?.theme || 'system';
-      } catch {
-        theme = 'system';
-      }
-    }
-    
-    const resolvedTheme = resolveTheme(theme);
-    updateDocumentTheme(resolvedTheme);
+  const apply = () => {
+    const { mode } = useThemeStore.getState();
+    const resolvedSky = resolveSky(mode);
+    useThemeStore.setState({ resolvedSky, resolvedTheme: baseOf(resolvedSky) });
+    updateDocumentTheme(resolvedSky);
   };
-  
-  initTheme();
-  
-  // Listen for system theme changes
-  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
-    const state = useThemeStore.getState();
-    if (state.theme === 'system') {
-      const newResolved = e.matches ? 'dark' : 'light';
-      useThemeStore.setState({ resolvedTheme: newResolved });
-      updateDocumentTheme(newResolved);
-    }
-  });
+  apply();
+  const onWake = () => {
+    if (document.visibilityState === 'visible') useThemeStore.getState().refreshAuto();
+  };
+  document.addEventListener('visibilitychange', onWake);
+  window.addEventListener('focus', () => useThemeStore.getState().refreshAuto());
 }

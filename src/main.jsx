@@ -1,32 +1,31 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App.jsx';
+import { resolveSkyMode, SKY_BASE } from './lib/sky';
 import './i18n'; // initialize the Voice (i18next) layer before render
 import './index.css';
 
-// Initialize theme before React renders to prevent flash
+// Resolve the visitor's "sky" (Phase 3: auto/dawn/day/dusk/night) and paint the
+// base class + data-sky onto <html> before React renders, to prevent a flash.
 const initializeTheme = () => {
-  const stored = localStorage.getItem('theme-storage');
-  let theme = 'system';
-  
-  if (stored) {
-    try {
-      const parsed = JSON.parse(stored);
-      theme = parsed.state?.theme || 'system';
-    } catch (e) {
-      console.warn('Failed to parse theme from storage');
-    }
+  let mode = 'auto';
+  try {
+    const parsed = JSON.parse(localStorage.getItem('theme-storage'));
+    // New shape persists `mode`; migrate the legacy `theme` (light|dark|system).
+    const legacy = parsed?.state?.theme;
+    mode = parsed?.state?.mode
+      || (legacy === 'light' ? 'day' : legacy === 'dark' ? 'night' : 'auto');
+  } catch {
+    mode = 'auto';
   }
-  
-  // Resolve system preference
-  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-  const resolvedTheme = theme === 'system' 
-    ? (prefersDark ? 'dark' : 'light')
-    : theme;
-  
-  // Apply theme class before render
-  document.documentElement.classList.toggle('dark', resolvedTheme === 'dark');
-  document.documentElement.style.colorScheme = resolvedTheme;
+
+  const sky = mode === 'auto' ? resolveSkyMode() : mode;
+  const base = SKY_BASE[sky] || 'dark';
+  const root = document.documentElement;
+  root.classList.remove('light', 'dark');
+  root.classList.add(base);
+  root.dataset.sky = sky;
+  root.style.colorScheme = base;
 };
 
 // Run before React mounts

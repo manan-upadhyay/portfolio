@@ -25,6 +25,7 @@
     "react-dom": "^18.2.0",
     "react-i18next": "^17.0.8",
     "resend": "^6.14.0",
+    "suncalc": "^2.0.0",
     "zustand": "^5.0.11"
   },
   "devDependencies": {

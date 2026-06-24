@@ -3,7 +3,7 @@ import { Map } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useThemeStore } from './store/useThemeStore';
 import Hero from './sections/Hero';
-import { Cursor, ErrorBoundary, SideRail, MapOverlay, DayNightToggle, ControlCluster, EasterEggListener } from './components';
+import { Cursor, ErrorBoundary, SideRail, MapOverlay, SkyControl, ControlCluster, EasterEggListener } from './components';
 // import { MusicPlayer } from './components'; // ambient audio — folds into ControlCluster in Phase 4
 import { useSmoothScroll } from './lib/smoothScroll';
 import { useActiveSection } from './hooks/useActiveSection';
@@ -46,7 +46,7 @@ const App = () => {
       {/* persistent chrome */}
       <Cursor />
       <SideRail activeId={activeId} onOpenMap={() => setMapOpen(true)} visible={activeId !== 'origin'} />
-      <div className="fixed top-5 right-5 z-40"><DayNightToggle /></div>
+      <div className="fixed top-5 right-5 z-40"><SkyControl /></div>
       {/* bottom-right control cluster — voice switcher (+ audio control in Phase 4) */}
       <ControlCluster />
       {/* listens for secret trigger words → unlocks the sealed voices */}

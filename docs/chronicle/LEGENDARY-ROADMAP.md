@@ -18,7 +18,7 @@
 |---|---|---|---|---|---|
 | 1 | **Voice switcher** (i18next: chronicle + plain, visible menu, sealed-voice teasers) | ✅ | 9 | 6 | low |
 | 2 | **Marginalia** (flavor ↔ substance footnotes) | ✅ | 8 | 4 | low |
-| 3 | **Time-aware real sky** (5 theme modes + live astrolabe) | 🟡 | 8 | 5 | low |
+| 3 | **Time-aware real sky** (5 theme modes: auto + 4 palettes) | ✅ | 8 | 5 | low |
 | 4 | **Interactive sound design** (Web Audio synth + raven sample) | 🟡 | 7 | 6 | med |
 | 5 | **Expedition recap** (client-side session send-off) | 🟡 | 6 | 4 | low |
 | 1b | **Voice easter eggs** (scott / dwight / cow + unlock system) | ✅ | 6 | 4 | low |
@@ -161,11 +161,34 @@ Phase 1 i18n layer.
 
 ---
 
-## 3. Time-aware real sky — 5 modes + live astrolabe  · Phase 3 · 🟡
+## 3. Time-aware real sky — 5 theme modes (auto + 4 palettes)  · Phase 3 · ✅ SHIPPED
 
-**What:** On load, pick the theme from the **visitor's local time**; render the
-astrolabe to reflect the **real current sky**. Manual choice overrides; missing
-time/location → fallback to current behavior.
+> **Shipped.** `src/lib/sky.js` (SunCalc + timezone→coords, no geolocation
+> prompt) resolves the visitor's real local sky; `useThemeStore` is now a **5-mode
+> sky** (`auto` default + `dawn`/`day`/`dusk`/`night`), `resolvedTheme`
+> (light/dark) kept as a derived alias so every `isDark` consumer is untouched.
+> `dawn`/`dusk` are warm token tints layered on the light/dark base via
+> `[data-sky]` (text tokens inherited → AA preserved); the hero backdrop/scrim are
+> now token-driven (`--hero-backdrop` / `--hero-scrim-rgb`). New **`SkyControl`**
+> (top-right) wraps the unchanged sun/moon `DayNightToggle` with a 5-row mode menu
+> whose trigger pill doubles as a live sky chip. Copy under the i18n `sky.*` keys.
+> Verified via CDP screenshots: all 5 modes correct in light/dark, `auto` resolves
+> from real local time, menu correct, `npm run build` + lint clean.
+>
+> **Scope trim (locked):** the **"how did he know this?!" status line** (region +
+> moon phase) was built, reviewed, then **cut** — Manan kept only the time-driven
+> 5-mode theme + `SkyControl` + dawn/dusk palettes. So `sky.js` is just the
+> time→sky resolver (no moon-phase / status helpers).
+>
+> **Astrolabe decision (locked): keep the abstract instrument.** The visual spike
+> (current vs. moon-phase+luminary vs. real-constellations — prototyped and
+> screenshotted) was reviewed; Manan chose to **leave the astrolabe as the abstract
+> seeded field**. The time-aware *palette* carries the wonder; the instrument stays
+> intentionally non-literal. (So: no astrolabe code change.)
+
+**What:** On load, pick the theme from the **visitor's local time** (5 modes:
+`auto` + dawn/day/dusk/night). Manual choice overrides; missing time/location →
+fallback to clock hours.
 
 **Themes: expand 2 → 4 palettes** (`dawn`, `day`, `dusk`, `night`) + an `auto`
 mode = **5 selectable modes**. New `dawn`/`dusk` tokens in `index.css` (AA).
@@ -179,26 +202,30 @@ prompt). Moon phase needs date only.
 - **Theme UI:** **keep the existing top-right sun/moon button exactly as-is** as
   the primary toggle. Add a better UI around it that accommodates all **5 modes**
   (Auto / Dawn / Day / Dusk / Night). `auto` is the default, time-driven.
-- **"How did he know this?!" status line:** in the existing bottom area that
-  shows the cursor-driven pin angle, also surface a **subtle timezone + date +
-  light visitor detail (with fallback)** — a quiet flex that the site *knows*.
+- **"How did he know this?!" status line:** ~~surface a subtle timezone + date +
+  moon-phase detail near the bearing readout~~ — **built then cut.** Manan kept
+  only the time-driven 5-mode theme; the hero bearing area is unchanged.
 - **Persistence:** `auto` by default (time-based); once the user picks a mode it
   sticks, with a clear way back to `auto`.
-- **Astrolabe literalness — DECISION PENDING A VISUAL SPIKE.** Before committing:
-  produce (a) a screenshot of the **current** hero, (b) a prototype of the
-  **moon-phase + luminary** variant, (c) a prototype of the **constellations**
-  variant. Manan compares the three and picks. *(These are real prototype
-  screenshots, not AI mockups.)*
+- **Astrolabe literalness — RESOLVED.** The spike shipped: (a) current hero, (b) a
+  moon-phase + luminary prototype, (c) a real-constellations prototype, all
+  screenshotted for comparison. **Manan picked (a) — keep the abstract
+  instrument.** The astrolabe is left unchanged; the time-aware palette + status
+  line carry the wonder.
 
 **Tasks**
-- [ ] **Spike:** screenshot current hero + prototype moon & constellation
-      variants → Manan decides scope.
-- [ ] Add `dawn` + `dusk` token sets to `index.css` (AA-checked).
-- [ ] Refactor theme store → 5 modes (`auto`+4) + persistence + fallback.
-- [ ] Add `suncalc`; time→theme resolver + timezone→lat/long.
-- [ ] Astrolabe: render chosen real-sky variant from live data.
-- [ ] Theme UI around the existing sun/moon button (5 modes) + status line.
-- [ ] **Canon update:** DESIGN-SYSTEM (4 palettes), 00-hero (live astrolabe).
+- [x] **Spike:** screenshot current hero + prototype moon & constellation
+      variants → Manan decided: **keep the abstract astrolabe** (no change).
+- [x] Add `dawn` + `dusk` token sets to `index.css` (AA-checked, `[data-sky]`).
+- [x] Refactor theme store → 5 modes (`auto`+4) + persistence + fallback.
+- [x] Add `suncalc`; time→sky resolver + timezone→lat/long (`src/lib/sky.js`).
+- [x] ~~Astrolabe: render real-sky variant~~ → **rejected by the spike; instrument
+      stays abstract.**
+- [x] Theme UI around the existing sun/moon button (5 modes, `SkyControl`).
+- [x] ~~Hero "how did he know this?!" status line~~ → **built then cut** (Manan
+      kept only the theme feature).
+- [x] **Canon update:** DESIGN-SYSTEM (4 palettes + sky modes), 00-hero (token
+      backdrop, locked astrolabe decision).
 
 ---
 
@@ -310,16 +337,14 @@ touch correct, no console errors, `npm run build` clean, screenshots reviewed.
 4. Place across About / Tech / Works.
 - **Needs from Manan:** filtered phrase list + the real facts behind them.
 
-### Phase 3 — Time-aware sky
-1. **Spike first:** screenshot current hero + prototype moon & constellation
-   variants → **Manan picks the astrolabe scope.**
-2. Add `dawn`/`dusk` tokens; refactor theme store → 5 modes + persistence.
-3. Add `suncalc`; time→theme + timezone→lat/long; the "how did he know this?!"
-   status line.
-4. Implement the chosen astrolabe variant; build the 5-mode theme UI around the
-   existing sun/moon button.
-5. Update DESIGN-SYSTEM + 00-hero canon.
-- **Needs from Manan:** astrolabe variant decision after the spike.
+### Phase 3 — Time-aware sky ✅
+1. ~~Spike~~ done → **Manan kept the abstract astrolabe** (no instrument change).
+2. ~~Add `dawn`/`dusk` tokens; refactor theme store → 5 modes + persistence.~~ ✅
+3. ~~Add `suncalc`; time→sky + timezone→lat/long; the "how did he know this?!"
+   status line.~~ ✅
+4. ~~Build the 5-mode theme UI (`SkyControl`) around the existing sun/moon
+   button.~~ ✅ (astrolabe variant dropped per the spike)
+5. ~~Update DESIGN-SYSTEM + 00-hero canon.~~ ✅
 
 ### Phase 4 — Sound design
 1. `src/lib/sound.js` (shared context, gesture unlock, ADSR).

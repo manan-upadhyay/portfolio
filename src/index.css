@@ -48,6 +48,11 @@
   /* Shadows */
   --shadow-card: 0px 20px 60px -20px rgba(120, 95, 60, 0.22), 0px 4px 20px rgba(0, 0, 0, 0.05);
   --shadow-glow: 0 0 40px rgba(99, 102, 241, 0.3);
+
+  /* Hero sky — backdrop gradient + scrim base (Phase 3: time-aware sky).
+     Default = "day" (full warm daylight). Dawn overrides below. */
+  --hero-backdrop: radial-gradient(130% 110% at 72% 105%, #FAF1DC 0%, #F2E7CF 45%, #E8D9BD 100%);
+  --hero-scrim-rgb: 245, 240, 230;
 }
 
 .dark {
@@ -93,6 +98,43 @@
   /* Shadows */
   --shadow-card: 0px 25px 80px -15px rgba(0, 0, 0, 0.6), 0px 0px 30px rgba(129, 140, 248, 0.08);
   --shadow-glow: 0 0 40px rgba(129, 140, 248, 0.25);
+
+  /* Hero sky — default = "night" (deep ink + starfield). Dusk overrides below. */
+  --hero-backdrop: radial-gradient(130% 100% at 75% 12%, #1B2440 0%, #0E1426 48%, #0B0F1A 100%);
+  --hero-scrim-rgb: 7, 10, 20;
+}
+
+/* ===== Sky palettes (Phase 3) — dawn/dusk are warm tints layered on the
+   light/dark base. Day = the bare `:root`, night = the bare `.dark`. Text tokens
+   stay inherited from the base so AA contrast is preserved; only ground/glow
+   warmth shifts. The base class still drives every existing `.light`/`.dark`
+   selector — `data-sky` only adds the time-of-day nuance. */
+
+/* Dawn — first warm light over the realm (rosy peach, light base). */
+.light[data-sky='dawn'] {
+  --color-primary: #FBEFE4;
+  --color-primary-dark: #F3E2D0;
+  --color-tertiary: #EFD9C2;
+  --color-ember: #D2641F;
+  --color-ember-rgb: 210, 100, 31;
+  --gradient-bg: linear-gradient(135deg, #FCEFE2 0%, #F7E2CF 40%, #F0D2BB 70%, #E9C7AE 100%);
+  --gradient-hero: linear-gradient(180deg, #FCEFE2 0%, #F6DEC9 55%, #EFCDB2 100%);
+  --hero-backdrop: radial-gradient(130% 110% at 72% 104%, #FDEAD6 0%, #F7D5BB 45%, #EDBE9F 100%);
+  --hero-scrim-rgb: 251, 238, 226;
+}
+
+/* Dusk — embered twilight (warm violet ink, dark base). */
+.dark[data-sky='dusk'] {
+  --color-primary: #130E1E;
+  --color-primary-dark: #0C0814;
+  --color-tertiary: #211733;
+  --color-ember: #ED9A55;
+  --color-ember-rgb: 237, 154, 85;
+  --color-card-border: rgba(173, 130, 200, 0.16);
+  --gradient-bg: linear-gradient(135deg, #130E1E 0%, #211633 50%, #130E1E 100%);
+  --gradient-hero: linear-gradient(180deg, #130E1E 0%, #221634 50%, #130E1E 100%);
+  --hero-backdrop: radial-gradient(130% 100% at 78% 13%, #3B2742 0%, #1F1531 48%, #130C1E 100%);
+  --hero-scrim-rgb: 19, 12, 26;
 }
 
 /* ===== Base Styles ===== */

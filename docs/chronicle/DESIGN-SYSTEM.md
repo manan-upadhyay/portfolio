@@ -12,6 +12,35 @@ All color is a CSS variable, re-mapped per theme by the `.dark` / `.light` class
 on `<html>` (managed by `useThemeStore`). **Never hardcode hex in a component**
 (only allowed inside a generated-art procedural fallback).
 
+### Sky modes (Phase 3 — time-aware) — 5 modes over 4 palettes
+
+The theme is a **5-mode "sky"** (`useThemeStore.mode`): `auto` (default,
+time-driven) plus four manual palettes — **`dawn` · `day` · `dusk` · `night`**.
+Each palette sits on a **light or dark base** (`dawn`/`day` → light, `dusk`/`night`
+→ dark); `<html>` carries both the base class (`light`/`dark`) **and**
+`data-sky="<mode>"`. The base class still drives every existing `.light`/`.dark`
+selector; `data-sky` only layers a warm time-of-day **tint** on top.
+
+- **Day** = the bare `:root` (full warm parchment). **Night** = the bare `.dark`
+  (deep ink + starfield). These are the two original themes, unchanged.
+- **Dawn** (`.light[data-sky='dawn']`) = a rosy-peach tint of the light base.
+  **Dusk** (`.dark[data-sky='dusk']`) = an embered-violet tint of the dark base.
+  Each overrides only ground/glow tokens (`--color-primary`, `--color-tertiary`,
+  `--color-ember`, gradients, hero backdrop) — **text tokens stay inherited from
+  the base so AA contrast is preserved**.
+- `auto` resolves to one of the four from the visitor's **real local sky** via
+  `src/lib/sky.js` (SunCalc + timezone→coords; no geolocation prompt). The
+  sun/moon toggle (`DayNightToggle`) flips the base while preserving the warmth
+  tier (dawn↔dusk, day↔night) and commits to a manual mode. `resolvedTheme`
+  (`light`/`dark`) remains a derived alias so every `isDark` consumer is unchanged.
+- **Hero backdrop tokens:** `--hero-backdrop` (radial gradient) + `--hero-scrim-rgb`
+  are defined per sky so the hero's procedural backdrop/scrim shift with the
+  palette without any per-mode branching in the component.
+
+The control is **`SkyControl`** (top-right): the existing sun/moon button + a
+5-row mode menu (Auto/Dawn/Day/Dusk/Night) whose trigger pill doubles as a live
+sky status chip. Copy lives under the i18n `sky.*` keys (mode names).
+
 ### Semantic tokens (use these)
 
 | Token | Dark ("Starlit Realm") | Light ("Dawn over the Realm") | Use for |
@@ -167,8 +196,9 @@ Keyframes available: `scrollcue`, `herofog`, `aurora`, `sunrise`, `float`,
 ## 7. Component inventory
 
 ### Canonical reusable widgets (`src/components/`, flat, barrel-exported)
-`SideRail` (chapter nav) · `MapOverlay` (⌘K map) · `Cursor` · `DayNightToggle` ·
-`CompassRose` (brand SVG) · `ChapterHeading` (the one section header) ·
+`SideRail` (chapter nav) · `MapOverlay` (⌘K map) · `Cursor` ·
+`SkyControl` (top-right 5-mode sky menu) wrapping `DayNightToggle` (the sun/moon
+base toggle) · `CompassRose` (brand SVG) · `ChapterHeading` (the one section header) ·
 `MapDivider` · `CountUp` · `ScrollReveal` · `ErrorBoundary` · `Magnet` ·
 `Marginalia` + `Annotated` (flavor→substance footnotes; wrap copy with the
 `[[id|phrase]]` marker, render via `<Annotated text={t('…')} />`, facts under

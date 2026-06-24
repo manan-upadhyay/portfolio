@@ -14,3 +14,4 @@ export { default as MapOverlay } from './MapOverlay';
 export { default as MusicPlayer } from './MusicPlayer';
 export { default as ScrollReveal } from './ScrollReveal';
 export { default as SideRail } from './SideRail';
+export { default as SkyControl } from './SkyControl';

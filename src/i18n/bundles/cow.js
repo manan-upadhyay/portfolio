@@ -155,6 +155,8 @@ export default {
   recap: {
     title: 'Moo',
     subtitle: 'Moo moo moo, moo moo — moo moo moo moo. Moo.',
+    how: 'Moo moo moo moo. Moo moo moo — moo moo.',
+    sigilNote: 'Moo moo moo — moo moo. Moo moo moo moo moo.',
     map: {
       localNow: 'moo {{time}} — moo ({{sky}})',
     },
@@ -165,9 +167,17 @@ export default {
       display: 'Moo',
       tongue: 'Moo',
     },
+    signal: {
+      title: 'Moo Moo Moo',
+      lantern: 'Moo',
+      road: 'Moo Moo',
+      carrier: 'Moo',
+      origin: 'Moo Moo',
+    },
     journey: {
       timeAfield: 'Moo Moo',
       trail: 'Moo',
+      visit: 'Moo Moo',
     },
     voices: {
       title: 'Moo',

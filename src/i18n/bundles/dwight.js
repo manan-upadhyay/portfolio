@@ -209,7 +209,9 @@ export default {
 
   recap: {
     title: 'Surveillance Report',
-    subtitle: 'Compiled through superior observation. You revealed all of this. Resistance is illogical.',
+    subtitle: 'Compiled through superior observation of your machine and your uplink. You revealed all of this. Resistance is illogical.',
+    how: 'A single reconnaissance ping to an IP registry confirmed your settlement. No intelligence was exfiltrated or archived. This time.',
+    sigilNote: 'Your biometric crest, computed from your hardware. Unique. Unforgeable. Generated on-site and transmitted nowhere. Fact.',
     map: {
       localNow: 'Local time {{time}}. Condition: {{sky}}. Position triangulated. Logged.',
     },
@@ -220,9 +222,17 @@ export default {
       display: 'Visual Apparatus',
       tongue: 'Dialect',
     },
+    signal: {
+      title: 'Intercepted Transmissions',
+      lantern: 'Power Reserves',
+      road: 'Uplink Speed',
+      carrier: 'Service Provider',
+      origin: 'Network Address',
+    },
     journey: {
       timeAfield: 'Time Under Observation',
       trail: 'Distance Surveyed',
+      visit: 'Recorded Incursions',
     },
     voices: {
       title: 'Classified Voices',

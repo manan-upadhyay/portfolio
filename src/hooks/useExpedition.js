@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 
 // Phase 5 — the "Expedition recap". A session-only log of *this* visit, computed
 // entirely client-side (no analytics infra) and deliberately NOT persisted — it
@@ -21,6 +22,23 @@ const useExpeditionStore = create((set) => ({
 }));
 
 export { useExpeditionStore };
+
+// Visit counter — the one thing the recap *does* remember across visits (just a
+// local tally, never sent). `bumped` is session-only (excluded from persistence)
+// so each page load increments exactly once. Call `bump()` from App on mount.
+export const useVisitStore = create(
+  persist(
+    (set, get) => ({
+      visits: 0,
+      bumped: false,
+      bump: () => {
+        if (get().bumped) return;
+        set({ visits: get().visits + 1, bumped: true });
+      },
+    }),
+    { name: 'chronicle-visits', partialize: (s) => ({ visits: s.visits }) }
+  )
+);
 
 /**
  * Mount-once tracker (lives in `App`). Accumulates total vertical scroll travel

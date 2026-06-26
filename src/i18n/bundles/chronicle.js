@@ -269,11 +269,28 @@ export default {
     noResult: 'No chapter found — try “skills”, “experience”, or “contact”.',
     footerHint: 'travel · esc to close',
     actions: {
+      voices: 'Change voice',
       resume: 'Read the Scroll (Resume)',
       github: 'GitHub',
       linkedin: 'LinkedIn',
       themeLight: 'Light the dawn',
       themeDark: 'Fall to night',
+    },
+  },
+
+  // The Voice Hall — the command-palette voice picker (scales past the popover).
+  voiceHall: {
+    title: 'The Voice Hall',
+    searchPlaceholder: 'Search voices…  try “office”, “boss”, “moo”',
+    close: 'Close',
+    noResult: 'No voice answers to that name — yet.',
+    sealedHint: 'Sealed voices wake when you type their secret word anywhere on the page.',
+    found: '{{count}}/{{total}} sealed found',
+    footerHint: 'enter to speak · esc to close',
+    categories: {
+      core: 'The Voices',
+      office: 'The Office',
+      bestiary: 'The Bestiary',
     },
   },
 
@@ -299,7 +316,9 @@ export default {
   // all client-side, nothing stored or sent. `{{var}}` are interpolations.
   recap: {
     title: 'Your Expedition',
-    subtitle: 'Divined from your device alone — read here, kept nowhere.',
+    subtitle: 'Read live from your device and your connection — shown here, kept nowhere.',
+    how: 'One quiet lookup to an IP service names your city. Nothing else leaves this page, and nothing is stored.',
+    sigilNote: 'Your traveler’s mark — drawn from your device alone. No two are alike, and this one was sent nowhere.',
     map: {
       // e.g. "your Dusk · 21:34"
       localNow: 'your {{sky}} · {{time}}',
@@ -311,14 +330,23 @@ export default {
       display: 'Viewport',
       tongue: 'Tongue',
     },
+    signal: {
+      title: 'The Signal',
+      lantern: 'Lantern',
+      road: 'Road',
+      carrier: 'Carrier',
+      origin: 'Origin',
+    },
     journey: {
       timeAfield: 'Time afield',
       trail: 'Trail unrolled',
+      visit: 'Voyage no.',
     },
     voices: {
       title: 'Sealed Voices',
       unlocked: '{{count}} / {{total}} found',
       sealed: 'Sealed',
+      explore: 'Explore all',
       switchTo: 'Speak as {{voice}}',
       locked: 'A sealed voice, yet undiscovered',
     },
@@ -332,7 +360,9 @@ export default {
   voice: {
     menuTitle: 'Voice',
     sealed: 'Sealed Voices',
-    sealedHint: 'Hidden voices await discovery.',
+    sealedHint: 'Solve a clue, then',
+    sealedTypeHint: 'type the answer anywhere on the page.',
+    openHall: 'Open the Voice Hall',
     locked: 'Locked',
     ariaOpen: 'Choose a voice',
   },

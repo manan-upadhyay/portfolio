@@ -87,6 +87,89 @@ export const readVisitor = () => {
   return cached;
 };
 
+// ---------------------------------------------------------------------------
+// Async signals — these either touch the network (the IP lookup) or need time
+// to resolve (battery, refresh rate). Each is cached and degrades to null, so
+// the recap renders instantly with the synchronous reading and fills these in
+// as they arrive. None of them block.
+// ---------------------------------------------------------------------------
+
+// Public IP + approximate city. This is the ONE network request the recap makes
+// (the user opted in); we send nothing and store nothing server-side — the
+// response is cached in sessionStorage so it's at most one lookup per visit.
+// Keyless + CORS-friendly: ipwho.is, with ipapi.co as a fallback.
+const GEO_KEY = 'chronicle-geo';
+let geoPromise = null;
+export const fetchGeo = () => {
+  if (geoPromise) return geoPromise;
+  try {
+    const saved = sessionStorage.getItem(GEO_KEY);
+    if (saved) { geoPromise = Promise.resolve(JSON.parse(saved)); return geoPromise; }
+  } catch { /* sessionStorage blocked — just fetch */ }
+
+  const norm = (d) => {
+    if (!d || d.success === false || (d.error && !d.ip)) return null;
+    const lat = d.latitude ?? d.lat;
+    const lng = d.longitude ?? d.lon ?? d.lng;
+    if (d.ip == null || lat == null || lng == null) return null;
+    return {
+      ip: d.ip,
+      city: d.city || null,
+      country: d.country || d.country_name || null,
+      region: d.region || d.region_name || null,
+      lat, lng,
+      isp: d.connection?.isp || d.connection?.org || d.org || d.isp || null,
+      flag: d.flag?.emoji || null,
+    };
+  };
+
+  geoPromise = fetch('https://ipwho.is/', { mode: 'cors' })
+    .then((r) => r.json())
+    .then((d) => norm(d))
+    .catch(() => fetch('https://ipapi.co/json/').then((r) => r.json()).then(norm).catch(() => null))
+    .then((geo) => {
+      if (geo) { try { sessionStorage.setItem(GEO_KEY, JSON.stringify(geo)); } catch { /* ignore */ } }
+      return geo;
+    });
+  return geoPromise;
+};
+
+/** Battery level (0–1) + charging state. `null` where the API is unavailable. */
+export const getBattery = async () => {
+  try {
+    if (!navigator.getBattery) return null;
+    const b = await navigator.getBattery();
+    return { level: b.level, charging: b.charging };
+  } catch {
+    return null;
+  }
+};
+
+/** Connection class — effectiveType + downlink (Mbps) + rtt (ms). */
+export const getNetwork = () => {
+  const c = typeof navigator !== 'undefined' ? navigator.connection : null;
+  if (!c || !c.effectiveType) return null;
+  return { effectiveType: c.effectiveType, downlink: c.downlink || null, rtt: c.rtt || null };
+};
+
+/** Measure the display refresh rate (Hz) by timing a short burst of frames. */
+export const measureRefreshRate = () =>
+  new Promise((resolve) => {
+    if (typeof requestAnimationFrame === 'undefined') return resolve(null);
+    const deltas = [];
+    let last = performance.now();
+    let frames = 0;
+    const tick = (now) => {
+      deltas.push(now - last);
+      last = now;
+      if (++frames < 32) return requestAnimationFrame(tick);
+      const sorted = deltas.slice(1).sort((a, b) => a - b); // drop first (warm-up)
+      const median = sorted[Math.floor(sorted.length / 2)] || 16.7;
+      return resolve(Math.round(1000 / median / 10) * 10 || null); // snap to nearest 10Hz
+    };
+    requestAnimationFrame(tick);
+  });
+
 /** Format a signed coordinate as "22.6°N" / "88.4°W". */
 export const fmtCoord = (v, pos, neg) => `${Math.abs(v).toFixed(1)}°${v >= 0 ? pos : neg}`;
 

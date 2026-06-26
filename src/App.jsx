@@ -3,10 +3,11 @@ import { Map } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useThemeStore } from './store/useThemeStore';
 import Hero from './sections/Hero';
-import { Cursor, ErrorBoundary, SideRail, MapOverlay, SkyControl, ControlCluster, EasterEggListener, VoiceTransition } from './components';
+import { Cursor, ErrorBoundary, SideRail, MapOverlay, SkyControl, ControlCluster, EasterEggListener, VoiceTransition, VoiceHall } from './components';
+import { useVoiceStore } from './store/useVoiceStore';
 import { useSmoothScroll } from './lib/smoothScroll';
 import { useActiveSection } from './hooks/useActiveSection';
-import { useExpedition } from './hooks/useExpedition';
+import { useExpedition, useVisitStore } from './hooks/useExpedition';
 import { sound } from './lib/sound';
 import './store/useSoundStore'; // rehydrate sound prefs into the engine at boot
 import { Analytics } from '@vercel/analytics/react';
@@ -39,6 +40,7 @@ const App = () => {
     sound.arm();
     sound.loadRaven();
     sound.loadBeds(); // preload the optional astrolabe + arsenal loop samples
+    useVisitStore.getState().bump(); // count this visit (local tally for the recap)
   }, []);
 
   // Map open / close whoosh — fire on transitions only (skip the initial mount).
@@ -52,6 +54,12 @@ const App = () => {
   useEffect(() => {
     const onKey = (e) => {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); setMapOpen((o) => !o); }
+      // ⇧⌘V (⇧⌃V) — summon the Voice Hall.
+      if ((e.metaKey || e.ctrlKey) && e.shiftKey && e.key.toLowerCase() === 'v') {
+        e.preventDefault();
+        const { hallOpen, openHall, closeHall } = useVoiceStore.getState();
+        (hallOpen ? closeHall : openHall)();
+      }
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
@@ -79,6 +87,8 @@ const App = () => {
         <Map size={18} style={{ color: 'var(--color-ember)' }} />
       </button>
       <MapOverlay open={mapOpen} onClose={() => setMapOpen(false)} activeId={activeId} />
+      {/* the command-palette voice picker (⇧⌘V / from the popover / from ⌘K) */}
+      <VoiceHall />
 
       <Hero />
 

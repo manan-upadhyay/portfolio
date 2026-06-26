@@ -106,15 +106,33 @@ export default {
     noResult: 'No section found — try “skills”, “experience”, or “contact”.',
     footerHint: 'enter to go · esc to close',
     actions: {
+      voices: 'Voices',
       resume: 'Resume',
       themeLight: 'Light mode',
       themeDark: 'Dark mode',
     },
   },
 
+  voiceHall: {
+    title: 'Voices',
+    searchPlaceholder: 'Search voices…',
+    close: 'Close',
+    noResult: 'No matching voice.',
+    sealedHint: 'Hidden voices unlock when you type their secret word anywhere on the page.',
+    found: '{{count}}/{{total}} found',
+    footerHint: 'enter to select · esc to close',
+    categories: {
+      core: 'Core',
+      office: 'The Office',
+      bestiary: 'Animals',
+    },
+  },
+
   recap: {
     title: 'Your Session',
-    subtitle: 'Read from your device locally — nothing is stored or sent.',
+    subtitle: 'Read from your device and connection — shown here, never stored.',
+    how: 'One request to an IP geolocation service resolves your city. Nothing else is sent, and nothing is saved.',
+    sigilNote: 'A fingerprint generated from your device signals — unique to you, and computed entirely on this page.',
     map: {
       localNow: '{{sky}} · {{time}} local',
     },
@@ -125,14 +143,23 @@ export default {
       display: 'Display',
       tongue: 'Language',
     },
+    signal: {
+      title: 'Connection',
+      lantern: 'Battery',
+      road: 'Network',
+      carrier: 'ISP',
+      origin: 'IP address',
+    },
     journey: {
       timeAfield: 'Time on page',
       trail: 'Scroll distance',
+      visit: 'Visit no.',
     },
     voices: {
       title: 'Hidden Voices',
       unlocked: '{{count}} / {{total}} found',
       sealed: 'Locked',
+      explore: 'Browse all',
       switchTo: 'Switch to {{voice}}',
       locked: 'Locked — not yet found',
     },

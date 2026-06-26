@@ -15,6 +15,13 @@ interface VoiceState {
   unlockVoice: (voice: string) => boolean;
   /** Has this voice been unlocked (or is it always open)? */
   isUnlocked: (voice: string) => boolean;
+  /** Voice Hall overlay (the command-palette voice picker) — not persisted. */
+  hallOpen: boolean;
+  openHall: () => void;
+  closeHall: () => void;
+  /** Has the visitor ever opened the Hall? Persisted — drives the one-time
+   *  "come discover voices" pulse on the quill button. */
+  hallSeen: boolean;
 }
 
 export const useVoiceStore = create<VoiceState>()(
@@ -45,10 +52,15 @@ export const useVoiceStore = create<VoiceState>()(
       },
 
       isUnlocked: (voice) => OPEN_VOICES.includes(voice) || get().unlocked.includes(voice),
+
+      hallOpen: false,
+      hallSeen: false,
+      openHall: () => set({ hallOpen: true, hallSeen: true }),
+      closeHall: () => set({ hallOpen: false }),
     }),
     {
       name: 'voice-storage',
-      partialize: (s) => ({ voice: s.voice, unlocked: s.unlocked }),
+      partialize: (s) => ({ voice: s.voice, unlocked: s.unlocked, hallSeen: s.hallSeen }),
       // The i18n layer reads the persisted voice at init and (for a sealed,
       // unlocked voice) lazy-loads its bundle + switches — see i18n/index.js.
       // The store's `voice` rehydrates from the same storage, so menu + content

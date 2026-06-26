@@ -40,6 +40,22 @@ reduced-motion + touch, `npm run build` clean, then move on.
 > clean, chronicle↔plain flips the whole site, dark + light correct, choice
 > persists. Remaining: **Phase 1b** (author the sealed personality bundles +
 > wire the unlock triggers).
+>
+> **Scalability pass (so the voice roster can grow to 10–15+).** The content
+> architecture was already scalable (a voice = one `voices.js` registry entry +
+> one lazy `bundles/<id>.js`); the two UIs that broke past ~3 were rebuilt. The
+> registry now carries **`category`** + **`glyph`** (serif monogram — no emoji)
+> per voice + a `voicesByCategory()` helper. New **`VoiceHall`** (`src/components/
+> VoiceHall.jsx`) — a ⌘-palette-style overlay (modeled on `MapOverlay`) with
+> search + category sections + voice cards (open → switch; sealed → clue + ⓘ
+> reference); open-state lives in `useVoiceStore.hallOpen` so it can be summoned
+> from **⇧⌘V**, the cluster popover's **"Open the Voice Hall"** CTA, or a
+> **"Change voice"** action added to the ⌘K `MapOverlay`. The bottom-right
+> `VoiceSwitcher` popover was rebuilt: open voices always shown, a **collapsible**
+> sealed group (so it never grows off-screen), a discovery **progress ring** +
+> one-time **pulse** (`hallSeen`, persisted) on the quill, and the Hall CTA.
+> Verified via CDP incl. a 12-voice scale test (popover collapses, Hall scrolls/
+> groups, recap constellation wraps), build + lint clean.
 
 **What:** A visible "Voice" control that re-skins all site copy through a chosen
 register. Two serious voices ship first; playful personalities unlock as easter
@@ -369,6 +385,27 @@ One shared `AudioContext`, unlocked on first gesture.
 > / `.voice-node` / `.exp-mono` in `index.css` (token-driven, AA in all skies).
 > Verified via CDP: map pins the real timezone, readings populate, the constellation
 > lights + counts on unlock, night/day/dawn correct, `npm run build` + lint clean.
+>
+> **Iteration 2 (the "engineering marvel" pass).** New signals in `visitor.js`
+> (+ a `useVisitor` hook that layers async results over the sync snapshot):
+> **one opt-in IP-geolocation lookup** (`ipwho.is`, `ipapi.co` fallback, cached in
+> `sessionStorage`) → city/country/coords (now driving the map ping) + ISP + IP;
+> **battery** (`getBattery`), **network** (`navigator.connection`), measured
+> **refresh-rate** (`measureRefreshRate`, in-view-gated rAF burst). The card now
+> reads in two groups — **The Reading** (device) + **The Signal** (battery /
+> network / carrier / IP) — each row hiding when its signal is absent (so blocked
+> IP just drops to the timezone city). Added an Apple-Weather **`SunArc`**
+> (`SunCalc` sunrise/sunset with a live sun dot), a device-fingerprint
+> **Traveler's Sigil** (`src/lib/sigil.js` — FNV hash → seeded canvas emblem +
+> hex, replacing the corner `CompassRose`), and a **persisted visit counter**
+> (`useVisitStore`). **Privacy honesty:** because we now make that one request,
+> the copy moved off "from your device alone" to "from your device and your
+> connection — kept nowhere", with an ⓘ **"how?"** note; reworded in all 5 voices.
+> The recap **constellation was rebuilt to scale** — a wrap-flow star cluster of
+> voice monograms (found = lit `glyph`, sealed = faint lock), hover narrates in
+> the nudge line, and an **"Explore all →"** opens the Voice Hall. Verified via
+> CDP (IP path **and** blocked-IP fallback, dark/light, build + lint clean). See
+> §1 for the Voice Hall + scalable switcher.
 
 **What:** A small "Your expedition" card near contact: chapters charted, scroll
 distance, time spent, theme(s) used, realms opened. Computed **client-side,

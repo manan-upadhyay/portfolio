@@ -1,10 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { Search, FileText, Github, Linkedin, Sun, Moon, X, CornerDownLeft, Star } from 'lucide-react';
+import { Search, FileText, Github, Linkedin, Sun, Moon, X, CornerDownLeft, Star, Feather } from 'lucide-react';
 import { personalInfo, chapterList } from '../constants';
 import { scrollToSection } from '../lib/smoothScroll';
 import { useThemeStore } from '../store/useThemeStore';
+import { useVoiceStore } from '../store/useVoiceStore';
 import CompassRose from './CompassRose';
 
 // Map waypoints = the chapters (single source of truth). Each carries its pin
@@ -51,6 +52,7 @@ const MapOverlay = ({ open, onClose, activeId }) => {
   }, [open, onClose]);
 
   const actions = [
+    { id: 'voices', label: t('map.actions.voices'), icon: Feather, run: () => useVoiceStore.getState().openHall() },
     { id: 'resume', label: t('map.actions.resume'), icon: FileText, run: () => window.open(personalInfo.resumeLink, '_blank', 'noopener,noreferrer') },
     { id: 'github', label: t('map.actions.github'), icon: Github, run: () => window.open(personalInfo.github, '_blank', 'noopener,noreferrer') },
     { id: 'linkedin', label: t('map.actions.linkedin'), icon: Linkedin, run: () => window.open(personalInfo.linkedin, '_blank', 'noopener,noreferrer') },

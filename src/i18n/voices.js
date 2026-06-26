@@ -13,24 +13,41 @@
 
 export const DEFAULT_VOICE = 'chronicle';
 
+// Voice categories — group voices in the Voice Hall overlay + the recap
+// constellation so the feature scales to many personalities. `order` sets the
+// section order; the visible label is i18n (`voiceHall.categories.<id>`).
+export const CATEGORIES = [
+  { id: 'core', order: 0 },
+  { id: 'office', order: 1 },
+  { id: 'bestiary', order: 2 },
+];
+
+// `glyph` is a short serif MONOGRAM (no emoji per the design system) used as the
+// voice's mark in the Hall + constellation. `category` slots it into a section.
 export const voices = [
   {
     id: 'chronicle',
     label: 'Chronicle',
     sample: 'The cinematic, in-world voice.',
     locked: false,
+    category: 'core',
+    glyph: 'Ch',
   },
   {
     id: 'plain',
     label: 'Plainspoken',
     sample: 'A straight, professional portfolio.',
     locked: false,
+    category: 'core',
+    glyph: 'Pl',
   },
   {
     id: 'scott',
     label: 'World’s Best Boss',
     sample: 'That’s what she said.',
     locked: true,
+    category: 'office',
+    glyph: 'Ms',
     trigger: 'boss',
     hint: 'Type what’s printed on the world’s best mug.',
     info: {
@@ -44,6 +61,8 @@ export const voices = [
     label: 'Assistant (to the) Manager',
     sample: 'Fact. Bears. Beets.',
     locked: true,
+    category: 'office',
+    glyph: 'Dw',
     trigger: 'beets',
     hint: 'Type what grows in rows at Schrute Farms.',
     info: {
@@ -57,6 +76,8 @@ export const voices = [
     label: 'Moo',
     sample: 'Moo moo, moo moo moo.',
     locked: true,
+    category: 'bestiary',
+    glyph: 'Mo',
     trigger: 'moo',
     hint: 'Type what the cow says.',
     info: {
@@ -74,3 +95,9 @@ export const OPEN_VOICES = voices.filter((v) => !v.locked).map((v) => v.id);
 export const SEALED_VOICES = voices.filter((v) => v.locked).map((v) => v.id);
 
 export const voiceById = (id) => voices.find((v) => v.id === id) || null;
+
+// Voices grouped into their categories (in `CATEGORIES` order), skipping any
+// empty category. Used by the Voice Hall overlay.
+export const voicesByCategory = () =>
+  CATEGORIES.map((c) => ({ ...c, items: voices.filter((v) => v.category === c.id) }))
+    .filter((c) => c.items.length);

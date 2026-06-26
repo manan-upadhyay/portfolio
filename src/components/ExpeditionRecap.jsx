@@ -1,13 +1,15 @@
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Lock, Star } from 'lucide-react';
-import { useExpeditionStore, useElapsed, PX_PER_METER } from '../hooks/useExpedition';
+import { Lock, Info, ArrowUpRight } from 'lucide-react';
+import { useExpeditionStore, useElapsed, useVisitStore, PX_PER_METER } from '../hooks/useExpedition';
 import { useThemeStore } from '../store/useThemeStore';
 import { useVoiceStore } from '../store/useVoiceStore';
 import { SEALED_VOICES, voiceById } from '../i18n/voices';
-import { readVisitor, fmtCoord, localReading } from '../lib/visitor';
+import { fmtCoord, localReading } from '../lib/visitor';
+import { useVisitor } from '../hooks/useVisitor';
+import { deviceHash, drawSigil } from '../lib/sigil';
 import ScrollReveal from './ScrollReveal';
-import CompassRose from './CompassRose';
+import SunArc from './SunArc';
 
 const fmtTime = (s) => {
   const m = Math.floor(s / 60);
@@ -122,6 +124,29 @@ const TravelerMap = ({ lat, lng }) => {
   return <canvas ref={ref} className="expedition-map__canvas" aria-hidden="true" />;
 };
 
+/* The Traveler's Sigil — a unique emblem drawn from the device fingerprint. */
+const Sigil = ({ seed }) => {
+  const ref = useRef(null);
+  const resolvedTheme = useThemeStore((s) => s.resolvedTheme);
+  useEffect(() => {
+    const canvas = ref.current;
+    const ctx = canvas.getContext('2d');
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const s = 46;
+    canvas.width = s * dpr; canvas.height = s * dpr;
+    canvas.style.width = `${s}px`; canvas.style.height = `${s}px`;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const cs = getComputedStyle(canvas);
+    const g = (n, fb) => (cs.getPropertyValue(n) || fb).trim();
+    drawSigil(ctx, s, seed, {
+      ember: g('--color-ember', '#d9772e'),
+      gold: g('--color-gold', '#b88a2e'),
+      emberRgb: g('--color-ember-rgb', '217,119,46'),
+    });
+  }, [seed, resolvedTheme]);
+  return <canvas ref={ref} className="sigil__canvas" aria-hidden="true" />;
+};
+
 /* One "reading" cell — mono value over a tiny uppercase label. */
 const Reading = ({ label, value, accent }) => (
   <div className={`expedition-cell${accent ? ' expedition-cell--accent' : ''}`}>
@@ -130,13 +155,31 @@ const Reading = ({ label, value, accent }) => (
   </div>
 );
 
-/* The interactive sealed-voice constellation — three nodes; unlocked ones glow
-   and switch the site voice on click, locked ones whisper their hint on hover. */
+/* A labelled mini-grid of reading cells; renders nothing when it has no data. */
+const ReadGroup = ({ label, cells, modifier = '' }) => {
+  if (!cells.length) return null;
+  return (
+    <>
+      {label && <span className="expedition-grouplabel">{label}</span>}
+      <div className={`expedition-readgrid ${modifier}`}>
+        {cells.map((c) => (
+          <Reading key={c.key} label={c.label} value={c.value} accent={c.accent} />
+        ))}
+      </div>
+    </>
+  );
+};
+
+/* The interactive sealed-voice constellation — a star cluster of voice sigils
+   that scales to any count. Found voices glow with their monogram and switch the
+   site voice on click; sealed ones are faint stars. Hovering any node narrates
+   it in the line below; "Explore all" opens the full Voice Hall. */
 const VoiceConstellation = ({ sealedLine }) => {
   const { t } = useTranslation();
   const unlocked = useVoiceStore((s) => s.unlocked);
   const current = useVoiceStore((s) => s.voice);
   const setVoice = useVoiceStore((s) => s.setVoice);
+  const openHall = useVoiceStore((s) => s.openHall);
   const [hint, setHint] = useState(null);
 
   const found = unlocked.filter((id) => SEALED_VOICES.includes(id)).length;
@@ -145,12 +188,13 @@ const VoiceConstellation = ({ sealedLine }) => {
     <div className="expedition-voices">
       <div className="expedition-voices__head">
         <span className="expedition-grouplabel">{t('recap.voices.title')}</span>
-        <span className="expedition-voices__count exp-mono">
-          {t('recap.voices.unlocked', { count: found, total: SEALED_VOICES.length })}
-        </span>
+        <button type="button" className="expedition-voices__explore" data-cursor="hover" onClick={openHall}>
+          {t('recap.voices.explore')} <ArrowUpRight size={12} />
+        </button>
       </div>
 
-      <div className="expedition-constellation" onMouseLeave={() => setHint(null)}>
+      <div className="voice-constellation" onMouseLeave={() => setHint(null)}>
+        <span className="voice-constellation__count exp-mono">{found}/{SEALED_VOICES.length}</span>
         {SEALED_VOICES.map((id) => {
           const meta = voiceById(id);
           const open = unlocked.includes(id);
@@ -159,21 +203,18 @@ const VoiceConstellation = ({ sealedLine }) => {
             <button
               key={id}
               type="button"
-              className="voice-node"
+              className="vc-node"
               data-open={open}
               data-active={active}
               data-cursor="hover"
               onClick={() => open && setVoice(id)}
-              onMouseEnter={() => !open && setHint(meta.hint)}
-              onFocus={() => !open && setHint(meta.hint)}
+              onMouseEnter={() => setHint(open ? meta.label : meta.hint)}
+              onFocus={() => setHint(open ? meta.label : meta.hint)}
               onBlur={() => setHint(null)}
               aria-label={open ? t('recap.voices.switchTo', { voice: meta.label }) : t('recap.voices.locked')}
               title={open ? meta.label : meta.hint}
             >
-              <span className="voice-node__glyph">
-                {open ? <Star size={15} fill="currentColor" /> : <Lock size={13} />}
-              </span>
-              <span className="voice-node__label">{open ? meta.label : t('recap.voices.sealed')}</span>
+              {open ? <span className="vc-node__glyph font-chronicle">{meta.glyph}</span> : <Lock size={12} />}
             </button>
           );
         })}
@@ -194,8 +235,9 @@ const VoiceConstellation = ({ sealedLine }) => {
 const ExpeditionRecap = () => {
   const { t } = useTranslation();
   const scrollPx = useExpeditionStore((s) => s.scrollPx);
+  const visits = useVisitStore((s) => s.visits);
 
-  // Tick the live clock only while the card is on screen.
+  // Tick the live clock + measure refresh rate only while the card is on screen.
   const ref = useRef(null);
   const [inView, setInView] = useState(false);
   useEffect(() => {
@@ -207,21 +249,32 @@ const ExpeditionRecap = () => {
   }, []);
   const seconds = useElapsed(inView);
 
-  const v = readVisitor();
+  const v = useVisitor(inView);
+  const { seed, hex } = deviceHash(v);
   const { time, sky } = localReading(v.coords);
   const coordStr = `${fmtCoord(v.coords.lat, 'N', 'S')}  ${fmtCoord(v.coords.lng, 'E', 'W')}`;
 
-  const machine = v.gpu || (v.cores ? `${v.cores} cores` : null) || (v.memory ? `${v.memory} GB` : null);
-  const system = [v.browser, v.os].filter(Boolean).join(' · ') || null;
-  const display = v.screen ? `${v.screen.w}×${v.screen.h}${v.screen.dpr > 1 ? ` @${v.screen.dpr}×` : ''}` : null;
-  const readings = [
-    { key: 'machine', value: machine },
-    { key: 'system', value: system },
-    { key: 'display', value: display },
+  // The device "reading".
+  const reading = [
+    { key: 'machine', value: v.gpu || (v.cores ? `${v.cores} cores` : null) },
+    { key: 'system', value: [v.browser, v.os].filter(Boolean).join(' · ') || null },
+    { key: 'display', value: v.screen ? `${v.screen.w}×${v.screen.h}${v.screen.dpr > 1 ? ` @${v.screen.dpr}×` : ''}${v.hz ? ` · ${v.hz}Hz` : ''}` : null },
     { key: 'tongue', value: v.language },
-  ].filter((r) => r.value);
+  ].filter((r) => r.value).map((r) => ({ ...r, label: t(`recap.reading.${r.key}`) }));
 
-  const meters = (scrollPx / PX_PER_METER).toFixed(1);
+  // The connection "signal" (battery + network + IP — populates as it resolves).
+  const signal = [
+    { key: 'lantern', value: v.battery ? `${Math.round(v.battery.level * 100)}%${v.battery.charging ? ' ⚡' : ''}` : null },
+    { key: 'road', value: v.network ? [v.network.effectiveType, v.network.downlink ? `${v.network.downlink} Mbps` : null, v.network.rtt ? `${v.network.rtt}ms` : null].filter(Boolean).join(' · ') : null },
+    { key: 'carrier', value: v.geo?.isp || null },
+    { key: 'origin', value: v.geo?.ip ? `${v.geo.flag ? `${v.geo.flag} ` : ''}${v.geo.ip}` : null },
+  ].filter((r) => r.value).map((r) => ({ ...r, label: t(`recap.signal.${r.key}`) }));
+
+  const journey = [
+    { key: 'timeAfield', value: fmtTime(seconds) },
+    { key: 'trail', value: `${(scrollPx / PX_PER_METER).toFixed(1)} m` },
+    { key: 'visit', value: String(visits || 1) },
+  ].map((r) => ({ ...r, label: t(`recap.journey.${r.key}`), accent: true }));
 
   // Sealed-voice nudge (Phase 1b tie-in).
   const found = useVoiceStore((s) => s.unlocked).filter((id) => SEALED_VOICES.includes(id)).length;
@@ -235,13 +288,21 @@ const ExpeditionRecap = () => {
         <div className="flex items-start justify-between gap-4">
           <div className="min-w-0">
             <span className="chapter-eyebrow">{t('recap.title')}</span>
-            <p className="expedition-sub mt-2.5">{t('recap.subtitle')}</p>
+            <p className="expedition-sub mt-2.5">
+              {t('recap.subtitle')}
+              <span className="expedition-how" title={t('recap.how')} tabIndex={0} aria-label={t('recap.how')}>
+                <Info size={13} />
+              </span>
+            </p>
           </div>
-          <CompassRose className="w-12 h-12 sm:w-14 sm:h-14 opacity-80 expedition-rose flex-shrink-0" />
+          <div className="expedition-sigil flex-shrink-0" title={t('recap.sigilNote')}>
+            <Sigil seed={seed} />
+            <span className="expedition-sigil__hash exp-mono">{hex}</span>
+          </div>
         </div>
 
         <div className="expedition-body mt-8">
-          {/* the animated map */}
+          {/* the animated map + sun path */}
           <figure className="expedition-map">
             <div className="expedition-map__disc">
               <TravelerMap lat={v.coords.lat} lng={v.coords.lng} />
@@ -255,22 +316,14 @@ const ExpeditionRecap = () => {
                 {t('recap.map.localNow', { time, sky: t(`sky.modes.${sky}`) })}
               </span>
             </figcaption>
+            <SunArc lat={v.coords.lat} lng={v.coords.lng} />
           </figure>
 
-          {/* the reading + journey + voices */}
+          {/* the reading + signal + journey + voices */}
           <div className="expedition-panel">
-            <span className="expedition-grouplabel">{t('recap.reading.title')}</span>
-            <div className="expedition-readgrid">
-              {readings.map((r) => (
-                <Reading key={r.key} label={t(`recap.reading.${r.key}`)} value={r.value} />
-              ))}
-            </div>
-
-            <div className="expedition-readgrid expedition-readgrid--journey">
-              <Reading label={t('recap.journey.timeAfield')} value={fmtTime(seconds)} accent />
-              <Reading label={t('recap.journey.trail')} value={`${meters} m`} accent />
-            </div>
-
+            <ReadGroup label={t('recap.reading.title')} cells={reading} />
+            <ReadGroup label={t('recap.signal.title')} cells={signal} />
+            <ReadGroup cells={journey} modifier="expedition-readgrid--journey" />
             <VoiceConstellation sealedLine={sealedLine} />
           </div>
         </div>

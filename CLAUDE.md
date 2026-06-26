@@ -61,7 +61,9 @@ hardcode display strings in components; add the key to the bundles instead.
 (There is no `Navbar`/`CommandPalette` — superseded by `SideRail` + `MapOverlay`.
 The visitor-facing controls are the top-right `SkyControl` (the 5-mode sky menu
 wrapping `DayNightToggle`) and the bottom-right `ControlCluster` = `VoiceSwitcher`
-+ `SoundControl` (the Phase 4 interactive-sound master control).)
++ `SoundControl` (the Phase 4 interactive-sound master control). The
+`VoiceSwitcher` popover (open voices + a collapsible sealed group + a discovery
+ring) and the full searchable **`VoiceHall`** overlay (⇧⌘V) both pick voices.)
 
 **Palette / theme:** dark-first "starlit realm" + light "dawn over the realm".
 All color via CSS variables in `src/index.css`. See
@@ -83,10 +85,15 @@ All color via CSS variables in `src/index.css`. See
   the **session-only** expedition store (`src/hooks/useExpedition.js`, *not*
   persisted — powers the Phase 5 recap). See [LEGENDARY-ROADMAP](docs/chronicle/LEGENDARY-ROADMAP.md) §5.
 - **Phase 5 recap** → `ExpeditionRecap` (a cinematic instrument panel at the foot
-  of Contact) reads the visitor from the browser alone via `src/lib/visitor.js`
-  (a cached, permissionless `navigator`/`screen`/WebGL snapshot — nothing stored
-  or sent) and pins them on a Canvas2D polar-azimuthal **`TravelerMap`** from
-  their timezone coords. The sealed voices render as an interactive constellation.
+  of Contact) "reads" the visitor from the browser via `src/lib/visitor.js` +
+  `useVisitor` — a cached `navigator`/`screen`/WebGL snapshot (GPU, OS/browser,
+  display+Hz, battery, network) **plus one opt-in IP-geolocation lookup**
+  (`ipwho.is`) for city/coords. That is the recap's *only* network call; nothing
+  is stored or sent beyond it, and the copy says so (with an ⓘ "how?" note). It
+  pins the visitor on a Canvas2D polar-azimuthal **`TravelerMap`**, shows an
+  Apple-Weather **`SunArc`** (`SunCalc`), a device-hash **Traveler's Sigil**
+  (`src/lib/sigil.js`), a persisted visit counter (`useVisitStore`), and a
+  scalable sealed-voice **constellation** that opens the Voice Hall.
 - **SunCalc** → time-aware **sky** (`src/lib/sky.js`): `auto` mode resolves the
   theme from the visitor's local time; 5 modes (auto + dawn/day/dusk/night). See
   [LEGENDARY-ROADMAP](docs/chronicle/LEGENDARY-ROADMAP.md) §3.
@@ -98,7 +105,11 @@ All color via CSS variables in `src/index.css`. See
   Each voice = an i18next language; `chronicle` is the complete base/fallback,
   other voices override only changed keys. Core voices (`chronicle`, `plain`)
   bundle eagerly; easter-egg personalities are code-split via `loadVoice`
-  (`src/i18n/index.js`). Bundles: `src/i18n/bundles/*`. See
+  (`src/i18n/index.js`). The `voices.js` registry carries `category` + `glyph`
+  (serif monogram) per voice so the feature scales: a **Voice Hall** overlay
+  (`VoiceHall`, ⇧⌘V / the cluster popover's CTA / the ⌘K palette) is the
+  searchable, grouped picker, while the bottom-right popover keeps the open
+  voices + a collapsible sealed group. Bundles: `src/i18n/bundles/*`. See
   [LEGENDARY-ROADMAP](docs/chronicle/LEGENDARY-ROADMAP.md) §1.
 - **lucide-react** → icons (+ custom `CompassRose` SVG). **No emoji in UI.**
 - **Contact** → server-side **Resend** via a Vite dev middleware (`ravenApiDev`

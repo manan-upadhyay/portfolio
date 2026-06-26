@@ -16,4 +16,6 @@ export { default as ScrollReveal } from './ScrollReveal';
 export { default as SideRail } from './SideRail';
 export { default as SkyControl } from './SkyControl';
 export { default as SoundControl } from './SoundControl';
+export { default as SunArc } from './SunArc';
+export { default as VoiceHall } from './VoiceHall';
 export { default as VoiceTransition } from './VoiceTransition';

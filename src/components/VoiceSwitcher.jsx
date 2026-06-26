@@ -1,16 +1,14 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Feather, Check, Lock, Info } from 'lucide-react';
+import { Feather, Check, Lock, Info, ChevronDown, Sparkles, ArrowRight } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useVoiceStore } from '../store/useVoiceStore';
 import { voices, SEALED_VOICES } from '../i18n/voices';
 
 const JELLY = { type: 'spring', stiffness: 320, damping: 24, mass: 0.7 };
+const RING_C = 2 * Math.PI * 26; // progress-ring circumference (r=26)
 
-// Attribution popover — who/what a voice is borrowed from. Shown for both locked
-// and unlocked voices (it's opt-in on hover/focus, so it helps people who don't
-// know the reference without spoiling the surprise for those who'd rather not
-// peek). Opens to the LEFT (the menu hugs the right screen edge).
+// Attribution popover — who/what a voice is borrowed from. Opens to the LEFT.
 const InfoTip = ({ info }) => (
   <motion.div
     role="tooltip"
@@ -36,7 +34,6 @@ const InfoTip = ({ info }) => (
 // One row in the voice menu: a selectable area + an optional info icon.
 const VoiceRow = ({ v, active, locked, onSelect }) => {
   const [tip, setTip] = useState(false);
-
   return (
     <div
       className="relative flex items-start gap-1 px-2 py-1.5 rounded-xl transition-colors"
@@ -62,8 +59,6 @@ const VoiceRow = ({ v, active, locked, onSelect }) => {
           )}
         </span>
         <span className="min-w-0">
-          {/* Locked: the voice's iconic quote (recognition hook for fans) as the
-              title, then an explicit "Clue —" line. Unlocked/open: real label. */}
           <span
             className="block text-[13px] font-medium leading-tight truncate"
             style={{ color: active ? 'var(--color-ember)' : 'var(--color-text)', fontStyle: locked ? 'italic' : 'normal' }}
@@ -99,20 +94,21 @@ const VoiceRow = ({ v, active, locked, onSelect }) => {
 
 /**
  * Voice switcher — the left half of the bottom-right control cluster. A circular
- * quill button that opens a menu UPWARD (so it never collides with the audio
- * control to its right). Open voices are selectable; sealed easter-egg voices
- * show their iconic quote + a "Clue —" line ("Sealed Voices · n/total") so
- * visitors know there's more to discover, with an ⓘ tooltip revealing the
- * reference. Click/tap driven (works on touch); closes on outside-click/Escape.
+ * quill button (ringed with a discovery-progress arc, and gently pulsing until
+ * the visitor first opens the Hall) that pops a menu UPWARD. Open voices are
+ * always shown; the sealed easter-egg voices live behind a COLLAPSIBLE group so
+ * the menu stays short no matter how many ship. A "Voice Hall" CTA opens the
+ * full command-palette picker. Click/tap driven; closes on outside-click/Escape.
  */
 const VoiceSwitcher = () => {
   const { t } = useTranslation();
-  const { voice, setVoice, isUnlocked } = useVoiceStore();
+  const { voice, setVoice, isUnlocked, openHall, hallSeen } = useVoiceStore();
   const [open, setOpen] = useState(false);
+  const [sealedOpen, setSealedOpen] = useState(false);
   const rootRef = useRef(null);
 
   useEffect(() => {
-    if (!open) return;
+    if (!open) return undefined;
     const onDown = (e) => { if (rootRef.current && !rootRef.current.contains(e.target)) setOpen(false); };
     const onKey = (e) => { if (e.key === 'Escape') setOpen(false); };
     document.addEventListener('pointerdown', onDown);
@@ -123,8 +119,12 @@ const VoiceSwitcher = () => {
   const openVoices = voices.filter((v) => !v.locked);
   const sealed = voices.filter((v) => v.locked);
   const discovered = SEALED_VOICES.filter((id) => isUnlocked(id)).length;
+  const total = sealed.length;
+  const allFound = discovered >= total;
+  const pulse = !hallSeen && !allFound; // entice first-timers toward the Hall
 
   const choose = (id) => { setVoice(id); setOpen(false); };
+  const goHall = () => { setOpen(false); openHall(); };
 
   return (
     <div ref={rootRef} className="relative">
@@ -154,59 +154,98 @@ const VoiceSwitcher = () => {
               <VoiceRow key={v.id} v={v} active={voice === v.id} locked={false} onSelect={() => choose(v.id)} />
             ))}
 
-            <div className="my-1.5 mx-3 h-px" style={{ background: 'var(--color-card-border)' }} />
+            {total > 0 && (
+              <>
+                <div className="my-1.5 mx-3 h-px" style={{ background: 'var(--color-card-border)' }} />
 
-            <p className="px-3 pb-1 text-[10px] tracking-[0.16em] uppercase font-medium flex items-center justify-between" style={{ color: 'var(--color-text-muted)' }}>
-              <span>{t('voice.sealed')}</span>
-              <span className="font-mono">{discovered}/{sealed.length}</span>
-            </p>
-            {/* The mechanic — kept in plain language (never voiced) so the unlock
-                instructions stay legible in every voice. Tap the ⓘ on a row to
-                learn who each hidden voice is borrowed from. */}
-            <p className="px-3 pb-2 text-[11px] leading-snug" style={{ color: 'var(--color-text-muted)' }}>
-              Hidden personalities. Solve a clue, then <span style={{ color: 'var(--color-ember)' }}>type the answer anywhere</span> on the page — or tap ⓘ to see the reference.
-            </p>
-            {sealed.map((v) => {
-              const unlocked = isUnlocked(v.id);
-              return (
-                <VoiceRow
-                  key={v.id}
-                  v={v}
-                  active={voice === v.id}
-                  locked={!unlocked}
-                  onSelect={() => choose(v.id)}
-                />
-              );
-            })}
+                {/* collapsible sealed group — keeps the menu short at any count */}
+                <button
+                  type="button"
+                  onClick={() => setSealedOpen((o) => !o)}
+                  data-cursor="hover"
+                  aria-expanded={sealedOpen}
+                  className="w-full flex items-center justify-between px-3 py-1.5 rounded-lg transition-colors"
+                  style={{ color: 'var(--color-text-muted)' }}
+                >
+                  <span className="text-[10px] tracking-[0.16em] uppercase font-semibold">{t('voice.sealed')}</span>
+                  <span className="flex items-center gap-1.5">
+                    <span className="font-mono text-[11px]" style={{ color: allFound ? 'var(--color-gold)' : 'var(--color-text-muted)' }}>{discovered}/{total}</span>
+                    <ChevronDown size={13} className="transition-transform" style={{ transform: sealedOpen ? 'rotate(180deg)' : 'none' }} />
+                  </span>
+                </button>
+
+                <AnimatePresence initial={false}>
+                  {sealedOpen && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: 'auto', opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.22, ease: [0.25, 0.4, 0.25, 1] }}
+                      className="overflow-hidden"
+                    >
+                      <p className="px-3 py-1.5 text-[11px] leading-snug" style={{ color: 'var(--color-text-muted)' }}>
+                        {t('voice.sealedHint')} <span style={{ color: 'var(--color-ember)' }}>{t('voice.sealedTypeHint')}</span>
+                      </p>
+                      <div className="voice-sealed-list">
+                        {sealed.map((v) => (
+                          <VoiceRow key={v.id} v={v} active={voice === v.id} locked={!isUnlocked(v.id)} onSelect={() => choose(v.id)} />
+                        ))}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                {/* the doorway to the full picker */}
+                <button type="button" onClick={goHall} data-cursor="hover" className="voice-hall-cta">
+                  <Sparkles size={14} />
+                  <span className="flex-1 text-left">{t('voice.openHall')}</span>
+                  <ArrowRight size={14} />
+                </button>
+              </>
+            )}
           </motion.div>
         )}
       </AnimatePresence>
 
-      <motion.button
-        type="button"
-        onClick={() => setOpen((o) => !o)}
-        data-cursor="hover"
-        whileTap={{ scale: 0.88 }}
-        transition={JELLY}
-        aria-haspopup="menu"
-        aria-expanded={open}
-        aria-label={t('voice.ariaOpen')}
-        className="grid place-items-center w-12 h-12 rounded-full"
-        style={{
-          background: 'var(--color-card-bg)',
-          border: '1px solid var(--color-card-border)',
-          backdropFilter: 'blur(20px)',
-          WebkitBackdropFilter: 'blur(20px)',
-          boxShadow: 'var(--shadow-card)',
-        }}
-      >
-        <span
-          className="grid place-items-center w-9 h-9 rounded-full"
-          style={{ background: 'rgba(var(--color-ember-rgb),0.16)', color: 'var(--color-ember)' }}
+      <div className="voice-quill" data-pulse={pulse || undefined}>
+        {/* discovery-progress ring */}
+        {total > 0 && (
+          <svg className="voice-quill__ring" viewBox="0 0 56 56" aria-hidden="true">
+            <circle cx="28" cy="28" r="26" fill="none" stroke="var(--color-card-border)" strokeWidth="1.5" />
+            <circle
+              cx="28" cy="28" r="26" fill="none" stroke="var(--color-ember)" strokeWidth="1.5" strokeLinecap="round"
+              strokeDasharray={`${(discovered / total) * RING_C} ${RING_C}`}
+              transform="rotate(-90 28 28)"
+              style={{ transition: 'stroke-dasharray 0.5s ease' }}
+            />
+          </svg>
+        )}
+        <motion.button
+          type="button"
+          onClick={() => setOpen((o) => !o)}
+          data-cursor="hover"
+          whileTap={{ scale: 0.88 }}
+          transition={JELLY}
+          aria-haspopup="menu"
+          aria-expanded={open}
+          aria-label={t('voice.ariaOpen')}
+          className="grid place-items-center w-12 h-12 rounded-full"
+          style={{
+            background: 'var(--color-card-bg)',
+            border: '1px solid var(--color-card-border)',
+            backdropFilter: 'blur(20px)',
+            WebkitBackdropFilter: 'blur(20px)',
+            boxShadow: 'var(--shadow-card)',
+          }}
         >
-          <Feather size={15} />
-        </span>
-      </motion.button>
+          <span
+            className="grid place-items-center w-9 h-9 rounded-full"
+            style={{ background: 'rgba(var(--color-ember-rgb),0.16)', color: 'var(--color-ember)' }}
+          >
+            <Feather size={15} />
+          </span>
+        </motion.button>
+      </div>
     </div>
   );
 };

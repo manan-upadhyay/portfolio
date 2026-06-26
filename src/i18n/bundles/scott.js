@@ -211,7 +211,9 @@ export default {
 
   recap: {
     title: 'Your Performance Review',
-    subtitle: 'I tracked all of this myself. I’m basically a hacker now. Don’t tell IT.',
+    subtitle: 'I pulled all this off your computer and your internet. I’m basically a hacker now. Don’t tell IT.',
+    how: 'Okay one website told me your city. That’s it. I didn’t save it. I would never. Probably.',
+    sigilNote: 'This little doodle? That’s YOU. One of a kind. Like me. I made it right here, didn’t send it anywhere.',
     map: {
       localNow: 'it’s {{time}} where you are. {{sky}}. how did I— okay it’s a little creepy.',
     },
@@ -222,9 +224,17 @@ export default {
       display: 'That Big Screen',
       tongue: 'How You Talk',
     },
+    signal: {
+      title: 'Your Internet & Stuff',
+      lantern: 'Your Battery',
+      road: 'Your Wi-Fi Speed',
+      carrier: 'Your Internet Guy',
+      origin: 'Your Secret Number',
+    },
     journey: {
       timeAfield: 'Time You Hung Out',
       trail: 'Scrollage',
+      visit: 'Times You Came Back',
     },
     voices: {
       title: 'Secret Voices',

@@ -77,6 +77,8 @@ export default {
     ndaSealed: "[[nda|Under NDA]] — details limited to what's permissible.",
     chartMore: 'Show {{count}} more projects',
     furl: 'Show less',
+    nod: 'Six projects above. The seventh is this site itself.',
+    nodCta: 'See how it was built',
   },
 
   contact: {
@@ -188,6 +190,59 @@ export default {
       some: '{{count}} of {{total}} hidden voices still locked.',
       all: 'All hidden voices unlocked. Nice.',
     },
+  },
+
+  // The Atelier — straight, factual register. Full coverage so plain never falls
+  // back into the cinematic voice mid-section.
+  atelier: {
+    eyebrow: 'Colophon',
+    title: 'How this site was built',
+    confession: 'It was already done. I kept building anyway.',
+    confessionSub:
+      'The site was finished and presentable about twenty commits ago. I chose not to stop there — I spent roughly another hundred hours on it, because I wanted to treat my own portfolio like a real product instead of settling for "good enough".',
+    timeline: {
+      title: 'Commit history',
+      range: 'Jun 20 – 27',
+      now: 'now',
+      doneFlag: 'Shippable here',
+      caption:
+        'Each point is a day of the rebuild; the line is cumulative commits. The marked point is where the site was already complete and presentable. Everything after it is six additional feature phases.',
+    },
+    stats: {
+      hours: 'Hours invested',
+      commits: 'Rebuild commits',
+      phases: 'Feature phases',
+      voices: 'Writing voices',
+      lines: 'Lines of code',
+      threejs: 'Three.js (removed)',
+    },
+    ledger: {
+      intro:
+        'The harder engineering decision was not what to add — it was what to remove. Here is what shipped, and what I built and then cut on purpose.',
+      built: 'Shipped',
+      cut: 'Cut, and why',
+    },
+    phases: {
+      voice: { title: 'Multi-voice system', why: 'A full i18next layer; the entire site re-skins through five writing voices, architected to scale to fifteen.' },
+      marginalia: { title: 'Marginalia', why: 'Hover a phrase to reveal the underlying engineering fact in a footnote.' },
+      sky: { title: 'Time-aware theme', why: 'Five theme modes resolved from your local time via SunCalc — no geolocation permission required.' },
+      sound: { title: 'Sound design', why: 'A Web Audio cue system (synthesized, zero asset weight); default-on, muted under reduced-motion.' },
+      recap: { title: 'Session recap', why: 'A client-side panel that reads device + connection details and maps your location — nothing stored or sent.' },
+      eggs: { title: 'Hidden voices', why: 'Type a trigger word to unlock additional personality voices, each fully written.' },
+    },
+    cuts: {
+      statusLine: { title: 'Location/moon status line', why: 'Built and reviewed, then removed — it felt invasive, and the time-based theme already delivered the effect.' },
+      battery: { title: 'Battery readout', why: 'Removed because the Battery Status API returns inaccurate values on some platforms; unreliable data has no place in a "reads your device" panel.' },
+      drone: { title: 'Ambient drone audio', why: 'Cut for being harsh; sparse, intentional cues work better than a continuous background bed.' },
+      rgbOverlay: { title: 'Full-screen glitch overlay', why: 'Replaced with a subtler per-text scramble on voice change — the original effect was too loud.' },
+    },
+    builtWith: 'Built with',
+    manifesto: [
+      'I build production web applications for a living — finance, healthcare, logistics, the systems people rely on. This site is the one place I answered only to the craft.',
+      'The goal I set: a hiring manager should feel the quality within ten seconds. Every section had to be a designed moment, not a static list — and if a part was static, it was not finished.',
+      'So I kept going past "done". Not because it was required, but because that is how I work, and I wanted that to be visible.',
+    ],
+    sign: '— Manan Upadhyay',
   },
 
   voice: {

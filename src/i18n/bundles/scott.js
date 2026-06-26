@@ -128,6 +128,8 @@ export default {
     ndaSealed: 'I’d tell you, but then I’d have to… you know. It’s [[nda|an NDA thing]]. Very official.',
     chartMore: 'Show {{count}} more hits',
     furl: 'Okay, that’s enough greatness',
+    nod: 'Six hits up there. The seventh one is the website you’re looking at. Boom.',
+    nodCta: 'See how I made it',
     projects: {
       gajaakriti: {
         description: 'A gorgeous media-heavy website and admin panel for a fancy wedding studio. Weddings! I love weddings. And the media loads fast.',
@@ -264,6 +266,45 @@ export default {
       some: '{{count}} of {{total}} voices still hiding. Keep going, you’re crushing it.',
       all: 'You found all of them. World’s Best Visitor. I’m not crying, you’re crying.',
     },
+  },
+
+  // The Atelier — Michael's voice. Narrative keys only; the per-phase/per-cut
+  // details fall back to chronicle's real facts (still Manan's substance).
+  atelier: {
+    eyebrow: 'Behind the Magic',
+    title: 'How I Made This',
+    confession: 'It was done. And then? I did more. That’s leadership.',
+    confessionSub:
+      'The website was finished like twenty saves ago. Totally done. I could’ve gone home. But I didn’t go home. I stayed and I poured another hundred hours into it, because I don’t do “good enough.” I do “world’s best.” It’s a whole thing.',
+    timeline: {
+      title: 'The Tape',
+      range: 'Jun 20 – 27',
+      now: 'now',
+      doneFlag: 'Done right here',
+      caption:
+        'Every dot is a day I showed up. The line goes up because I kept going up. The gold mark? That’s where a normal person stops. I am not a normal person. I’m a friend, a boss, and an idea man.',
+    },
+    stats: {
+      hours: 'Hours of me',
+      commits: 'Times I saved',
+      phases: 'Genius phases',
+      voices: 'Voices (incl. mine)',
+      lines: 'Lines, baby',
+      threejs: '3D stuff (cut)',
+    },
+    ledger: {
+      intro:
+        'The hard part isn’t adding stuff. Anybody can add stuff. The hard part is knowing what to cut. I know what to cut. I’m basically a surgeon.',
+      built: 'Stuff I shipped',
+      cut: 'Stuff I cut (on purpose)',
+    },
+    builtWith: 'Made with',
+    manifesto: [
+      'I build real apps for real companies — banks, hospitals, the important ones. But this site? This one was just for me. No boss. No client. Just a man and his vision.',
+      'The goal was simple: somebody looks at this for ten seconds and they go, “wow, hire that guy immediately.” Every part had to be a moment. If it was boring, it wasn’t finished.',
+      'So I kept going past the finish line. Not because I had to. Because that’s who I am. I’m the world’s best developer. Probably. Don’t fact-check that.',
+    ],
+    sign: '— Michael. I mean, Manan. (It’s Manan.)',
   },
 
   footer: {

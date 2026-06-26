@@ -151,6 +151,9 @@ export default {
     ndaSealed: "[[nda|Sealed under NDA]] — details limited to what's permissible.",
     chartMore: 'Chart {{count}} more realms',
     furl: 'Furl the map',
+    // The nod to the unnumbered seventh realm — this very site (see the Atelier).
+    nod: 'Six realms charted. The seventh is the one you are standing in.',
+    nodCta: 'See how it was drawn',
     // Per-project copy, keyed by the project `id` in constants. `name`,
     // `company`, `tags`, links and gallery stay data in constants.
     projects: {
@@ -391,6 +394,61 @@ export default {
       some: '{{count}} of {{total}} voices still lie sealed — keep listening.',
       all: 'Every voice discovered. A keen ear, traveler.',
     },
+  },
+
+  // The Atelier (LEGENDARY-ROADMAP §7) — the coda chapter: how this very site was
+  // designed, developed and pushed past "done". The confession + manifesto are
+  // the human core; the ledger pairs every shipped phase with what was cut. Metric
+  // values + ids are data in constants.atelier; these are the voiced labels.
+  atelier: {
+    eyebrow: 'The Atelier',
+    title: 'How the map was drawn',
+    confession: 'It was already done. Then I kept going.',
+    confessionSub:
+      'The map was finished and presentable roughly twenty commits ago — a polished, cinematic build. I could have shipped it. Instead I poured another hundred-odd hours into it, because "good enough" is exactly where most portfolios stop, and I wanted to see how far past that line I could push.',
+    timeline: {
+      title: 'The Build Log',
+      range: 'Jun 20 – 27',
+      now: 'now',
+      doneFlag: 'It was done here',
+      caption:
+        'Each point is a day of the revamp; the line is commits, climbing. The gold mark is where the site was already a finished, cinematic build. Everything to the right of it — six “wonder” phases — is the obsession arc.',
+    },
+    stats: {
+      hours: 'Hours poured',
+      commits: 'Revamp commits',
+      phases: 'Wonder phases',
+      voices: 'Site voices',
+      lines: 'Lines of craft',
+      threejs: 'Three.js (removed)',
+    },
+    ledger: {
+      intro:
+        'The senior part of the work was not adding things — it was knowing what to keep. Here is what shipped, and what I built then deliberately cut.',
+      built: 'What I shipped',
+      cut: 'What I cut, and why',
+    },
+    phases: {
+      voice: { title: 'The Voice switcher', why: 'A full i18next layer — the whole site re-skins through five personalities, scalable to fifteen, with easter-egg voices unlocked by discovery.' },
+      marginalia: { title: 'Marginalia', why: 'Hover a flavor phrase and the real engineering fact unfolds in the margin — the fantasy made to earn its keep.' },
+      sky: { title: 'Time-aware sky', why: 'Five theme modes that resolve from your real local time via SunCalc — no geolocation prompt, pure math from your timezone.' },
+      sound: { title: 'Interactive sound', why: 'A Web Audio system of synthesized cues (zero bytes) that reward intent, never motion — default-on, silenced under reduced-motion.' },
+      recap: { title: 'The Expedition recap', why: 'A cinematic instrument that reads your device and connection client-side and pins you on a live polar map — nothing stored, nothing sent.' },
+      eggs: { title: 'Voice easter eggs', why: 'Type a secret word anywhere and a sealed personality wakes — Scott, Dwight, a cow — each authored in full character.' },
+    },
+    cuts: {
+      statusLine: { title: 'The “how did he know?” status line', why: 'Region + moon phase near the hero. Built, reviewed, cut — it edged from wonder toward creepy, and the time-driven palette already carried the magic.' },
+      battery: { title: 'The battery readout', why: 'Removed: the Battery Status API lies on some platforms (macOS Chrome reports 100% while charging). A card that “reads you” must never show data it cannot trust.' },
+      drone: { title: 'The arsenal drone bed', why: 'A continuous low drone behind the skill orbit. Cut for being harsh and fatiguing — sparse, intentional cues beat an ambient bed every time.' },
+      rgbOverlay: { title: 'The full-screen RGB voice tear', why: 'A chromatic glitch over the whole frame on voice change. Replaced with a quieter per-text decode scramble — the spectacle was louder than the moment deserved.' },
+    },
+    builtWith: 'Built with',
+    manifesto: [
+      'I build production web platforms for a living — finance, healthcare, logistics, the systems people actually depend on. This site is where I got to answer to no one but the craft.',
+      'The brief I gave myself was simple and unreasonable: make a hiring manager feel the work in ten seconds. Every section had to be a moment, not a list. The test was always “would this survive on awwwards?” — and if a part was static, it wasn’t done.',
+      'So I kept pushing past finished. Not because it needed it — because that is how I think, and I wanted you to be able to see exactly how.',
+    ],
+    sign: '— Manan, who could not leave it alone.',
   },
 
   voice: {

@@ -1607,3 +1607,253 @@ h1, h2, h3, h4, h5, h6 {
   .carousel-ctrl,
   .carousel-dot { transition: none; }
 }
+
+/* ===== The Atelier (coda — how this site was made) ===== */
+
+/* the confession — the human core */
+.atelier-confession {
+  font-size: clamp(24px, 4.4vw, 40px);
+  font-weight: 600;
+  line-height: 1.12;
+  letter-spacing: -0.01em;
+  color: var(--color-text);
+  max-width: 18ch;
+}
+.atelier-confession__sub {
+  font-size: clamp(15px, 1.8vw, 17px);
+  line-height: 1.6;
+  max-width: 52ch;
+  color: var(--color-text-muted);
+}
+
+/* the build-timeline card */
+.atelier-card {
+  background:
+    radial-gradient(120% 130% at 90% -10%, rgba(var(--color-ember-rgb), 0.08), transparent 52%),
+    radial-gradient(90% 90% at 5% 110%, rgba(var(--color-gold-rgb), 0.05), transparent 55%),
+    var(--gradient-card);
+}
+.atelier-card__hint {
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: var(--color-text-muted);
+}
+.atelier-card__caption {
+  font-size: 13.5px;
+  line-height: 1.55;
+  max-width: 60ch;
+  color: var(--color-text-muted);
+}
+
+.atelier-chart {
+  position: relative;
+  width: 100%;
+  height: clamp(160px, 26vw, 220px);
+}
+.atelier-chart__canvas { position: absolute; inset: 0; }
+.atelier-chart__axis {
+  position: absolute;
+  bottom: 1px;
+  font-family: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  color: var(--color-text-muted);
+}
+.atelier-chart__axis--start { left: 10px; }
+.atelier-chart__axis--end { right: 10px; color: var(--color-ember); }
+
+/* the "done" milestone flag, aligned to the canvas marker */
+.atelier-flag {
+  position: absolute;
+  top: 0;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  pointer-events: none;
+}
+.atelier-flag__dot {
+  width: 7px; height: 7px; border-radius: 9999px;
+  background: var(--color-gold);
+  box-shadow: 0 0 8px rgba(var(--color-gold-rgb), 0.6);
+}
+.atelier-flag__label {
+  margin-top: 5px;
+  padding: 2px 7px;
+  border-radius: 7px;
+  white-space: nowrap;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-gold);
+  background: rgba(var(--color-gold-rgb), 0.12);
+  border: 1px solid rgba(var(--color-gold-rgb), 0.35);
+}
+
+/* headline metrics */
+.atelier-stats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1px;
+  background: var(--color-card-border);
+  border: 1px solid var(--color-card-border);
+  border-radius: 16px;
+  overflow: hidden;
+}
+@media (min-width: 640px) { .atelier-stats { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (min-width: 1024px) { .atelier-stats { grid-template-columns: repeat(6, minmax(0, 1fr)); } }
+.atelier-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 20px 12px;
+  text-align: center;
+  background: var(--color-card-bg);
+}
+.atelier-stat__value {
+  font-size: clamp(26px, 3.6vw, 34px);
+  font-weight: 600;
+  line-height: 1;
+  color: var(--color-ember);
+}
+.atelier-stat__label {
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+/* the ledger — built vs cut */
+.atelier-ledger__intro {
+  font-size: clamp(16px, 2vw, 18px);
+  line-height: 1.55;
+  max-width: 60ch;
+  color: var(--color-text);
+}
+.atelier-ledger {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: 1fr;
+}
+@media (min-width: 768px) { .atelier-ledger { grid-template-columns: 1fr 1fr; gap: 20px; } }
+.atelier-col {
+  padding: 22px;
+  border-radius: 18px;
+  background: var(--gradient-card);
+  border: 1px solid var(--color-card-border);
+}
+.atelier-col__head {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+.atelier-col__head--built { color: var(--color-ember); }
+.atelier-col__head--cut { color: var(--color-text-muted); }
+.atelier-col__list {
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+}
+.atelier-entry {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 13px 0;
+  border-top: 1px solid var(--color-card-border);
+}
+.atelier-entry:first-child { border-top: 0; padding-top: 0; }
+.atelier-entry__title {
+  position: relative;
+  padding-left: 16px;
+  font-size: 14.5px;
+  font-weight: 600;
+  color: var(--color-text);
+}
+.atelier-entry__title::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.55em;
+  width: 7px; height: 7px;
+  border-radius: 9999px;
+}
+.atelier-entry--built .atelier-entry__title::before {
+  background: var(--color-ember);
+  box-shadow: 0 0 7px rgba(var(--color-ember-rgb), 0.5);
+}
+.atelier-entry--cut .atelier-entry__title { color: var(--color-text-muted); }
+.atelier-entry--cut .atelier-entry__title::before {
+  background: transparent;
+  border: 1px solid var(--color-text-muted);
+}
+.atelier-entry__why {
+  padding-left: 16px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--color-text-muted);
+}
+
+/* built-with chips */
+.atelier-tech { display: flex; flex-wrap: wrap; gap: 8px; }
+.atelier-chip {
+  padding: 6px 12px;
+  border-radius: 9999px;
+  font-size: 12px;
+  color: var(--color-text);
+  background: rgba(var(--color-ember-rgb), 0.06);
+  border: 1px solid var(--color-card-border);
+}
+
+/* the manifesto */
+.atelier-manifesto { max-width: 64ch; }
+.atelier-manifesto__p {
+  font-size: clamp(16px, 2vw, 19px);
+  line-height: 1.65;
+  color: var(--color-text);
+}
+.atelier-manifesto__p + .atelier-manifesto__p { margin-top: 16px; }
+.atelier-sign {
+  font-style: italic;
+  font-size: 18px;
+  color: var(--color-ember);
+}
+
+/* the Realms → Atelier nod (the unnumbered seventh realm) */
+.works-nod { display: flex; justify-content: center; text-align: center; }
+.works-nod__btn {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  max-width: 46ch;
+}
+.works-nod__line {
+  font-style: italic;
+  font-size: clamp(17px, 2.4vw, 21px);
+  line-height: 1.4;
+  color: var(--color-text-muted);
+  transition: color 0.25s ease;
+}
+.works-nod__btn:hover .works-nod__line { color: var(--color-text); }
+.works-nod__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--color-ember);
+  transition: gap 0.2s ease;
+}
+.works-nod__btn:hover .works-nod__cta { gap: 8px; }

@@ -1,4 +1,5 @@
 // Reusable UI components — shared across sections. Import via `from '../components'`.
+export { default as BuildTimeline } from './BuildTimeline';
 export { default as ChapterHeading } from './ChapterHeading';
 export { default as CompassRose } from './CompassRose';
 export { default as ControlCluster } from './ControlCluster';

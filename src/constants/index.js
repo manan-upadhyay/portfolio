@@ -375,6 +375,49 @@ export const stats = [
   { value: '38%', key: 'load' },
 ];
 
+// The Atelier (coda — LEGENDARY-ROADMAP §7). The "making-of" closing chapter:
+// how this very site was designed, developed and pushed past "done". This is
+// NON-COPY data only — the headline metrics, the build-timeline shape, and the
+// ledger/phase/cut/tech IDs. The voiced labels live in the bundles, keyed by
+// these ids: t('atelier.stats.<key>'), t('atelier.phases.<id>'), etc.
+export const atelier = {
+  // Headline instrument metrics. `value` is data; the label is voiced
+  // (t('atelier.stats.<key>')). `count` cells animate via CountUp; literals
+  // (e.g. "0 KB") render as-is. Sourced from `git log` + the file census.
+  stats: [
+    { key: 'hours', value: '100+', count: true },
+    { key: 'commits', value: '35', count: true },
+    { key: 'phases', value: '6', count: true },
+    { key: 'voices', value: '5', count: true },
+    { key: 'lines', value: '9.7K', count: false },
+    { key: 'threejs', value: '0 KB', count: false },
+  ],
+  // The build timeline — daily commit counts across the "Cartographer revamp"
+  // (Jun 20–27 2026). `done` flags the day the site was already a presentable,
+  // cinematic build — everything after is the obsession arc (the six phases).
+  // Drives the Canvas2D `BuildTimeline`; the flag label is voiced.
+  timeline: [
+    { day: 'Jun 20', commits: 1 },
+    { day: 'Jun 21', commits: 1 },
+    { day: 'Jun 22', commits: 5 },
+    { day: 'Jun 23', commits: 18, done: true },
+    { day: 'Jun 24', commits: 5 },
+    { day: 'Jun 25', commits: 3 },
+    { day: 'Jun 26', commits: 1 },
+    { day: 'Jun 27', commits: 1 },
+  ],
+  // The ledger. `built` = the six shipped "wonder" phases; `cut` = features
+  // built then deliberately removed (the senior-judgment column). ids key the
+  // voiced copy: t('atelier.phases.<id>.title' / '.why') and t('atelier.cuts…').
+  built: ['voice', 'marginalia', 'sky', 'sound', 'recap', 'eggs'],
+  cut: ['statusLine', 'battery', 'drone', 'rgbOverlay'],
+  // "Built with" — proper-noun tech names are data, rendered as chips.
+  tech: [
+    'React 18', 'Vite', 'GSAP · ScrollTrigger', 'Lenis', 'Framer Motion',
+    'Zustand', 'i18next', 'Web Audio', 'Canvas2D', 'SunCalc', 'Resend',
+  ],
+};
+
 // Education
 export const education = {
   degree: 'Bachelor of Engineering in Information Technology',

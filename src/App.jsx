@@ -18,6 +18,7 @@ const Experience = lazy(() => import('./sections/Experience'));
 const Tech = lazy(() => import('./sections/Tech'));
 const Works = lazy(() => import('./sections/Works'));
 const Contact = lazy(() => import('./sections/Contact'));
+const Atelier = lazy(() => import('./sections/Atelier'));
 
 const SectionLoader = () => (
   <div className="flex items-center justify-center py-20">
@@ -106,6 +107,10 @@ const App = () => {
       </ErrorBoundary>
       <ErrorBoundary>
         <Suspense fallback={<SectionLoader />}><Contact /></Suspense>
+      </ErrorBoundary>
+      {/* The Atelier — coda chapter: how this very site was made. */}
+      <ErrorBoundary>
+        <Suspense fallback={<SectionLoader />}><Atelier /></Suspense>
       </ErrorBoundary>
 
       <footer className="py-10 text-center border-t" style={{ borderColor: 'var(--color-card-border)' }}>

@@ -8,6 +8,7 @@ import { SectionWrapper } from '../hoc';
 import { projects, chapters } from '../constants';
 import { ChapterHeading, ScrollReveal, Annotated } from '../components';
 import { useThemeStore } from '../store/useThemeStore';
+import { scrollToSection } from '../lib/smoothScroll';
 import Magnet from '../components/Magnet';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -265,6 +266,17 @@ const Works = () => {
           </AnimatePresence>
         </div>
       )}
+
+      {/* The subtle nod: the portfolio itself as the unnumbered seventh realm —
+          no card (you're already standing in it), just a quiet line into the
+          Atelier coda. */}
+      <ScrollReveal direction="up" className="works-nod mt-16">
+        <button type="button" onClick={() => scrollToSection('atelier')} data-cursor="hover"
+          className="works-nod__btn">
+          <span className="works-nod__line font-chronicle">{t('works.nod')}</span>
+          <span className="works-nod__cta">{t('works.nodCta')} <ArrowUpRight size={15} /></span>
+        </button>
+      </ScrollReveal>
     </>
   );
 };

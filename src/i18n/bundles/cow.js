@@ -100,6 +100,8 @@ export default {
     ndaSealed: 'Moo moo moo moo — moo moo moo moo moo moo.',
     chartMore: 'Moo {{count}} moo moo',
     furl: 'Moo moo moo',
+    nod: 'Moo moo moo moo moo. Moo moo moo moo moo moo.',
+    nodCta: 'Moo moo moo',
     projects: {
       gajaakriti: { description: 'Moo moo moo moo moo moo moo moo moo moo moo.', highlights: ['Moo moo moo moo moo moo moo.', 'Moo moo moo moo moo moo.', 'Moo moo moo moo moo.', 'Moo moo moo moo moo moo moo.'] },
       'royal-tiles': { description: 'Moo moo moo moo moo — moo moo moo, moo moo moo moo.', highlights: ['Moo moo moo moo moo moo.', 'Moo moo moo moo moo.', 'Moo moo moo moo moo moo moo.', 'Moo moo moo moo.', 'Moo moo moo moo moo.'] },
@@ -198,6 +200,43 @@ export default {
       some: '{{count}} moo {{total}} moo. Moo moo.',
       all: 'Moo moo moo moo moo. Moo!',
     },
+  },
+
+  // The Atelier — moo. (Per-phase/per-cut details fall back to chronicle.)
+  atelier: {
+    eyebrow: 'Moo Moo',
+    title: 'Moo moo moo moo',
+    confession: 'Moo moo moo. Moo moo moo moo.',
+    confessionSub:
+      'Moo moo moo moo moo moo moo moo moo moo moo. Moo moo moo moo moo, moo moo moo moo moo moo moo — moo moo moo moo moo moo moo moo moo.',
+    timeline: {
+      title: 'Moo Moo',
+      range: 'Moo 20 – 27',
+      now: 'moo',
+      doneFlag: 'Moo moo moo',
+      caption:
+        'Moo moo moo moo moo moo. Moo moo moo moo moo moo moo. Moo moo moo moo moo moo moo moo moo moo.',
+    },
+    stats: {
+      hours: 'Moo moo',
+      commits: 'Moo moo moo',
+      phases: 'Moo moo',
+      voices: 'Moo moo',
+      lines: 'Moo moo moo',
+      threejs: 'Moo (moo)',
+    },
+    ledger: {
+      intro: 'Moo moo moo moo moo. Moo moo moo moo moo moo moo moo.',
+      built: 'Moo moo',
+      cut: 'Moo moo moo',
+    },
+    builtWith: 'Moo moo',
+    manifesto: [
+      'Moo moo moo moo moo moo moo moo. Moo moo moo moo moo moo moo moo moo.',
+      'Moo moo moo moo moo moo moo moo moo moo. Moo moo moo moo moo moo — moo moo moo moo moo moo.',
+      'Moo moo moo moo moo moo. Moo moo moo. Moo.',
+    ],
+    sign: '— Moo. (Moo moo moo.)',
   },
 
   footer: {

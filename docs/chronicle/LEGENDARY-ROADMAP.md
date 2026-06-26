@@ -22,6 +22,7 @@
 | 4 | **Interactive sound design** (Web Audio synth + raven sample) | ✅ | 7 | 6 | med |
 | 5 | **Expedition recap** (client-side session send-off) | ✅ | 6 | 4 | low |
 | 1b | **Voice easter eggs** (scott / dwight / cow + unlock system) | ✅ | 6 | 4 | low |
+| 7 | **The Atelier** (making-of coda: build timeline + built/cut ledger + manifesto) | ✅ | 8 | 5 | low |
 | 6 | **Lantern cursor** (invisible-ink reveal; can host a voice-unlock) | 🔵 | 8 | 6 | med |
 
 **Guiding principle:** every feature must either *serve a skeptical/impatient
@@ -444,6 +445,44 @@ only).
 - [x] `useExpedition` hook — track chapters/scroll/time/theme/realms in session.
 - [x] Recap card UI in Contact section.
 - [x] (explore) sealed-voice hint integrated into the recap.
+
+---
+
+## 7. The Atelier — the making-of coda  · Phase 7 · ✅ SHIPPED
+
+> **Shipped.** A new **coda chapter** (`sections/Atelier.jsx`, id `atelier`) after
+> Contact, before the footer — "how the map was drawn." Answers the brief: a
+> human, behind-the-scenes look at how the site was designed, iterated, and pushed
+> past "done," grounded in real repo data. **Not a numbered chapter** — kept out of
+> `chapters`/`chapterList` so the SideRail + ⌘K map stay the six-realm journey.
+>
+> **Movements:** (1) a **confession** (the human core — "It was already done. Then
+> I kept going."); (2) the signature **`BuildTimeline`** instrument
+> (`components/BuildTimeline.jsx`) — a Canvas2D cumulative-commit area chart of the
+> Jun 20–27 revamp burst that draws itself on first view, with a gold "it was done
+> here" milestone marker after which the line brightens (the obsession arc); follows
+> the project's instrument conventions (DPR-aware, theme-token re-read on
+> `resolvedTheme`, IO-paused, reduced-motion → single static frame); (3) a `CountUp`
+> **metrics** strip (hours / commits / phases / voices / lines / 0 KB Three.js);
+> (4) the **ledger** — every shipped phase paired with **what was built then cut**
+> (status line, battery, drone bed, RGB overlay) as the senior-judgment column;
+> (5) a **built-with** chip rail; (6) the **manifesto** + signature.
+>
+> **Data vs. copy:** metric values, the timeline shape, and ledger/cut/tech ids are
+> data in **`constants.atelier`**; all labels are voiced under **`atelier.*`** — full
+> passes in `chronicle` (cartographer) + `plain` (colophon), character passes in
+> `scott` / `dwight` / `cow` for the narrative-prominent keys (per-phase/per-cut
+> facts deep-merge-fall back to chronicle's real substance). **The Realms nod**
+> (`works.nod` / `works.nodCta`, authored in all five voices) closes The Realms with
+> "the seventh realm is the one you're standing in →" linking into the Atelier — the
+> deliberate alternative to a self-referential project card. CSS: `.atelier-*` +
+> `.works-nod*` in `index.css` (token-driven, AA both skies). Verified: `npm run
+> build` + lint clean; ships as its own lazy chunk (~3 KB gz).
+
+**Decision (locked): no project card for the portfolio itself.** A card inside The
+Realms breaks the gallery frame, competes with real client proof, and under-sells
+the meta-story. The portfolio-as-masterwork lives in the Atelier coda instead; the
+Realms get one subtle closing nod into it.
 
 ---
 

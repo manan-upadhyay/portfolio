@@ -126,6 +126,8 @@ export default {
     ndaSealed: '[[nda|Classified]]. I have said too much already. This conversation is over.',
     chartMore: 'Reveal {{count}} more conquests',
     furl: 'Seal the records',
+    nod: 'Six territories above. The seventh is the ground beneath your feet — this site.',
+    nodCta: 'Review the schematics',
     projects: {
       gajaakriti: {
         description: 'A media-heavy website and command center for a premium wedding studio. Media delivery: optimized. Performance: superior.',
@@ -262,6 +264,45 @@ export default {
       some: '{{count}} of {{total}} voices still classified. The investigation continues.',
       all: 'All voices declassified. Impressive. I trust you completely. (I do not.)',
     },
+  },
+
+  // The Atelier — Dwight's voice. Narrative keys only; per-phase/per-cut details
+  // fall back to chronicle's real facts.
+  atelier: {
+    eyebrow: 'The Schematics',
+    title: 'How This Was Constructed',
+    confession: 'It was complete. I continued regardless. Superior soldiers do not rest.',
+    confessionSub:
+      'The site was operational and presentable approximately twenty commits ago. A lesser developer would have stood down. I did not stand down. I committed an additional one hundred hours, because “adequate” is the motto of the weak, and Schrutes do not surrender ground.',
+    timeline: {
+      title: 'The Surveillance Log',
+      range: 'Jun 20 – 27',
+      now: 'now',
+      doneFlag: 'Mission complete here',
+      caption:
+        'Each marker is a day of operations. The line ascends because I do not retreat. The gold marker indicates where a normal operative would cease. I am not a normal operative. I am Assistant Regional Manager.',
+    },
+    stats: {
+      hours: 'Hours deployed',
+      commits: 'Operations logged',
+      phases: 'Strategic phases',
+      voices: 'Voices commanded',
+      lines: 'Lines fortified',
+      threejs: 'Three.js (eliminated)',
+    },
+    ledger: {
+      intro:
+        'Weakness is adding everything. Strength is the discipline to remove. I removed with precision. Observe.',
+      built: 'Deployed',
+      cut: 'Eliminated, with cause',
+    },
+    builtWith: 'Constructed with',
+    manifesto: [
+      'I construct production systems for serious institutions — finance, healthcare, logistics. Mission-critical. This site, however, answered to no authority but my own standards.',
+      'The objective was absolute: a recruiter must comprehend my superiority within ten seconds. Every section is a deliberate position. A static section is an undefended position. I do not leave positions undefended.',
+      'Therefore I advanced past completion. Not by requirement. By nature. Discipline. Loyalty. Fact.',
+    ],
+    sign: '— Dwight K. Schrute. (Manan. It is Manan.)',
   },
 
   footer: {

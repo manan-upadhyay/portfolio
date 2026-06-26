@@ -24,6 +24,7 @@ export default {
     ctaPrimary: 'Begin',
     ctaSecondary: 'Contact HQ →',
     scroll: 'Descend',
+    spin: 'Rotate the alidade. Fact: gears.',
   },
 
   about: {

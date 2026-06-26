@@ -12,13 +12,20 @@ import { mountAstrolabe } from '../lib/astrolabe';
  * @param {string} themeKey  re-mount trigger (e.g. resolvedTheme)
  * @param {(radPerSec: number) => void} [onSpeed]  per-frame needle angular-speed
  *        report (rad/s) — used to drive the gear sound in sync with the needle.
+ * @param {React.MutableRefObject<{ spin: () => void } | null>} [controlsRef]
+ *        populated with the live instrument controls (e.g. `spin()`) while mounted.
  */
-export function useAstrolabe(canvasRef, wrapRef, bearingRef, themeKey, onSpeed) {
+export function useAstrolabe(canvasRef, wrapRef, bearingRef, themeKey, onSpeed, controlsRef) {
   useEffect(() => {
     const canvas = canvasRef.current;
     const wrap = wrapRef.current;
     if (!canvas || !wrap) return undefined;
-    return mountAstrolabe(canvas, wrap, { bearingEl: bearingRef?.current, onSpeed });
+    const inst = mountAstrolabe(canvas, wrap, { bearingEl: bearingRef?.current, onSpeed });
+    if (controlsRef) controlsRef.current = inst;
+    return () => {
+      inst.destroy();
+      if (controlsRef) controlsRef.current = null;
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [themeKey]);
 }

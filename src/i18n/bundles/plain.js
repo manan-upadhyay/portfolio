@@ -27,6 +27,7 @@ export default {
     hook: 'Five years building production web platforms where performance, reliability, and craft drive results.',
     ctaPrimary: 'View my work',
     ctaSecondary: 'Contact me →',
+    spin: 'Spin the pointer',
   },
 
   about: {

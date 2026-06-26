@@ -54,6 +54,17 @@ export function mountAstrolabe(canvas, wrap, { bearingEl, onSpeed } = {}) {
   let needleSpeed = 0;    // smoothed |dθ/dt| in rad/s (drives the gear sound)
   let lastDeg = -1;
   let raf;
+
+  // Free-spin physics (the "spin the wheel" flick): a flick winds the alidade up
+  // to a peak velocity, then friction bleeds it off so it coasts to a natural stop.
+  let spinning = false;
+  let spinVel = 0;        // current angular velocity, rad/s (signed)
+  let spinDir = 1;        // ±1 spin direction
+  let spinPeak = 0;       // velocity the wind-up is climbing toward, rad/s
+  let spinUp = 0;         // 0..1 wind-up progress
+  const SPIN_UP = 0.32;       // seconds to reach peak velocity
+  const SPIN_FRICTION = 0.16; // fraction of velocity retained per second (decay)
+  const SPIN_STOP = 0.6;      // rad/s below which the coast settles to rest
   const start = performance.now();
 
   // Seeded constellation field on the inner disc.
@@ -192,12 +203,30 @@ export function mountAstrolabe(canvas, wrap, { bearingEl, onSpeed } = {}) {
   const loop = (ts) => {
     const el = (ts - start) / 1000;
     const introDone = reduce || el >= ASSEMBLE;
+    // Frame delta, clamped so a tab-refocus stall can't teleport the needle.
+    const dt = prevTs ? Math.min((ts - prevTs) / 1000, 0.05) : 0;
+    let frameSpeed = null; // explicit rad/s for the gear sound (free spin path)
     if (reduce) {
       cur = -Math.PI / 2;
     } else if (!introDone) {
       // Dramatic multi-turn spin that decelerates into "up" (Origin).
       const pA = easeOut(seg(el, 0.95, 1.45));
       cur = -Math.PI / 2 + (1 - pA) * (TWO_PI * 2 + 0.6);
+    } else if (spinning) {
+      // Wind up to peak, then let friction bleed the velocity off (a flywheel).
+      if (spinUp < 1) {
+        spinUp = Math.min(1, spinUp + (dt > 0 ? dt : 0.016) / SPIN_UP);
+        spinVel = spinDir * spinPeak * easeOut(spinUp);
+      } else {
+        spinVel *= Math.pow(SPIN_FRICTION, dt);
+      }
+      cur += spinVel * dt;
+      frameSpeed = Math.abs(spinVel);
+      if (spinUp >= 1 && Math.abs(spinVel) < SPIN_STOP) {
+        spinning = false;
+        spinVel = 0;
+        cur = Math.atan2(Math.sin(cur), Math.cos(cur)); // settle to a clean angle
+      }
     } else if (coarse || mouse.x === null) {
       cur += (-Math.PI / 2 + Math.sin(ts / 2600) * 0.5 - cur) * 0.04;
     } else {
@@ -210,10 +239,10 @@ export function mountAstrolabe(canvas, wrap, { bearingEl, onSpeed } = {}) {
     draw(ts);
 
     // Report the needle's angular speed (rad/s, smoothed) so the gear sound can
-    // turn exactly as fast as the alidade does — silent when it's at rest.
+    // turn exactly as fast as the alidade does — silent when it's at rest. During
+    // a free spin we know the velocity exactly, so use it (avoids a wrap spike).
     if (onSpeed) {
-      const dt = prevTs ? (ts - prevTs) / 1000 : 0;
-      const inst = dt > 0 ? Math.abs(cur - prevCur) / dt : 0;
+      const inst = frameSpeed != null ? frameSpeed : (dt > 0 ? Math.abs(cur - prevCur) / dt : 0);
       needleSpeed += (inst - needleSpeed) * 0.2; // low-pass to tame frame jitter
       onSpeed(needleSpeed);
     }
@@ -225,7 +254,8 @@ export function mountAstrolabe(canvas, wrap, { bearingEl, onSpeed } = {}) {
       if (deg !== lastDeg) {
         lastDeg = deg;
         const charting = introDone && !reduce && !coarse && mouse.x !== null;
-        bearingEl.textContent = `bearing ${String(deg).padStart(3, '0')}° · ${charting ? 'charting' : 'origin'}`;
+        const state = spinning ? 'spinning' : charting ? 'charting' : 'origin';
+        bearingEl.textContent = `bearing ${String(deg).padStart(3, '0')}° · ${state}`;
       }
     }
     if (!reduce) raf = requestAnimationFrame(loop);
@@ -240,11 +270,25 @@ export function mountAstrolabe(canvas, wrap, { bearingEl, onSpeed } = {}) {
   window.addEventListener('resize', updateRect);
   raf = requestAnimationFrame(loop); // runs once under reduced-motion (no reschedule)
 
-  return () => {
+  // Flick the alidade into a free spin. Each call winds it up (adding momentum if
+  // it's already turning) and friction coasts it to a natural stop. No-op under
+  // reduced motion, where the loop doesn't run.
+  const spin = () => {
+    if (reduce) return;
+    spinDir = spinning ? spinDir : Math.random() < 0.5 ? -1 : 1;
+    // A fresh, satisfying flick (~3–4 turns/sec peak); a re-flick adds momentum.
+    spinPeak = Math.min((spinning ? Math.abs(spinVel) : 0) + 18 + Math.random() * 6, 40);
+    spinUp = 0;
+    spinning = true;
+  };
+
+  const destroy = () => {
     cancelAnimationFrame(raf);
     ro.disconnect();
     window.removeEventListener('pointermove', onMove);
     window.removeEventListener('scroll', updateRect);
     window.removeEventListener('resize', updateRect);
   };
+
+  return { destroy, spin };
 }

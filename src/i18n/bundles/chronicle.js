@@ -39,6 +39,7 @@ export default {
     ctaPrimary: 'Begin the Chronicle',
     ctaSecondary: 'Summon me →',
     scroll: 'Scroll',
+    spin: 'Spin the alidade',
   },
 
   about: {

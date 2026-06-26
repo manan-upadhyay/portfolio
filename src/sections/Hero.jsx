@@ -7,6 +7,7 @@ import { personalInfo, chapters } from '../constants';
 import { useThemeStore } from '../store/useThemeStore';
 import { scrollToSection } from '../lib/smoothScroll';
 import { useAstrolabe } from '../hooks/useAstrolabe';
+import { RefreshCcw, RotateCw } from 'lucide-react';
 import { sound } from '../lib/sound';
 import CompassRose from '../components/CompassRose';
 
@@ -25,6 +26,7 @@ const Hero = () => {
   const canvasRef = useRef(null);
   const canvasWrapRef = useRef(null);
   const bearingRef = useRef(null);
+  const astrolabeRef = useRef(null);
 
   // `t(returnObjects)` hands back a fresh array every render — memoize per voice
   // so it's a stable reference (otherwise the rotation effect churns). `t`'s
@@ -86,7 +88,7 @@ const Hero = () => {
   // The living astrolabe (Canvas2D). Re-mounts on theme change to re-read tokens.
   // Its needle speed drives the gear sound, so the gear turns as fast as the cursor
   // sweeps the alidade (and is silent at rest). Safe regardless of sound state.
-  useAstrolabe(canvasRef, canvasWrapRef, bearingRef, resolvedTheme, sound.watch.setSpeed);
+  useAstrolabe(canvasRef, canvasWrapRef, bearingRef, resolvedTheme, sound.watch.setSpeed, astrolabeRef);
 
   // Astrolabe watch-mechanism sound — hero-local; its level tracks how much of the
   // hero is on screen, so it fades to silence as you scroll past (natural distance
@@ -178,6 +180,40 @@ const Hero = () => {
           <CompassRose className="w-full h-full opacity-90" />
         </motion.div>
       </div>
+
+      {/* Spin control — a subtle button pinned to the instrument's lower edge.
+          Clicking flicks the alidade into a free spin that winds up and coasts to
+          a natural stop (real flywheel friction). Hidden under reduced motion,
+          where the needle doesn't animate. Mirrors the astrolabe's responsive box
+          so it always sits on the rim. */}
+      {!prefersReduced && (
+        <div
+          className="absolute z-20 pointer-events-none aspect-square left-1/2 -translate-x-1/2 top-[6%] w-[62vw] max-w-[280px]
+                     md:left-auto md:translate-x-0 md:right-[4%] md:top-1/2 md:-translate-y-1/2 md:w-[min(44vw,560px)] md:max-w-none"
+        >
+          <motion.button
+            type="button"
+            onClick={() => astrolabeRef.current?.spin()}
+            data-cursor="hover"
+            aria-label={t('hero.spin')}
+            title={t('hero.spin')}
+            className="pointer-events-auto absolute left-1/2 bottom-0 -translate-x-1/2 translate-y-1/2 grid place-items-center
+                       w-11 h-11 rounded-full backdrop-blur-sm transition-colors"
+            style={{
+              background: 'rgba(var(--hero-scrim-rgb), 0.5)',
+              border: '1px solid var(--color-card-border)',
+              color: 'var(--color-ember)',
+            }}
+            initial={{ opacity: 0, scale: 0.6 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: prefersReduced ? 0 : 2.1, type: 'spring', stiffness: 220, damping: 18 }}
+            whileHover={{ scale: 1.12, rotate: 90 }}
+            whileTap={{ scale: 0.9, rotate: 220 }}
+          >
+            <RefreshCcw size={17} strokeWidth={1.75} />
+          </motion.button>
+        </div>
+      )}
 
       {/* Bearing readout (desktop, pointer devices). */}
       <div className="hidden md:block absolute z-[5] bottom-[12%] right-[7%] pointer-events-none">

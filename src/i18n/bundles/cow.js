@@ -23,6 +23,7 @@ export default {
     ctaPrimary: 'Moo',
     ctaSecondary: 'Moo →',
     scroll: 'Moo',
+    spin: 'Moo moo moo',
   },
 
   about: {

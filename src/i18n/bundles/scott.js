@@ -26,6 +26,7 @@ export default {
     ctaPrimary: 'Let’s be friends',
     ctaSecondary: 'Call me →',
     scroll: 'Scroll, please',
+    spin: 'Give it a whirl',
   },
 
   about: {

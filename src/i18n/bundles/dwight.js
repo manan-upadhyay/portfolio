@@ -58,6 +58,7 @@ export default {
     intro: 'This is my service record. It is accurate, verifiable, and impressive. Question it and you question the sun. Proceed.',
     travelTrail: 'Advance',
     present: 'Active Duty',
+    onAssignment: 'Deployed',
     journey: {
       'first-trail': {
         chapter: 'Recruitment',
@@ -73,16 +74,31 @@ export default {
         chapter: 'Training',
         headline: 'Formal credentials acquired. CGPA 8.36 / 10. Fact.',
         role: 'Cadet, Information Technology',
-        points: ['Acquired a formal engineering degree. Credentials are non-negotiable.'],
+        points: [
+          'Acquired a formal engineering degree. Credentials are non-negotiable.',
+          'Then acquired a second degree — LL.B., three years, from HNGU — and passed the bar examination (AIBE). Redundant credentials are superior credentials. I am also legally formidable.',
+        ],
       },
       expedition: {
         chapter: 'The Long Campaign',
         headline: 'Six industries. Production-grade. No survivors — among the bugs.',
         role: 'Full Stack Developer',
         points: [
+          'Awarded the first-ever Employee of the Month. Month one. Bested 29 rivals. Dominance.',
           'Deployed applications across six sectors: finance, health, logistics, CRM, SaaS, media.',
           'Maintained total ownership — requisition through production surveillance.',
-          'Fortified every application (JWT/OAuth, Okta, RBAC) and maximized speed.',
+        ],
+      },
+      vanguard: {
+        chapter: 'Special Assignment',
+        headline: 'Commanding the front line of the Capital Group account.',
+        role: 'Lead Frontend Developer',
+        org: 'Infosys · stationed at Capital Group',
+        via: 'Chain of command, stated precisely: enlisted at Inexture, sub-contracted through Infosys, stationed at Capital Group. Three flags. One soldier. Zero confusion. Question it and you question logistics itself.',
+        points: [
+          'Led frontend operations across multiple Capital Group products. Command established.',
+          'Executed 4 production releases. Features built from nothing. Flawless.',
+          'Directed sprint planning, client demos, code reviews, and production surveillance.',
         ],
       },
       horizon: {

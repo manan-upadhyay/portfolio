@@ -19,9 +19,11 @@ interface VoiceState {
   hallOpen: boolean;
   openHall: () => void;
   closeHall: () => void;
-  /** Has the visitor ever opened the Hall? Persisted — drives the one-time
-   *  "come discover voices" pulse on the quill button. */
+  /** Has the visitor ever opened the Hall? Persisted. */
   hallSeen: boolean;
+  /** Has the one-time "try the voices" entice note been shown/engaged? Persisted. */
+  voiceNoted: boolean;
+  markVoiceNoted: () => void;
 }
 
 export const useVoiceStore = create<VoiceState>()(
@@ -55,12 +57,15 @@ export const useVoiceStore = create<VoiceState>()(
 
       hallOpen: false,
       hallSeen: false,
-      openHall: () => set({ hallOpen: true, hallSeen: true }),
+      openHall: () => set({ hallOpen: true, hallSeen: true, voiceNoted: true }),
       closeHall: () => set({ hallOpen: false }),
+
+      voiceNoted: false,
+      markVoiceNoted: () => set({ voiceNoted: true }),
     }),
     {
       name: 'voice-storage',
-      partialize: (s) => ({ voice: s.voice, unlocked: s.unlocked, hallSeen: s.hallSeen }),
+      partialize: (s) => ({ voice: s.voice, unlocked: s.unlocked, hallSeen: s.hallSeen, voiceNoted: s.voiceNoted }),
       // The i18n layer reads the persisted voice at init and (for a sealed,
       // unlocked voice) lazy-loads its bundle + switches — see i18n/index.js.
       // The store's `voice` rehydrates from the same storage, so menu + content

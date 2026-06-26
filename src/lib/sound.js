@@ -342,11 +342,11 @@ const watch = makeBed({
 
     // Slow gear-tooth clicks: resonant noise gated by a slow inverted saw LFO.
     const src = ctx.createBufferSource(); src.buffer = noise; src.loop = true;
-    const bp = ctx.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 2200; bp.Q.value = 9;
+    const bp = ctx.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 3000; bp.Q.value = 25;
     const bp2 = ctx.createBiquadFilter(); bp2.type = 'bandpass'; bp2.frequency.value = 1150; bp2.Q.value = 7;
-    const gate = ctx.createGain(); gate.gain.value = 0.18;
-    const lfo = ctx.createOscillator(); lfo.type = 'sawtooth'; lfo.frequency.value = 1.6; // slow teeth
-    const lfoAmt = ctx.createGain(); lfoAmt.gain.value = -0.18; // inverted → sharp tick + decay
+    const gate = ctx.createGain(); gate.gain.value = 0.015;
+    const lfo = ctx.createOscillator(); lfo.type = 'sawtooth'; lfo.frequency.value = 18; // slow teeth
+    const lfoAmt = ctx.createGain(); lfoAmt.gain.value = -0.15; // inverted → sharp tick + decay
     lfo.connect(lfoAmt).connect(gate.gain);
     src.connect(bp).connect(gate);
     src.connect(bp2).connect(gate);

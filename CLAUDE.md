@@ -62,8 +62,11 @@ hardcode display strings in components; add the key to the bundles instead.
 The visitor-facing controls are the top-right `SkyControl` (the 5-mode sky menu
 wrapping `DayNightToggle`) and the bottom-right `ControlCluster` = `VoiceSwitcher`
 + `SoundControl` (the Phase 4 interactive-sound master control). The
-`VoiceSwitcher` popover (open voices + a collapsible sealed group + a discovery
-ring) and the full searchable **`VoiceHall`** overlay (⇧⌘V) both pick voices.)
+`VoiceSwitcher` popover is intentionally minimal (open voices + a one-time
+scroll-triggered entice note + a CTA into the Hall); the searchable, category-
+grouped **`VoiceHall`** overlay (⇧⌘V) is the rich picker, with a gamified
+**"Summon a voice"** request form that posts through the same raven endpoint as
+Contact. Info popovers use the portalled **`Hovercard`** so they're never clipped.)
 
 **Palette / theme:** dark-first "starlit realm" + light "dawn over the realm".
 All color via CSS variables in `src/index.css`. See
@@ -130,6 +133,14 @@ All color via CSS variables in `src/index.css`. See
    `src/constants/`. Components are pure presenters — no inline prose, no magic
    numbers for content, no hardcoded strings. A new string → add a bundle key
    (and its `plain` override when the wording changes by voice).
+   - **Every new piece of content ships in EVERY voice.** When you add or change
+     any visible copy, write it for **all** bundles — the `chronicle` base
+     (canonical/fallback), `plain`, **and** every easter-egg voice
+     (`scott`, `dwight`, `cow`, …), each in that personality's character. Don't
+     rely on fallback for voiced copy: i18next **replaces** (not deep-merges)
+     array keys like `points`, so a voice that overrides an array misses
+     newly-added entries entirely unless you add them there too. New voice → it
+     must cover the new keys before it ships.
 3. **Theme-token only.** Use `var(--color-*)` / Tailwind tokens. **No raw hex in
    components** except inside generated-art fallbacks. If you need a new color,
    add a token to `index.css` (both themes).

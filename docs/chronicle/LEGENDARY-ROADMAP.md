@@ -51,11 +51,24 @@ reduced-motion + touch, `npm run build` clean, then move on.
 > reference); open-state lives in `useVoiceStore.hallOpen` so it can be summoned
 > from **⇧⌘V**, the cluster popover's **"Open the Voice Hall"** CTA, or a
 > **"Change voice"** action added to the ⌘K `MapOverlay`. The bottom-right
-> `VoiceSwitcher` popover was rebuilt: open voices always shown, a **collapsible**
-> sealed group (so it never grows off-screen), a discovery **progress ring** +
-> one-time **pulse** (`hallSeen`, persisted) on the quill, and the Hall CTA.
-> Verified via CDP incl. a 12-voice scale test (popover collapses, Hall scrolls/
-> groups, recap constellation wraps), build + lint clean.
+> `VoiceSwitcher` popover was rebuilt and then **decluttered** to its essentials
+> (open voices + a CTA into the Hall — the sealed-discovery game lives in the Hall
+> now). The disliked static quill ring/pulse was **removed** in favour of a
+> one-time, scroll-triggered **entice note** above the quill (catchy marketing
+> copy; appears once the visitor reaches the Arsenal; `voiceNoted` persisted).
+> Verified via CDP incl. a 12-voice scale test (Hall scrolls/groups, recap
+> constellation wraps), build + lint clean.
+>
+> **Wow + gamification pass.** The Hall got an ambient ember/gold **aura + star
+> dust** backdrop, a proper **header** (feather crest + serif title + subtitle),
+> **medallion** monograms, and staggered card entrance. Added a gamified
+> **"Summon a Voice"** tile (`VoiceRequest` in `VoiceHall.jsx`): a collapsed CTA
+> that unfolds into a tiny form (persona + email + why) and posts through the
+> existing **`/api/send-raven`** endpoint (`inquiry: 'Voice request'`), then bursts
+> into a celebratory confirmation. All info popovers were moved to a portalled
+> **`Hovercard`** (fixes the regression where tooltips inside the new scrolling
+> menus were clipped and spawned a stray scrollbar). Authored across `chronicle`
+> + `plain` (other voices fall back).
 
 **What:** A visible "Voice" control that re-skins all site copy through a chosen
 register. Two serious voices ship first; playful personalities unlock as easter
@@ -406,6 +419,15 @@ One shared `AudioContext`, unlocked on first gesture.
 > the nudge line, and an **"Explore all →"** opens the Voice Hall. Verified via
 > CDP (IP path **and** blocked-IP fallback, dark/light, build + lint clean). See
 > §1 for the Voice Hall + scalable switcher.
+>
+> **Credibility fixes.** **Battery was dropped** — the Battery Status API reports
+> wrong values on some platforms (notably macOS Chrome: 100%/charging regardless
+> of real charge), and a "reads you from your device" card must never show data it
+> can't trust. The Connection grid now lets a lone trailing cell (e.g. the long
+> IP) **span the row** (`:last-child:nth-child(odd)`), so there's never an empty
+> slot. Unrelated but shipped here: `history.scrollRestoration = 'manual'` in
+> `smoothScroll.js` — the browser's native scroll-restore fought GSAP's pinned
+> Experience on reload; manual restore loads clean at the hero instead.
 
 **What:** A small "Your expedition" card near contact: chapters charted, scroll
 distance, time spent, theme(s) used, realms opened. Computed **client-side,

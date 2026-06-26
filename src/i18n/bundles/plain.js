@@ -52,7 +52,13 @@ export default {
     journey: {
       'first-trail': { chapter: 'First Role', headline: 'Where I started.' },
       oath: { chapter: 'Education', headline: 'B.E. Information Technology · CGPA 8.36 / 10.' },
-      expedition: { chapter: 'Current Role', headline: 'Six industries. Production-grade. End to end.' },
+      expedition: { chapter: 'Full Stack Role', headline: 'Six industries. Production-grade. End to end.' },
+      vanguard: {
+        chapter: 'Lead Role',
+        headline: 'Leading frontend across the Capital Group product network.',
+        org: 'Infosys · embedded with Capital Group',
+        via: 'Employed by Inexture, sub-contracted through Infosys, embedded with Capital Group.',
+      },
       horizon: { chapter: "What's Next", headline: 'Open to teams who value craft and ownership.' },
     },
     summonCta: 'Contact me',
@@ -115,6 +121,7 @@ export default {
 
   voiceHall: {
     title: 'Voices',
+    subtitle: 'Pick the writing voice — or request one that isn’t here yet.',
     searchPlaceholder: 'Search voices…',
     close: 'Close',
     noResult: 'No matching voice.',
@@ -125,6 +132,19 @@ export default {
       core: 'Core',
       office: 'The Office',
       bestiary: 'Animals',
+    },
+    request: {
+      section: 'Request',
+      cta: 'Request a voice',
+      ctaSub: 'Want a specific voice or personality? Let me know and I’ll consider adding it.',
+      persona: 'Which voice / personality?',
+      personaPlaceholder: 'e.g. a famous character, an accent, a tone…',
+      emailPlaceholder: 'your email — so I can follow up',
+      send: 'Send request',
+      sending: 'Sending…',
+      done: 'Request sent',
+      doneSub: 'Thanks — I’ll consider “{{persona}}.”',
+      error: 'Something went wrong — check the name and a valid email, then retry.',
     },
   },
 
@@ -168,6 +188,13 @@ export default {
       some: '{{count}} of {{total}} hidden voices still locked.',
       all: 'All hidden voices unlocked. Nice.',
     },
+  },
+
+  voice: {
+    openHall: 'Browse all voices',
+    hallTeaserSome: '{{count}} hidden voices to find',
+    hallTeaserAll: 'All voices unlocked',
+    note: 'Tip: you can change the writing voice — try Plainspoken, or find the hidden ones.',
   },
 
   footer: {

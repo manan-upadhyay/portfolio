@@ -142,12 +142,27 @@ export const skillCategories = [
 
 const experiences = [
   {
+    title: 'Lead Frontend Developer',
+    company_name: 'Infosys (sub-contract) · Capital Group',
+    icon: web,
+    iconBg: '#1E293B',
+    date: 'January 2025 – Present',
+    points: [
+      'Led frontend development across multiple products within the Capital Group network as a sub-contractor with Infosys.',
+      'Shipped 4 production releases, including features architected and built from scratch.',
+      'Gained hands-on exposure to Helm charts, Harness pipelines, and AWS.',
+      'Drove sprint planning, client demos, backlog grooming, code reviews, and production monitoring.',
+    ],
+    technologies: ['React.js', 'Next.js', 'Okta', 'Highcharts', 'AWS', 'Helm', 'Harness'],
+  },
+  {
     title: 'Full Stack Developer',
     company_name: 'Inexture Solutions',
     icon: backend,
     iconBg: '#1E293B',
     date: 'January 2022 – Present',
     points: [
+      'Won the first-ever Employee of the Month award — earned in the program’s opening month, among a 30-member team.',
       'Delivered production-grade web applications across finance, healthcare, logistics, CRM/ERP, SaaS, media-heavy, and visualization-driven platforms using React.js, Next.js, Node.js, Express.js, NestJS, MongoDB, and PostgreSQL.',
       'Built end-to-end frontend features from requirement grooming and task breakdown to implementation, API integration, QA support, release validation, and production monitoring.',
       'Developed secure authentication and authorization flows using JWT/OAuth, Okta, Auth.js, RBAC, middleware-based access control, and dynamic user access conditions.',
@@ -181,6 +196,10 @@ export const journey = [
   { id: 'first-trail', year: '2021', tech: ['React', 'Redux', 'Strapi', 'Prisma', 'PostgreSQL'], kind: 'work' },
   { id: 'oath', year: '2022', tech: [], kind: 'edu' },
   { id: 'expedition', year: '2022 — Now', tech: ['Next.js', 'Node.js', 'NestJS', 'PostgreSQL', 'MongoDB', 'Auth'], kind: 'work', current: true },
+  // `secondment` (not `current`) flags an assignment that branches off the
+  // previous waypoint's employer — rendered with a "via" route link + ribbon so
+  // it never reads as a second, simultaneous job. See Experience.jsx.
+  { id: 'vanguard', year: 'Jan 2025 — Now', tech: ['Next.js', 'Okta', 'AWS', 'Helm', 'Harness'], kind: 'work', secondment: true, secondedTo: 'Infosys' },
   { id: 'horizon', year: 'Now', tech: [], kind: 'cta' },
 ];
 
@@ -362,6 +381,14 @@ export const education = {
   university: 'Gujarat Technological University',
   year: '2022',
   cgpa: '8.36/10',
+  // Secondary credential, kept low-key (not career-related). Surfaced as a quiet
+  // second line on the Education ("Oath") waypoint — see experience.journey.oath.
+  additional: {
+    degree: 'Bachelor of Laws (LL.B.)',
+    university: 'Hemchandracharya North Gujarat University (HNGU)',
+    year: '2026',
+    note: 'Cleared the All India Bar Examination (AIBE), June 2026.',
+  },
 };
 
 export { services, experiences, projects, featuredProjects, otherProjects };

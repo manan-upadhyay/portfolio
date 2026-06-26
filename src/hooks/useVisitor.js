@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { readVisitor, fetchGeo, getBattery, getNetwork, measureRefreshRate } from '../lib/visitor';
+import { readVisitor, fetchGeo, getNetwork, measureRefreshRate } from '../lib/visitor';
 
 /**
  * Resolves the visitor "reading" for the expedition recap: the synchronous
@@ -13,14 +13,12 @@ import { readVisitor, fetchGeo, getBattery, getNetwork, measureRefreshRate } fro
 export const useVisitor = (measureHz = false) => {
   const base = readVisitor(); // sync + cached
   const [geo, setGeo] = useState(null);
-  const [battery, setBattery] = useState(null);
   const [hz, setHz] = useState(null);
   const network = getNetwork(); // sync
 
   useEffect(() => {
     let alive = true;
     fetchGeo().then((g) => { if (alive) setGeo(g); });
-    getBattery().then((b) => { if (alive) setBattery(b); });
     return () => { alive = false; };
   }, []);
 
@@ -39,7 +37,6 @@ export const useVisitor = (measureHz = false) => {
     region: geo?.city || base.region,
     area: geo?.country || base.area,
     geo,
-    battery,
     hz,
     network,
   };

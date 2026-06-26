@@ -9,14 +9,14 @@ import SoundControl from './SoundControl';
  * normal flex flow, growing it naturally pushes the voice button left. The theme
  * toggle stays top-right (unchanged).
  */
-const ControlCluster = () => (
+const ControlCluster = ({ activeId }) => (
   <motion.div
     initial={{ opacity: 0, y: 20 }}
     animate={{ opacity: 1, y: 0 }}
     transition={{ delay: 0.8, duration: 0.6 }}
     className="fixed bottom-5 right-5 z-40 flex items-end gap-3"
   >
-    <VoiceSwitcher />
+    <VoiceSwitcher activeId={activeId} />
     <SoundControl />
   </motion.div>
 );

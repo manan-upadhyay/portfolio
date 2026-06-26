@@ -134,16 +134,10 @@ export const fetchGeo = () => {
   return geoPromise;
 };
 
-/** Battery level (0–1) + charging state. `null` where the API is unavailable. */
-export const getBattery = async () => {
-  try {
-    if (!navigator.getBattery) return null;
-    const b = await navigator.getBattery();
-    return { level: b.level, charging: b.charging };
-  } catch {
-    return null;
-  }
-};
+// NOTE: the Battery Status API was intentionally NOT used — it reports incorrect
+// values on several platforms (notably macOS Chrome, which returns 100%/charging
+// regardless of the real charge), and the recap must never show untrustworthy
+// data. Network + IP are the reliable "connection" signals.
 
 /** Connection class — effectiveType + downlink (Mbps) + rtt (ms). */
 export const getNetwork = () => {

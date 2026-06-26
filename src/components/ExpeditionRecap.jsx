@@ -10,6 +10,7 @@ import { useVisitor } from '../hooks/useVisitor';
 import { deviceHash, drawSigil } from '../lib/sigil';
 import ScrollReveal from './ScrollReveal';
 import SunArc from './SunArc';
+import Hovercard from './Hovercard';
 
 const fmtTime = (s) => {
   const m = Math.floor(s / 60);
@@ -262,9 +263,11 @@ const ExpeditionRecap = () => {
     { key: 'tongue', value: v.language },
   ].filter((r) => r.value).map((r) => ({ ...r, label: t(`recap.reading.${r.key}`) }));
 
-  // The connection "signal" (battery + network + IP — populates as it resolves).
+  // The connection "signal" (network + IP — populates as it resolves). Battery was
+  // dropped: the Battery Status API reports wrong values on some platforms (e.g.
+  // macOS Chrome shows 100% while charging), and a credibility-first card must
+  // never show data it can't trust.
   const signal = [
-    { key: 'lantern', value: v.battery ? `${Math.round(v.battery.level * 100)}%${v.battery.charging ? ' ⚡' : ''}` : null },
     { key: 'road', value: v.network ? [v.network.effectiveType, v.network.downlink ? `${v.network.downlink} Mbps` : null, v.network.rtt ? `${v.network.rtt}ms` : null].filter(Boolean).join(' · ') : null },
     { key: 'carrier', value: v.geo?.isp || null },
     { key: 'origin', value: v.geo?.ip ? `${v.geo.flag ? `${v.geo.flag} ` : ''}${v.geo.ip}` : null },
@@ -290,9 +293,9 @@ const ExpeditionRecap = () => {
             <span className="chapter-eyebrow">{t('recap.title')}</span>
             <p className="expedition-sub mt-2.5">
               {t('recap.subtitle')}
-              <span className="expedition-how" title={t('recap.how')} tabIndex={0} aria-label={t('recap.how')}>
+              <Hovercard className="expedition-how" width={240} ariaLabel={t('recap.how')} content={<span className="text-[11.5px] leading-snug block" style={{ color: 'var(--color-text-muted)' }}>{t('recap.how')}</span>}>
                 <Info size={13} />
-              </span>
+              </Hovercard>
             </p>
           </div>
           <div className="expedition-sigil flex-shrink-0" title={t('recap.sigilNote')}>

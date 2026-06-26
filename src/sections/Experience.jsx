@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useTranslation } from 'react-i18next';
-import { Briefcase, GraduationCap, Compass, ArrowRight } from 'lucide-react';
+import { Briefcase, GraduationCap, Compass, ArrowRight, GitBranch } from 'lucide-react';
 import { journey, chapters } from '../constants';
 import { ChapterHeading, ScrollReveal } from '../components';
 import { scrollToSection } from '../lib/smoothScroll';
@@ -17,6 +17,9 @@ const WaypointBody = ({ w }) => {
   const Icon = KIND_ICON[w.kind] || Briefcase;
   const isCta = w.kind === 'cta';
   const points = t(`experience.journey.${w.id}.points`, { returnObjects: true });
+  // Secondment note — names the full chain (home employer → who he's seconded
+  // through → where he's embedded) so the assignment never reads as a 2nd job.
+  const via = w.secondment ? t(`experience.journey.${w.id}.via`, { defaultValue: '' }) : '';
   return (
     <div className="realm-card relative h-full p-7 flex flex-col overflow-hidden">
       {/* watermark era marker — fully contained, sits behind the foot as texture */}
@@ -42,7 +45,25 @@ const WaypointBody = ({ w }) => {
             <span className="status-dot" /> {t('experience.present')}
           </span>
         )}
+        {w.secondment && (
+          <span
+            className="ml-auto flex items-center gap-1.5 text-[10.5px] px-2 py-0.5 rounded-full font-medium whitespace-nowrap"
+            style={{ color: 'var(--color-gold)', background: 'rgba(var(--color-gold-rgb),0.1)', border: '1px solid rgba(var(--color-gold-rgb),0.32)' }}
+          >
+            <GitBranch size={11} /> {t('experience.onAssignment')}
+          </span>
+        )}
       </div>
+
+      {/* secondment ribbon — the explicit, layout-independent disambiguation */}
+      {via && (
+        <p
+          className="flex items-start gap-2 text-[11.5px] leading-snug mb-4 -mt-1 pl-2.5 border-l-2"
+          style={{ color: 'var(--color-text-muted)', borderColor: 'rgba(var(--color-gold-rgb),0.5)' }}
+        >
+          {via}
+        </p>
+      )}
 
       {/* identity block — the single focal point */}
       <p className="chapter-eyebrow !text-[10.5px] !tracking-[0.26em] !gap-2 mb-2.5">{t(`experience.journey.${w.id}.chapter`)}</p>
@@ -242,6 +263,25 @@ const Experience = () => {
                 className="wp shrink-0 relative flex items-center justify-center px-3"
                 style={{ width: 'var(--card-w)' }}
               >
+                {/* secondment tie — a labelled link sitting on the route midway
+                    back to the previous (employer) waypoint, so the assignment
+                    visibly BRANCHES off the prior role rather than running parallel */}
+                {w.secondment && (
+                  <span
+                    className="absolute z-10 flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[9.5px] font-medium tracking-wide whitespace-nowrap"
+                    style={{
+                      left: 0,
+                      top: 'calc(50% - var(--card-h) / 2 - 46px)',
+                      transform: 'translate(-50%, -50%)',
+                      background: 'var(--color-primary)',
+                      border: '1px dashed rgba(var(--color-gold-rgb),0.55)',
+                      color: 'var(--color-text-muted)',
+                    }}
+                  >
+                    <GitBranch size={11} style={{ color: 'var(--color-gold)' }} /> {t('experience.via')}
+                  </span>
+                )}
+
                 {/* waypoint marker on the route + connector down to the card */}
                 <span
                   className="wp-node absolute left-1/2 -translate-x-1/2 rotate-45 w-3.5 h-3.5 transition-all"
@@ -276,6 +316,14 @@ const Experience = () => {
           {journey.map((w) => (
             <ScrollReveal key={w.id} direction="up" className="relative pl-10">
               <span className="absolute left-0 top-3 rotate-45 w-3.5 h-3.5" style={{ background: 'var(--color-gold)' }} />
+              {w.secondment && (
+                <span
+                  className="absolute left-0 -translate-x-1/2 -top-5 flex items-center gap-1 px-2 py-0.5 rounded-full text-[9.5px] font-medium whitespace-nowrap"
+                  style={{ background: 'var(--color-primary)', border: '1px dashed rgba(var(--color-gold-rgb),0.55)', color: 'var(--color-text-muted)' }}
+                >
+                  <GitBranch size={10} style={{ color: 'var(--color-gold)' }} /> {t('experience.via')}
+                </span>
+              )}
               <WaypointBody w={w} />
             </ScrollReveal>
           ))}

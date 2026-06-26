@@ -76,6 +76,8 @@ export default {
       'Every expedition leaves a trail. Keep scrolling to travel mine — from the first commit to the present campaign.',
     travelTrail: 'Travel the trail',
     present: 'Present',
+    onAssignment: 'On assignment',
+    via: 'via Infosys',
     // Per-waypoint copy, keyed by the journey item `id` in constants.
     journey: {
       'first-trail': {
@@ -94,7 +96,10 @@ export default {
         headline: 'Forged the foundations · CGPA 8.36 / 10.',
         role: 'B.E. Information Technology',
         org: 'Gujarat Technological University',
-        points: ['Engineering degree in Information Technology.'],
+        points: [
+          'Engineering degree in Information Technology.',
+          'And a three-year LL.B. from Hemchandracharya North Gujarat University — earned alongside the work, with the bar cleared (AIBE) in 2026.',
+        ],
       },
       expedition: {
         chapter: 'The Long Expedition',
@@ -102,9 +107,21 @@ export default {
         role: 'Full Stack Developer',
         org: 'Inexture Solutions',
         points: [
+          'First-ever Employee of the Month — claimed in month one, among 30.',
           'Delivered apps across finance, health, logistics, CRM, SaaS & media.',
           'Owned features end to end — grooming to production monitoring.',
-          'Secured apps (JWT/OAuth, Okta, RBAC) and tuned performance.',
+        ],
+      },
+      vanguard: {
+        chapter: 'The Vanguard',
+        headline: 'Leading the front line of the Capital Group fleet.',
+        role: 'Lead Frontend Developer',
+        org: 'Infosys · embedded with Capital Group',
+        via: 'Flying Inexture’s colours — sub-contracted through Infosys, embedded with the Capital Group fleet.',
+        points: [
+          'Lead frontend across multiple products on the Capital Group network.',
+          'Shipped 4 production releases — features charted from scratch.',
+          'Ran sprint planning, client demos, code reviews & production monitoring.',
         ],
       },
       horizon: {
@@ -281,6 +298,7 @@ export default {
   // The Voice Hall — the command-palette voice picker (scales past the popover).
   voiceHall: {
     title: 'The Voice Hall',
+    subtitle: 'Choose who narrates the chronicle — or summon a voice not yet among us.',
     searchPlaceholder: 'Search voices…  try “office”, “boss”, “moo”',
     close: 'Close',
     noResult: 'No voice answers to that name — yet.',
@@ -291,6 +309,24 @@ export default {
       core: 'The Voices',
       office: 'The Office',
       bestiary: 'The Bestiary',
+    },
+    // The gamified "summon a new voice" tile.
+    request: {
+      section: 'Summon',
+      cta: 'Summon a new voice',
+      ctaSub: 'A character you’d love to hear narrate this? Send word to the cartographer.',
+      back: 'Back',
+      persona: 'Whose voice?',
+      personaPlaceholder: 'Gandalf · a dread pirate · your favourite villain…',
+      email: 'Your email',
+      emailPlaceholder: 'your email — so I can tell you when it lands',
+      note: 'Why them?',
+      notePlaceholder: 'make your case (optional)',
+      send: 'Send the request',
+      sending: 'Summoning…',
+      done: 'Your request takes flight',
+      doneSub: 'The cartographer will weigh “{{persona}}.” Thank you, traveler.',
+      error: 'The raven balked — check the name and a valid email, then try again.',
     },
   },
 
@@ -359,10 +395,15 @@ export default {
 
   voice: {
     menuTitle: 'Voice',
+    pinned: 'Marked Voices',
     sealed: 'Sealed Voices',
     sealedHint: 'Solve a clue, then',
     sealedTypeHint: 'type the answer anywhere on the page.',
-    openHall: 'Open the Voice Hall',
+    openHall: 'Enter the Voice Hall',
+    hallTeaserSome: '{{count}} sealed voices await discovery',
+    hallTeaserAll: 'Every voice discovered — wander them all',
+    // The one-time entice note above the quill (replaces the old static ring).
+    note: 'Psst — this whole tale can be told in other voices. Care to meet them?',
     locked: 'Locked',
     ariaOpen: 'Choose a voice',
   },

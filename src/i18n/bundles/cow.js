@@ -57,6 +57,7 @@ export default {
     intro: 'Moo moo moo moo moo moo. Moo moo moo moo moo moo moo moo moo moo.',
     travelTrail: 'Moo moo',
     present: 'Moo',
+    onAssignment: 'Moo moo',
     journey: {
       'first-trail': {
         chapter: 'Moo', headline: 'Moo moo moo moo.', role: 'Moo Moo', org: 'Moo Moo Moo',
@@ -64,11 +65,17 @@ export default {
       },
       oath: {
         chapter: 'Moo Moo', headline: 'Moo moo moo moo moo · 8.36 / 10.', role: 'Moo', org: 'Moo Moo Moo Moo',
-        points: ['Moo moo moo moo moo moo.'],
+        points: ['Moo moo moo moo moo moo.', 'Moo moo moo — LL.B. — moo HNGU, moo moo (AIBE), moo.'],
       },
       expedition: {
         chapter: 'Moo Moo Moo', headline: 'Moo moo. Moo-moo. Moo moo moo.', role: 'Moo Moo Moo', org: 'Moo Moo',
-        points: ['Moo moo moo moo moo moo moo.', 'Moo moo moo moo moo moo.', 'Moo moo moo moo moo.'],
+        points: ['Moo moo moo moo moo — moo moo moo 30. Moo!', 'Moo moo moo moo moo moo moo.', 'Moo moo moo moo moo moo.'],
+      },
+      vanguard: {
+        chapter: 'Moo Moo Moo Moo', headline: 'Moo moo moo Capital Group moo.', role: 'Moo Moo Moo',
+        org: 'Infosys · Capital Group',
+        via: 'Moo moo Inexture, moo moo Infosys, moo moo Capital Group. Moo moo moo moo.',
+        points: ['Moo moo moo moo Capital Group moo.', 'Moo moo 4 moo moo — moo moo moo.', 'Moo moo moo, moo moo, moo moo moo.'],
       },
       horizon: {
         chapter: 'Moooo', headline: 'Moo moo moo moo moo moo moo.', role: 'Moooo', org: 'Moo moo moo moo',
@@ -199,6 +206,7 @@ export default {
 
   voice: {
     menuTitle: 'Moo',
+    pinned: 'Moo Moo Moo',
     sealed: 'Moo Moo',
   },
 };

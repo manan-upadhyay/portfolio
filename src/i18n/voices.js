@@ -10,6 +10,13 @@
 // Sealed voices carry a `trigger` (the secret word the visitor types to unlock —
 // see EasterEggListener) and a `hint` (the cryptic clue shown on the locked row,
 // so discovery is a solvable game, not a guess).
+//
+// `pinned: true` PROMOTES a voice (open or sealed) into the compact bottom-right
+// VoiceSwitcher popover so it sits alongside the open voices — a curated, code-
+// configured "favourites" shortlist. A pinned-but-still-sealed voice shows its
+// clue + ⓘ reference there (and is excluded from the popover's "Sealed Voices"
+// group to avoid listing it twice). Set/unset it here in code; nothing else needs
+// to change.
 
 export const DEFAULT_VOICE = 'chronicle';
 
@@ -46,6 +53,7 @@ export const voices = [
     label: 'World’s Best Boss',
     sample: 'That’s what she said.',
     locked: true,
+    pinned: true, // curated favourite — surfaced in the compact VoiceSwitcher popover
     category: 'office',
     glyph: 'Ms',
     trigger: 'boss',
@@ -93,6 +101,9 @@ export const OPEN_VOICES = voices.filter((v) => !v.locked).map((v) => v.id);
 
 // Voices behind the easter-egg gate.
 export const SEALED_VOICES = voices.filter((v) => v.locked).map((v) => v.id);
+
+// Curated "favourites" surfaced in the compact VoiceSwitcher popover (code-set).
+export const PINNED_VOICES = voices.filter((v) => v.pinned).map((v) => v.id);
 
 export const voiceById = (id) => voices.find((v) => v.id === id) || null;
 

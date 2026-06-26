@@ -75,7 +75,7 @@ const App = () => {
       <SideRail activeId={activeId} onOpenMap={() => setMapOpen(true)} visible={activeId !== 'origin'} />
       <div className="fixed top-5 right-5 z-40"><SkyControl /></div>
       {/* bottom-right control cluster — voice switcher (+ audio control in Phase 4) */}
-      <ControlCluster />
+      <ControlCluster activeId={activeId} />
       {/* listens for secret trigger words → unlocks the sealed voices */}
       <EasterEggListener />
       {/* per-text decode scramble + sound when the voice/copy changes */}

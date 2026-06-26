@@ -17,6 +17,13 @@ export const useSmoothScroll = () => {
   useEffect(() => {
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+    // Own scroll restoration: the browser's native restore fights GSAP's pinned
+    // horizontal Experience (its scroll-distance changes the page height as pins
+    // resolve), so a reload mid-page would jank through it. Manual = always start
+    // clean at the top (the hero), no fight with Lenis/ScrollTrigger.
+    if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+    window.scrollTo(0, 0);
+
     const lenis = new Lenis({
       duration: 1.1,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),

@@ -60,6 +60,7 @@ export default {
     intro: 'Okay, everybody — conference room, five minutes. This is the story of my career, and it is a journey. There will be snacks. (There are no snacks.)',
     travelTrail: 'Take the tour',
     present: 'Currently',
+    onAssignment: 'On loan (big deal)',
     journey: {
       'first-trail': {
         chapter: 'The Cold Open',
@@ -75,16 +76,31 @@ export default {
         chapter: 'School',
         headline: 'I have a degree. A real one. CGPA 8.36 / 10. Boom.',
         role: 'Student (a good one)',
-        points: ['Got an engineering degree in IT. Framed it. Looked at it. Still proud.'],
+        points: [
+          'Got an engineering degree in IT. Framed it. Looked at it. Still proud.',
+          'Then got a LAW degree too — LL.B., three years, from HNGU — and passed the bar (AIBE). I am basically a lawyer. Don’t sue me, I’ll sue back.',
+        ],
       },
       expedition: {
         chapter: 'The Big Leagues',
         headline: 'Six industries. Production-grade. End to end. Boom — roasted.',
         role: 'Full Stack Developer',
         points: [
+          'Won the first-ever Employee of the Month. Month one. Out of 30 people. Undefeated.',
           'Delivered apps across finance, health, logistics, CRM, SaaS and media.',
           'Owned features end to end — meeting to monitoring, no babysitting required.',
-          'Locked everything down (JWT/OAuth, Okta, RBAC) and made it fast.',
+        ],
+      },
+      vanguard: {
+        chapter: 'The Big Account',
+        headline: 'Running point on the Capital Group account. Huge client. Huge.',
+        role: 'Lead Frontend Developer',
+        org: 'Infosys · for Capital Group',
+        via: 'Okay so technically I work for Inexture, who loaned me to Infosys, who put me on Capital Group. It’s a whole thing. I’m basically a free agent. A people person who happens to be a free agent.',
+        points: [
+          'Led frontend on multiple Capital Group products. They needed a leader. Hello.',
+          'Shipped 4 production releases. Built features from scratch. From NOTHING.',
+          'Ran sprint planning, client demos, code reviews. Meetings, basically. I love meetings.',
         ],
       },
       horizon: {

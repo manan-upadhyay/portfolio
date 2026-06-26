@@ -273,6 +273,9 @@ function makeBed({ build, peak = 1, sampleUrl = null }) {
     },
     start() { wanted = true; ensure(); apply(); },
     stop() { wanted = false; level = 0; if (nodes) { nodes.stop(); nodes = null; } },
+    // Forward a live drive value (e.g. needle speed) to the running voice, if it
+    // implements one. No-op while the bed isn't sounding (sample beds, or faded out).
+    setSpeed(v) { if (nodes && nodes.setSpeed) nodes.setSpeed(v); },
     refresh() { if (wanted && level > 0.001) { ensure(); apply(); } else if (nodes && !enabled) { nodes.stop(); nodes = null; } },
     // Preload the optional loop sample; if the bed is already sounding the synth
     // fallback, swap to the sample seamlessly.
@@ -321,47 +324,65 @@ const hum = makeBed({
   },
 });
 
-// Hero astrolabe (synth fallback) — a SLOW revolving gear: a continuous low
-// rotational rumble (tremolo'd by a ~0.5 Hz "turn") under slow, sharp gear-tooth
-// clicks (~1.6 Hz, resonant metallic noise gated by an inverted saw LFO). Reads
-// as a big outer gear turning. Hero-local, scroll-faded.
+// Hero astrolabe (synth fallback) — a revolving gear whose sound IS the needle's
+// motion: a low rotational rumble + sharp gear-tooth clicks that are *silent at
+// rest* and swell in only while the alidade turns. Both the click rate (the
+// gear-tooth LFO) and the loudness are driven live by the needle's angular speed
+// via `setSpeed(radPerSec)`, called every frame by the astrolabe. So the gear
+// spins exactly as fast as the cursor sweeps the needle. Hero-local, scroll-faded.
+const TWO_PI = Math.PI * 2;
+const GEAR_TEETH = 26;        // teeth per full needle revolution → click rate
+const GEAR_MAX_HZ = 38;       // ceiling on the tooth-click rate (rad/s can spike)
+const GEAR_FULL_SPEED = 6;    // needle rad/s at which the gear reaches full volume
 const watch = makeBed({
   peak: CONFIG.beds.hero.peak,
   sampleUrl: CONFIG.beds.hero.sample,
   build: () => {
     const g = ctx.createGain(); g.gain.value = 0.0001;
 
-    // Continuous rotational rumble (the gear turning).
+    // Motion gate — the whole gear runs through this; it sits silent until the
+    // needle moves, so there is no constant background drone (driven by setSpeed).
+    const motion = ctx.createGain(); motion.gain.value = 0.0001;
+
+    // Rotational rumble (the gear body turning).
     const rumble = ctx.createOscillator(); rumble.type = 'sawtooth'; rumble.frequency.value = 64;
     const rumLp = ctx.createBiquadFilter(); rumLp.type = 'lowpass'; rumLp.frequency.value = 180; rumLp.Q.value = 0.5;
     const rumG = ctx.createGain(); rumG.gain.value = 0.16;
-    const turn = ctx.createOscillator(); turn.type = 'sine'; turn.frequency.value = 0.5; // ~one revolution / 2s
-    const turnAmt = ctx.createGain(); turnAmt.gain.value = 0.07;
-    turn.connect(turnAmt).connect(rumG.gain);
-    rumble.connect(rumLp).connect(rumG).connect(g);
+    rumble.connect(rumLp).connect(rumG).connect(motion);
 
-    // Slow gear-tooth clicks: resonant noise gated by a slow inverted saw LFO.
+    // Gear-tooth clicks: resonant noise gated by an inverted saw LFO whose rate
+    // is set live to the needle's revolving speed.
     const src = ctx.createBufferSource(); src.buffer = noise; src.loop = true;
     const bp = ctx.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 3000; bp.Q.value = 25;
     const bp2 = ctx.createBiquadFilter(); bp2.type = 'bandpass'; bp2.frequency.value = 1150; bp2.Q.value = 7;
-    const gate = ctx.createGain(); gate.gain.value = 0.015;
-    const lfo = ctx.createOscillator(); lfo.type = 'sawtooth'; lfo.frequency.value = 18; // slow teeth
+    const gate = ctx.createGain(); gate.gain.value = 0.15;
+    const lfo = ctx.createOscillator(); lfo.type = 'sawtooth'; lfo.frequency.value = 0.0001; // teeth rate := needle speed
     const lfoAmt = ctx.createGain(); lfoAmt.gain.value = -0.15; // inverted → sharp tick + decay
     lfo.connect(lfoAmt).connect(gate.gain);
     src.connect(bp).connect(gate);
     src.connect(bp2).connect(gate);
-    gate.connect(g);
+    gate.connect(motion);
 
+    motion.connect(g);
     g.connect(master);
-    [rumble, turn, lfo].forEach((o) => o.start()); src.start();
+    [rumble, lfo].forEach((o) => o.start()); src.start();
     return {
       gain: g,
+      // Map the needle's angular speed (rad/s) → gear-tooth click rate + loudness.
+      setSpeed(radPerSec) {
+        const speed = Math.abs(radPerSec) || 0;
+        const t = now();
+        const clickHz = Math.min((speed / TWO_PI) * GEAR_TEETH, GEAR_MAX_HZ);
+        lfo.frequency.setTargetAtTime(Math.max(clickHz, 0.0001), t, 0.05);
+        const m = Math.min(speed / GEAR_FULL_SPEED, 1);
+        motion.gain.setTargetAtTime(0.0001 + m, t, 0.08);
+      },
       stop() {
         const t = now();
         g.gain.setTargetAtTime(0.0001, t, 0.2);
         try { src.stop(t + 0.6); } catch { /* already stopped */ }
-        [rumble, turn, lfo].forEach((o) => { try { o.stop(t + 0.6); } catch { /* already stopped */ } });
-        setTimeout(() => { [rumble, rumLp, rumG, turn, turnAmt, src, bp, bp2, gate, lfo, lfoAmt, g].forEach((n) => n.disconnect()); }, 800);
+        [rumble, lfo].forEach((o) => { try { o.stop(t + 0.6); } catch { /* already stopped */ } });
+        setTimeout(() => { [rumble, rumLp, rumG, motion, src, bp, bp2, gate, lfo, lfoAmt, g].forEach((n) => n.disconnect()); }, 800);
       },
     };
   },

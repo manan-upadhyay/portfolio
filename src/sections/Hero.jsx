@@ -84,7 +84,9 @@ const Hero = () => {
   }, []);
 
   // The living astrolabe (Canvas2D). Re-mounts on theme change to re-read tokens.
-  useAstrolabe(canvasRef, canvasWrapRef, bearingRef, resolvedTheme);
+  // Its needle speed drives the gear sound, so the gear turns as fast as the cursor
+  // sweeps the alidade (and is silent at rest). Safe regardless of sound state.
+  useAstrolabe(canvasRef, canvasWrapRef, bearingRef, resolvedTheme, sound.watch.setSpeed);
 
   // Astrolabe watch-mechanism sound — hero-local; its level tracks how much of the
   // hero is on screen, so it fades to silence as you scroll past (natural distance

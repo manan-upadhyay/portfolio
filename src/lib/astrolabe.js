@@ -25,10 +25,12 @@ const seg = (el, s, d) => Math.max(0, Math.min((el - s) / d, 1)); // staged sub-
 /**
  * @param {HTMLCanvasElement} canvas
  * @param {HTMLElement} wrap  square wrapper that sizes the canvas
- * @param {{ bearingEl?: HTMLElement|null }} [opts]  optional live bearing readout
+ * @param {{ bearingEl?: HTMLElement|null, onSpeed?: (radPerSec: number) => void }} [opts]
+ *        optional live bearing readout + a per-frame needle angular-speed report
+ *        (rad/s, smoothed) — used to drive the gear sound in sync with the needle.
  * @returns {() => void} cleanup
  */
-export function mountAstrolabe(canvas, wrap, { bearingEl } = {}) {
+export function mountAstrolabe(canvas, wrap, { bearingEl, onSpeed } = {}) {
   const c = canvas.getContext('2d');
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const coarse = window.matchMedia('(hover: none)').matches;
@@ -47,6 +49,9 @@ export function mountAstrolabe(canvas, wrap, { bearingEl } = {}) {
   let rect = { left: 0, top: 0, width: 0, height: 0 };
   const mouse = { x: null, y: null };
   let cur = -Math.PI / 2; // current alidade angle (points "up" = N = Origin)
+  let prevCur = cur;      // alidade angle last frame (for angular-speed reporting)
+  let prevTs = 0;         // ts last frame
+  let needleSpeed = 0;    // smoothed |dθ/dt| in rad/s (drives the gear sound)
   let lastDeg = -1;
   let raf;
   const start = performance.now();
@@ -203,6 +208,17 @@ export function mountAstrolabe(canvas, wrap, { bearingEl } = {}) {
       cur += d * 0.08;
     }
     draw(ts);
+
+    // Report the needle's angular speed (rad/s, smoothed) so the gear sound can
+    // turn exactly as fast as the alidade does — silent when it's at rest.
+    if (onSpeed) {
+      const dt = prevTs ? (ts - prevTs) / 1000 : 0;
+      const inst = dt > 0 ? Math.abs(cur - prevCur) / dt : 0;
+      needleSpeed += (inst - needleSpeed) * 0.2; // low-pass to tame frame jitter
+      onSpeed(needleSpeed);
+    }
+    prevCur = cur;
+    prevTs = ts;
 
     if (bearingEl) {
       const deg = Math.round((((cur + Math.PI / 2) * 180) / Math.PI % 360 + 360) % 360);

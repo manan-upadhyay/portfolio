@@ -10,13 +10,15 @@ import { mountAstrolabe } from '../lib/astrolabe';
  * @param {React.RefObject<HTMLElement>} wrapRef    square wrapper sizing the canvas
  * @param {React.RefObject<HTMLElement>} bearingRef optional live bearing readout
  * @param {string} themeKey  re-mount trigger (e.g. resolvedTheme)
+ * @param {(radPerSec: number) => void} [onSpeed]  per-frame needle angular-speed
+ *        report (rad/s) — used to drive the gear sound in sync with the needle.
  */
-export function useAstrolabe(canvasRef, wrapRef, bearingRef, themeKey) {
+export function useAstrolabe(canvasRef, wrapRef, bearingRef, themeKey, onSpeed) {
   useEffect(() => {
     const canvas = canvasRef.current;
     const wrap = wrapRef.current;
     if (!canvas || !wrap) return undefined;
-    return mountAstrolabe(canvas, wrap, { bearingEl: bearingRef?.current });
+    return mountAstrolabe(canvas, wrap, { bearingEl: bearingRef?.current, onSpeed });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [themeKey]);
 }

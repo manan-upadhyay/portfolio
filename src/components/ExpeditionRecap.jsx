@@ -1,0 +1,282 @@
+import { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { Lock, Star } from 'lucide-react';
+import { useExpeditionStore, useElapsed, PX_PER_METER } from '../hooks/useExpedition';
+import { useThemeStore } from '../store/useThemeStore';
+import { useVoiceStore } from '../store/useVoiceStore';
+import { SEALED_VOICES, voiceById } from '../i18n/voices';
+import { readVisitor, fmtCoord, localReading } from '../lib/visitor';
+import ScrollReveal from './ScrollReveal';
+import CompassRose from './CompassRose';
+
+const fmtTime = (s) => {
+  const m = Math.floor(s / 60);
+  const sec = s % 60;
+  return m ? `${m}m ${String(sec).padStart(2, '0')}s` : `${sec}s`;
+};
+
+/* ---------- The Traveler's Map — a polar-azimuthal radar that pins the visitor
+   from their timezone-derived coordinates (north pole at the centre). The
+   cartographer's signature instrument, bookending the hero astrolabe. ---------- */
+const TravelerMap = ({ lat, lng }) => {
+  const ref = useRef(null);
+  const resolvedTheme = useThemeStore((s) => s.resolvedTheme);
+
+  useEffect(() => {
+    const canvas = ref.current;
+    const wrap = canvas.parentElement;
+    const ctx = canvas.getContext('2d');
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const cs = getComputedStyle(canvas);
+    const v = (name, fb) => (cs.getPropertyValue(name) || fb).trim();
+    const ember = v('--color-ember', '#d9772e');
+    const emberRgb = v('--color-ember-rgb', '217,119,46');
+    const goldRgb = v('--color-gold-rgb', '184,138,46');
+    const lineCol = v('--color-card-border', 'rgba(255,255,255,0.1)');
+
+    // Deterministic faint star field (seeded so resize doesn't reshuffle it).
+    let seed = 9301;
+    const rnd = () => ((seed = (seed * 9301 + 49297) % 233280) / 233280);
+    const stars = Array.from({ length: 44 }, () => ({ a: rnd() * Math.PI * 2, r: 0.18 + rnd() * 0.82, s: 0.4 + rnd() * 1.1 }));
+
+    // Visitor ping: colatitude → radius (N pole centre, S pole rim), lng → bearing.
+    const pingR = Math.max(0, Math.min(180, 90 - lat)) / 180;
+    const pingA = (lng * Math.PI) / 180;
+
+    let W = 0, H = 0, R = 0, cx = 0, cy = 0, dpr = 1, raf = 0, running = false;
+    const resize = () => {
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      W = wrap.clientWidth; H = wrap.clientHeight;
+      canvas.width = W * dpr; canvas.height = H * dpr;
+      canvas.style.width = `${W}px`; canvas.style.height = `${H}px`;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      cx = W / 2; cy = H / 2; R = Math.min(W, H) / 2 - 8;
+    };
+
+    const draw = (now) => {
+      ctx.clearRect(0, 0, W, H);
+
+      // graticule — outer disc, latitude rings, longitude spokes
+      ctx.lineWidth = 1;
+      ctx.strokeStyle = lineCol;
+      ctx.beginPath(); ctx.arc(cx, cy, R, 0, Math.PI * 2); ctx.stroke();
+      ctx.strokeStyle = `rgba(${emberRgb},0.12)`;
+      for (const f of [0.33, 0.66]) { ctx.beginPath(); ctx.arc(cx, cy, R * f, 0, Math.PI * 2); ctx.stroke(); }
+      for (let i = 0; i < 12; i++) {
+        const a = (i / 12) * Math.PI * 2;
+        ctx.strokeStyle = `rgba(${emberRgb},${i % 3 ? 0.05 : 0.11})`;
+        ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx + R * Math.sin(a), cy - R * Math.cos(a)); ctx.stroke();
+      }
+
+      // stars
+      for (const st of stars) {
+        const tw = reduce ? 0.12 : (Math.sin(now / 900 + st.a * 5) + 1) * 0.12;
+        ctx.fillStyle = `rgba(${goldRgb},${0.16 + tw})`;
+        ctx.beginPath(); ctx.arc(cx + R * st.r * Math.sin(st.a), cy - R * st.r * Math.cos(st.a), st.s, 0, Math.PI * 2); ctx.fill();
+      }
+
+      // radar sweep
+      if (!reduce) {
+        const sweep = (now / 4200) * Math.PI * 2;
+        const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, R);
+        grad.addColorStop(0, `rgba(${emberRgb},0)`);
+        grad.addColorStop(1, `rgba(${emberRgb},0.15)`);
+        ctx.fillStyle = grad;
+        ctx.beginPath(); ctx.moveTo(cx, cy); ctx.arc(cx, cy, R, sweep - 0.6, sweep); ctx.closePath(); ctx.fill();
+        ctx.strokeStyle = `rgba(${emberRgb},0.45)`; ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx + R * Math.cos(sweep), cy + R * Math.sin(sweep)); ctx.stroke();
+      }
+
+      // the visitor ping — crosshair, expanding pulse, glowing dot
+      const px = cx + R * pingR * Math.sin(pingA);
+      const py = cy - R * pingR * Math.cos(pingA);
+      ctx.strokeStyle = `rgba(${emberRgb},0.35)`; ctx.lineWidth = 0.8;
+      ctx.beginPath(); ctx.moveTo(px - 7, py); ctx.lineTo(px + 7, py); ctx.moveTo(px, py - 7); ctx.lineTo(px, py + 7); ctx.stroke();
+      const pulse = reduce ? 0.45 : (now / 1600) % 1;
+      ctx.strokeStyle = `rgba(${emberRgb},${0.55 * (1 - pulse)})`; ctx.lineWidth = 1.4;
+      ctx.beginPath(); ctx.arc(px, py, 3 + pulse * 13, 0, Math.PI * 2); ctx.stroke();
+      ctx.fillStyle = ember; ctx.shadowColor = `rgba(${emberRgb},0.9)`; ctx.shadowBlur = 10;
+      ctx.beginPath(); ctx.arc(px, py, 3.2, 0, Math.PI * 2); ctx.fill();
+      ctx.shadowBlur = 0;
+    };
+
+    const loop = (now) => { if (!running) return; draw(now); raf = requestAnimationFrame(loop); };
+
+    resize();
+    draw(performance.now());
+
+    const ro = new ResizeObserver(() => { resize(); draw(performance.now()); });
+    ro.observe(wrap);
+    // Only animate while the card is on screen.
+    const io = new IntersectionObserver(([e]) => {
+      if (e.isIntersecting && !reduce) {
+        if (!running) { running = true; raf = requestAnimationFrame(loop); }
+      } else { running = false; cancelAnimationFrame(raf); }
+    }, { threshold: 0.05 });
+    io.observe(wrap);
+
+    return () => { running = false; cancelAnimationFrame(raf); ro.disconnect(); io.disconnect(); };
+  }, [lat, lng, resolvedTheme]);
+
+  return <canvas ref={ref} className="expedition-map__canvas" aria-hidden="true" />;
+};
+
+/* One "reading" cell — mono value over a tiny uppercase label. */
+const Reading = ({ label, value, accent }) => (
+  <div className={`expedition-cell${accent ? ' expedition-cell--accent' : ''}`}>
+    <span className="expedition-cell__label">{label}</span>
+    <span className="expedition-cell__value exp-mono">{value}</span>
+  </div>
+);
+
+/* The interactive sealed-voice constellation — three nodes; unlocked ones glow
+   and switch the site voice on click, locked ones whisper their hint on hover. */
+const VoiceConstellation = ({ sealedLine }) => {
+  const { t } = useTranslation();
+  const unlocked = useVoiceStore((s) => s.unlocked);
+  const current = useVoiceStore((s) => s.voice);
+  const setVoice = useVoiceStore((s) => s.setVoice);
+  const [hint, setHint] = useState(null);
+
+  const found = unlocked.filter((id) => SEALED_VOICES.includes(id)).length;
+
+  return (
+    <div className="expedition-voices">
+      <div className="expedition-voices__head">
+        <span className="expedition-grouplabel">{t('recap.voices.title')}</span>
+        <span className="expedition-voices__count exp-mono">
+          {t('recap.voices.unlocked', { count: found, total: SEALED_VOICES.length })}
+        </span>
+      </div>
+
+      <div className="expedition-constellation" onMouseLeave={() => setHint(null)}>
+        {SEALED_VOICES.map((id) => {
+          const meta = voiceById(id);
+          const open = unlocked.includes(id);
+          const active = current === id;
+          return (
+            <button
+              key={id}
+              type="button"
+              className="voice-node"
+              data-open={open}
+              data-active={active}
+              data-cursor="hover"
+              onClick={() => open && setVoice(id)}
+              onMouseEnter={() => !open && setHint(meta.hint)}
+              onFocus={() => !open && setHint(meta.hint)}
+              onBlur={() => setHint(null)}
+              aria-label={open ? t('recap.voices.switchTo', { voice: meta.label }) : t('recap.voices.locked')}
+              title={open ? meta.label : meta.hint}
+            >
+              <span className="voice-node__glyph">
+                {open ? <Star size={15} fill="currentColor" /> : <Lock size={13} />}
+              </span>
+              <span className="voice-node__label">{open ? meta.label : t('recap.voices.sealed')}</span>
+            </button>
+          );
+        })}
+      </div>
+
+      <p className="expedition-sealed font-chronicle">{hint || sealedLine}</p>
+    </div>
+  );
+};
+
+/**
+ * ExpeditionRecap — the Phase 5 send-off. A cinematic instrument panel near the
+ * contact section: the cartographer "reads" the traveler (device + locale +
+ * their live local sky, all from the browser — nothing stored or sent), pins
+ * them on an animated polar map, and tallies this session. Everything is
+ * computed client-side.
+ */
+const ExpeditionRecap = () => {
+  const { t } = useTranslation();
+  const scrollPx = useExpeditionStore((s) => s.scrollPx);
+
+  // Tick the live clock only while the card is on screen.
+  const ref = useRef(null);
+  const [inView, setInView] = useState(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return undefined;
+    const io = new IntersectionObserver(([e]) => setInView(e.isIntersecting), { threshold: 0.2 });
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+  const seconds = useElapsed(inView);
+
+  const v = readVisitor();
+  const { time, sky } = localReading(v.coords);
+  const coordStr = `${fmtCoord(v.coords.lat, 'N', 'S')}  ${fmtCoord(v.coords.lng, 'E', 'W')}`;
+
+  const machine = v.gpu || (v.cores ? `${v.cores} cores` : null) || (v.memory ? `${v.memory} GB` : null);
+  const system = [v.browser, v.os].filter(Boolean).join(' · ') || null;
+  const display = v.screen ? `${v.screen.w}×${v.screen.h}${v.screen.dpr > 1 ? ` @${v.screen.dpr}×` : ''}` : null;
+  const readings = [
+    { key: 'machine', value: machine },
+    { key: 'system', value: system },
+    { key: 'display', value: display },
+    { key: 'tongue', value: v.language },
+  ].filter((r) => r.value);
+
+  const meters = (scrollPx / PX_PER_METER).toFixed(1);
+
+  // Sealed-voice nudge (Phase 1b tie-in).
+  const found = useVoiceStore((s) => s.unlocked).filter((id) => SEALED_VOICES.includes(id)).length;
+  const total = SEALED_VOICES.length;
+  const sealedKey = found === 0 ? 'none' : found === total ? 'all' : 'some';
+  const sealedLine = t(`recap.sealed.${sealedKey}`, { count: total - found, total });
+
+  return (
+    <ScrollReveal direction="up" className="mt-14">
+      <div ref={ref} className="realm-card expedition-log p-7 sm:p-9">
+        <div className="flex items-start justify-between gap-4">
+          <div className="min-w-0">
+            <span className="chapter-eyebrow">{t('recap.title')}</span>
+            <p className="expedition-sub mt-2.5">{t('recap.subtitle')}</p>
+          </div>
+          <CompassRose className="w-12 h-12 sm:w-14 sm:h-14 opacity-80 expedition-rose flex-shrink-0" />
+        </div>
+
+        <div className="expedition-body mt-8">
+          {/* the animated map */}
+          <figure className="expedition-map">
+            <div className="expedition-map__disc">
+              <TravelerMap lat={v.coords.lat} lng={v.coords.lng} />
+            </div>
+            <figcaption className="expedition-readout">
+              <span className="expedition-readout__region">
+                {v.region}{v.area && <em> · {v.area}</em>}
+              </span>
+              <span className="expedition-readout__coords exp-mono">{coordStr}</span>
+              <span className="expedition-readout__now exp-mono">
+                {t('recap.map.localNow', { time, sky: t(`sky.modes.${sky}`) })}
+              </span>
+            </figcaption>
+          </figure>
+
+          {/* the reading + journey + voices */}
+          <div className="expedition-panel">
+            <span className="expedition-grouplabel">{t('recap.reading.title')}</span>
+            <div className="expedition-readgrid">
+              {readings.map((r) => (
+                <Reading key={r.key} label={t(`recap.reading.${r.key}`)} value={r.value} />
+              ))}
+            </div>
+
+            <div className="expedition-readgrid expedition-readgrid--journey">
+              <Reading label={t('recap.journey.timeAfield')} value={fmtTime(seconds)} accent />
+              <Reading label={t('recap.journey.trail')} value={`${meters} m`} accent />
+            </div>
+
+            <VoiceConstellation sealedLine={sealedLine} />
+          </div>
+        </div>
+      </div>
+    </ScrollReveal>
+  );
+};
+
+export default ExpeditionRecap;

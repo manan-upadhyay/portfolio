@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import i18n, { loadVoice } from '../i18n';
 import { DEFAULT_VOICE, OPEN_VOICES, SEALED_VOICES } from '../i18n/voices';
+import { fireVoiceChange } from '../lib/voiceChange';
 
 interface VoiceState {
   /** Active voice = i18next language id. */
@@ -33,6 +34,7 @@ export const useVoiceStore = create<VoiceState>()(
         }
         await i18n.changeLanguage(voice);
         set({ voice });
+        fireVoiceChange(); // decode sound + per-text scramble as the copy transforms
       },
 
       unlockVoice: (voice) => {

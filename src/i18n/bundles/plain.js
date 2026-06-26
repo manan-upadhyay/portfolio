@@ -112,6 +112,37 @@ export default {
     },
   },
 
+  recap: {
+    title: 'Your Session',
+    subtitle: 'Read from your device locally — nothing is stored or sent.',
+    map: {
+      localNow: '{{sky}} · {{time}} local',
+    },
+    reading: {
+      title: 'Your Device',
+      machine: 'Hardware',
+      system: 'Browser & OS',
+      display: 'Display',
+      tongue: 'Language',
+    },
+    journey: {
+      timeAfield: 'Time on page',
+      trail: 'Scroll distance',
+    },
+    voices: {
+      title: 'Hidden Voices',
+      unlocked: '{{count}} / {{total}} found',
+      sealed: 'Locked',
+      switchTo: 'Switch to {{voice}}',
+      locked: 'Locked — not yet found',
+    },
+    sealed: {
+      none: 'Three hidden voices are still locked — the right words unlock them.',
+      some: '{{count}} of {{total}} hidden voices still locked.',
+      all: 'All hidden voices unlocked. Nice.',
+    },
+  },
+
   footer: {
     quote: '“The journey is the reward.”',
   },

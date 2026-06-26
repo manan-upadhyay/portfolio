@@ -1,14 +1,13 @@
 import { motion } from 'framer-motion';
 import VoiceSwitcher from './VoiceSwitcher';
+import SoundControl from './SoundControl';
 
 /**
  * Bottom-right control cluster — a fixed flex row that hosts the visitor-facing
- * controls. Layout contract: **[Voice switcher] · [Audio control]** (voice left,
- * audio right). The audio control (Phase 4) expands on hover; because the row is
- * normal flex flow, growing the audio control naturally pushes the voice button
- * left. The theme toggle stays top-right (unchanged).
- *
- * Phase 1 ships the voice switcher; the audio slot is reserved on the right.
+ * controls. Layout contract: **[Voice switcher] · [Sound control]** (voice left,
+ * sound right). The sound control (Phase 4) expands on hover; because the row is
+ * normal flex flow, growing it naturally pushes the voice button left. The theme
+ * toggle stays top-right (unchanged).
  */
 const ControlCluster = () => (
   <motion.div
@@ -18,7 +17,7 @@ const ControlCluster = () => (
     className="fixed bottom-5 right-5 z-40 flex items-end gap-3"
   >
     <VoiceSwitcher />
-    {/* Audio control slot — Phase 4 (interactive sound design) mounts here. */}
+    <SoundControl />
   </motion.div>
 );
 

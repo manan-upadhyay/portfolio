@@ -1,12 +1,14 @@
-import { lazy, Suspense, useState, useEffect } from 'react';
+import { lazy, Suspense, useState, useEffect, useRef } from 'react';
 import { Map } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useThemeStore } from './store/useThemeStore';
 import Hero from './sections/Hero';
-import { Cursor, ErrorBoundary, SideRail, MapOverlay, SkyControl, ControlCluster, EasterEggListener } from './components';
-// import { MusicPlayer } from './components'; // ambient audio — folds into ControlCluster in Phase 4
+import { Cursor, ErrorBoundary, SideRail, MapOverlay, SkyControl, ControlCluster, EasterEggListener, VoiceTransition } from './components';
 import { useSmoothScroll } from './lib/smoothScroll';
 import { useActiveSection } from './hooks/useActiveSection';
+import { useExpedition } from './hooks/useExpedition';
+import { sound } from './lib/sound';
+import './store/useSoundStore'; // rehydrate sound prefs into the engine at boot
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from "@vercel/speed-insights/react"
 
@@ -28,7 +30,24 @@ const App = () => {
   const isDark = resolvedTheme === 'dark';
   useSmoothScroll();
   const activeId = useActiveSection();
+  useExpedition(); // accumulate session scroll distance → the Phase 5 recap
   const [mapOpen, setMapOpen] = useState(false);
+
+  // Sound engine boot: arm the first-gesture unlock + preload the optional raven
+  // sample (degrades to a synthesized flight if the file is absent).
+  useEffect(() => {
+    sound.arm();
+    sound.loadRaven();
+    sound.loadBeds(); // preload the optional astrolabe + arsenal loop samples
+  }, []);
+
+  // Map open / close whoosh — fire on transitions only (skip the initial mount).
+  const mapWasOpen = useRef(false);
+  useEffect(() => {
+    if (mapOpen === mapWasOpen.current) return;
+    sound.playCue(mapOpen ? 'mapOpen' : 'mapClose');
+    mapWasOpen.current = mapOpen;
+  }, [mapOpen]);
 
   useEffect(() => {
     const onKey = (e) => {
@@ -51,6 +70,8 @@ const App = () => {
       <ControlCluster />
       {/* listens for secret trigger words → unlocks the sealed voices */}
       <EasterEggListener />
+      {/* per-text decode scramble + sound when the voice/copy changes */}
+      <VoiceTransition />
       {/* mobile map button (side-rail is desktop-only) */}
       <button onClick={() => setMapOpen(true)} aria-label={t('nav.openMap')}
         className="md:hidden fixed top-5 left-5 z-40 grid place-items-center w-11 h-11 rounded-full"

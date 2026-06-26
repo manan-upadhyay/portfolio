@@ -154,6 +154,58 @@ The site is *directed*. Motion is intentional, weighty, never decorative jitter.
 
 ---
 
+## 4c. Sound language (Phase 4)
+
+The audio counterpart to the motion language. Engine + API: ARCHITECTURE §4b.
+
+### Principles
+1. **Sound rewards intent, never accompanies motion.** Cues fire on *decisions*
+   (toggle the theme/voice, send the raven, open the map, hover a skill, hit an
+   error) — never on scroll or passive animation. There is **no background-music
+   bed**.
+2. **Sparse, short, warm.** One-shot cues are brief (≤~0.6s), **gentle**, low-gain,
+   on-palette (rounded shapes, soft filtered noise — never harsh). A master limiter
+   glues overlaps. A cue that lands *out of sync* with its visual reads worse than
+   none — e.g. the `theme` swoosh is length-matched to the theme wipe.
+3. **Two beds only**, both *spatial* with natural **distance falloff** (level
+   driven by scroll proximity, fading in as the section approaches and out as it
+   leaves): the **Arsenal `hum`** (low spacey drone) and the **Hero `watch`**
+   (slow revolving-gear astrolabe). Each plays an **optional looping mp3** if
+   provided (`CONFIG.beds.*.sample`), else a synthesized fallback; the distance
+   fade works either way. Both tear down fully at zero.
+4. **Default-on, silent until the first gesture** (browser law); **auto-muted
+   under `prefers-reduced-motion`**; one master mute+volume control; preference
+   persisted. **Sound only plays while the page is in view** — the context
+   suspends on tab/window switch (visibility + focus) and resumes on return.
+5. **All tunables live in `CONFIG`** at the top of `lib/sound.js` — cue `peak`
+   (loudness) / `dur`, bed `peak`, and the optional sample paths. A human tweaks
+   sounds there; no need to touch the synthesis.
+
+### Cue vocabulary
+| Cue | Where | Character |
+|---|---|---|
+| `theme` | DayNightToggle | a single gentle warm "wipe" of air (no chime), length-synced to the reveal |
+| `glitch` | voice change (switcher + easter eggs) | soft "decode" chatter that thins to a resolve tone; pairs with the text scramble |
+| `error` | Contact submit (validation/instant) | short low descending "denied" buzz |
+| `mapOpen`/`mapClose` | App (⌘K map) | gentle rising / falling whoosh (no chime) |
+| `raven` | Contact send | mp3 sample → else synth wingbeats + caw |
+| `blip` | Tech hover | tiny pluck; pitch steps an arpeggio across the orbit |
+| `confirm` | sound turned on | soft two-note acknowledgement |
+| `hum` (bed) | Arsenal | spacey drone — mp3 loop or synth fallback, proximity-faded |
+| `watch` (bed) | Hero | slow revolving-gear astrolabe — mp3 loop or synth fallback, scroll-faded |
+
+### Voice-change scramble (visual)
+On every voice switch the copy swaps synchronously; `VoiceTransition` (mounted in
+App) then **decodes the new wording in**: every visible text element scrambles
+through random glyphs and resolves to the new voice (the "Scrambled Text" effect),
+paired with the soft `glitch` decode sound. **Content-level, per-text — no
+full-screen overlay.** Implemented in `lib/voiceScramble.js` (a DOM `TreeWalker`
+mutates visible text-node values, then restores the exact target so React stays
+consistent); skipped under reduced-motion. Both voice paths fire it via
+`lib/voiceChange.js` (the voice store calls `fireVoiceChange()` after a switch).
+
+---
+
 ## 5. CSS utility classes (in `index.css`)
 
 Reuse these; add to this list when you create a new shared visual.
@@ -203,8 +255,10 @@ base toggle) · `CompassRose` (brand SVG) · `ChapterHeading` (the one section h
 `Marginalia` + `Annotated` (flavor→substance footnotes; wrap copy with the
 `[[id|phrase]]` marker, render via `<Annotated text={t('…')} />`, facts under
 `marginalia.<id>` in `chronicle`) · `VoiceSwitcher` / `ControlCluster` /
-`EasterEggListener` (the Voice system) · `MusicPlayer` *(mounted but disabled)*.
-Plus `SectionWrapper` (`src/hoc/`). Page chapters live in `src/sections/`.
+`EasterEggListener` / `VoiceTransition` (the Voice system; `VoiceTransition` =
+the per-text scramble + sound on voice change) · `SoundControl` (the Sound system,
+audio half of the cluster). Plus `SectionWrapper` (`src/hoc/`). Page chapters live
+in `src/sections/`.
 
 ### Removed (do not reintroduce)
 The react-bits experiments (`SplitText`, `BlurText`, `TiltedCard`,

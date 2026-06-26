@@ -19,8 +19,8 @@
 | 1 | **Voice switcher** (i18next: chronicle + plain, visible menu, sealed-voice teasers) | ✅ | 9 | 6 | low |
 | 2 | **Marginalia** (flavor ↔ substance footnotes) | ✅ | 8 | 4 | low |
 | 3 | **Time-aware real sky** (5 theme modes: auto + 4 palettes) | ✅ | 8 | 5 | low |
-| 4 | **Interactive sound design** (Web Audio synth + raven sample) | 🟡 | 7 | 6 | med |
-| 5 | **Expedition recap** (client-side session send-off) | 🟡 | 6 | 4 | low |
+| 4 | **Interactive sound design** (Web Audio synth + raven sample) | ✅ | 7 | 6 | med |
+| 5 | **Expedition recap** (client-side session send-off) | ✅ | 6 | 4 | low |
 | 1b | **Voice easter eggs** (scott / dwight / cow + unlock system) | ✅ | 6 | 4 | low |
 | 6 | **Lantern cursor** (invisible-ink reveal; can host a voice-unlock) | 🔵 | 8 | 6 | med |
 
@@ -229,11 +229,61 @@ prompt). Moon phase needs date only.
 
 ---
 
-## 4. Interactive sound design system  · Phase 4 · 🟡
+## 4. Interactive sound design system  · Phase 4 · ✅ SHIPPED
 
-**What:** Evolve the existing `MusicPlayer` into a *sound design system* of
-sparse, intentional cues. **Sound rewards intent, never accompanies motion.**
-Upgrades the audio slot created in the Phase 1 control cluster.
+> **Shipped.** A three-layer Web-Audio system: **engine** `src/lib/sound.js`
+> (one shared `AudioContext`, gesture-unlocked via `sound.arm()`, master
+> `gain → compressor → destination`; synth helpers `blip`/`swoosh`; cues +
+> two managed beds), **store** `src/store/useSoundStore.ts` (persisted
+> `enabled`/`volume`/`engaged`, default-on, auto-muted under reduced-motion),
+> and **UI** `src/components/SoundControl.jsx` (the cluster's audio half:
+> master mute/volume + the one-time "turn on sound" onboarding note, ~10s
+> auto-dismiss, killed by the first gesture). Cues wired: `theme`
+> (DayNightToggle), `voice` (VoiceSwitcher), `mapOpen`/`mapClose` (App), `raven`
+> (Contact send; mp3 → synth fallback), `blip` (Tech hover arpeggio), `confirm`
+> (sound on). Beds: hero **hum** (scroll-faded via a Hero ScrollTrigger) +
+> arsenal **drone** (in-view gated). The old `MusicPlayer` was **removed**
+> (superseded). Verified via CDP: AudioContext unlocks on gesture + schedules
+> nodes (hum + cues), **reduced-motion stays fully silent** (0 oscillators), no
+> console errors, the control + onboarding note + hover-expand render correctly;
+> `npm run build` + lint clean.
+>
+> **Needs from Manan:** drop the organic **`public/sounds/raven.mp3`** when ready
+> — until then the raven cue uses its synthesized fallback (no action required to
+> ship).
+>
+> **Iteration (post-review re-tune):** beds reassigned + cues reworked per
+> feedback — the spacey **`hum` moved to the Arsenal** (with scroll-proximity
+> distance falloff), the Hero got a new metallic **`watch`-mechanism** bed (also
+> scroll-faded), the old harsh Arsenal `drone` was **removed**, the `theme`/`map`
+> cues dropped their chime (swoosh only; theme swoosh **lengthened to ~0.62s to
+> sync with the wipe**), and the voice chime became a **`glitch`** cue paired with
+> a new **`VoiceGlitch` visual** (chromatic tear bands + full-frame hue warp as
+> the copy re-forms). Added **page-visibility gating** — the AudioContext suspends
+> on tab/window switch and resumes on return. Re-verified via CDP: voice change
+> schedules the glitch cue + mounts the overlay + switches copy; context suspends
+> when hidden, resumes when visible; build + lint clean.
+>
+> **Iteration 2 (sound polish + content-level voice transition):** (1) added an
+> **`error`** cue on the Contact form's instant/validation errors; (2) both beds
+> now play an **optional looping mp3** with a synth fallback + the same distance
+> fade — **Hero `watch` → `public/sounds/astrolabe.mp3`** (synth fallback redesigned
+> to a *slow revolving gear*), **Arsenal `hum` → `public/sounds/arsenal.mp3`**
+> (synth fallback kept); (3) **`theme`/`map` swooshes made gentler** and all knobs
+> moved into a **`CONFIG`** block at the top of `lib/sound.js` for easy human
+> tuning; (4) the voice `glitch` sound softened into a "decode", and the
+> **full-screen RGB overlay was removed** in favour of a **per-text scramble** —
+> every visible text element decodes into the new voice (`lib/voiceScramble.js`,
+> `VoiceTransition`), the requested content-level "Scrambled Text" effect.
+> Re-verified via CDP: voice change scrambles every visible text node then resolves
+> to the new copy (no overlay), 0 console errors; build + lint clean.
+>
+> **Needs from Manan:** optional loop mp3s — `public/sounds/astrolabe.mp3` (Hero)
+> + `public/sounds/arsenal.mp3` (Arsenal); synth fallbacks ship meanwhile.
+
+**What:** A *sound design system* of sparse, intentional cues. **Sound rewards
+intent, never accompanies motion.** Upgrades the audio slot created in the
+Phase 1 control cluster.
 
 **Cue list (approved)**
 - Astrolabe **mechanical hum** — plays in the hero, **fades out as you scroll
@@ -263,17 +313,62 @@ One shared `AudioContext`, unlocked on first gesture.
 - One sound control (volume + mute) — the audio half of the cluster.
 
 **Tasks**
-- [ ] `src/lib/sound.js` — shared context, gesture-unlock, ADSR helper.
-- [ ] Synthesize each abstract cue; tune to taste.
-- [ ] Raven mp3 loader (graceful if absent).
-- [ ] Wire cues: Hero (hum+fade) / Tech / Contact / theme toggle / voice toggle /
-      MapOverlay.
-- [ ] Upgrade the cluster's audio control → master sound + hover-note (10s auto).
-- [ ] Respect `prefers-reduced-motion` (default mute) + persist.
+- [x] `src/lib/sound.js` — shared context, gesture-unlock, ADSR helper.
+- [x] Synthesize each abstract cue; tune to taste.
+- [x] Raven mp3 loader (graceful if absent) → `public/sounds/raven.mp3`.
+- [x] Wire cues: Hero (hum+fade) / Tech (drone+blip) / Contact / theme toggle /
+      voice toggle / MapOverlay (open+close).
+- [x] Upgrade the cluster's audio control → master sound + hover-note (10s auto).
+- [x] Respect `prefers-reduced-motion` (default mute) + persist.
+- [x] **Canon update:** ARCHITECTURE §4b (sound layer), DESIGN-SYSTEM §4c (sound
+      language), CLAUDE.md §3.
 
 ---
 
-## 5. Expedition recap — personalized send-off  · Phase 5 · 🟡
+## 5. Expedition recap — personalized send-off  · Phase 5 · ✅ SHIPPED
+
+> **Shipped (redesigned).** A cinematic **instrument panel** auto-presents at the
+> foot of the contact section — the cartographer's bookend to the hero astrolabe
+> and the arsenal orbit. The conceit: the cartographer *reads the traveler* from
+> the browser alone (device + locale + their live local sky) and **pins them on an
+> animated map** — all client-side, nothing stored or sent.
+>
+> **The signature element** is **`TravelerMap`** (Canvas2D, inside `ExpeditionRecap`):
+> a real **polar-azimuthal projection** (north pole at centre, latitude→radius,
+> longitude→bearing) drawing a graticule, a seeded star field, a rotating **radar
+> sweep**, and a pulsing **ember ping at the visitor's coordinates** (derived from
+> their IANA timezone via `tzToCoords` in `lib/sky.js` — no geolocation prompt).
+> rAF-driven, DPR-aware, **paused off-screen** via IntersectionObserver, re-reads
+> theme tokens on `resolvedTheme` change, and renders a single static frame under
+> reduced-motion.
+>
+> **The "Reading"** comes from **`src/lib/visitor.js`** — a cached, synchronous,
+> permissionless snapshot of `navigator`/`screen`/WebGL: GPU (cleaned
+> `WEBGL_debug_renderer_info`), OS+browser, viewport+DPR, language, cores/memory,
+> region+coords from the timezone, plus `localReading()` (their live wall-clock +
+> the sky resolving at *their* location now). Shown in a mono "terminal" grid
+> (`.exp-mono`) so the numbers read clearly — fixing the old serif old-style
+> figures.
+>
+> **The voices** are promoted to a primary **interactive constellation**: three
+> nodes (`SEALED_VOICES`), `n / 3` found; an unlocked node glows gold and **switches
+> the site voice on click** (`setVoice`), the active one burns ember, locked nodes
+> whisper their cryptic `hint` on hover/focus (revealed in place of the closing
+> nudge line). The nudge reads `recap.sealed.{none|some|all}` against
+> `useVoiceStore.unlocked`.
+>
+> **Dropped** the old constant stats (chapters `n/6`, realms) — anyone who reaches
+> the recap has scrolled the whole page, so those were always `6/6 · N/N`. The
+> session store (`src/hooks/useExpedition.js`, non-persisted) now tracks only what
+> varies: **time afield** (`useElapsed`, live, in-view-gated) and **trail unrolled**
+> (`scrollPx → metres` via `PX_PER_METER`). `CompassRose` (slow-spin) sits in the
+> corner. Copy under `recap.*` is authored for **all five voices** —
+> `chronicle` (cartographer divination), `plain` (factual), and strong personality
+> passes for `scott` (*"Your Performance Review… I'm basically a hacker"*), `dwight`
+> (*"Surveillance Report… I will find them"*) and `cow` (*"Moo"*). CSS: `.expedition-*`
+> / `.voice-node` / `.exp-mono` in `index.css` (token-driven, AA in all skies).
+> Verified via CDP: map pins the real timezone, readings populate, the constellation
+> lights + counts on unlock, night/day/dawn correct, `npm run build` + lint clean.
 
 **What:** A small "Your expedition" card near contact: chapters charted, scroll
 distance, time spent, theme(s) used, realms opened. Computed **client-side,
@@ -284,11 +379,12 @@ only).
 - **Presentation:** subtle, **auto-present near contact**.
 - **Voice-egg tie-in:** **explore** — the recap can hint at undiscovered voices
   (e.g. "1 of 3 sealed voices remain…"), reinforcing Phase 1b discovery.
+  *(Shipped: the closing gold line.)*
 
 **Tasks**
-- [ ] `useExpedition` hook — track chapters/scroll/time/theme/realms in session.
-- [ ] Recap card UI in Contact section.
-- [ ] (explore) sealed-voice hint integrated into the recap.
+- [x] `useExpedition` hook — track chapters/scroll/time/theme/realms in session.
+- [x] Recap card UI in Contact section.
+- [x] (explore) sealed-voice hint integrated into the recap.
 
 ---
 
@@ -346,17 +442,19 @@ touch correct, no console errors, `npm run build` clean, screenshots reviewed.
    button.~~ ✅ (astrolabe variant dropped per the spike)
 5. ~~Update DESIGN-SYSTEM + 00-hero canon.~~ ✅
 
-### Phase 4 — Sound design
-1. `src/lib/sound.js` (shared context, gesture unlock, ADSR).
-2. Synthesize cues; wire raven mp3 loader.
-3. Wire cues into sections + theme/voice toggles; hero hum with scroll-fade.
-4. Upgrade the cluster's audio control (master sound + hover-note + reduced-
-   motion default-mute).
-- **Needs from Manan:** the raven `.mp3` file dropped into the assets folder.
+### Phase 4 — Sound design ✅
+1. ~~`src/lib/sound.js` (shared context, gesture unlock, ADSR).~~ ✅
+2. ~~Synthesize cues; wire raven mp3 loader.~~ ✅
+3. ~~Wire cues into sections + theme/voice toggles; hero hum with scroll-fade.~~ ✅
+4. ~~Upgrade the cluster's audio control (master sound + hover-note + reduced-
+   motion default-mute).~~ ✅
+- **Needs from Manan:** drop `public/sounds/raven.mp3` when ready (optional; synth
+  fallback ships meanwhile).
 
-### Phase 5 — Expedition recap
-1. `useExpedition` session hook.
-2. Recap card near contact; (explore) sealed-voice hint.
+### Phase 5 — Expedition recap ✅
+1. ~~`useExpedition` session hook (non-persisted store + chapter/scroll/sky/realm
+   trackers).~~ ✅
+2. ~~Recap card (`ExpeditionRecap`) near contact; sealed-voice hint line.~~ ✅
 
 ### Phase 1b — Voice easter eggs
 1. Pluggable trigger system → unlock.

@@ -293,12 +293,59 @@ export default {
     regionSvg: 'No off-the-shelf library did this — I built a custom tool from scratch that uses TensorFlow.js to turn a flat PNG into an editable, region-segmented SVG.'
   },
 
+  // Expedition recap (LEGENDARY-ROADMAP §5). A cinematic, session-only send-off
+  // near contact: the cartographer "reads" the traveler from the browser alone
+  // (device + locale + their live local sky) and pins them on an animated map —
+  // all client-side, nothing stored or sent. `{{var}}` are interpolations.
+  recap: {
+    title: 'Your Expedition',
+    subtitle: 'Divined from your device alone — read here, kept nowhere.',
+    map: {
+      // e.g. "your Dusk · 21:34"
+      localNow: 'your {{sky}} · {{time}}',
+    },
+    reading: {
+      title: 'The Reading',
+      machine: 'Engine',
+      system: 'Vessel',
+      display: 'Viewport',
+      tongue: 'Tongue',
+    },
+    journey: {
+      timeAfield: 'Time afield',
+      trail: 'Trail unrolled',
+    },
+    voices: {
+      title: 'Sealed Voices',
+      unlocked: '{{count}} / {{total}} found',
+      sealed: 'Sealed',
+      switchTo: 'Speak as {{voice}}',
+      locked: 'A sealed voice, yet undiscovered',
+    },
+    sealed: {
+      none: 'Three voices still lie sealed — listen for the words that wake them.',
+      some: '{{count}} of {{total}} voices still lie sealed — keep listening.',
+      all: 'Every voice discovered. A keen ear, traveler.',
+    },
+  },
+
   voice: {
     menuTitle: 'Voice',
     sealed: 'Sealed Voices',
     sealedHint: 'Hidden voices await discovery.',
     locked: 'Locked',
     ariaOpen: 'Choose a voice',
+  },
+
+  // Interactive sound design (LEGENDARY-ROADMAP §4). UI copy for the bottom-right
+  // sound control; cues themselves are audio, not copy. Literal across voices.
+  sound: {
+    enableHint: 'Turn on sound for a more immersive experience.',
+    on: 'Sound',
+    off: 'Muted',
+    toggleOn: 'Turn sound on',
+    toggleOff: 'Turn sound off',
+    volume: 'Sound volume',
   },
 
   // Time-aware sky (LEGENDARY-ROADMAP §3). `auto` reads the visitor's real local

@@ -1,11 +1,16 @@
 import { useState, useEffect, useMemo, useRef } from 'react';
 import { motion } from 'framer-motion';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useTranslation } from 'react-i18next';
 import { Webhook } from 'lucide-react';
 import { SectionWrapper } from '../hoc';
 import { skillCategories, chapters } from '../constants';
 import { ChapterHeading, CompassRose } from '../components';
 import { useThemeStore } from '../store/useThemeStore';
+import { sound, playCue } from '../lib/sound';
+
+gsap.registerPlugin(ScrollTrigger);
 
 // Each category owns one concentric ring (inner → outer), each revolving at its
 // own pace and direction — a solar system of skills. Inner rings move faster.
@@ -34,6 +39,7 @@ const OrbitalField = () => {
   const [links, setLinks] = useState([]);
   const fieldRef = useRef(null);
   const nodeRefs = useRef(new Map());
+  const blipStep = useRef(0);
 
   // Precompute each ring + its nodes' polar offsets (relative to centre).
   const rings = useMemo(() => skillCategories.map((cat, ci) => {
@@ -104,7 +110,10 @@ const OrbitalField = () => {
     return () => cancelAnimationFrame(raf);
   }, [activeKey, rings, activeNode]);
 
-  const enter = (cat, key) => { setActiveCat(cat); setActiveKey(key); };
+  const enter = (cat, key) => {
+    if (key !== activeKey) playCue('blip', { step: blipStep.current++ }); // little arpeggio across the orbit
+    setActiveCat(cat); setActiveKey(key);
+  };
   const leave = () => { setActiveCat(null); setActiveKey(null); };
 
   return (
@@ -246,6 +255,7 @@ const Clusters = () => (
 const Tech = () => {
   const { t } = useTranslation();
   const [orbital, setOrbital] = useState(false);
+  const sectionRef = useRef(null);
 
   useEffect(() => {
     const mq = window.matchMedia('(min-width: 1024px)');
@@ -257,8 +267,23 @@ const Tech = () => {
     return () => { mq.removeEventListener('change', update); rm.removeEventListener('change', update); };
   }, []);
 
+  // Space hum — its level follows the section's scroll proximity: it rises as the
+  // Arsenal approaches the centre of the viewport and fades as it leaves, peaking
+  // when the section is framed (a natural distance falloff). Safe when muted.
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      ScrollTrigger.create({
+        trigger: sectionRef.current,
+        start: 'top bottom',
+        end: 'bottom top',
+        onUpdate: (self) => sound.hum.setLevel(1 - Math.abs(self.progress * 2 - 1)),
+      });
+    }, sectionRef);
+    return () => { sound.hum.stop(); ctx.revert(); };
+  }, []);
+
   return (
-    <>
+    <div ref={sectionRef}>
       <ChapterHeading no={chapters.arsenal.no} eyebrow={t('chapters.arsenal.label')} title={`${t('chapters.arsenal.sub')}.`} align="center" />
       <p className="text-center max-w-xl mx-auto mt-5 text-[15px]" style={{ color: 'var(--color-text-muted)' }}>
         {t('arsenal.subtitle')}
@@ -269,7 +294,7 @@ const Tech = () => {
       ) : (
         <Clusters />
       )}
-    </>
+    </div>
   );
 };
 

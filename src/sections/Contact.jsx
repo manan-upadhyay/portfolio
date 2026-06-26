@@ -4,7 +4,8 @@ import { useTranslation } from 'react-i18next';
 import { Mail, Linkedin, Github, MapPin, ArrowUpRight, Send, Loader2, Check, Download, Copy, Feather } from 'lucide-react';
 import { SectionWrapper } from '../hoc';
 import { personalInfo, summon, chapters } from '../constants';
-import { ChapterHeading, ScrollReveal } from '../components';
+import { ChapterHeading, ScrollReveal, ExpeditionRecap } from '../components';
+import { playCue } from '../lib/sound';
 
 // Presentational icon map — data (label/value/href) lives in constants.
 const CHANNEL_ICONS = { email: Mail, linkedin: Linkedin, github: Github, location: MapPin };
@@ -107,6 +108,7 @@ const Contact = () => {
     let msg = pick(variants, error);
     if (key === 'notConfigured') msg = msg.replace(/\{\{email\}\}/g, personalInfo.email);
     setError(msg);
+    playCue('error'); // the raven is refused
   };
 
   const handleSubmit = async (e) => {
@@ -132,6 +134,7 @@ const Contact = () => {
       const data = await res.json().catch(() => ({}));
 
       if (res.ok && data.ok) {
+        playCue('raven'); // the raven takes flight
         setSuccess(true);
         setForm({ name: '', email: '', message: '' });
         setTimeout(() => setSuccess(false), 6000);
@@ -292,6 +295,9 @@ const Contact = () => {
           </p>
         </ScrollReveal>
       </div>
+
+      {/* Phase 5 — in-session "expedition recap" send-off */}
+      <ExpeditionRecap />
     </>
   );
 };

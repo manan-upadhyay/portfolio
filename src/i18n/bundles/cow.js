@@ -152,6 +152,37 @@ export default {
     },
   },
 
+  recap: {
+    title: 'Moo',
+    subtitle: 'Moo moo moo, moo moo — moo moo moo moo. Moo.',
+    map: {
+      localNow: 'moo {{time}} — moo ({{sky}})',
+    },
+    reading: {
+      title: 'Moo Moo',
+      machine: 'Moo',
+      system: 'Moo Moo',
+      display: 'Moo',
+      tongue: 'Moo',
+    },
+    journey: {
+      timeAfield: 'Moo Moo',
+      trail: 'Moo',
+    },
+    voices: {
+      title: 'Moo',
+      unlocked: '{{count}}/{{total}} moo',
+      sealed: 'Moo',
+      switchTo: 'Moo {{voice}}',
+      locked: 'Moo moo moo',
+    },
+    sealed: {
+      none: 'Moo moo moo — moo moo moo moo.',
+      some: '{{count}} moo {{total}} moo. Moo moo.',
+      all: 'Moo moo moo moo moo. Moo!',
+    },
+  },
+
   footer: {
     quote: '“Moo.”',
   },

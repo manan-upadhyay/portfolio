@@ -209,6 +209,37 @@ export default {
     },
   },
 
+  recap: {
+    title: 'Your Performance Review',
+    subtitle: 'I tracked all of this myself. I’m basically a hacker now. Don’t tell IT.',
+    map: {
+      localNow: 'it’s {{time}} where you are. {{sky}}. how did I— okay it’s a little creepy.',
+    },
+    reading: {
+      title: 'Your Setup (Nice)',
+      machine: 'Your Sweet Rig',
+      system: 'Your Browser Situation',
+      display: 'That Big Screen',
+      tongue: 'How You Talk',
+    },
+    journey: {
+      timeAfield: 'Time You Hung Out',
+      trail: 'Scrollage',
+    },
+    voices: {
+      title: 'Secret Voices',
+      unlocked: '{{count}} of {{total}}. boom.',
+      sealed: 'Locked',
+      switchTo: 'Be {{voice}}',
+      locked: 'Locked. Mysterious. Like me.',
+    },
+    sealed: {
+      none: 'Three secret voices left to find. The hunt is on. That’s what she said.',
+      some: '{{count}} of {{total}} voices still hiding. Keep going, you’re crushing it.',
+      all: 'You found all of them. World’s Best Visitor. I’m not crying, you’re crying.',
+    },
+  },
+
   footer: {
     quote: '“That’s what she said.”',
   },

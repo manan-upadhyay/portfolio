@@ -59,8 +59,9 @@ visible copy lives in **`src/i18n/bundles/*`** and is read via `useTranslation`'
 map coords, chapter `no`/`kw`, project facts, skill names, stat values. Never
 hardcode display strings in components; add the key to the bundles instead.
 (There is no `Navbar`/`CommandPalette` — superseded by `SideRail` + `MapOverlay`.
-The visitor-facing controls are the top-right `DayNightToggle` and the
-bottom-right `ControlCluster` = `VoiceSwitcher` (+ audio control in Phase 4).)
+The visitor-facing controls are the top-right `SkyControl` (the 5-mode sky menu
+wrapping `DayNightToggle`) and the bottom-right `ControlCluster` = `VoiceSwitcher`
++ `SoundControl` (the Phase 4 interactive-sound master control).)
 
 **Palette / theme:** dark-first "starlit realm" + light "dawn over the realm".
 All color via CSS variables in `src/index.css`. See
@@ -77,8 +78,22 @@ All color via CSS variables in `src/index.css`. See
 - **GSAP + ScrollTrigger** → scroll choreography (pin, scrub, parallax-out).
 - **Lenis** → smooth scroll, driven by GSAP ticker (`src/lib/smoothScroll.js`).
   Framer motion variants live in `src/lib/motion.js`.
-- **Zustand** → theme store (`src/store/useThemeStore.ts`) + voice store
-  (`src/store/useVoiceStore.ts`).
+- **Zustand** → theme/sky store (`src/store/useThemeStore.ts`) + voice store
+  (`src/store/useVoiceStore.ts`) + sound store (`src/store/useSoundStore.ts`) +
+  the **session-only** expedition store (`src/hooks/useExpedition.js`, *not*
+  persisted — powers the Phase 5 recap). See [LEGENDARY-ROADMAP](docs/chronicle/LEGENDARY-ROADMAP.md) §5.
+- **Phase 5 recap** → `ExpeditionRecap` (a cinematic instrument panel at the foot
+  of Contact) reads the visitor from the browser alone via `src/lib/visitor.js`
+  (a cached, permissionless `navigator`/`screen`/WebGL snapshot — nothing stored
+  or sent) and pins them on a Canvas2D polar-azimuthal **`TravelerMap`** from
+  their timezone coords. The sealed voices render as an interactive constellation.
+- **SunCalc** → time-aware **sky** (`src/lib/sky.js`): `auto` mode resolves the
+  theme from the visitor's local time; 5 modes (auto + dawn/day/dusk/night). See
+  [LEGENDARY-ROADMAP](docs/chronicle/LEGENDARY-ROADMAP.md) §3.
+- **Web Audio** → the **interactive sound design system** (`src/lib/sound.js`):
+  synthesized cues (0 bytes) + one optional `public/sounds/raven.mp3`, gesture-
+  unlocked, default-on / reduced-motion-muted. Sound rewards *intent*, never
+  motion. See ARCHITECTURE §4b + DESIGN-SYSTEM §4c.
 - **i18next + react-i18next** → the **Voice switcher** (multi-personality copy).
   Each voice = an i18next language; `chronicle` is the complete base/fallback,
   other voices override only changed keys. Core voices (`chronicle`, `plain`)

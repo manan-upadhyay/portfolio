@@ -207,6 +207,37 @@ export default {
     },
   },
 
+  recap: {
+    title: 'Surveillance Report',
+    subtitle: 'Compiled through superior observation. You revealed all of this. Resistance is illogical.',
+    map: {
+      localNow: 'Local time {{time}}. Condition: {{sky}}. Position triangulated. Logged.',
+    },
+    reading: {
+      title: 'Subject Profile',
+      machine: 'Hardware (Cataloged)',
+      system: 'Operating Environment',
+      display: 'Visual Apparatus',
+      tongue: 'Dialect',
+    },
+    journey: {
+      timeAfield: 'Time Under Observation',
+      trail: 'Distance Surveyed',
+    },
+    voices: {
+      title: 'Classified Voices',
+      unlocked: '{{count}}/{{total}} declassified',
+      sealed: 'Classified',
+      switchTo: 'Assume identity: {{voice}}',
+      locked: 'Classified. Strictly need-to-know.',
+    },
+    sealed: {
+      none: 'Three voices remain classified. I will find them. I always find them.',
+      some: '{{count}} of {{total}} voices still classified. The investigation continues.',
+      all: 'All voices declassified. Impressive. I trust you completely. (I do not.)',
+    },
+  },
+
   footer: {
     quote: '“Fact.”',
   },

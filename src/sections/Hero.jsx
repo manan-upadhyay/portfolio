@@ -7,6 +7,7 @@ import { personalInfo, chapters } from '../constants';
 import { useThemeStore } from '../store/useThemeStore';
 import { scrollToSection } from '../lib/smoothScroll';
 import { useAstrolabe } from '../hooks/useAstrolabe';
+import { sound } from '../lib/sound';
 import CompassRose from '../components/CompassRose';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -84,6 +85,25 @@ const Hero = () => {
 
   // The living astrolabe (Canvas2D). Re-mounts on theme change to re-read tokens.
   useAstrolabe(canvasRef, canvasWrapRef, bearingRef, resolvedTheme);
+
+  // Astrolabe watch-mechanism sound — hero-local; its level tracks how much of the
+  // hero is on screen, so it fades to silence as you scroll past (natural distance
+  // falloff) and rises again on the way back. The engine no-ops until sound is
+  // unlocked + enabled + the page is in view, so this is safe regardless of state.
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      const st = ScrollTrigger.create({
+        trigger: rootRef.current,
+        start: 'top top',
+        end: 'bottom top',
+        onUpdate: (self) => sound.watch.setLevel(1 - self.progress),
+        onLeave: () => sound.watch.setLevel(0),
+        onLeaveBack: () => sound.watch.setLevel(1),
+      });
+      sound.watch.setLevel(1 - st.progress);
+    }, rootRef);
+    return () => { sound.watch.stop(); ctx.revert(); };
+  }, []);
 
   const firstName = personalInfo.name.split(' ')[0];
   const lastName = personalInfo.name.split(' ').slice(1).join(' ');

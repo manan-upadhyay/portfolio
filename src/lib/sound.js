@@ -34,7 +34,7 @@ export const CONFIG = {
   blip: { peak: 0.11 },             // arsenal hover pluck
   beds: {
     hero: { peak: 0.5, sample: '/sounds/astrolabe.mp3' },   // Hero astrolabe loop
-    arsenal: { peak: 0.42, sample: '/sounds/arsenal.mp3' },  // Arsenal ambience loop
+    arsenal: { peak: 0.12, sample: '/sounds/arsenal.mp3' },  // Arsenal ambience loop
   },
   raven: '/sounds/raven.mp3',       // Contact-send raven (one-shot sample)
 };

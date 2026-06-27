@@ -267,7 +267,9 @@ export default {
 
   voice: {
     menuTitle: 'Moo',
+    menuSub: 'Moo moo moo — moo moo?',
     pinned: 'Moo Moo Moo',
     sealed: 'Moo Moo',
+    more: 'Moo {{count}} moo',
   },
 };

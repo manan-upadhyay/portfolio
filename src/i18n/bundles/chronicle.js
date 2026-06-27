@@ -500,10 +500,12 @@ export default {
 
   voice: {
     menuTitle: 'Voice',
+    menuSub: 'Who narrates this chronicle? Choose a teller.',
     pinned: 'Marked Voices',
     sealed: 'Sealed Voices',
     sealedHint: 'Solve a clue, then',
     sealedTypeHint: 'type the answer anywhere on the page.',
+    more: '{{count}} more in the Voice Hall',
     openHall: 'Enter the Voice Hall',
     hallTeaserSome: '{{count}} sealed voices await discovery',
     hallTeaserAll: 'Every voice discovered — wander them all',

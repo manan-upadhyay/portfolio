@@ -348,6 +348,11 @@ export default {
     sign: '— Michael. I mean, Manan. (It’s Manan.)',
   },
 
+  voice: {
+    menuSub: 'Who tells this story? Me, ideally. I’m great at stories.',
+    more: '{{count}} more voices. Like a party. In here.',
+  },
+
   footer: {
     quote: '“That’s what she said.”',
     atelierLink: 'The making-of. Behind the scenes. Pretty much a documentary.',

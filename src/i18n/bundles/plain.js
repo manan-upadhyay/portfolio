@@ -293,6 +293,8 @@ export default {
   },
 
   voice: {
+    menuSub: 'Change the writing voice of the whole site.',
+    more: '{{count}} more in the Voice Hall',
     openHall: 'Browse all voices',
     hallTeaserSome: '{{count}} hidden voices to find',
     hallTeaserAll: 'All voices unlocked',

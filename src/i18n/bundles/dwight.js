@@ -346,6 +346,11 @@ export default {
     sign: '— Dwight K. Schrute. (Manan. It is Manan.)',
   },
 
+  voice: {
+    menuSub: 'Identify the narrator. Assign a voice. Proceed.',
+    more: '{{count}} more concealed. Locate them. That is an order.',
+  },
+
   footer: {
     quote: '“Fact.”',
     atelierLink: 'The schematics — how this site was engineered. Question authority.',

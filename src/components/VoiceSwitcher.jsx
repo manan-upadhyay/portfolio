@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Feather, Check, Lock, Info, ArrowRight } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useVoiceStore } from '../store/useVoiceStore';
-import { voices, SEALED_VOICES, PINNED_VOICES } from '../i18n/voices';
+import { voices, SEALED_VOICES, POPOVER_SEALED_LIMIT, popoverVoices } from '../i18n/voices';
 import Hovercard from './Hovercard';
 
 const JELLY = { type: 'spring', stiffness: 320, damping: 24, mass: 0.7 };
@@ -76,11 +76,12 @@ const NOTE_AT = ['arsenal', 'projects', 'contact'];
 /**
  * Voice switcher — the left half of the bottom-right control cluster. A circular
  * quill button (gently pulsing until the visitor first opens the Hall) that pops a
- * menu UPWARD. The menu lists the OPEN voices and any code-`pinned` favourites
- * (each ticked when active — so a switched-to sealed voice is always reflected
- * here), then a collapsible "Sealed Voices" group with each hidden voice's clue +
- * ⓘ reference, then a CTA into the full Voice Hall. Click/tap driven; closes on
- * outside-click/Escape.
+ * menu UPWARD. The menu is a deliberately short TEASER: a one-line "what is this"
+ * subtitle, the OPEN voices, then up to POPOVER_SEALED_LIMIT sealed-voice clues
+ * (with the full discovery count), and — when more voices exist than fit — a quiet
+ * "+N more" line plus the primary CTA, both routing to the full Voice Hall. The
+ * old "Marked Voices" group is retired to keep the menu uncluttered. Click/tap
+ * driven; closes on outside-click/Escape.
  */
 const VoiceSwitcher = ({ activeId }) => {
   const { t } = useTranslation();
@@ -108,13 +109,16 @@ const VoiceSwitcher = ({ activeId }) => {
     return () => { clearTimeout(inT); clearTimeout(outT); };
   }, [activeId, voiceNoted, open]);
 
-  // Quick-pick rows: the open voices plus any pinned favourites (a pinned-but-
-  // sealed voice rides along, locked until discovered). Pinned voices are pulled
-  // OUT of the "Sealed Voices" group below so they're never listed twice.
-  const openVoices = voices.filter((v) => !v.locked);
-  const pinned = voices.filter((v) => v.pinned);
-  const sealed = voices.filter((v) => v.locked && !v.pinned);
+  // Teaser rows, all popover-eligible + code-ordered (see voices.js `popover` /
+  // `popoverOrder`). Open voices first; sealed clues capped at the limit so the
+  // menu stays scannable. The discovery count and the "+N more" overflow signal
+  // both read off the FULL roster, so nothing feels hidden — just deferred.
+  const shown = popoverVoices();
+  const openVoices = shown.filter((v) => !v.locked);
+  const sealed = shown.filter((v) => v.locked).slice(0, POPOVER_SEALED_LIMIT);
   const discovered = SEALED_VOICES.filter((id) => isUnlocked(id)).length;
+  // Voices not previewed here (open or sealed) — the reason to enter the Hall.
+  const moreCount = voices.length - openVoices.length - sealed.length;
 
   const choose = (id) => { setVoice(id); setOpen(false); };
   const toggleMenu = () => { markVoiceNoted(); setShowNote(false); setOpen((o) => !o); };
@@ -164,33 +168,21 @@ const VoiceSwitcher = ({ activeId }) => {
               boxShadow: 'var(--shadow-card)',
             }}
           >
-            <p className="px-3 pt-2 pb-1.5 text-[10px] tracking-[0.2em] uppercase font-semibold" style={{ color: 'var(--color-text-muted)' }}>
-              {t('voice.menuTitle')}
-            </p>
+            <div className="px-3 pt-2 pb-1.5">
+              <p className="text-[10px] tracking-[0.2em] uppercase font-semibold" style={{ color: 'var(--color-text-muted)' }}>
+                {t('voice.menuTitle')}
+              </p>
+              <p className="text-[11px] leading-snug mt-1" style={{ color: 'var(--color-text-muted)' }}>
+                {t('voice.menuSub')}
+              </p>
+            </div>
 
             {openVoices.map((v) => (
               <VoiceRow key={v.id} v={v} active={voice === v.id} locked={false} onSelect={() => choose(v.id)} />
             ))}
 
-            {/* pinned favourites — promoted alongside the open voices */}
-            {pinned.length > 0 && (
-              <>
-                <p className="px-3 pt-2 pb-1 text-[10px] tracking-[0.16em] uppercase font-medium" style={{ color: 'var(--color-text-muted)' }}>
-                  {t('voice.pinned')}
-                </p>
-                {pinned.map((v) => (
-                  <VoiceRow
-                    key={v.id}
-                    v={v}
-                    active={voice === v.id}
-                    locked={v.locked && !isUnlocked(v.id)}
-                    onSelect={() => choose(v.id)}
-                  />
-                ))}
-              </>
-            )}
-
-            {/* sealed easter-egg voices — clue + reference, the discovery game */}
+            {/* sealed easter-egg voices — clue + reference, the discovery game.
+                Capped at POPOVER_SEALED_LIMIT; the count stays the full roster. */}
             {sealed.length > 0 && (
               <>
                 <div className="my-1.5 mx-3 h-px" style={{ background: 'var(--color-card-border)' }} />
@@ -211,6 +203,15 @@ const VoiceSwitcher = ({ activeId }) => {
                     onSelect={() => choose(v.id)}
                   />
                 ))}
+
+                {/* overflow — quietly signals there are more voices than fit, and
+                    routes to the Hall (the menu's "for more, open the Hall" cue) */}
+                {moreCount > 0 && (
+                  <button type="button" onClick={goHall} data-cursor="hover" className="voice-more">
+                    <span>{t('voice.more', { count: moreCount })}</span>
+                    <ArrowRight size={13} className="flex-shrink-0" />
+                  </button>
+                )}
               </>
             )}
 

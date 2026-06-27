@@ -11,14 +11,32 @@
 // see EasterEggListener) and a `hint` (the cryptic clue shown on the locked row,
 // so discovery is a solvable game, not a guess).
 //
-// `pinned: true` PROMOTES a voice (open or sealed) into the compact bottom-right
-// VoiceSwitcher popover so it sits alongside the open voices — a curated, code-
-// configured "favourites" shortlist. A pinned-but-still-sealed voice shows its
-// clue + ⓘ reference there (and is excluded from the popover's "Sealed Voices"
-// group to avoid listing it twice). Set/unset it here in code; nothing else needs
-// to change.
+// ── Compact-popover config (the bottom-right VoiceSwitcher) ──────────────────
+// The popover is the *teaser* surface — it stays deliberately short so its job
+// reads at a glance ("switch who narrates the site"), and defers the full roster
+// to the Voice Hall. Two optional, code-set fields tune what it shows:
+//
+//   • `popover: false`   → withhold this voice from the popover entirely
+//                          (Hall-only). Default (undefined/true) = shown.
+//   • `popoverOrder: n`  → ordering within the popover (ascending; registry
+//                          order breaks ties). Lets you curate the shortlist's
+//                          sequence without reordering the registry itself.
+//
+// Sealed rows in the popover are additionally capped at `POPOVER_SEALED_LIMIT`
+// (see below) so the menu never sprawls; the discovery COUNT still reflects the
+// full sealed roster, and any overflow routes to the Hall.
+//
+// `pinned: true` is the dormant "marked voice" feature (a curated favourite that
+// used to ride a third "Marked Voices" group in the popover). That group is
+// currently hidden to keep the menu uncluttered — the flag and `PINNED_VOICES`
+// export are kept for a future revival but no longer change the popover.
 
 export const DEFAULT_VOICE = 'chronicle';
+
+// Max sealed voices PREVIEWED in the compact popover before the rest defer to the
+// Voice Hall. Caps rendered rows only — the discovery count (n/total) and the
+// overflow ("+N more") signal always reflect the full sealed roster.
+export const POPOVER_SEALED_LIMIT = 3;
 
 // Voice categories — group voices in the Voice Hall overlay + the recap
 // constellation so the feature scales to many personalities. `order` sets the
@@ -39,6 +57,7 @@ export const voices = [
     locked: false,
     category: 'core',
     glyph: 'Ch',
+    popoverOrder: 0,
   },
   {
     id: 'plain',
@@ -47,15 +66,17 @@ export const voices = [
     locked: false,
     category: 'core',
     glyph: 'Pl',
+    popoverOrder: 1,
   },
   {
     id: 'scott',
     label: 'World’s Best Boss',
     sample: 'That’s what she said.',
     locked: true,
-    pinned: true, // curated favourite — surfaced in the compact VoiceSwitcher popover
+    pinned: true, // dormant "marked voice" flag — popover surfacing is hidden for now
     category: 'office',
     glyph: 'Ms',
+    popoverOrder: 2,
     trigger: 'boss',
     hint: 'Type what’s printed on the world’s best mug.',
     info: {
@@ -71,6 +92,7 @@ export const voices = [
     locked: true,
     category: 'office',
     glyph: 'Dw',
+    popoverOrder: 3,
     trigger: 'beets',
     hint: 'Type what grows in rows at Schrute Farms.',
     info: {
@@ -86,6 +108,7 @@ export const voices = [
     locked: true,
     category: 'bestiary',
     glyph: 'Mo',
+    popoverOrder: 4,
     trigger: 'moo',
     hint: 'Type what the cow says.',
     info: {
@@ -106,6 +129,17 @@ export const SEALED_VOICES = voices.filter((v) => v.locked).map((v) => v.id);
 export const PINNED_VOICES = voices.filter((v) => v.pinned).map((v) => v.id);
 
 export const voiceById = (id) => voices.find((v) => v.id === id) || null;
+
+// Voices surfaced in the compact bottom-right popover (the teaser surface),
+// ordered by `popoverOrder` (ascending; registry order breaks ties). Opt a voice
+// out with `popover: false`. The caller splits these into open vs. sealed and
+// caps the sealed preview at POPOVER_SEALED_LIMIT.
+export const popoverVoices = () =>
+  voices
+    .map((v, i) => ({ v, i }))
+    .filter(({ v }) => v.popover !== false)
+    .sort((a, b) => (a.v.popoverOrder ?? 0) - (b.v.popoverOrder ?? 0) || a.i - b.i)
+    .map(({ v }) => v);
 
 // Voices grouped into their categories (in `CATEGORIES` order), skipping any
 // empty category. Used by the Voice Hall overlay.

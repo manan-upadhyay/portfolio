@@ -63,3 +63,41 @@ export const scrollToTop = () => {
 };
 
 export const getLenis = () => lenisInstance;
+
+// Cross-route scroll memory: when the visitor leaves the Chronicle for the
+// Atelier (the /making-of route), the scroll page unmounts. We stash the exact
+// scrollY so that, on return, they land back at the doorway they stepped through
+// (the foot of The Realms) instead of at the top.
+let rememberedY = null;
+export const rememberScroll = () => { rememberedY = window.scrollY; };
+
+/**
+ * Restore the scrollY remembered when the visitor stepped into the Atelier,
+ * after the Chronicle remounts. The pinned horizontal Experience grows the page
+ * height asynchronously (its lazy chunk mounts, then ScrollTrigger measures the
+ * pin), so we can't scroll to a deep Y until the document is tall enough: poll
+ * the height for a few frames, then jump there instantly (no animation — it
+ * should feel like we never left). The remembered value is cleared only once the
+ * scroll is actually applied, so React StrictMode's double-invoked mount effect
+ * (dev) can't swallow it on the first pass.
+ */
+export const restoreScroll = () => {
+  if (rememberedY == null) return () => {};
+  const y = rememberedY;
+  let raf = 0;
+  let tries = 0;
+  const step = () => {
+    const max = document.documentElement.scrollHeight - window.innerHeight;
+    if (max >= y - 4 || tries > 40) {
+      rememberedY = null;
+      const target = Math.max(0, Math.min(y, max));
+      if (lenisInstance) lenisInstance.scrollTo(target, { immediate: true });
+      else window.scrollTo(0, target);
+      return;
+    }
+    tries += 1;
+    raf = requestAnimationFrame(step);
+  };
+  raf = requestAnimationFrame(step);
+  return () => cancelAnimationFrame(raf);
+};

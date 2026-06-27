@@ -8,8 +8,8 @@ How the app is wired, the canonical patterns to copy, and how to verify work.
 
 ```
 src/
-  App.jsx                 # Shell: theme bg + aurora, Cursor, SideRail, DayNightToggle,
-                          #   MapOverlay, sections, footer, Vercel <Analytics/>
+  App.jsx                 # Router: BrowserRouter → Layout wrapping the two routes
+                          #   (/ = Chronicle, /making-of = the Atelier)
   main.jsx                # Entry
   index.css               # Theme tokens + global utilities + keyframes (SOURCE OF TRUTH for style)
   constants/index.js      # ALL content: personalInfo, summon, chapters, services,
@@ -27,11 +27,15 @@ src/
   hooks/
     useActiveSection.js   # Scroll-spy → active chapter id (drives SideRail/MapOverlay)
   hoc/SectionWrapper.jsx  # Standard padded <section> + stagger container
-  sections/               # Page chapters (00–05) + index.js barrel
-    Hero.jsx About.jsx Experience.jsx Tech.jsx Works.jsx Contact.jsx
+  pages/                  # Route-level views (rendered through Layout's <Outlet/>)
+    Chronicle.jsx         #   / — the scroll spine (Hero + chapters 00–05) + its chrome
+    MakingOf.jsx          #   /making-of — return doorway + the lazy Atelier
+  sections/               # Page chapters (00–05) + the Atelier coda + index.js barrel
+    Hero.jsx About.jsx Experience.jsx Tech.jsx Works.jsx Contact.jsx Atelier.jsx
   components/             # Reusable widgets (flat) + index.js barrel:
-                          #   SideRail, MapOverlay, Cursor, SkyControl(+DayNightToggle), CompassRose,
-                          #   ChapterHeading, MapDivider, CountUp, ScrollReveal, ErrorBoundary,
+                          #   Layout (shared shell), SideRail, MapOverlay, Cursor,
+                          #   SkyControl(+DayNightToggle), CompassRose, ChapterHeading,
+                          #   MapDivider, CountUp, ScrollReveal, ErrorBoundary,
                           #   ControlCluster(=VoiceSwitcher + SoundControl), Magnet
   assets/                 # backend/creator/mobile/web pngs + tech/*.svg (import via assets/index.js)
 public/                   # PRODUCTION ASSETS ONLY (everything here ships):
@@ -52,31 +56,58 @@ docs/chronicle/           # THIS documentation set (source of truth)
 
 ---
 
-## 2. App composition (the shell)
+## 2. App composition (router + shell)
 
-`App.jsx` order matters (z-stacking + mount):
+`App.jsx` is just the router; the persistent shell is `components/Layout.jsx`,
+shared by both routes (z-stacking + mount order matters):
 
 ```jsx
-useSmoothScroll();                       // Lenis + GSAP ticker (once)
-const activeId = useActiveSection();     // scroll-spy → active chapter id
+// App.jsx
+<BrowserRouter><Routes>
+  <Route element={<Layout/>}>
+    <Route index element={<Chronicle/>} />          // /
+    <Route path="making-of" element={<MakingOf/>} />// /making-of
+  </Route>
+</Routes></BrowserRouter>
+
+// components/Layout.jsx — present on EVERY route
+useSmoothScroll();                       // Lenis + GSAP ticker (once, persists across routes)
+const activeId = useActiveSection();     // scroll-spy → active chapter id (→ Outlet context)
 <div bg=theme>
   <div aurora-bg / sunrise-bg />         // ambient background
   <Cursor />                             // custom cursor (fixed, top z)
-  <SideRail activeId visible={activeId!=='origin'} onOpenMap />  // collapsible chapter nav
-  <DayNightToggle />                     // fixed top-right
-  <MapOverlay open activeId />           // ⌘K interactive map
-  <Hero />                               // chapter 00 (eager)
-  {lazy sections each wrapped in <ErrorBoundary><Suspense>…}
-  <footer/> <Analytics/>
+  <SkyControl />                         // fixed top-right (sky menu)
+  <ControlCluster activeId />            // fixed bottom-right (voice + sound)
+  <EasterEggListener/> <VoiceTransition/> <VoiceHall/>  // global ⇧⌘V + decode FX
+  <ScrollManager/>                       // resets scroll on entering /making-of
+  <Outlet context={{ activeId }} />      // ← the active route renders here
+  <footer/* + the quiet /making-of link */> <Analytics/> <SpeedInsights/>
 </div>
+
+// pages/Chronicle.jsx — / only
+const { activeId } = useOutletContext();
+useEffect(() => restoreScroll(), []);    // land back at the doorway on return from the Atelier
+<SideRail activeId visible={activeId!=='origin'} onOpenMap />  // collapsible chapter nav
+<button mobile-map/> <MapOverlay open activeId />             // ⌘K interactive map (Chronicle-only)
+<Hero /> {lazy sections each <ErrorBoundary><Suspense>…}      // chapters 00–05 (no Atelier)
+
+// pages/MakingOf.jsx — /making-of only
+<Link to="/" className="atelier-return">{t('makingOf.back')}</Link>  // the return doorway
+<ErrorBoundary><Suspense><Atelier/></Suspense></ErrorBoundary>       // lazy Atelier
 ```
 
 - **Sections are `lazy()` + `Suspense` + `ErrorBoundary`.** An `ErrorBoundary`
   around each guarantees one section failing never white-screens the site. `Hero`
-  is eager (above the fold); the rest are lazy via `import('./sections/…')`.
-- **Sound boot (Phase 4):** `App` calls `sound.arm()` (one-time gesture → unlock
-  the AudioContext) + `sound.loadRaven()` (preload the optional sample) on mount,
-  and fires the map open/close whoosh from the `mapOpen` state. The old
+  is eager (above the fold); the rest (incl. the Atelier) are lazy.
+- **One Lenis, across routes.** `useSmoothScroll` lives in `Layout`, so the smooth
+  scroll persists through navigation (no re-init jank). The Chronicle unmounts
+  when you visit `/making-of`; on return it restores the remembered scroll
+  position (`rememberScroll`/`restoreScroll` in `smoothScroll.js`) once the pinned
+  Experience has grown the page height. `ScrollManager` sends any other
+  destination to the top.
+- **Sound boot (Phase 4):** `Layout` calls `sound.arm()` (one-time gesture →
+  unlock the AudioContext) + `sound.loadRaven()`/`loadBeds()` on mount; the
+  Chronicle fires the map open/close whoosh from its `mapOpen` state. The old
   `MusicPlayer` (ambient track) is **removed** — superseded by the cue system.
 
 ---
@@ -88,6 +119,9 @@ const activeId = useActiveSection();     // scroll-spy → active chapter id
 a parallel rAF scroll loop.**
 
 - Programmatic scroll: `scrollToSection('about')`, `scrollToTop()`.
+- Cross-route memory: `rememberScroll()` (called by the Realms doorway before it
+  navigates to `/making-of`) + `restoreScroll()` (called on the Chronicle's mount)
+  return the visitor to the exact spot they left.
 - Reduced motion: smoothing auto-disables.
 
 **Every scroll-driven component uses this shape:**
@@ -170,8 +204,9 @@ accompany motion. Three layers:
 
 | Component | Contract |
 |---|---|
-| `SideRail({ activeId, onOpenMap, visible })` | Desktop-only collapsible glass rail (left, vertically centered); hidden on the hero (`visible={activeId!=='origin'}`); springs open on hover. Sigil = themed brand crest (`/logo-{light,dark}.png`); chapter rows → `scrollToSection`; Map row uses `CompassRose`. Chapters come from `constants.chapterList` (single source). |
-| `MapOverlay({ open, onClose, activeId })` | ⌘K interactive map overlay (the realized "Command Palette"). Pins are `constants.chapterList` (each chapter's `x`/`y`/`kw`); probes `/chronicle/map/realm-map.webp`, degrades gracefully; commands map to `scrollToSection` + external links. |
+| `Layout` | The shell shared by both routes: mounts smooth scroll + the boot side-effects, the always-present controls (`SkyControl`, `ControlCluster`, `VoiceHall`, ⇧⌘V), the footer (with the quiet `/making-of` link), analytics, and a `ScrollManager`. Renders the active route through `<Outlet context={{ activeId }} />`. Imported directly by `App.jsx` (not barrel-exported). |
+| `SideRail({ activeId, onOpenMap, visible })` | **Chronicle-only** (rendered by `pages/Chronicle.jsx`). Desktop-only collapsible glass rail (left, vertically centered); hidden on the hero (`visible={activeId!=='origin'}`); springs open on hover. Sigil = themed brand crest (`/logo-{light,dark}.png`); chapter rows → `scrollToSection`; Map row uses `CompassRose`. Chapters come from `constants.chapterList` (single source). |
+| `MapOverlay({ open, onClose, activeId })` | **Chronicle-only** ⌘K interactive map overlay (the realized "Command Palette"). Pins are `constants.chapterList` (each chapter's `x`/`y`/`kw`); probes `/chronicle/map/realm-map.webp`, degrades gracefully; commands map to `scrollToSection` + external links. |
 | `Cursor` | Dot + trailing ring (+grows over `a,button,[data-cursor=hover]`) + backlight. Auto-off on touch/reduced-motion. Add `data-cursor="hover"` to custom interactive targets. |
 | `SkyControl` | Top-right theme control: the 5-mode sky menu (Auto/Dawn/Day/Dusk/Night) wrapping `DayNightToggle`. The trigger pill is a live sky status chip. |
 | `DayNightToggle({ compact? })` | The base light↔dark toggle (inside `SkyControl`). Sun↔moon morph, orbit ring, spring press, radial View-Transition ripple; fires the `theme` sound cue. |
@@ -237,6 +272,10 @@ CHROME="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
 - Check **dark + light**, and **360 / 768 / 1280 / 1920** widths.
 - Confirm no console errors: add `--enable-logging=stderr --v=0 --dump-dom`.
 - Verify reduced-motion (emulate) and that scroll never locks.
+- **Verify both routes:** `/` (no Atelier inline, doorway + footer link present)
+  and `/making-of` (return doorway + Atelier body, no chapter chrome). Deep-link
+  `/making-of` works because of the `vercel.json` SPA rewrite (dev: Vite serves
+  `index.html` for any path).
 
 > To verify scroll-dependent chrome (the `SideRail`, which is hidden on the hero)
 > you need a scrolled state — drive scroll via CDP or check the rendered DOM.

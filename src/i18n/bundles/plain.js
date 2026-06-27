@@ -80,6 +80,7 @@ export default {
     furl: 'Show less',
     nod: 'Six projects above. The seventh is this site itself.',
     nodCta: 'See how it was built',
+    // (nodCta keeps its literal wording — the doorway reads the same in plain.)
   },
 
   contact: {
@@ -295,5 +296,10 @@ export default {
 
   footer: {
     quote: '“The journey is the reward.”',
+    atelierLink: 'The making-of — how this site was built',
+  },
+
+  makingOf: {
+    back: 'Back to the portfolio',
   },
 };

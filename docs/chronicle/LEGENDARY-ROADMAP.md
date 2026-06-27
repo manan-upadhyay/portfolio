@@ -450,8 +450,9 @@ only).
 
 ## 7. The Atelier — the making-of coda  · Phase 7 · ✅ SHIPPED
 
-> **Shipped.** A new **coda chapter** (`sections/Atelier.jsx`, id `atelier`) after
-> Contact, before the footer — "how the map was drawn." Answers the brief: a
+> **Shipped** (originally inline after Contact; **relocated to its own route
+> `/making-of`** — see the update at the end of this section). A **coda**
+> (`sections/Atelier.jsx`, id `atelier`) — "how the map was drawn." Answers the brief: a
 > human, behind-the-scenes look at how the site was designed, iterated, and pushed
 > past "done," grounded in real repo data. **Not a numbered chapter** — kept out of
 > `chapters`/`chapterList` so the SideRail + ⌘K map stay the six-realm journey.
@@ -483,6 +484,21 @@ only).
 Realms breaks the gallery frame, competes with real client proof, and under-sells
 the meta-story. The portfolio-as-masterwork lives in the Atelier coda instead; the
 Realms get one subtle closing nod into it.
+
+**Update (relocated to its own route `/making-of`).** Inline after Contact, the
+Atelier was an anticlimax *past* the conversion beat and broke the in-world
+fiction (it's director's commentary). It's now a standalone route — the workshop
+*behind* the Chronicle — which also gives it a **shareable URL** (drop
+`/making-of` straight into a job application). The app became a two-route SPA
+(`react-router-dom`): `/` (`pages/Chronicle.jsx`, ending at Contact) and
+`/making-of` (`pages/MakingOf.jsx`, lazy-loading `sections/Atelier.jsx`), sharing
+`components/Layout.jsx` (smooth scroll + global controls + footer). The Realms nod
+now **navigates** there (remembering scroll so the return lands you back at the
+doorway via `rememberScroll`/`restoreScroll`); a quiet footer link
+(`footer.atelierLink`) and a fixed return doorway (`makingOf.back`) complete the
+loop — new keys authored in all five voices. `vercel.json` provides the SPA
+rewrite (excluding `/api`). The Atelier still stays out of `chapters`/`chapterList`
+(absent from the SideRail + ⌘K map). See ARCHITECTURE §2 + CLAUDE.md §2.
 
 ---
 

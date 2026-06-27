@@ -42,8 +42,9 @@ const PINS = [
   (track active section via ScrollTrigger/IO and highlight its pin).
 
 ## Implementation notes
-- `MapOverlay` owns the keydown (⌘K/Esc), filtering, and action list; `App.jsx`
-  toggles its `open` state (the ⌘K handler lives there). Its pins come from
+- `MapOverlay` owns the keydown (Esc), filtering, and action list; the Chronicle
+  route (`pages/Chronicle.jsx`) toggles its `open` state (the ⌘K handler lives
+  there — the map is Chronicle-only, not on `/making-of`). Its pins come from
   `constants.chapterList` (each chapter's `x`/`y`/`kw`) — the **same single
   source** the SideRail uses, so there's nothing to keep in sync.
 

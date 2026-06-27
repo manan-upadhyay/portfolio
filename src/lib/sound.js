@@ -348,7 +348,7 @@ const watch = makeBed({
     // Rotational rumble (the gear body turning).
     const rumble = ctx.createOscillator(); rumble.type = 'sawtooth'; rumble.frequency.value = 64;
     const rumLp = ctx.createBiquadFilter(); rumLp.type = 'lowpass'; rumLp.frequency.value = 180; rumLp.Q.value = 0.5;
-    const rumG = ctx.createGain(); rumG.gain.value = 0.16;
+    const rumG = ctx.createGain(); rumG.gain.value = 0.10;
     rumble.connect(rumLp).connect(rumG).connect(motion);
 
     // Gear-tooth clicks: resonant noise gated by an inverted saw LFO whose rate

@@ -130,7 +130,7 @@ export default {
     chartMore: 'Show {{count}} more hits',
     furl: 'Okay, that’s enough greatness',
     nod: 'Six hits up there. The seventh one is the website you’re looking at. Boom.',
-    nodCta: 'See how I made it',
+    nodCta: 'Take the behind-the-scenes tour',
     projects: {
       gajaakriti: {
         description: 'A gorgeous media-heavy website and admin panel for a fancy wedding studio. Weddings! I love weddings. And the media loads fast.',
@@ -350,5 +350,10 @@ export default {
 
   footer: {
     quote: '“That’s what she said.”',
+    atelierLink: 'The making-of. Behind the scenes. Pretty much a documentary.',
+  },
+
+  makingOf: {
+    back: 'Okay, back to the good stuff',
   },
 };

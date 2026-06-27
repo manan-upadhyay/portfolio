@@ -1914,6 +1914,39 @@ h1, h2, h3, h4, h5, h6 {
 }
 .works-nod__btn:hover .works-nod__cta { gap: 8px; }
 
+/* The quiet doorway to the Atelier in the global footer. */
+.atelier-footer-link:hover { color: var(--color-ember) !important; }
+
+/* ===== The Atelier route (/making-of) — the return doorway ===== */
+.atelier-return {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 40;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 15px 9px 12px;
+  border-radius: 999px;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: var(--color-text-muted);
+  background: var(--color-card-bg);
+  border: 1px solid var(--color-card-border);
+  backdrop-filter: blur(20px);
+  transition: color 0.25s ease, border-color 0.25s ease, transform 0.25s ease, padding 0.25s ease;
+}
+.atelier-return:hover {
+  color: var(--color-text);
+  border-color: var(--color-ember);
+  padding-left: 14px;
+  padding-right: 13px;
+}
+.atelier-return svg { color: var(--color-ember); transition: transform 0.25s ease; }
+.atelier-return:hover svg { transform: translateX(-3px); }
+
 /* ===== Raven console — the message card's fixed-height status footer =====
    A reserved slot so idle / sending / error / success all swap IN PLACE with no
    layout shift. The slot is absolutely positioned inside a min-height box, so a

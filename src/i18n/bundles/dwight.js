@@ -348,5 +348,10 @@ export default {
 
   footer: {
     quote: '“Fact.”',
+    atelierLink: 'The schematics — how this site was engineered. Question authority.',
+  },
+
+  makingOf: {
+    back: 'Return to the survey',
   },
 };

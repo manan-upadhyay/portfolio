@@ -154,7 +154,7 @@ export default {
     furl: 'Furl the map',
     // The nod to the unnumbered seventh realm — this very site (see the Atelier).
     nod: 'Six realms charted. The seventh is the one you are standing in.',
-    nodCta: 'See how it was drawn',
+    nodCta: 'Step into the Atelier',
     // Per-project copy, keyed by the project `id` in constants. `name`,
     // `company`, `tags`, links and gallery stay data in constants.
     projects: {
@@ -341,6 +341,12 @@ export default {
   footer: {
     quote: '“The journey is the reward.”',
     credit: '© {{year}} Manan Upadhyay · Crafted with React, GSAP & far too much chai.',
+    atelierLink: 'The Atelier — how this was made',
+  },
+
+  // The Atelier's own route (/making-of) chrome — the doorway back home.
+  makingOf: {
+    back: 'Return to the Chronicle',
   },
 
   // Marginalia footnotes (LEGENDARY-ROADMAP §2). Keyed by the `[[id|…]]` marker

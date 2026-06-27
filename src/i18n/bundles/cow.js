@@ -258,6 +258,11 @@ export default {
 
   footer: {
     quote: '“Moo.”',
+    atelierLink: 'Moo moo — moo moo moo moo moo.',
+  },
+
+  makingOf: {
+    back: 'Moo moo moo moo',
   },
 
   voice: {

@@ -44,16 +44,29 @@ Section components live in `src/sections/`; reusable widgets in `src/components/
 | 03 | The Arsenal | `sections/Tech.jsx` | `arsenal` | **Interactive orbital** skill field |
 | 04 | The Realms | `sections/Works.jsx` | `projects` | **Editorial cinematic** project plates |
 | 05 | Summon | `sections/Contact.jsx` | `contact` | Statement + form + channels |
-| —  | The Atelier *(coda)* | `sections/Atelier.jsx` | `atelier` | **Making-of**: Canvas2D `BuildTimeline` + built/cut ledger + manifesto |
+| —  | The Atelier *(coda)* | `sections/Atelier.jsx` | `atelier` | **Making-of** on its own route `/making-of` (not in the scroll spine): Canvas2D `BuildTimeline` + built/cut ledger + manifesto |
 
-**The Atelier is an unnumbered coda**, not part of the six-chapter spine. It
-renders after Contact (before the footer) and is *deliberately absent* from
+**The Atelier is an unnumbered coda on its own route** (`/making-of`), not part
+of the six-chapter spine and no longer inline in the scroll page. The scroll
+page (`/`, `pages/Chronicle.jsx`) **ends at Contact**; the Atelier renders
+standalone at `/making-of` (`pages/MakingOf.jsx`, lazy-loading `sections/Atelier.jsx`)
+as a shareable "behind the curtain" page. It stays *deliberately absent* from
 `chapters`/`chapterList` — so it never appears in the `SideRail` nav or the ⌘K
-map (those stay the six-realm journey). It's reached by scrolling there or via
-the subtle nod at the foot of The Realms (`works.nod` → `scrollToSection('atelier')`).
-Its non-copy data (headline metrics, the build-timeline shape, ledger/cut/tech
-ids) lives in `constants.atelier`; all labels are voiced under the bundles'
-`atelier.*` key. See [LEGENDARY-ROADMAP](docs/chronicle/LEGENDARY-ROADMAP.md) §7.
+map (those stay the six-realm journey). It's reached from the doorway at the foot
+of The Realms (`works.nod`/`works.nodCta` → navigates to `/making-of`, remembering
+the scroll position so the return lands you back there) or the quiet footer link
+(`footer.atelierLink`); a fixed return doorway (`makingOf.back`) leads home. Its
+non-copy data (headline metrics, the build-timeline shape, ledger/cut/tech ids)
+lives in `constants.atelier`; all labels are voiced under the bundles' `atelier.*`
+(+ `makingOf.*`) keys. See [LEGENDARY-ROADMAP](docs/chronicle/LEGENDARY-ROADMAP.md) §7.
+
+**Routing.** The app is a two-route SPA (`react-router-dom`): `/` (the Chronicle)
+and `/making-of` (the Atelier) share one shell — `components/Layout.jsx` (smooth
+scroll, the global controls, footer, analytics; renders route content through
+`<Outlet/>`). `App.jsx` is just the router. Route-scoped chrome (`SideRail`,
+`MapOverlay`, the mobile map button, the ⌘K handler) lives in `pages/Chronicle.jsx`;
+the Atelier's only chrome is its return doorway. `vercel.json` rewrites client
+routes to `index.html` (excluding `/api`) so `/making-of` is directly shareable.
 
 Chapters are defined **once** in `src/constants/index.js` — `chapters` (keyed by
 section `id`: structural **data** only now — `no`, map `x`/`y`, search `kw`) plus
@@ -88,6 +101,9 @@ All color via CSS variables in `src/index.css`. See
 
 - **React 18 + Vite 4**, JSX function components + hooks only (one exception:
   `ErrorBoundary` class). **Node 24** (pinned via `engines` + `.nvmrc`).
+- **react-router-dom** → the two-route SPA: `/` (Chronicle) + `/making-of`
+  (Atelier), sharing `components/Layout.jsx` (see §2 "Routing"). `vercel.json`
+  provides the SPA rewrite (excluding `/api`).
 - **Tailwind** for layout/spacing + **CSS variables** for all theme color.
 - **Framer Motion** → component enter/hover/exit + small interactions.
 - **GSAP + ScrollTrigger** → scroll choreography (pin, scrub, parallax-out).
@@ -128,7 +144,7 @@ All color via CSS variables in `src/index.css`. See
 - **Contact** → server-side **Resend** via a Vite dev middleware (`ravenApiDev`
   in `vite.config.js`) locally / a serverless function in prod; the API key never
   reaches the client. **Vercel Analytics** (`@vercel/analytics/react`) is mounted
-  in `App.jsx`.
+  in the shared shell (`components/Layout.jsx`).
 - **❌ Three.js / @react-three/* has been fully removed.** Do not add WebGL/3D.
   Depth comes from layered CSS + parallax + Canvas2D (the hero astrolabe).
 

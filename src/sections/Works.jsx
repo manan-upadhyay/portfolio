@@ -8,7 +8,8 @@ import { SectionWrapper } from '../hoc';
 import { projects, chapters } from '../constants';
 import { ChapterHeading, ScrollReveal, Annotated } from '../components';
 import { useThemeStore } from '../store/useThemeStore';
-import { scrollToSection } from '../lib/smoothScroll';
+import { rememberScroll } from '../lib/smoothScroll';
+import { useNavigate } from 'react-router-dom';
 import Magnet from '../components/Magnet';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -228,6 +229,7 @@ const RealmCard = ({ project }) => {
 
 const Works = () => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [showAll, setShowAll] = useState(false);
   const featured = projects.filter((p) => p.isFeatured);
   const others = projects.filter((p) => !p.isFeatured);
@@ -268,11 +270,12 @@ const Works = () => {
       )}
 
       {/* The subtle nod: the portfolio itself as the unnumbered seventh realm —
-          no card (you're already standing in it), just a quiet line into the
-          Atelier coda. */}
+          no card (you're already standing in it), just a quiet doorway into the
+          Atelier (its own /making-of route). We remember the scroll position so
+          returning lands the visitor right back here. */}
       <ScrollReveal direction="up" className="works-nod mt-16">
-        <button type="button" onClick={() => scrollToSection('atelier')} data-cursor="hover"
-          className="works-nod__btn">
+        <button type="button" data-cursor="hover" className="works-nod__btn"
+          onClick={() => { rememberScroll(); navigate('/making-of'); }}>
           <span className="works-nod__line font-chronicle">{t('works.nod')}</span>
           <span className="works-nod__cta">{t('works.nodCta')} <ArrowUpRight size={15} /></span>
         </button>

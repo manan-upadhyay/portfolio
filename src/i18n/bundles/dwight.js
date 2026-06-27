@@ -184,6 +184,10 @@ export default {
     },
     submitIdle: 'Transmit',
     submitLoading: 'Transmitting…',
+    status: {
+      idle: 'The raven is on standby. Disciplined. Alert.',
+      sending: 'Raven deployed. Maintain radio silence…',
+    },
     resumeCta: 'Service Record',
     success: 'Transmission received. Acknowledged. Filed in triplicate. I will respond.',
     errors: {

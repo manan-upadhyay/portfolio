@@ -250,6 +250,10 @@ export default {
     submitIdle: 'Dispatch the Raven',
     submitLoading: 'Sending the raven…',
     resumeCta: 'Download CV',
+    status: {
+      idle: 'The raven waits, quill trimmed and ready.',
+      sending: 'Wings unfurl — the raven takes the sky…',
+    },
     success: 'Your raven has taken flight — I’ll reply as soon as it lands.',
     errors: {
       required: [

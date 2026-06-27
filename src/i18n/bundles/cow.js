@@ -132,6 +132,10 @@ export default {
     },
     submitIdle: 'Moo',
     submitLoading: 'Moo moo…',
+    status: {
+      idle: 'Moo moo moo moo.',
+      sending: 'Moo moo moo…',
+    },
     resumeCta: 'Moo Moo',
     success: 'Moo moo moo moo moo — moo moo moo moo moo moo moo.',
     errors: {

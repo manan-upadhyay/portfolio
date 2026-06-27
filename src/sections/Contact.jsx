@@ -42,6 +42,23 @@ const RavenNotice = ({ type, children }) => {
   );
 };
 
+/* Idle / sending state for the status console — a subtle pulsing pip + a line of
+   serif copy. Shares the console slot with RavenNotice so states crossfade in
+   place with no layout shift. */
+const ConsoleLine = ({ kind, children }) => (
+  <motion.div
+    className={`raven-console__line raven-console__line--${kind}`}
+    initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -4 }}
+    transition={{ duration: 0.4, ease: 'easeOut' }}
+  >
+    <span className="raven-console__pip" aria-hidden="true" />
+    {kind === 'sending'
+      ? <Loader2 size={13} className="animate-spin" style={{ color: 'var(--color-ember)' }} />
+      : <Feather size={13} style={{ color: 'var(--color-ember)' }} />}
+    <span className="raven-console__text">{children}</span>
+  </motion.div>
+);
+
 /* Copy-to-clipboard button (email row) — flips to a check for ~2s on success */
 const CopyButton = ({ text }) => {
   const [copied, setCopied] = useState(false);
@@ -167,7 +184,7 @@ const Contact = () => {
 
       <div className="grid lg:grid-cols-[1.1fr_0.9fr] gap-8 mt-10">
         {/* ---- Message ---- */}
-        <ScrollReveal direction="up" className="realm-card p-7 sm:p-9 min-w-0">
+        <ScrollReveal direction="up" className="realm-card p-7 sm:p-9 min-w-0 flex flex-col">
           <span className="chapter-eyebrow">{t('contact.theMessage')}</span>
 
           {/* inquiry chips */}
@@ -193,7 +210,7 @@ const Contact = () => {
               so suppress the browser's native bubbles — otherwise an invalid
               type="email" value is caught natively and our custom error (and
               every voice's variant of it) never gets a chance to show. */}
-          <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-4">
+          <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-4 flex-1">
             {/* Honeypot — visually hidden, off the tab order; a filled value = bot. */}
             <input
               ref={honeypotRef}
@@ -210,19 +227,11 @@ const Contact = () => {
               <input name="email" type="email" value={form.email} onChange={handleChange} placeholder={t('contact.placeholders.email')}
                 className={inputCls} style={inputStyle} aria-label="Your email" aria-required="true" />
             </div>
-            <textarea name="message" rows={5} value={form.message} onChange={handleChange}
+            <textarea name="message" rows={4} value={form.message} onChange={handleChange}
               placeholder={t('contact.messagePlaceholders', { returnObjects: true })[inquiry] || t('contact.placeholders.message')}
-              className={`${inputCls} resize-none`} style={inputStyle} aria-label="Your message" aria-required="true" />
+              className={`${inputCls} resize-none flex-1 min-h-[140px]`} style={inputStyle} aria-label="Your message" aria-required="true" />
 
-            {/* <AnimatePresence mode="wait">
-              {error ? (
-                <RavenNotice key={error} type="error">{error}</RavenNotice>
-              ) : success ? (
-                <RavenNotice key="success" type="success">{t('contact.success')}</RavenNotice>
-              ) : null}
-            </AnimatePresence> */}
-
-            <div className="mt-auto flex flex-col sm:flex-row gap-3">
+            <div className="flex flex-col sm:flex-row gap-3">
               <button ref={submitRef} type="submit" disabled={loading} data-cursor="hover"
                 className="btn-primary flex-1 disabled:opacity-70">
                 {loading ? (<><Loader2 size={18} className="animate-spin" /> {t('contact.submitLoading')}</>) : (<>{t('contact.submitIdle')} <Send size={16} /></>)}
@@ -231,6 +240,26 @@ const Contact = () => {
                 className="btn-secondary" aria-label={`${t('contact.resumeCta')} (PDF)`}>
                 <Download size={16} /> {t('contact.resumeCta')}
               </a>
+            </div>
+
+            {/* Status console — a fixed-height slot below the action row. All
+                feedback (idle / sending / error / success) crossfades IN PLACE
+                here, so the buttons never jump and the card's lower space reads as
+                an intentional "transmission" footer rather than dead air. */}
+            <div className="raven-console">
+              <div className="raven-console__slot">
+                <AnimatePresence mode="wait">
+                  {error ? (
+                    <RavenNotice key={error} type="error">{error}</RavenNotice>
+                  ) : success ? (
+                    <RavenNotice key="success" type="success">{t('contact.success')}</RavenNotice>
+                  ) : loading ? (
+                    <ConsoleLine key="sending" kind="sending">{t('contact.status.sending')}</ConsoleLine>
+                  ) : (
+                    <ConsoleLine key="idle" kind="idle">{t('contact.status.idle')}</ConsoleLine>
+                  )}
+                </AnimatePresence>
+              </div>
             </div>
           </form>
           {/* The raven flock — erupts from the button on success */}

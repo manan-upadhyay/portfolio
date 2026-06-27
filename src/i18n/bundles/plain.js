@@ -95,8 +95,12 @@ export default {
       Collaboration: 'What should we build together? Pitch me the idea…',
       'Just saying hi': 'Say hello — what brought you here?',
     },
-    submitIdle: 'Send [[raven|message]]',
+    submitIdle: 'Send Message',
     submitLoading: 'Sending…',
+    status: {
+      idle: 'Ready when you are.',
+      sending: 'Sending your message…',
+    },
     success: "Thanks — your message is on its way. I'll reply soon.",
     errors: {
       required: ['Please fill in every field before sending.'],

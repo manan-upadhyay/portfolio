@@ -1914,47 +1914,40 @@ h1, h2, h3, h4, h5, h6 {
 }
 .works-nod__btn:hover .works-nod__cta { gap: 8px; }
 
-/* ===== Raven burst (contact-send success flight) ===== */
-@keyframes raven-flight {
-  0%   {
-    opacity: 0;
-    transform: translate(-50%, -50%) translate(0, 0) scale(0.2) rotate(var(--raven-rot, 0deg));
-  }
-  8%  {
-    opacity: 0.95;
-    transform: translate(-50%, -50%) translate(calc(var(--raven-dx) * 0.05), calc(var(--raven-dy) * 0.05)) scale(0.6) rotate(var(--raven-rot, 0deg));
-  }
-  25%  {
-    opacity: 0.9;
-    transform: translate(-50%, -50%)
-      translate(calc(var(--raven-dx) * 0.25), calc(var(--raven-dy) * 0.25 + var(--raven-wobble, 5px)))
-      scale(0.85) rotate(var(--raven-rot, 0deg));
-  }
-  50%  {
-    opacity: 0.75;
-    transform: translate(-50%, -50%)
-      translate(calc(var(--raven-dx) * 0.5), calc(var(--raven-dy) * 0.5 - var(--raven-wobble, 5px)))
-      scale(0.95) rotate(var(--raven-rot, 0deg));
-  }
-  75%  {
-    opacity: 0.45;
-    transform: translate(-50%, -50%)
-      translate(calc(var(--raven-dx) * 0.75), calc(var(--raven-dy) * 0.75 + calc(var(--raven-wobble, 5px) * 0.5)))
-      scale(1) rotate(var(--raven-rot, 0deg));
-  }
-  100% {
-    opacity: 0;
-    transform: translate(-50%, -50%) translate(var(--raven-dx), var(--raven-dy)) scale(1) rotate(var(--raven-rot, 0deg));
-  }
+/* ===== Raven console — the message card's fixed-height status footer =====
+   A reserved slot so idle / sending / error / success all swap IN PLACE with no
+   layout shift. The slot is absolutely positioned inside a min-height box, so a
+   notice that wraps to extra lines overflows the slot symmetrically instead of
+   pushing the action row above it. */
+.raven-console { position: relative; min-height: 64px; margin-top: 4px; }
+.raven-console__slot {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  align-items: center;
 }
-
-/* Wing-phase: 4 SVG paths are stacked; each fades in for 25% of the cycle then
-   out, offset by its index. The JS sets animation-delay per phase. */
-@keyframes raven-wing-phase {
-  0%   { opacity: 1; }
-  20%  { opacity: 1; }
-  25%  { opacity: 0; }
-  95%  { opacity: 0; }
-  100% { opacity: 1; }
+.raven-console__slot > * { grid-area: 1 / 1; } /* stack states for the crossfade */
+.raven-console__line {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-style: italic;
+  font-size: 16px;
+  line-height: 1.4;
+  color: var(--color-text-muted);
+}
+.raven-console__pip {
+  width: 7px;
+  height: 7px;
+  border-radius: 9999px;
+  flex-shrink: 0;
+  background: var(--color-ember);
+  animation: raven-pip 2.6s ease-in-out infinite;
+}
+.raven-console__line--sending .raven-console__pip { animation-duration: 0.9s; }
+@keyframes raven-pip {
+  0%, 100% { opacity: 0.35; box-shadow: 0 0 0 0 rgba(var(--color-ember-rgb), 0.4); }
+  50%      { opacity: 1;    box-shadow: 0 0 0 5px rgba(var(--color-ember-rgb), 0); }
 }
 

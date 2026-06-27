@@ -184,8 +184,12 @@ export default {
       Collaboration: 'Pitch me. I love a good pitch. Let’s make something great together.',
       'Just saying hi': 'Hi! Hello! What’s up! This is already going great.',
     },
-    submitIdle: 'Send [[raven|it]]',
+    submitIdle: 'Send it! Send it! Send it!',
     submitLoading: 'Sending…',
+    status: {
+      idle: 'I’m right here. Waiting. Patiently. Mostly.',
+      sending: 'Okay here it goes, here it goes…',
+    },
     resumeCta: 'My Résumé',
     success: 'Boom. Roasted. (I mean — message sent! I’ll reply soon, friend.)',
     errors: {

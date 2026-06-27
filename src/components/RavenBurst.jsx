@@ -1,243 +1,204 @@
 // ─────────────────────────────────────────────────────────────────────────────
-// RavenBurst — a flock of black ravens that erupt from the button origin and
-// fly toward the upper-right, fading as they spread. Each bird has a realistic
-// silhouette with articulated wings that flap between up/down positions. The
-// flock uses staggered launch, varied sizes, speeds, and angles for a natural
-// "startled takeoff" feel. Portalled to <body> to avoid clipping.
+// RavenBurst — a cinematic flock of ravens that erupts from the send button and
+// scatters across the page on a successful dispatch, in time with raven.mp3.
+//
+// Rendered on a single full-screen Canvas2D (one element for the whole flock —
+// far cheaper than dozens of animated SVGs) with light flight physics: a startled
+// upward-and-outward launch, flap-driven lift over gravity, drag, per-bird wander,
+// banking into the velocity, and depth (bigger birds fly faster, nearer, brighter).
+//
+// Birds are painted in the button's own fill colour (`--btn-bg`) so they read as
+// the button itself taking flight — black on the light theme, pale on the dark.
+// Honors prefers-reduced-motion (no flock). Portalled to <body>; pointer-through.
 // ─────────────────────────────────────────────────────────────────────────────
-import { useEffect, useState, useRef, useMemo } from 'react';
+import { useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 
-// ── Realistic raven silhouettes ──────────────────────────────────────────────
-// Three wing positions for the flap cycle. Each is a side-profile raven viewed
-// from below/behind during flight — distinct head+beak, body, tail, and wings
-// at different stroke angles. Drawn centered at origin for easy rotation.
-
-// Wings fully raised (upstroke peak)
-const WING_UP =
-  'M0,0 C-1,-0.5 -2,-1 -3,-0.8 L-4,-0.5 C-4.5,-0.3 -5,0 -5.5,0.2 ' +  // tail
-  'L-3,0.3 C-2,0.4 -1,0.5 0,0.3 ' +                                       // lower body
-  'C0.5,0.2 1,0.1 1.5,0.3 L2.5,0.5 L3.2,0.3 ' +                          // head+beak
-  'C2.8,0 2.5,-0.2 2,-0.3 C1.5,-0.4 1,-0.3 0.5,-0.2 ' +                  // neck
-  'M-3.5,-0.4 C-3,-1.5 -2,-3 -0.8,-4.8 C-0.3,-5.5 0,-5.8 0.2,-5.5 ' +   // left wing up
-  'C0,-4.8 -0.5,-3.5 -1,-2.2 C-1.5,-1.2 -2,-0.6 -2.5,-0.3 ' +
-  'M1.5,-0.2 C1.8,-1.2 2.2,-2.8 3,-4.5 C3.5,-5.2 3.8,-5.5 4,-5.2 ' +    // right wing up
-  'C3.6,-4.2 3,-3 2.5,-1.8 C2,-0.8 1.8,-0.4 1.5,-0.2';
-
-// Wings level (mid-stroke glide)
-const WING_MID =
-  'M0,0 C-1,-0.5 -2,-1 -3,-0.8 L-4,-0.5 C-4.5,-0.3 -5,0 -5.5,0.2 ' +
-  'L-3,0.3 C-2,0.4 -1,0.5 0,0.3 ' +
-  'C0.5,0.2 1,0.1 1.5,0.3 L2.5,0.5 L3.2,0.3 ' +
-  'C2.8,0 2.5,-0.2 2,-0.3 C1.5,-0.4 1,-0.3 0.5,-0.2 ' +
-  'M-3.5,-0.4 C-4,-0.6 -5,-0.8 -7,-0.6 C-8,-0.5 -8.5,-0.3 -8.5,-0.1 ' + // left wing flat
-  'C-7.5,-0.2 -6,-0.3 -4.5,-0.3 C-3.5,-0.3 -3,-0.3 -2.5,-0.3 ' +
-  'M1.5,-0.2 C2.5,-0.4 4,-0.6 6,-0.5 C7,-0.4 7.5,-0.2 7.5,0 ' +         // right wing flat
-  'C6.5,-0.1 5,-0.2 3.5,-0.2 C2.5,-0.2 2,-0.2 1.5,-0.2';
-
-// Wings fully lowered (downstroke)
-const WING_DOWN =
-  'M0,0 C-1,-0.5 -2,-1 -3,-0.8 L-4,-0.5 C-4.5,-0.3 -5,0 -5.5,0.2 ' +
-  'L-3,0.3 C-2,0.4 -1,0.5 0,0.3 ' +
-  'C0.5,0.2 1,0.1 1.5,0.3 L2.5,0.5 L3.2,0.3 ' +
-  'C2.8,0 2.5,-0.2 2,-0.3 C1.5,-0.4 1,-0.3 0.5,-0.2 ' +
-  'M-3.5,-0.4 C-4,0.5 -4.5,1.5 -5.5,3 C-6,3.8 -6.2,4 -6,3.8 ' +        // left wing down
-  'C-5.5,3 -4.5,1.8 -3.5,0.8 C-3,0.3 -2.8,0 -2.5,-0.3 ' +
-  'M1.5,-0.2 C2,0.6 2.8,1.8 3.5,3.2 C3.8,3.8 4,4 3.8,3.8 ' +            // right wing down
-  'C3.2,3 2.5,1.5 2,0.5 C1.8,0.1 1.6,-0.1 1.5,-0.2';
-
-// Alternate body shapes for variety — slightly different proportions
-const BODY_VARIANTS = [
-  // Variant A: stockier body, broader wings
-  {
-    up: 'M0,0 C-1.2,-0.4 -2.2,-0.8 -3.2,-0.6 L-4.2,-0.3 C-4.8,0 -5.5,0.3 -6,0.5 ' +
-        'L-3.2,0.4 C-2,0.5 -0.8,0.6 0,0.4 C0.6,0.3 1.2,0.1 1.8,0.3 L2.8,0.5 L3.5,0.2 ' +
-        'C3,0 2.6,-0.2 2,-0.3 C1.4,-0.4 0.8,-0.3 0.4,-0.2 ' +
-        'M-3.8,-0.3 C-3.2,-1.8 -2,-3.5 -0.5,-5.2 C0,-5.8 0.3,-6 0.4,-5.6 ' +
-        'C0.1,-4.8 -0.6,-3.2 -1.2,-2 C-1.8,-1 -2.5,-0.5 -3,-0.2 ' +
-        'M1.6,-0.2 C2,-1.5 2.8,-3.2 3.5,-5 C3.8,-5.6 4.2,-5.8 4.3,-5.4 ' +
-        'C3.8,-4.2 3,-2.8 2.4,-1.5 C2,-0.6 1.8,-0.3 1.6,-0.2',
-    mid: 'M0,0 C-1.2,-0.4 -2.2,-0.8 -3.2,-0.6 L-4.2,-0.3 C-4.8,0 -5.5,0.3 -6,0.5 ' +
-         'L-3.2,0.4 C-2,0.5 -0.8,0.6 0,0.4 C0.6,0.3 1.2,0.1 1.8,0.3 L2.8,0.5 L3.5,0.2 ' +
-         'C3,0 2.6,-0.2 2,-0.3 C1.4,-0.4 0.8,-0.3 0.4,-0.2 ' +
-         'M-3.8,-0.3 C-4.8,-0.5 -6.2,-0.6 -8.2,-0.4 C-9,-0.3 -9.5,0 -9.5,0.2 ' +
-         'C-8.5,0 -7,-0.2 -5.5,-0.2 C-4.2,-0.2 -3.5,-0.2 -3,-0.2 ' +
-         'M1.6,-0.2 C3,-0.4 4.8,-0.5 7,-0.3 C8,-0.2 8.5,0 8.5,0.2 ' +
-         'C7.5,0 6,-0.1 4.5,-0.1 C3,-0.1 2.2,-0.1 1.6,-0.2',
-    down: 'M0,0 C-1.2,-0.4 -2.2,-0.8 -3.2,-0.6 L-4.2,-0.3 C-4.8,0 -5.5,0.3 -6,0.5 ' +
-          'L-3.2,0.4 C-2,0.5 -0.8,0.6 0,0.4 C0.6,0.3 1.2,0.1 1.8,0.3 L2.8,0.5 L3.5,0.2 ' +
-          'C3,0 2.6,-0.2 2,-0.3 C1.4,-0.4 0.8,-0.3 0.4,-0.2 ' +
-          'M-3.8,-0.3 C-4.2,0.8 -4.8,2 -5.8,3.5 C-6.2,4.2 -6.5,4.3 -6.2,4 ' +
-          'C-5.6,3.2 -4.6,1.8 -3.6,0.6 C-3.2,0.2 -3,0 -2.8,-0.2 ' +
-          'M1.6,-0.2 C2.2,0.8 3,2 4,3.5 C4.2,4 4.5,4.2 4.3,3.8 ' +
-          'C3.6,2.8 2.8,1.5 2.2,0.4 C1.9,0 1.7,-0.1 1.6,-0.2',
-  },
-  // Variant B: sleeker, longer tail
-  {
-    up: 'M0,0 C-0.8,-0.3 -1.8,-0.7 -2.8,-0.6 L-4,-0.3 C-4.8,0 -5.8,0.2 -6.5,0.4 ' +
-        'L-3,0.3 C-1.8,0.4 -0.6,0.4 0,0.3 C0.4,0.2 0.8,0 1.3,0.2 L2.2,0.4 L3,0.2 ' +
-        'C2.6,0 2.2,-0.2 1.8,-0.3 C1.2,-0.3 0.6,-0.2 0.3,-0.1 ' +
-        'M-3.2,-0.3 C-2.8,-1.6 -1.8,-3 -0.6,-4.6 C-0.2,-5.2 0.1,-5.4 0.2,-5.1 ' +
-        'C0,-4.4 -0.5,-3 -1,-1.8 C-1.5,-0.9 -2,-0.4 -2.5,-0.2 ' +
-        'M1.3,-0.2 C1.6,-1.2 2.2,-2.6 2.8,-4.2 C3.2,-4.8 3.5,-5 3.6,-4.7 ' +
-        'C3.2,-3.8 2.6,-2.5 2.2,-1.4 C1.8,-0.6 1.5,-0.3 1.3,-0.2',
-    mid: 'M0,0 C-0.8,-0.3 -1.8,-0.7 -2.8,-0.6 L-4,-0.3 C-4.8,0 -5.8,0.2 -6.5,0.4 ' +
-         'L-3,0.3 C-1.8,0.4 -0.6,0.4 0,0.3 C0.4,0.2 0.8,0 1.3,0.2 L2.2,0.4 L3,0.2 ' +
-         'C2.6,0 2.2,-0.2 1.8,-0.3 C1.2,-0.3 0.6,-0.2 0.3,-0.1 ' +
-         'M-3.2,-0.3 C-4,-0.5 -5.5,-0.6 -7.5,-0.4 C-8.2,-0.3 -8.8,0 -8.8,0.1 ' +
-         'C-7.8,0 -6.5,-0.1 -5,-0.2 C-3.8,-0.2 -3.2,-0.2 -2.8,-0.2 ' +
-         'M1.3,-0.2 C2.2,-0.3 3.8,-0.4 5.8,-0.3 C6.5,-0.2 7,0 7,0.1 ' +
-         'C6,0 4.8,-0.1 3.5,-0.1 C2.5,-0.1 1.8,-0.1 1.3,-0.2',
-    down: 'M0,0 C-0.8,-0.3 -1.8,-0.7 -2.8,-0.6 L-4,-0.3 C-4.8,0 -5.8,0.2 -6.5,0.4 ' +
-          'L-3,0.3 C-1.8,0.4 -0.6,0.4 0,0.3 C0.4,0.2 0.8,0 1.3,0.2 L2.2,0.4 L3,0.2 ' +
-          'C2.6,0 2.2,-0.2 1.8,-0.3 C1.2,-0.3 0.6,-0.2 0.3,-0.1 ' +
-          'M-3.2,-0.3 C-3.6,0.6 -4.2,1.5 -5,3 C-5.4,3.6 -5.6,3.8 -5.4,3.5 ' +
-          'C-4.8,2.8 -4,1.5 -3.2,0.5 C-2.8,0.1 -2.6,-0.1 -2.5,-0.2 ' +
-          'M1.3,-0.2 C1.8,0.5 2.5,1.6 3.2,3 C3.5,3.5 3.6,3.7 3.5,3.5 ' +
-          'C3,2.6 2.4,1.4 1.8,0.4 C1.5,0 1.4,-0.1 1.3,-0.2',
-  },
-];
+const TWO_PI = Math.PI * 2;
 
 // ── Tuning ───────────────────────────────────────────────────────────────────
-const COUNT = 100;                 // flock size (~30% more than 22)
-const FLIGHT_DURATION_MIN = 1080; // ms — fastest bird (20% slower)
-const FLIGHT_DURATION_MAX = 2160; // ms — slowest bird (20% slower)
-const FLIGHT_DISTANCE_MIN = 100;  // px — shortest flight
-const FLIGHT_DISTANCE_MAX = 380;  // px — longest flight
-const BIRD_SCALE_MIN = 2.0;      // 40% thicker than 2.2
-const BIRD_SCALE_MAX = 4.5;      // 40% thicker than 3.8
-const STAGGER_MAX = 1020;          // ms — wider stagger for more birds
-const CLEANUP_DELAY = 3400;       // ms — longer to match slower flights
+const COUNT = 64;            // flock size
+const LAUNCH_STAGGER = 520;  // ms — spread of the startled takeoff
+const LIFE_MS = 2600;        // ms — a single bird's flight before it has faded
+const GRAVITY = 360;         // px/s² downward
+const DRAG = 0.4;            // velocity damping per second (fraction)
+const SPEED_MIN = 240;       // px/s initial burst speed (smallest/farthest bird)
+const SPEED_MAX = 620;       // px/s initial burst speed (largest/nearest bird)
+const LIFT = 520;            // px/s² peak upward thrust on each downstroke
+const SIZE_MIN = 7;          // px half-wingspan (far)
+const SIZE_MAX = 17;         // px half-wingspan (near)
 
-// Angle range: fans from upper-right. Some birds go nearly straight up, some
-// veer right, a few even scatter slightly left for realism.
-const ANGLE_MIN = 0;   // degrees (almost horizontal right)
-const ANGLE_MAX = 360;  // degrees (nearly straight up)
+const rand = (a, b) => a + Math.random() * (b - a);
 
-const rand = (min, max) => min + Math.random() * (max - min);
-const randInt = (min, max) => Math.floor(rand(min, max + 1));
-
-/** Generate flight parameters for one raven. */
-function birdParams(originX, originY) {
-  const angle = rand(ANGLE_MIN, ANGLE_MAX);
-  const rad = (angle * Math.PI) / 180;
-  const dist = rand(FLIGHT_DISTANCE_MIN, FLIGHT_DISTANCE_MAX);
-  const dx = Math.cos(rad) * dist;
-  const dy = Math.sin(rad) * dist;
-  const dur = rand(FLIGHT_DURATION_MIN, FLIGHT_DURATION_MAX);
-  const delay = rand(0, STAGGER_MAX);
-  const scale = rand(BIRD_SCALE_MIN, BIRD_SCALE_MAX);
-  // Bird faces its flight direction (beak-forward) + slight wobble.
-  const rotation = angle + rand(-15, 15);
-  // Wing flap: full cycle duration (up → mid → down → mid → up).
-  const flapDur = rand(180, 320);
-  // Pick a random body variant for shape diversity.
-  const variant = randInt(0, BODY_VARIANTS.length - 1);
-  // Slight vertical wobble during flight (birds don't fly in a straight line).
-  const wobbleAmp = rand(3, 10);
-  const wobbleFreq = rand(2, 5); // number of wobbles during flight
-
-  return { dx, dy, dur, delay, scale, rotation, flapDur, variant, wobbleAmp, wobbleFreq, originX, originY };
+/** One raven's initial state. Launches up-and-outward (a startled fan). */
+function spawn(cx, cy) {
+  const size = rand(SIZE_MIN, SIZE_MAX);
+  const depth = (size - SIZE_MIN) / (SIZE_MAX - SIZE_MIN); // 0 far … 1 near
+  // Fan biased upward: straight-up to the sides, a few nearly horizontal.
+  const ang = -Math.PI / 2 + rand(-1.15, 1.15);
+  const speed = SPEED_MIN + depth * (SPEED_MAX - SPEED_MIN) * rand(0.7, 1.1);
+  return {
+    x: cx + rand(-6, 6),
+    y: cy + rand(-4, 4),
+    vx: Math.cos(ang) * speed,
+    vy: Math.sin(ang) * speed,
+    size,
+    depth,
+    delay: rand(0, LAUNCH_STAGGER) / 1000, // s
+    flap: rand(0, TWO_PI),
+    flapSpeed: rand(13, 20),               // rad/s wingbeat
+    wander: rand(-1, 1),
+    wanderPhase: rand(0, TWO_PI),
+    heading: ang,
+    born: -1, // set when its stagger delay elapses
+  };
 }
 
-/** One animated raven — uses CSS animation for flight + JS-driven frame-based
- *  wing position swap for realistic flapping (CSS can't morph SVG paths). */
-const Raven = ({ params }) => {
-  const { dx, dy, dur, delay, scale, rotation, flapDur, variant, wobbleAmp, wobbleFreq, originX, originY } = params;
+/** Draw a flapping raven (local space, +x = forward) as a filled silhouette. */
+function drawBird(ctx, b, col) {
+  const s = b.size;
+  // One clean wingbeat per cycle: wings sweep wide (downstroke/glide) ↔ narrow &
+  // back (upstroke). `beat` 1=wide … -1=closed; `raise` 0=wide … 1=closed.
+  const beat = Math.cos(b.flap);
+  const raise = 0.5 - 0.5 * beat;
+  const ty = s * (0.45 + 0.55 * (1 - raise)); // wingtip lateral spread
+  const tx = -s * (0.12 + 0.4 * raise);       // tips sweep back as they raise
 
-  // Choose which set of wing shapes to use (default or variant body).
-  const shapes = variant === 0
-    ? { up: WING_UP, mid: WING_MID, down: WING_DOWN }
-    : (BODY_VARIANTS[variant - 1] || BODY_VARIANTS[0]);
+  ctx.save();
+  ctx.translate(b.x, b.y);
+  ctx.rotate(b.heading);                  // body (+x = head) points along velocity
+  ctx.globalAlpha = b.alpha;
+  ctx.fillStyle = col;
+  ctx.strokeStyle = col;
+  ctx.lineJoin = 'round';
+  ctx.lineCap = 'round';
 
-  const style = {
-    position: 'fixed',
-    left: originX,
-    top: originY,
-    width: 28 * (scale / 2.5),   // normalize to a good visual size
-    height: 18 * (scale / 2.5),
-    pointerEvents: 'none',
-    zIndex: 99999,
-    opacity: 0,
-    transform: `translate(-50%, -50%) rotate(${rotation}deg)`,
-    animation: `raven-flight ${dur}ms ${delay}ms ease-out forwards`,
-    '--raven-dx': `${dx}px`,
-    '--raven-dy': `${dy}px`,
-    '--raven-wobble': `${wobbleAmp}px`,
-    '--raven-wobble-freq': wobbleFreq,
-  };
+  // Wings — two tapered strokes from the shoulders out to the swept tips.
+  ctx.lineWidth = Math.max(s * 0.26, 0.8);
+  ctx.beginPath();
+  ctx.moveTo(s * 0.12, 0);
+  ctx.quadraticCurveTo(-s * 0.05, -ty * 0.55, tx, -ty);
+  ctx.moveTo(s * 0.12, 0);
+  ctx.quadraticCurveTo(-s * 0.05, ty * 0.55, tx, ty);
+  ctx.stroke();
 
-  // Flap cycle: up → mid → down → mid → up (4 phases)
-  const phases = [shapes.up, shapes.mid, shapes.down, shapes.mid];
-  const phaseDur = flapDur / 4; // duration of each wing position
+  // Body + head + a hint of tail (a small tapered teardrop).
+  ctx.beginPath();
+  ctx.moveTo(s * 0.62, 0);                          // head/beak
+  ctx.quadraticCurveTo(s * 0.1, s * 0.2, -s * 0.78, s * 0.06);
+  ctx.quadraticCurveTo(-s * 0.98, 0, -s * 0.78, -s * 0.06); // tail point
+  ctx.quadraticCurveTo(s * 0.1, -s * 0.2, s * 0.62, 0);
+  ctx.fill();
 
-  return (
-    <svg viewBox="-10 -7 20 12" style={style} aria-hidden="true">
-      {/* Each phase is layered; CSS animation-delay + duration staggers them
-          so only one is visible at a time, creating the flap illusion. */}
-      {phases.map((d, i) => (
-        <path
-          key={i}
-          d={d}
-          fill="currentColor"
-          style={{
-            color: 'var(--color-text)',
-            opacity: 0,
-            animation: `raven-wing-phase ${flapDur}ms ${delay + i * phaseDur}ms ease-in-out infinite`,
-            // Each phase is visible for 25% of the cycle, offset by its index.
-            animationDelay: `${delay + i * phaseDur}ms`,
-          }}
-        />
-      ))}
-    </svg>
-  );
-};
+  ctx.restore();
+}
 
 /**
- * RavenBurst — mount where the send succeeds. Pass the button ref so the
- * flock erupts from the button's position.
- *
- * @param {boolean} active — true to fire the burst
- * @param {React.RefObject} originRef — ref to the submit button
+ * RavenBurst — mount near the send button; pass its ref so the flock erupts from
+ * the button. Fires once each time `active` flips true.
+ * @param {boolean} active
+ * @param {React.RefObject} originRef — the submit button
  */
 const RavenBurst = ({ active, originRef }) => {
-  const [birds, setBirds] = useState(null);
+  const canvasRef = useRef(null);
+  const rafRef = useRef(0);
   const firedRef = useRef(false);
 
   useEffect(() => {
-    if (!active || firedRef.current) return;
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if (!active) { firedRef.current = false; return undefined; }
+    if (firedRef.current) return undefined;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined;
     firedRef.current = true;
 
+    const canvas = canvasRef.current;
+    if (!canvas) return undefined;
+    const ctx = canvas.getContext('2d');
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const W = window.innerWidth;
+    const H = window.innerHeight;
+    canvas.width = W * dpr;
+    canvas.height = H * dpr;
+    canvas.style.width = `${W}px`;
+    canvas.style.height = `${H}px`;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+    // Birds are the button taking flight — paint them in its fill colour.
+    const col = getComputedStyle(document.documentElement)
+      .getPropertyValue('--btn-bg').trim() || '#1F1B16';
+
     const el = originRef?.current;
-    let cx = window.innerWidth / 2;
-    let cy = window.innerHeight / 2;
+    let cx = W / 2;
+    let cy = H / 2;
     if (el) {
       const r = el.getBoundingClientRect();
       cx = r.left + r.width / 2;
       cy = r.top + r.height / 2;
     }
 
-    // Generate all bird flight parameters.
-    const flock = Array.from({ length: COUNT }, () => birdParams(cx, cy));
+    const flock = Array.from({ length: COUNT }, () => spawn(cx, cy));
+    // Near birds drawn last (over far birds) for depth layering.
+    flock.sort((a, b) => a.depth - b.depth);
 
-    setBirds(flock.map((p, i) => <Raven key={i} params={p} />));
+    const start = performance.now();
+    let last = start;
 
-    const timer = setTimeout(() => setBirds(null), CLEANUP_DELAY);
-    return () => clearTimeout(timer);
+    const frame = (now) => {
+      const t = (now - start) / 1000;          // s since burst
+      const dt = Math.min((now - last) / 1000, 0.05);
+      last = now;
+      ctx.clearRect(0, 0, W, H);
+
+      let anyAlive = false;
+      for (const b of flock) {
+        if (t < b.delay) { anyAlive = true; continue; } // still on the button
+        if (b.born < 0) b.born = t;
+        const age = (t - b.born) * 1000;        // ms aloft
+        if (age > LIFE_MS) continue;
+        anyAlive = true;
+
+        // Flap-driven lift over gravity (thrust peaks on the downstroke).
+        b.flap += b.flapSpeed * dt;
+        const thrust = LIFT * Math.max(0, Math.sin(b.flap));
+        b.vy += (GRAVITY - thrust) * dt;
+        // Lazy wander so paths curve instead of running dead straight.
+        b.wanderPhase += dt * 2.4;
+        b.vx += Math.cos(b.wanderPhase) * b.wander * 26 * dt;
+        b.vy += Math.sin(b.wanderPhase * 1.3) * b.wander * 16 * dt;
+        // Drag.
+        const d = 1 - DRAG * dt;
+        b.vx *= d; b.vy *= d;
+        b.x += b.vx * dt;
+        b.y += b.vy * dt;
+        // Bank into the direction of travel (smoothed).
+        const target = Math.atan2(b.vy, b.vx);
+        let da = target - b.heading;
+        while (da > Math.PI) da -= TWO_PI;
+        while (da < -Math.PI) da += TWO_PI;
+        b.heading += da * Math.min(1, dt * 10);
+
+        // Quick fade-in on launch, long fade-out at the end of life.
+        const p = age / LIFE_MS;
+        const fadeIn = Math.min(1, age / 90);
+        const fadeOut = p > 0.6 ? 1 - (p - 0.6) / 0.4 : 1;
+        b.alpha = (0.55 + 0.45 * b.depth) * fadeIn * fadeOut;
+
+        drawBird(ctx, b, col);
+      }
+
+      if (anyAlive) rafRef.current = requestAnimationFrame(frame);
+      else ctx.clearRect(0, 0, W, H);
+    };
+    rafRef.current = requestAnimationFrame(frame);
+
+    return () => cancelAnimationFrame(rafRef.current);
   }, [active, originRef]);
 
-  // Reset the one-shot when success clears so it can fire again.
-  useEffect(() => {
-    if (!active) firedRef.current = false;
-  }, [active]);
-
-  if (!birds) return null;
-
   return createPortal(
-    <div aria-hidden="true" style={{ position: 'fixed', inset: 0, pointerEvents: 'none', zIndex: 99999 }}>
-      {birds}
-    </div>,
+    <canvas
+      ref={canvasRef}
+      aria-hidden="true"
+      style={{ position: 'fixed', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 99999 }}
+    />,
     document.body
   );
 };

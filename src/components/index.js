@@ -14,6 +14,7 @@ export { default as Magnet } from './Magnet';
 export { default as Marginalia, Annotated } from './Marginalia';
 export { default as MapDivider } from './MapDivider';
 export { default as MapOverlay } from './MapOverlay';
+export { default as RavenBurst } from './RavenBurst';
 export { default as ScrollReveal } from './ScrollReveal';
 export { default as SideRail } from './SideRail';
 export { default as SkyControl } from './SkyControl';

@@ -132,35 +132,35 @@ const Contact = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSuccess(false);
-    // if (!form.name || !form.email || !form.message) return fail('required');
-    // if (!EMAIL_RE.test(form.email)) return fail('email');
+    if (!form.name || !form.email || !form.message) return fail('required');
+    if (!EMAIL_RE.test(form.email)) return fail('email');
 
     setError('');
     setLoading(true);
     try {
-      // const res = await fetch(RAVEN_ENDPOINT, {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({
-      //     name: form.name,
-      //     email: form.email,
-      //     message: form.message,
-      //     inquiry,
-      //     company: honeypotRef.current?.value || '',
-      //   }),
-      // });
-      // const data = await res.json().catch(() => ({}));
+      const res = await fetch(RAVEN_ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: form.name,
+          email: form.email,
+          message: form.message,
+          inquiry,
+          company: honeypotRef.current?.value || '',
+        }),
+      });
+      const data = await res.json().catch(() => ({}));
 
-      // if (res.ok && data.ok) {
+      if (res.ok && data.ok) {
         playCue('raven'); // the raven takes flight
         setSuccess(true);
         setForm({ name: '', email: '', message: '' });
         setTimeout(() => setSuccess(false), 6000);
-      // } else if (res.status === 503 || data.code === 'NOT_CONFIGURED') {
-      //   fail('notConfigured'); // server has no RESEND_API_KEY yet
-      // } else {
-      //   fail('failed');
-      // }
+      } else if (res.status === 503 || data.code === 'NOT_CONFIGURED') {
+        fail('notConfigured'); // server has no RESEND_API_KEY yet
+      } else {
+        fail('failed');
+      }
     } catch (err) {
       console.error('Raven dispatch failed:', err);
       fail('failed');

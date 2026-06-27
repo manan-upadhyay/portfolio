@@ -49,6 +49,7 @@ let enabled = true;      // user preference (mute switch)
 let volume = 0.7;        // user preference 0..1
 let armed = false;       // gesture listener attached once?
 let pageActive = true;   // is our tab/window currently in view? (no sound if not)
+const unlockCbs = [];    // fire-once callbacks for the first gesture unlock
 
 const reduceMotion = () =>
   typeof window !== 'undefined' &&
@@ -400,10 +401,23 @@ function loadBeds() {
 function unlock() {
   if (!ensureContext()) return;
   if (pageActive && ctx.state === 'suspended') ctx.resume().catch(() => {});
+  const wasLocked = !unlocked;
   unlocked = true;
   applyMaster();
   hum.refresh();
   watch.refresh();
+  // On the very first unlock, fire any one-shot listeners (e.g. the hero spins
+  // the astrolabe so the visitor is rewarded with the synced gear sound the
+  // instant audio becomes legal — see Hero.jsx). Each runs at most once.
+  if (wasLocked) { while (unlockCbs.length) { try { unlockCbs.shift()(); } catch { /* listener threw — ignore */ } } }
+}
+
+/** Register a fire-once callback for the first audio unlock. Runs immediately if
+ *  already unlocked, so callers never miss it. */
+function onUnlock(fn) {
+  if (typeof fn !== 'function') return;
+  if (unlocked) { try { fn(); } catch { /* ignore */ } return; }
+  unlockCbs.push(fn);
 }
 
 // Page in view → resume; tab/window switched away → suspend (truly stops the
@@ -457,6 +471,7 @@ function playCue(name, opts) {
 export const sound = {
   arm,
   unlock,
+  onUnlock,
   setEnabled,
   setVolume,
   playCue,

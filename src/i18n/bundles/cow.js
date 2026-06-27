@@ -231,6 +231,18 @@ export default {
       built: 'Moo moo',
       cut: 'Moo moo moo',
     },
+    eggs: {
+      title: 'Moo Moo',
+      intro: 'Moo moo moo moo, moo moo moo. Moo moo moo moo moo moo moo moo.',
+      astrolabe: { title: 'Moo moo', how: 'Moo moo moo moo — moo moo, moo moo moo moo moo.' },
+      spin: { title: 'Moo moo moo', how: 'Moo moo moo moo moo moo. Moo moo moo.' },
+      sound: { title: 'Moo', how: 'Moo moo moo moo, moo moo moo moo moo. Moo.' },
+      sky: { title: 'Moo moo', how: 'Moo moo moo moo moo. Moo moo moo moo.' },
+      voices: { title: 'Moo moo moo', how: 'Moo moo moo moo (⇧⌘V) moo moo. Moo: “moo”.' },
+      map: { title: 'Moo', how: 'Moo moo ⌘K moo moo moo moo.' },
+      raven: { title: 'Moo moo', how: 'Moo moo moo moo moo moo moo moo moo.' },
+      recap: { title: 'Moo moo moo', how: 'Moo moo moo moo, moo moo moo moo moo moo.' },
+    },
     builtWith: 'Moo moo',
     manifesto: [
       'Moo moo moo moo moo moo moo moo. Moo moo moo moo moo moo moo moo moo.',

@@ -443,6 +443,42 @@ export default {
       drone: { title: 'The arsenal drone bed', why: 'A continuous low drone behind the skill orbit. Cut for being harsh and fatiguing — sparse, intentional cues beat an ambient bed every time.' },
       rgbOverlay: { title: 'The full-screen RGB voice tear', why: 'A chromatic glitch over the whole frame on voice change. Replaced with a quieter per-text decode scramble — the spectacle was louder than the moment deserved.' },
     },
+    eggs: {
+      title: 'The Field Guide',
+      intro: 'Most of the craft here is quiet on purpose — it answers only when you reach for it. Here is where to find what hides in plain sight.',
+      astrolabe: {
+        title: 'The living needle',
+        how: 'Sweep your cursor across the hero astrolabe — the alidade follows your hand, and a gear-mechanism sound turns at exactly the speed you move it.',
+      },
+      spin: {
+        title: 'Spin the alidade',
+        how: 'Press the spin button on the instrument’s rim to flick the needle into a free spin — real flywheel physics wind it up and let it coast to rest.',
+      },
+      sound: {
+        title: 'A synthesised score',
+        how: 'Every cue on the page is generated live by Web Audio — zero bytes shipped. Toggle it from the speaker control, bottom-right, then listen on a theme change, a send, a map open.',
+      },
+      sky: {
+        title: 'Five skies',
+        how: 'The control top-right holds five skies — and “auto” reads your local time to choose dawn, day, dusk, or night for you.',
+      },
+      voices: {
+        title: 'Hidden voices',
+        how: 'The whole site can be re-voiced. Open the Voice Hall (⇧⌘V) — sealed personalities unlock when you type their secret word anywhere on the page. (Try “boss”.)',
+      },
+      map: {
+        title: 'The chart',
+        how: 'Press ⌘K (Ctrl K) to summon the realm map — a searchable chart of every chapter of the journey.',
+      },
+      raven: {
+        title: 'The raven',
+        how: 'Send word from Summon and a flock of ravens bursts across the page with a caw — the courier carrying your message.',
+      },
+      recap: {
+        title: 'The traveller’s read',
+        how: 'At the foot of Summon, an instrument panel reads your own device, screen, and connection — and, with your blessing, your city — then mints a one-of-a-kind sigil from it.',
+      },
+    },
     builtWith: 'Built with',
     manifesto: [
       'I build production web platforms for a living — finance, healthcare, logistics, the systems people actually depend on. This site is where I got to answer to no one but the craft.',

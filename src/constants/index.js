@@ -411,6 +411,19 @@ export const atelier = {
   // voiced copy: t('atelier.phases.<id>.title' / '.why') and t('atelier.cuts…').
   built: ['voice', 'marginalia', 'sky', 'sound', 'recap', 'eggs'],
   cut: ['statusLine', 'battery', 'drone', 'rgbOverlay'],
+  // The "field guide" — the deliberately-subtle interactions most visitors never
+  // find. `icon` keys a lucide glyph in Atelier.jsx; the name + how-to-trigger
+  // copy is voiced: t('atelier.eggs.<id>.title' / '.how').
+  eggs: [
+    { id: 'astrolabe', icon: 'compass' },
+    { id: 'spin', icon: 'refresh' },
+    { id: 'sound', icon: 'audio' },
+    { id: 'sky', icon: 'sky' },
+    { id: 'voices', icon: 'drama' },
+    { id: 'map', icon: 'map' },
+    { id: 'raven', icon: 'send' },
+    { id: 'recap', icon: 'fingerprint' },
+  ],
   // "Built with" — proper-noun tech names are data, rendered as chips.
   tech: [
     'React 18', 'Vite', 'GSAP · ScrollTrigger', 'Lenis', 'Framer Motion',

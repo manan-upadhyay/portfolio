@@ -237,6 +237,42 @@ export default {
       drone: { title: 'Ambient drone audio', why: 'Cut for being harsh; sparse, intentional cues work better than a continuous background bed.' },
       rgbOverlay: { title: 'Full-screen glitch overlay', why: 'Replaced with a subtler per-text scramble on voice change — the original effect was too loud.' },
     },
+    eggs: {
+      title: 'Things you might miss',
+      intro: 'A lot of the interaction here is intentionally quiet. Here’s where to find it.',
+      astrolabe: {
+        title: 'Cursor-tracked needle',
+        how: 'Move your cursor over the hero astrolabe — the needle tracks your pointer, and a gear sound spins at the exact speed you move it.',
+      },
+      spin: {
+        title: 'Spin the needle',
+        how: 'Click the spin button on the astrolabe’s edge to flick the needle — it speeds up and slows to a stop with real momentum physics.',
+      },
+      sound: {
+        title: 'Synthesized sound',
+        how: 'All audio is generated live in the browser (Web Audio, zero bytes). Toggle it with the speaker control, bottom-right; you’ll hear it on theme changes, form sends, and more.',
+      },
+      sky: {
+        title: 'Five themes',
+        how: 'The control at top-right offers five skies, including “auto”, which picks dawn/day/dusk/night from your local time.',
+      },
+      voices: {
+        title: 'Alternate voices',
+        how: 'Every line of copy can switch personality. Open the Voice Hall with ⇧⌘V; locked voices unlock when you type their secret word on the page.',
+      },
+      map: {
+        title: 'Command map',
+        how: 'Press ⌘K (Ctrl+K) to open a searchable map of every section.',
+      },
+      raven: {
+        title: 'Raven on send',
+        how: 'Submit the contact form and a flock of birds animates across the screen with a sound cue.',
+      },
+      recap: {
+        title: 'Visitor readout',
+        how: 'At the bottom of the contact section, a panel reads your device, screen, and connection (and your city, if you allow it) and generates a unique sigil.',
+      },
+    },
     builtWith: 'Built with',
     manifesto: [
       'I build production web applications for a living — finance, healthcare, logistics, the systems people rely on. This site is the one place I answered only to the craft.',

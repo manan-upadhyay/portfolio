@@ -299,6 +299,42 @@ export default {
       built: 'Stuff I shipped',
       cut: 'Stuff I cut (on purpose)',
     },
+    eggs: {
+      title: 'Secret Stuff I Added',
+      intro: 'I put a bunch of cool things in here that nobody notices. That ends today. Boom — here they are.',
+      astrolabe: {
+        title: 'The Spinny Compass',
+        how: 'Wave your mouse over the big compass thing up top. It follows you. Like a loyal employee. And it makes a little gear noise. I did that.',
+      },
+      spin: {
+        title: 'Give It a Whirl',
+        how: 'See the little button on the compass? Push it. The needle spins like a fidget spinner and slows down all by itself. Physics. I’m basically a scientist.',
+      },
+      sound: {
+        title: 'The Sounds',
+        how: 'Every beep and whoosh here? Made by a computer, live, zero downloads. Hit the speaker button, bottom right. Then change the theme and listen. You’re welcome.',
+      },
+      sky: {
+        title: 'The Sky Button',
+        how: 'Top right. Five skies. One of them is “auto” and it knows what time it is where you are. Creepy? A little. Cool? Extremely.',
+      },
+      voices: {
+        title: 'The Other Mes',
+        how: 'The whole site can talk in different voices. Hit ⇧⌘V. Some are locked — type the magic word to unlock them. Hint: type “boss”. Trust me on this one.',
+      },
+      map: {
+        title: 'The Map Thing',
+        how: 'Press ⌘K. A map pops up. You can search it. It’s like Google Maps, but for me.',
+      },
+      raven: {
+        title: 'The Birds',
+        how: 'Send me a message and a whole flock of birds flies across the screen. With a sound. It’s very dramatic. I love it.',
+      },
+      recap: {
+        title: 'The Creepy Part',
+        how: 'Scroll to the bottom of the contact part. It reads your computer, your screen, even your city. I’m basically the NSA. A friendly NSA.',
+      },
+    },
     builtWith: 'Made with',
     manifesto: [
       'I build real apps for real companies — banks, hospitals, the important ones. But this site? This one was just for me. No boss. No client. Just a man and his vision.',

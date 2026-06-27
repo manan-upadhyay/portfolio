@@ -1,9 +1,28 @@
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
-import { Hammer, Scissors } from 'lucide-react';
+import { Hammer, Scissors, Compass, RefreshCcw, AudioLines, CloudSun, Drama, Map, Send, Fingerprint } from 'lucide-react';
 import { SectionWrapper } from '../hoc';
 import { atelier } from '../constants';
 import { ChapterHeading, ScrollReveal, CountUp, BuildTimeline } from '../components';
+
+/* lucide glyph per field-guide entry (icon id → component). */
+const EGG_ICONS = { compass: Compass, refresh: RefreshCcw, audio: AudioLines, sky: CloudSun, drama: Drama, map: Map, send: Send, fingerprint: Fingerprint };
+
+/* One field-guide entry — a subtle interaction + how/where to trigger it. */
+const EggCard = ({ icon, title, how }) => {
+  const Icon = EGG_ICONS[icon] ?? Compass;
+  return (
+    <motion.li
+      className="atelier-egg"
+      initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: '-40px' }} transition={{ duration: 0.5 }}
+    >
+      <span className="atelier-egg__icon" aria-hidden="true"><Icon size={17} strokeWidth={1.5} /></span>
+      <span className="atelier-egg__title">{title}</span>
+      <span className="atelier-egg__how">{how}</span>
+    </motion.li>
+  );
+};
 
 /* One headline metric — animated number (or literal) over an uppercase label. */
 const Stat = ({ stat, label }) => (
@@ -98,6 +117,20 @@ const Atelier = () => {
             </ul>
           </div>
         </div>
+      </ScrollReveal>
+
+      {/* The field guide — the subtle interactions most visitors never find. */}
+      <ScrollReveal direction="up" className="mt-14">
+        <div className="flex items-baseline justify-between gap-4 flex-wrap">
+          <span className="chapter-eyebrow">{t('atelier.eggs.title')}</span>
+        </div>
+        <p className="atelier-ledger__intro mt-4">{t('atelier.eggs.intro')}</p>
+        <ul className="atelier-eggs mt-7">
+          {atelier.eggs.map((e) => (
+            <EggCard key={e.id} icon={e.icon}
+              title={t(`atelier.eggs.${e.id}.title`)} how={t(`atelier.eggs.${e.id}.how`)} />
+          ))}
+        </ul>
       </ScrollReveal>
 
       {/* Built with — the locked stack, as data-driven chips. */}

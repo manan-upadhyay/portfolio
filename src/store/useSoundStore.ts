@@ -15,12 +15,14 @@ const prefersReduced = () =>
 interface SoundState {
   enabled: boolean;
   volume: number;
-  /** Has the visitor interacted with audio yet? Dismisses the onboarding note. */
-  engaged: boolean;
+  /** Has a gesture unlocked the browser autoplay gate yet? Runtime-only (never
+   *  persisted — the gate re-locks on every fresh load). Mirrors the engine's
+   *  `unlocked` so the UI can show the "armed but locked" coachmark on landing
+   *  and dismiss it the instant audio actually starts. */
+  unlocked: boolean;
   setEnabled: (v: boolean) => void;
   toggle: () => void;
   setVolume: (v: number) => void;
-  markEngaged: () => void;
 }
 
 export const useSoundStore = create<SoundState>()(
@@ -28,7 +30,7 @@ export const useSoundStore = create<SoundState>()(
     (set, get) => ({
       enabled: !prefersReduced(),
       volume: 0.7,
-      engaged: false,
+      unlocked: false,
       setEnabled: (v) => {
         set({ enabled: v });
         sound.setEnabled(v);
@@ -42,11 +44,10 @@ export const useSoundStore = create<SoundState>()(
         set({ volume: v });
         sound.setVolume(v);
       },
-      markEngaged: () => { if (!get().engaged) set({ engaged: true }); },
     }),
     {
       name: 'sound-storage',
-      partialize: (s) => ({ enabled: s.enabled, volume: s.volume, engaged: s.engaged }),
+      partialize: (s) => ({ enabled: s.enabled, volume: s.volume }),
       // On return visits, push the persisted preferences into the engine so the
       // very first cue already respects them.
       onRehydrateStorage: () => (state) => {
@@ -57,3 +58,8 @@ export const useSoundStore = create<SoundState>()(
     }
   )
 );
+
+// Mirror the engine's autoplay-gate state into the store. `onUnlock` fires once
+// on the first gesture (or immediately if already unlocked), so the UI flips out
+// of the "armed but locked" state exactly when audio actually becomes audible.
+sound.onUnlock(() => useSoundStore.setState({ unlocked: true }));

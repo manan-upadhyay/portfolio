@@ -516,9 +516,10 @@ export default {
   // Interactive sound design (LEGENDARY-ROADMAP §4). UI copy for the bottom-right
   // sound control; cues themselves are audio, not copy. Literal across voices.
   sound: {
-    enableHint: 'Turn on sound for a more immersive experience.',
+    enableHint: 'This chronicle has a voice — click below to hear it.',
     on: 'Sound',
     off: 'Muted',
+    ready: 'Ready',
     toggleOn: 'Turn sound on',
     toggleOff: 'Turn sound off',
     volume: 'Sound volume',

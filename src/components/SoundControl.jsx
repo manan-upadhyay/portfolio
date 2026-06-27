@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Volume2, VolumeX } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useSoundStore } from '../store/useSoundStore';
+import { sound } from '../lib/sound';
 
 const JELLY = { type: 'spring', stiffness: 320, damping: 24, mass: 0.7 };
 const COLLAPSED = 48;
@@ -10,39 +11,58 @@ const EXPANDED = 248;
 
 /**
  * Sound control — the audio half of the bottom-right control cluster (Phase 4).
- * The collapsed circle toggles master sound (mute ↔ on, with an audible confirm);
- * hovering springs it open to reveal a volume slider. Because the cluster is a
- * normal flex row, this growing leftward naturally pushes the voice switcher left.
  *
- * Onboarding: while the visitor hasn't engaged with the page yet, a one-time hover
- * note invites turning sound on; it auto-dismisses after ~10s and permanently once
- * any gesture occurs (which also unlocks the AudioContext via `sound.arm()`).
+ * Three states, not two:
+ *  • muted        — the visitor turned it off (`!enabled`).
+ *  • armed/locked — on by preference but the browser autoplay gate is still shut
+ *                   (`enabled && !unlocked`); nothing can be heard yet.
+ *  • live         — `enabled && unlocked`; sound actually plays.
+ *
+ * The armed state is the landing state for almost every visitor. To avoid the
+ * classic trap — a "turn on sound" coachmark pointing at a button whose normal
+ * action is *mute* — the button is context-aware: while the gate is shut, a press
+ * IS the unlock gesture (it opens the gate and keeps sound on, with an audible
+ * confirm), never a mute. So following the coachmark does exactly what it says.
+ * Past the gate the button is an ordinary mute/unmute toggle.
  */
 const SoundControl = () => {
   const { t } = useTranslation();
-  const { enabled, volume, engaged, toggle, setVolume, markEngaged } = useSoundStore();
+  const { enabled, volume, unlocked, toggle, setVolume } = useSoundStore();
   const [expanded, setExpanded] = useState(false);
   const [showNote, setShowNote] = useState(false);
   const liveBar = useRef(null);
+  // Was the autoplay gate still shut at the moment this press began? Captured on
+  // the button's own pointerdown (which fires before the global window unlock
+  // listener), so the click handler can't be fooled by the gate opening mid-press.
+  const pressLocked = useRef(false);
 
-  // One-time onboarding note: appears shortly after load, auto-dismisses at ~10s,
-  // and is killed permanently by the first gesture (also our audio-unlock signal).
+  const armed = enabled && !unlocked; // on by preference, but the browser holds it
+  const live = enabled && unlocked;   // actually audible
+
+  // Coachmark: appears a beat after landing while still locked, and dismisses the
+  // instant we leave the armed state (the gate opens, or the visitor mutes).
   useEffect(() => {
-    if (engaged) { setShowNote(false); return undefined; }
-    const inT = setTimeout(() => setShowNote(true), 1500);
-    const outT = setTimeout(() => setShowNote(false), 11500);
-    const onGesture = () => markEngaged();
-    window.addEventListener('pointerdown', onGesture, { once: true });
-    window.addEventListener('keydown', onGesture, { once: true });
-    return () => {
-      clearTimeout(inT); clearTimeout(outT);
-      window.removeEventListener('pointerdown', onGesture);
-      window.removeEventListener('keydown', onGesture);
-    };
-  }, [engaged, markEngaged]);
+    if (!armed) { setShowNote(false); return undefined; }
+    const inT = setTimeout(() => setShowNote(true), 1200);
+    return () => clearTimeout(inT);
+  }, [armed]);
 
-  const onToggle = () => { markEngaged(); toggle(); };
-  const onVolume = (e) => { markEngaged(); setVolume(parseFloat(e.target.value)); };
+  const capturePress = () => { pressLocked.current = !sound.isUnlocked(); };
+
+  const onPress = () => {
+    if (pressLocked.current) {
+      // First press while the browser gate is shut: this click is the unlock
+      // gesture. Open it and keep sound ON (the confirm cue is immediate proof),
+      // rather than muting. `unlock()` is idempotent if the global listener beat
+      // us to it; `toggle()` only runs to recover a muted-yet-locked edge case.
+      sound.unlock();
+      if (!enabled) toggle();
+      sound.playCue('confirm');
+    } else {
+      toggle();
+    }
+  };
+  const onVolume = (e) => setVolume(parseFloat(e.target.value));
 
   return (
     <div
@@ -50,9 +70,10 @@ const SoundControl = () => {
       onMouseEnter={() => setExpanded(true)}
       onMouseLeave={() => setExpanded(false)}
     >
-      {/* onboarding hover note */}
+      {/* Armed-but-locked coachmark — a clear, action-first invitation pointing at
+          the speaker, which (above) genuinely turns sound on when pressed. */}
       <AnimatePresence>
-        {showNote && !engaged && (
+        {showNote && armed && (
           <motion.div
             initial={{ opacity: 0, y: 8, scale: 0.96 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -90,22 +111,34 @@ const SoundControl = () => {
           boxShadow: 'var(--shadow-card)',
         }}
       >
-        {/* mute / unmute — always visible (anchored right) */}
+        {/* press = activate (while locked) or mute/unmute (once live) */}
         <motion.button
-          onClick={onToggle}
+          onPointerDown={capturePress}
+          onClick={onPress}
           data-cursor="hover"
           whileTap={{ scale: 0.88 }}
           transition={JELLY}
-          aria-label={enabled ? t('sound.toggleOff') : t('sound.toggleOn')}
-          aria-pressed={enabled}
-          className="grid place-items-center flex-shrink-0 w-12 h-12"
+          aria-label={live ? t('sound.toggleOff') : t('sound.toggleOn')}
+          aria-pressed={live}
+          className="relative grid place-items-center flex-shrink-0 w-12 h-12"
         >
+          {/* "Primed" pulse — shown ONLY while armed (locked). A plain conditional
+              (not AnimatePresence) so it vanishes the very instant audio unlocks. */}
+          {armed && (
+            <motion.span
+              className="absolute top-2 right-2 w-2 h-2 rounded-full pointer-events-none"
+              style={{ background: 'var(--color-ember)' }}
+              animate={{ opacity: [1, 0.35, 1], scale: [1, 1.25, 1] }}
+              transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
+            />
+          )}
           <span
             className="grid place-items-center w-9 h-9 rounded-full transition-colors"
             style={{
-              background: enabled ? 'rgba(var(--color-ember-rgb),0.16)' : 'var(--color-card-bg)',
-              color: enabled ? 'var(--color-ember)' : 'var(--color-text-muted)',
-              border: enabled ? 'none' : '1px solid var(--color-card-border)',
+              // live = ember fill; armed = dormant-but-inviting; muted = neutral.
+              background: live ? 'rgba(var(--color-ember-rgb),0.16)' : 'var(--color-card-bg)',
+              color: live ? 'var(--color-ember)' : armed ? 'var(--color-text)' : 'var(--color-text-muted)',
+              border: live ? 'none' : `1px solid ${armed ? 'rgba(var(--color-ember-rgb),0.5)' : 'var(--color-card-border)'}`,
             }}
           >
             {enabled ? <Volume2 size={15} /> : <VolumeX size={15} />}
@@ -123,7 +156,7 @@ const SoundControl = () => {
             className="text-[10px] tracking-[0.18em] uppercase font-medium whitespace-nowrap"
             style={{ color: enabled ? 'var(--color-ember)' : 'var(--color-text-muted)' }}
           >
-            {enabled ? t('sound.on') : t('sound.off')}
+            {live ? t('sound.on') : armed ? t('sound.ready') : t('sound.off')}
           </span>
           <input
             ref={liveBar}

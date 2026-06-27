@@ -287,6 +287,11 @@ export default {
     sign: '— Manan Upadhyay',
   },
 
+  sound: {
+    enableHint: 'Click the speaker below to turn on sound.',
+    ready: 'Ready',
+  },
+
   voice: {
     openHall: 'Browse all voices',
     hallTeaserSome: '{{count}} hidden voices to find',

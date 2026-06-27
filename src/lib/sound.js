@@ -468,10 +468,18 @@ function playCue(name, opts) {
   if (fn) fn(t0, opts || {});
 }
 
+/** Has a user gesture resumed the audio context yet? (The browser autoplay gate.)
+ *  Distinct from the `enabled` preference: audio only actually plays once BOTH are
+ *  true. The UI reads this to show the "armed but locked" coachmark on landing. */
+function isUnlocked() {
+  return unlocked;
+}
+
 export const sound = {
   arm,
   unlock,
   onUnlock,
+  isUnlocked,
   setEnabled,
   setVolume,
   playCue,

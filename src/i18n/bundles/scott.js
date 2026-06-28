@@ -283,7 +283,7 @@ export default {
       'The website was finished like twenty saves ago. Totally done. I could’ve gone home. But I didn’t go home. I stayed and I poured another hundred hours into it, because I don’t do “good enough.” I do “world’s best.” It’s a whole thing.',
     timeline: {
       title: 'The Tape',
-      range: 'Jun 20 – 27',
+      range: 'Jun 20 – 28',
       now: 'now',
       doneFlag: 'Done right here',
       caption:

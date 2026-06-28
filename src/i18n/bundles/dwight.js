@@ -281,7 +281,7 @@ export default {
       'The site was operational and presentable approximately twenty commits ago. A lesser developer would have stood down. I did not stand down. I committed an additional one hundred hours, because “adequate” is the motto of the weak, and Schrutes do not surrender ground.',
     timeline: {
       title: 'The Surveillance Log',
-      range: 'Jun 20 – 27',
+      range: 'Jun 20 – 28',
       now: 'now',
       doneFlag: 'Mission complete here',
       caption:

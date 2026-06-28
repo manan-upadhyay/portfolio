@@ -29,7 +29,7 @@ export const CONFIG = {
   theme: { peak: 0.10, dur: 0.62 }, // theme-toggle swoosh (length-synced to the wipe)
   mapOpen: { peak: 0.09 },          // map-open swoosh
   mapClose: { peak: 0.08 },         // map-close swoosh
-  error: { peak: 0.16 },            // contact-form error buzz
+  error: { peak: 0.16 },            // contact-form error tone (sleek two-note)
   glitch: { peak: 0.10 },           // voice-change decode
   blip: { peak: 0.11 },             // arsenal hover pluck
   beds: {
@@ -159,11 +159,15 @@ const CUES = {
     blip(t0 + 0.5, { freq: 880, type: 'sine', dur: 0.2, peak: 0.06, attack: 0.006 }); // soft resolve
   },
 
-  // Contact-form error — a short, low descending "denied" buzz (not harsh).
+  // Contact-form error — a sleek, iOS-style "uh-oh": two clean descending sine
+  // tones (a soft major third down, A4 → F4) over a faint triangle sub for weight.
+  // Pure and refined — it reads as a polite "no", never a harsh buzz.
   error(t0) {
-    blip(t0, { freq: 220, glideTo: 150, type: 'sawtooth', dur: 0.16, peak: CONFIG.error.peak, attack: 0.004 });
-    blip(t0 + 0.13, { freq: 165, glideTo: 110, type: 'sawtooth', dur: 0.22, peak: CONFIG.error.peak * 0.9, attack: 0.004 });
-    swoosh(t0, { dur: 0.18, peak: 0.05, type: 'lowpass', from: 420, to: 120, q: 0.6 });
+    const pk = CONFIG.error.peak;
+    blip(t0, { freq: 440, type: 'sine', dur: 0.14, peak: pk, attack: 0.006 });
+    blip(t0, { freq: 880, type: 'sine', dur: 0.10, peak: pk * 0.16, attack: 0.004 }); // airy octave gloss
+    blip(t0 + 0.12, { freq: 349.23, type: 'sine', dur: 0.22, peak: pk, attack: 0.006 });
+    blip(t0 + 0.12, { freq: 174.61, type: 'triangle', dur: 0.22, peak: pk * 0.22, attack: 0.006 }); // sub weight
   },
 
   // Map opens — a gentle upward swell (drawing the chart open).
@@ -348,7 +352,7 @@ const watch = makeBed({
     // Rotational rumble (the gear body turning).
     const rumble = ctx.createOscillator(); rumble.type = 'sawtooth'; rumble.frequency.value = 64;
     const rumLp = ctx.createBiquadFilter(); rumLp.type = 'lowpass'; rumLp.frequency.value = 180; rumLp.Q.value = 0.5;
-    const rumG = ctx.createGain(); rumG.gain.value = 0.10;
+    const rumG = ctx.createGain(); rumG.gain.value = 0.02;
     rumble.connect(rumLp).connect(rumG).connect(motion);
 
     // Gear-tooth clicks: resonant noise gated by an inverted saw LFO whose rate
@@ -356,9 +360,9 @@ const watch = makeBed({
     const src = ctx.createBufferSource(); src.buffer = noise; src.loop = true;
     const bp = ctx.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 3000; bp.Q.value = 25;
     const bp2 = ctx.createBiquadFilter(); bp2.type = 'bandpass'; bp2.frequency.value = 1150; bp2.Q.value = 7;
-    const gate = ctx.createGain(); gate.gain.value = 0.15;
+    const gate = ctx.createGain(); gate.gain.value = 0.35;
     const lfo = ctx.createOscillator(); lfo.type = 'sawtooth'; lfo.frequency.value = 0.0001; // teeth rate := needle speed
-    const lfoAmt = ctx.createGain(); lfoAmt.gain.value = -0.15; // inverted → sharp tick + decay
+    const lfoAmt = ctx.createGain(); lfoAmt.gain.value = -0.40; // inverted → sharp tick + decay
     lfo.connect(lfoAmt).connect(gate.gain);
     src.connect(bp).connect(gate);
     src.connect(bp2).connect(gate);

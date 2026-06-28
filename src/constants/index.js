@@ -383,19 +383,25 @@ export const stats = [
 export const atelier = {
   // Headline instrument metrics. `value` is data; the label is voiced
   // (t('atelier.stats.<key>')). `count` cells animate via CountUp; literals
-  // (e.g. "0 KB") render as-is. Sourced from `git log` + the file census.
+  // (e.g. "0 KB") render as-is. Sourced from `git log` + the file census:
+  //   commits → `git log --since=2026-06-20 --oneline | wc -l` (the revamp, 46)
+  //   lines   → `wc -l` of hand-written src/ (js/jsx/ts/css ≈ 11.7K)
+  //   voices  → src/i18n/bundles/* (chronicle, plain, scott, dwight, cow)
   stats: [
-    { key: 'hours', value: '100+', count: true },
-    { key: 'commits', value: '35', count: true },
+    { key: 'hours', value: '120+', count: true },
+    { key: 'commits', value: '46', count: true },
     { key: 'phases', value: '6', count: true },
     { key: 'voices', value: '5', count: true },
-    { key: 'lines', value: '9.7K', count: false },
+    { key: 'lines', value: '11.7K', count: false },
     { key: 'threejs', value: '0 KB', count: false },
   ],
   // The build timeline — daily commit counts across the "Cartographer revamp"
-  // (Jun 20–27 2026). `done` flags the day the site was already a presentable,
-  // cinematic build — everything after is the obsession arc (the six phases).
-  // Drives the Canvas2D `BuildTimeline`; the flag label is voiced.
+  // (Jun 20–28 2026, per `git log`). `done` flags the day the site was already a
+  // presentable, cinematic build (Jun 23 — procedural hero, chapter canon, mobile
+  // pass) — everything after is the obsession arc (the six "wonder" phases), and
+  // Jun 27 is its peak: the Atelier, Voice Hall, raven burst, free-spin astrolabe
+  // and the /making-of route all landed that day. Drives the Canvas2D
+  // `BuildTimeline`; the flag label is voiced.
   timeline: [
     { day: 'Jun 20', commits: 1 },
     { day: 'Jun 21', commits: 1 },
@@ -404,7 +410,8 @@ export const atelier = {
     { day: 'Jun 24', commits: 5 },
     { day: 'Jun 25', commits: 3 },
     { day: 'Jun 26', commits: 1 },
-    { day: 'Jun 27', commits: 1 },
+    { day: 'Jun 27', commits: 11 },
+    { day: 'Jun 28', commits: 1 },
   ],
   // The ledger. `built` = the six shipped "wonder" phases; `cut` = features
   // built then deliberately removed (the senior-judgment column). ids key the

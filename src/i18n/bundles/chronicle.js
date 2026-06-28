@@ -419,7 +419,7 @@ export default {
       'The map was finished and presentable roughly twenty commits ago — a polished, cinematic build. I could have shipped it. Instead I poured another hundred-odd hours into it, because "good enough" is exactly where most portfolios stop, and I wanted to see how far past that line I could push.',
     timeline: {
       title: 'The Build Log',
-      range: 'Jun 20 – 27',
+      range: 'Jun 20 – 28',
       now: 'now',
       doneFlag: 'It was done here',
       caption:

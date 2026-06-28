@@ -216,7 +216,7 @@ export default {
       'Moo moo moo moo moo moo moo moo moo moo moo. Moo moo moo moo moo, moo moo moo moo moo moo moo — moo moo moo moo moo moo moo moo moo.',
     timeline: {
       title: 'Moo Moo',
-      range: 'Moo 20 – 27',
+      range: 'Moo 20 – 28',
       now: 'moo',
       doneFlag: 'Moo moo moo',
       caption:

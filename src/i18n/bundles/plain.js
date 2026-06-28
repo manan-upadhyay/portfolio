@@ -208,7 +208,7 @@ export default {
       'The site was finished and presentable about twenty commits ago. I chose not to stop there — I spent roughly another hundred hours on it, because I wanted to treat my own portfolio like a real product instead of settling for "good enough".',
     timeline: {
       title: 'Commit history',
-      range: 'Jun 20 – 27',
+      range: 'Jun 20 – 28',
       now: 'now',
       doneFlag: 'Shippable here',
       caption:

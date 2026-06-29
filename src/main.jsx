@@ -5,6 +5,7 @@ import { PostHogProvider } from '@posthog/react';
 import App from './App.jsx';
 import { resolveSkyMode, SKY_BASE } from './lib/sky';
 import { markAnalyticsReady, dntEnabled } from './lib/analytics';
+import log, { greet } from './lib/log';
 import './i18n'; // initialize the Voice (i18next) layer before render
 import './index.css';
 
@@ -27,6 +28,9 @@ if (PH_KEY && !dntEnabled()) {
     capture_exceptions: true, // JS error tracking
   });
   markAnalyticsReady();
+  log.info('analytics ready — cookieless PostHog, error capture on');
+} else {
+  log.info('analytics disabled', dntEnabled() ? '(Do-Not-Track honored)' : '(no key)');
 }
 
 // Resolve the visitor's "sky" (Phase 3: auto/dawn/day/dusk/night) and paint the
@@ -41,6 +45,7 @@ const initializeTheme = () => {
       || (legacy === 'light' ? 'day' : legacy === 'dark' ? 'night' : 'auto');
   } catch {
     mode = 'auto';
+    log.warn('theme: could not read persisted sky — falling back to auto');
   }
 
   const sky = mode === 'auto' ? resolveSkyMode() : mode;
@@ -50,10 +55,14 @@ const initializeTheme = () => {
   root.classList.add(base);
   root.dataset.sky = sky;
   root.style.colorScheme = base;
+  log.info(`sky resolved → ${sky} (${base}) from mode "${mode}"`);
 };
 
 // Run before React mounts
 initializeTheme();
+
+// Greet the curious soul who opens DevTools (once, on-brand).
+greet();
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>

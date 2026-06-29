@@ -17,6 +17,9 @@ import { initReactI18next } from 'react-i18next';
 import chronicle from './bundles/chronicle';
 import plain from './bundles/plain';
 import { DEFAULT_VOICE, OPEN_VOICES } from './voices';
+import { createLogger } from '../lib/log';
+
+const log = createLogger('voice');
 
 // Restore the persisted voice (set by the Voice store) before init so there's no
 // flash of the default. Locked voices are only honored if previously unlocked.
@@ -65,8 +68,10 @@ export async function loadVoice(id) {
     const mod = await import(`./bundles/${id}.js`);
     i18n.addResourceBundle(id, 'translation', mod.default, true, true);
     loaded.add(id);
+    log.info(`unsealed the "${id}" voice`);
     return true;
   } catch {
+    log.warn(`voice "${id}" has no bundle yet — staying on the current voice`);
     return false; // bundle not authored yet — caller can ignore
   }
 }

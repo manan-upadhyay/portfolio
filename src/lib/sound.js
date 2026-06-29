@@ -16,6 +16,9 @@
 // sections fire cues through `playCue` / `hum` / `watch`. Everything no-ops
 // safely until unlocked + enabled + the page is in view, so callers never guard.
 // ─────────────────────────────────────────────────────────────────────────────
+import { createLogger } from './log';
+
+const log = createLogger('sound');
 
 // ╔═══════════════════════════════════════════════════════════════════════════╗
 // ║  TUNING — edit me. Friendly knobs for the whole sound design.              ║
@@ -215,10 +218,11 @@ async function loadRaven(url = CONFIG.raven) {
   if (!ensureContext()) return;
   try {
     const res = await fetch(url);
-    if (!res.ok) return; // 404 → fall back to ravenSynth, no noise in console
+    if (!res.ok) { log.debug(`raven sample absent (${res.status}) → synth fallback`); return; }
     ravenBuffer = await ctx.decodeAudioData(await res.arrayBuffer());
   } catch {
     ravenBuffer = null; // any failure → graceful synth fallback
+    log.debug('raven sample failed to decode → synth fallback');
   }
 }
 
@@ -413,7 +417,10 @@ function unlock() {
   // On the very first unlock, fire any one-shot listeners (e.g. the hero spins
   // the astrolabe so the visitor is rewarded with the synced gear sound the
   // instant audio becomes legal — see Hero.jsx). Each runs at most once.
-  if (wasLocked) { while (unlockCbs.length) { try { unlockCbs.shift()(); } catch { /* listener threw — ignore */ } } }
+  if (wasLocked) {
+    log.info('audio unlocked by first gesture — cues live');
+    while (unlockCbs.length) { try { unlockCbs.shift()(); } catch { /* listener threw — ignore */ } }
+  }
 }
 
 /** Register a fire-once callback for the first audio unlock. Runs immediately if

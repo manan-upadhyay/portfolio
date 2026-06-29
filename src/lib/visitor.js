@@ -7,6 +7,9 @@
 // recap can hide a row rather than render a blank.
 
 import { getTimezone, tzToCoords, resolveSkyMode } from './sky';
+import { createLogger } from './log';
+
+const log = createLogger('visitor');
 
 const ua = typeof navigator !== 'undefined' ? navigator.userAgent || '' : '';
 
@@ -104,7 +107,10 @@ export const fetchGeo = () => {
   if (geoPromise) return geoPromise;
   try {
     const saved = sessionStorage.getItem(GEO_KEY);
-    if (saved) { geoPromise = Promise.resolve(JSON.parse(saved)); return geoPromise; }
+    if (saved) {
+      log.debug('geo served from session cache');
+      geoPromise = Promise.resolve(JSON.parse(saved)); return geoPromise;
+    }
   } catch { /* sessionStorage blocked — just fetch */ }
 
   const norm = (d) => {
@@ -128,6 +134,9 @@ export const fetchGeo = () => {
     .then((d) => norm(d))
     .catch(() => fetch('https://ipapi.co/json/').then((r) => r.json()).then(norm).catch(() => null))
     .then((geo) => {
+      // No PII in the log — just whether the one opt-in lookup resolved.
+      if (geo) log.debug('geo lookup resolved (city/coords available)');
+      else log.warn('geo lookup unavailable — recap will hide location rows');
       if (geo) { try { sessionStorage.setItem(GEO_KEY, JSON.stringify(geo)); } catch { /* ignore */ } }
       return geo;
     });

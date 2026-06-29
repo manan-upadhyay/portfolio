@@ -11,6 +11,9 @@
 // path never reaches the network.
 
 import { playCue } from './sound';
+import { createLogger } from './log';
+
+const log = createLogger('raven');
 
 export const RAVEN_ENDPOINT = '/api/send-raven';
 export const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -37,10 +40,12 @@ export async function sendRaven(payload) {
     }
     // Server has no RESEND_API_KEY yet → a distinct, recoverable state.
     const code = res.status === 503 || data.code === 'NOT_CONFIGURED' ? 'notConfigured' : 'failed';
+    if (code === 'notConfigured') log.warn('endpoint has no RESEND_API_KEY yet — message not sent');
+    else log.warn(`dispatch refused (HTTP ${res.status})`);
     playCue('error'); // the raven is refused
     return { ok: false, code };
   } catch (err) {
-    console.error('Raven dispatch failed:', err);
+    log.error('dispatch failed — network error:', err);
     playCue('error');
     return { ok: false, code: 'failed' };
   }

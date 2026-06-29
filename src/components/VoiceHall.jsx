@@ -6,6 +6,7 @@ import { useVoiceStore } from '../store/useVoiceStore';
 import { voicesByCategory, voiceById, SEALED_VOICES } from '../i18n/voices';
 import { playCue } from '../lib/sound';
 import { sendRaven, EMAIL_RE } from '../lib/raven';
+import { getLenis } from '../lib/smoothScroll';
 import Hovercard from './Hovercard';
 import RavenNotice from './RavenNotice';
 import RavenBurst from './RavenBurst';
@@ -77,14 +78,6 @@ const VoiceRequest = () => {
   const [state, setState] = useState('idle'); // idle | sending | done | error
   const sendRef = useRef(null);     // the raven flock erupts from the Send button…
   const originRef = useRef(null);   // …whose centre we capture before it swaps out
-  const errRef = useRef(null);      // sentinel below the error — scrolled into view
-
-  // Reveal the error notice when it appears — it sits below the Send button, so on
-  // a short rail it can land out of view; scrollIntoView walks up whichever scroll
-  // container is active (the form on desktop, the stage on mobile).
-  useEffect(() => {
-    if (state === 'error') errRef.current?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
-  }, [state]);
 
   const submit = async (e) => {
     e.preventDefault();
@@ -124,10 +117,14 @@ const VoiceRequest = () => {
           </motion.div>
         ) : (
           <motion.form key="form" className="voice-summon__form" onSubmit={submit}
-            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} noValidate>
             <span className="voice-summon__crest"><Feather size={17} /></span>
             <h3 className="voice-summon__title font-chronicle">{t('voiceHall.request.cta')}</h3>
-            <p className="voice-summon__lede">{t('voiceHall.request.ctaSub')}</p>
+            {/* Intro line ↔ error share one slot at the top, so an error is seen
+                instantly (no scrolling) and never grows the form past the modal. */}
+            {state === 'error'
+              ? <RavenNotice type="error">{t('voiceHall.request.error')}</RavenNotice>
+              : <p className="voice-summon__lede">{t('voiceHall.request.ctaSub')}</p>}
 
             <label className="voice-summon__field">
               <span className="voice-summon__fieldlabel">{t('voiceHall.request.persona')}</span>
@@ -159,11 +156,6 @@ const VoiceRequest = () => {
                 ? <><Loader2 size={15} className="animate-spin" /> {t('voiceHall.request.sending')}</>
                 : <><Send size={15} /> {t('voiceHall.request.send')}</>}
             </button>
-            {/* Shared cinematic feedback — the shaking "returned raven" + error cue. */}
-            <AnimatePresence>
-              {state === 'error' && <RavenNotice type="error">{t('voiceHall.request.error')}</RavenNotice>}
-            </AnimatePresence>
-            <span ref={errRef} aria-hidden="true" />
           </motion.form>
         )}
       </AnimatePresence>
@@ -190,10 +182,26 @@ const VoiceHall = () => {
   useEffect(() => {
     if (!hallOpen) return undefined;
     setQuery('');
+    // Hard-lock the page while the Hall is open. Lenis drives the whole-page
+    // scroll, so we stop it AND set the document to overflow:hidden — the latter
+    // is the backstop that keeps native wheel from chaining up to the document
+    // when it bubbles out of (or past the end of) an inner scroll area. Inner
+    // scrollers carry `data-lenis-prevent` + `overscroll-behavior:contain` so they
+    // still scroll natively without leaking to the background.
+    const lenis = getLenis();
+    lenis?.stop();
+    const root = document.documentElement;
+    const prevOverflow = root.style.overflow;
+    root.style.overflow = 'hidden';
     const f = setTimeout(() => inputRef.current?.focus(), 60);
     const onKey = (e) => { if (e.key === 'Escape') closeHall(); };
     window.addEventListener('keydown', onKey);
-    return () => { clearTimeout(f); window.removeEventListener('keydown', onKey); };
+    return () => {
+      clearTimeout(f);
+      window.removeEventListener('keydown', onKey);
+      root.style.overflow = prevOverflow;
+      lenis?.start();
+    };
   }, [hallOpen, closeHall]);
 
   const q = query.trim().toLowerCase();
@@ -220,7 +228,6 @@ const VoiceHall = () => {
       {hallOpen && (
         <motion.div className="fixed inset-0 z-[100] grid place-items-center p-4 sm:p-8"
           initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-          data-lenis-prevent
           role="dialog" aria-modal="true" aria-label={t('voiceHall.title')}>
           <div className="absolute inset-0" style={{ background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(12px)' }} onClick={closeHall} />
 
@@ -253,8 +260,11 @@ const VoiceHall = () => {
                 className="flex-1 bg-transparent outline-none text-[14.5px]" style={{ color: 'var(--color-text)' }} />
             </form>
 
-            {/* two-pane stage: scrolling voices + persistent summon rail */}
-            <div className="voice-hall__stage">
+            {/* two-pane stage: scrolling voices + persistent summon rail.
+                data-lenis-prevent here lets the inner scroll areas (the roster, the
+                rail/form on desktop, the whole stage on mobile) scroll natively
+                instead of driving Lenis; the page itself is hard-locked above. */}
+            <div className="voice-hall__stage" data-lenis-prevent>
               <div className="voice-hall__left">
                 {/* fixed head — the live "Now narrating" spotlight + intro stay put
                     while the roster scrolls beneath, so the current voice is always

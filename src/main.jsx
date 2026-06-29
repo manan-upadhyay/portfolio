@@ -18,11 +18,19 @@ import './index.css';
 //   (heatmaps / rage- + dead-clicks), history-change $pageview, $pageleave, web
 //   vitals, and exception autocapture. Session replay is gated in the PostHog
 //   project settings (we don't disable it here). See docs/chronicle/ANALYTICS.md.
+//   In production we route ingestion through a SAME-ORIGIN reverse proxy
+//   (`/ingest/*` → PostHog, via vercel.json rewrites) so ad-blockers don't
+//   recognize it as a tracker and drop ~20-40% of events. `ui_host` keeps the
+//   toolbar / "view in PostHog" links pointing at the real app. Dev has no proxy,
+//   so it talks to PostHog directly (VITE_POSTHOG_HOST, default US cloud).
 const PH_KEY = import.meta.env.VITE_POSTHOG_KEY;
-const PH_HOST = import.meta.env.VITE_POSTHOG_HOST || 'https://us.i.posthog.com';
+const PH_HOST = import.meta.env.PROD
+  ? `${window.location.origin}/ingest`
+  : (import.meta.env.VITE_POSTHOG_HOST || 'https://us.i.posthog.com');
 if (PH_KEY && !dntEnabled()) {
   posthog.init(PH_KEY, {
     api_host: PH_HOST,
+    ui_host: 'https://us.posthog.com', // real UI host behind the proxy
     defaults: '2026-05-30',
     persistence: 'memory', // cookieless + anonymous → no consent banner
     capture_exceptions: true, // JS error tracking

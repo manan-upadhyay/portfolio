@@ -97,29 +97,115 @@ derives country server-side):
 `screen_w/h`, `language`, `returning_visitor`, `reduced_motion`, `sound_enabled`,
 `theme`, `sky_mode`, `voice`.
 
-## Viewing the data (build once in PostHog)
+## Dashboard setup — end to end (do this once)
 
-PostHog gives charts + filters with **zero dashboard code**. Pin these to a
-"Chronicle Adoption" dashboard:
+PostHog gives charts + filters with **zero dashboard code**. The walkthrough
+below builds two dashboards from the events above. Allow ~30 min.
 
-1. **Feature adoption** — *Trends*, bar chart, total of each named event.
-2. **Voice popularity** — *Trends* on `voice_selected` **breakdown by** `voice`.
-3. **Scroll funnel** — *Funnel*: `scroll_depth` `25 → 50 → 75 → 100`.
-4. **Conversion funnel** ⭐ — *Funnel*: `$pageview` → `section_view (contact)` →
-   `contact_form_start` → `contact_submit` → `contact_success`. The hiring metric.
-5. **Discovery funnel** — *Funnel*: `$pageview` → `astrolabe_spin` →
-   `voice_hall_open` → `atelier_view`.
-6. **Heatmaps** — open any page in the PostHog toolbar (needs feature flags /
-   `/decide` enabled) → click + rage-click maps.
-7. **Web vitals** — the built-in Web Vitals dashboard (LCP/CLS/INP per route).
-8. **Errors** — the Error tracking tab ($exception + ErrorBoundary reports).
+### Step 0 — Get data flowing & verify
 
-Every insight filters natively by the super properties above + PostHog's
-device/country props. Vercel Web Analytics stays mounted for raw pageviews/geo;
-PostHog is the product-event + qualitative layer on top.
+1. Create a project at app.posthog.com → **Settings → Project → Project API key**.
+2. Put it in `VITE_POSTHOG_KEY` (+ `VITE_POSTHOG_HOST` if EU) locally and in
+   **Vercel → Project → Settings → Environment Variables** (Production + Preview),
+   then redeploy.
+3. Open the deployed site, click around (spin the astrolabe, switch a voice,
+   focus the contact form). In PostHog → **Activity** (live events) you should see
+   `$pageview`, `$autocapture`, `astrolabe_spin`, `voice_selected`, … arriving.
+   If nothing shows: check the key and that the browser isn't sending Do-Not-Track.
 
-## Future / experiments
+> **Ad-blocker reverse proxy (already wired).** In production, ingestion is routed
+> through a **same-origin proxy** so blockers don't see a tracker domain and drop
+> ~20–40% of events. [`vercel.json`](../../vercel.json) rewrites `/ingest/static/*`
+> → `us-assets.i.posthog.com` and `/ingest/*` → `us.i.posthog.com`; [`main.jsx`](../../src/main.jsx)
+> sets `api_host` to `${origin}/ingest` in prod (+ `ui_host` so the toolbar still
+> links to the real PostHog UI). Dev talks to PostHog directly (no proxy).
+> **On EU cloud**, repoint both `/ingest` rewrite destinations to the `eu` hosts.
+> Verify after deploy: in the Network tab, `…/ingest/e/?...` returns **200** (not
+> `blocked:other`), and PostHog **Activity** still receives events.
 
-Feature flags are enabled, so you can run **A/B experiments** (hero copy, CTA
-wording) and gradual rollouts directly from PostHog — no code change beyond
-reading the flag where you want to branch.
+> **Interpretation caveat (important).** We run **cookieless** (`persistence:
+> 'memory'`), so each page *load* is a fresh anonymous person. "Unique users" ≈
+> **unique sessions**, and `returning_visitor` (our own super-property, from a
+> persisted local tally) is the reliable repeat-visit signal — prefer it over
+> PostHog's person-level returning metric. Keep funnel conversion windows within
+> **one session** (our journeys are single-visit anyway).
+
+### Step 1 — Turn on the free capture layers
+
+**Settings → Project**, enable: **Autocapture**, **Heatmaps**, **Web vitals**,
+**Session replay** (keep "Mask all inputs" on), **Error tracking**. These power
+heatmaps/replay/vitals/exceptions with no extra code.
+
+Optional but tidy: **Data management → Events**, mark the marquee events as
+**Verified** and add descriptions, so the team picker stays clean.
+
+### Step 2 — Create two dashboards
+
+**New dashboard** (left sidebar → Dashboards → New):
+- **"Chronicle — Conversion & Quality"** (the hiring scoreboard)
+- **"Chronicle — Adoption & Engagement"** (did the moments land?)
+
+For every tile: **New insight → pick the type → configure → Save & add to
+dashboard**. Set each dashboard's date range to **Last 30 days** (top-right).
+
+### Step 3 — Dashboard A · "Conversion & Quality"
+
+| # | Tile | Type | Config | Answers |
+|---|---|---|---|---|
+| A1 | **Conversion funnel** ⭐ | Funnel | Steps: `$pageview` → `section_view` (filter `id = contact`) → `contact_form_start` → `contact_submit` → `contact_success`. Window: 1 day. | Where leads are won/lost |
+| A2 | **Soft-intent signals** | Trends | Series (Unique users): `email_copied`, `resume_open`, `channel_open`. Display: bar. | Intent beyond the form |
+| A3 | **What work they want** | Trends | `inquiry_selected` **breakdown by** `inquiry` (Total count). Pie/bar. | Hire vs freelance vs collab |
+| A4 | **Conversion by inquiry** | Funnel | A1 steps, but **breakdown by** `contact_success` → `inquiry`. | Which inquiry type converts |
+| A5 | **Leads over time** | Trends | `contact_success` (Total), interval = day. | Lead flow trend |
+| A6 | **Web Vitals** | (built-in) | Add the **Web Vitals** insight (LCP/CLS/INP), breakdown by `$pathname`. | Real-user performance |
+| A7 | **Errors** | (built-in) | Pin from the **Error tracking** tab. | Broken subtrees / $exception |
+
+Add an **Alert** on A5: open the insight → **Subscribe / Alerts** → notify your
+email when `contact_success` ≥ 1 per day (instant lead notification).
+
+### Step 4 — Dashboard B · "Adoption & Engagement"
+
+| # | Tile | Type | Config | Answers |
+|---|---|---|---|---|
+| B1 | **Feature adoption** | Trends | One series **Unique users** per marquee event: `astrolabe_spin`, `voice_hall_open`, `voice_selected`, `map_open`, `arsenal_tools_hovered`, `carousel_open`, `buildreel_scrub`, `persona_card_expand`, `expedition_view`, `atelier_view`. Display: **bar**, sorted desc. | Which moments get touched |
+| B2 | **Adoption rate %** | Trends | Same events as B1 but as a **formula** `A / B` where `B = $pageview` (unique). Shows % of visits using each feature. | Touched vs ignored, normalized |
+| B3 | **Hot sections** | Trends | `section_view` **breakdown by** `id`. | Most-seen chapters |
+| B4 | **Scroll funnel** | Funnel | `scroll_depth` steps `pct = 25 → 50 → 75 → 100`. | Where they stop scrolling |
+| B5 | **Discovery funnel** | Funnel | `$pageview` → `astrolabe_spin` → `voice_hall_open` → `atelier_view`. | Do deep features get reached |
+| B6 | **Voice popularity** | Trends | `voice_selected` **breakdown by** `voice`. | Favourite voice + long tail |
+| B7 | **Easter-egg discovery** | Trends | `voice_unlocked` **breakdown by** `voice`. | Which secrets get found |
+| B8 | **Voice wishlist** | Trends | `voice_summon_submit` **breakdown by** `persona` (table). | Voices people *want* |
+| B9 | **Session quality** | Trends | `session_recap` — three series using **property value (average)**: `seconds_on_site`, `max_scroll_pct`, `voices_tried`. Display: number/bold. | Avg depth of a visit |
+| B10 | **Voices-tried distribution** | Trends | `session_recap` **breakdown by** `voices_tried`. | How many voices per visit |
+| B11 | **Power users** | Trends | `shortcut_used` (Unique users) **breakdown by** `combo`. | Keyboard-driven devs |
+| B12 | **Heatmaps** | (toolbar) | Open the live site via **Toolbar** (Activity → Launch toolbar) → click + rage-click maps per page. | Where they actually click |
+
+### Step 5 — Cohorts (slice everything by audience)
+
+**People → Cohorts → New cohort**:
+- **Engaged explorers** — performed `voice_selected` ≥ 2 **or** `atelier_view` in
+  the last 30d.
+- **Converters** — performed `contact_success`.
+- **Technical audience** — performed `shortcut_used` (or `$autocapture` with a
+  `device_gpu` worth bragging about).
+
+Then on any tile, **filter by cohort** — e.g. compare B9 *Session quality* for
+Converters vs everyone to validate *"engaged visitors convert."*
+
+### Step 6 — Slice by super-properties
+
+On any insight, **+ Filter** / **Breakdown** by our registered super-props:
+`device_os`, `device_browser`, `theme`, `voice`, `returning_visitor`,
+`reduced_motion`, `sound_enabled`, plus PostHog's country/device. (E.g. Conversion
+funnel broken down by `device_os` → does mobile convert worse?)
+
+### Step 7 — Qualitative & experiments
+
+- **Session replay** (left sidebar) — watch anonymized visits; filter to sessions
+  that hit `contact_form_start` but **not** `contact_success` to see *why* leads
+  abandon. Masked inputs keep it private.
+- **Experiments** (feature flags are enabled) — A/B test e.g. hero copy or the
+  primary CTA; read the flag in code only where you branch.
+
+Vercel Web Analytics stays mounted for raw pageviews/geo; PostHog is the
+product-event + qualitative layer on top.

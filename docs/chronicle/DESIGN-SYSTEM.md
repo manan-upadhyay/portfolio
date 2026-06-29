@@ -206,6 +206,37 @@ consistent); skipped under reduced-motion. Both voice paths fire it via
 
 ---
 
+## 5a. Button / CTA language (two, and only two)
+
+Every CTA in the app speaks one of two button languages. Don't invent a third;
+don't hand-roll accent fills on buttons — reach for one of these so contrast
+stays correct in **all** themes (light/dawn + dark/dusk).
+
+1. **Neutral primary — `.btn-primary`.** The default for real actions (Hero
+   "Let's be friends", Contact submit). A high-contrast pill that **inverts per
+   theme** via `--btn-bg` / `--btn-fg` (near-black pill + cream text on light;
+   cream pill + ink text on dark). Always AA. Use this unless the button is meant
+   to feel "special / story".
+
+2. **Accent CTA — the warm gradient button** (e.g. the Voice Hall **summon**
+   `.voice-summon__send`). Driven by `--cta-accent-bg` / `--cta-accent-fg`, which
+   are **theme-aware for contrast**:
+   - **Light/dawn:** the accent gradient is mid-tone, so white text would fail AA
+     — the token instead uses a **deepened burnt-ember** gradient with **white**
+     text (~4.6:1).
+   - **Dark/dusk:** the bright ember→gold accent glows on the dark panel, so the
+     token uses the bright gradient with **dark ink** (the luminous-pill look).
+
+   The contrast law: a vibrant ember/amber gradient gives dark ink ~5–6:1 but
+   white only ~3:1. So **never put white on the bright accent gradient** — either
+   deepen the surface (light) or use dark ink (dark). Both directions live in the
+   `--cta-accent-*` tokens, so new accent CTAs just read those two vars.
+
+Text links / quiet actions (Hero "Call me", `.link-hover`) and accent-tinted
+secondary buttons (`.voice-hall-cta` — ember text on a faint ember wash) are not
+"CTAs" in this sense and keep their own treatment. Badges (`.wax-seal--*`) are
+labels, not buttons.
+
 ## 5. CSS utility classes (in `index.css`)
 
 Reuse these; add to this list when you create a new shared visual.
@@ -221,7 +252,8 @@ Reuse these; add to this list when you create a new shared visual.
 | `.realm-card` | Standard glass card w/ ember hover (cards everywhere) |
 | `.cinematic-vignette` | Edge/seam mask + bottom fade for full-bleed art |
 | `.cursor-dot/.cursor-ring/.cursor-backlight` | Custom cursor parts |
-| `.btn-primary` | Indigo gradient primary button |
+| `.btn-primary` | Neutral primary CTA — theme-inverting pill (`--btn-bg`/`--btn-fg`). See §5a |
+| `.voice-summon__send` | Accent gradient CTA — contrast-aware (`--cta-accent-*`). See §5a |
 | `.status-dot` | Pulsing "available" dot |
 | `.glass-card`, `.link-hover` | Glass surface, underline-on-hover |
 | `.marginalia`, `.marginalia__rune`, `.marginalia__note` | Footnote trigger (dotted underline + `†` rune) and its unfolding margin note |

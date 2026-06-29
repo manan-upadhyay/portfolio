@@ -278,16 +278,31 @@ export default {
   atelier: {
     eyebrow: 'Behind the Magic',
     title: 'How I Made This',
-    confession: 'It was done. And then? I did more. That’s leadership.',
+    confession: 'It passed every test but mine. And mine is the hard one.',
     confessionSub:
-      'The website was finished like twenty saves ago. Totally done. I could’ve gone home. But I didn’t go home. I stayed and I poured another hundred hours into it, because I don’t do “good enough.” I do “world’s best.” It’s a whole thing.',
-    timeline: {
-      title: 'The Tape',
-      range: 'Jun 20 – 28',
-      now: 'now',
-      doneFlag: 'Done right here',
+      'The website was totally finished like twenty saves ago. It was great. It was done. I could’ve left. But “done” is what other people settle for, and I am not other people — I’m an idea man with an eye for detail, which is two things. So I stayed and poured in another hundred and fifty hours fixing stuff nobody would ever notice, because I notice. That’s my gift. And, occasionally, my curse. Mostly gift.',
+    reel: {
+      title: 'The Director’s Cut',
+      range: 'Jun 20 – 28 · 9 scenes',
       caption:
-        'Every dot is a day I showed up. The line goes up because I kept going up. The gold mark? That’s where a normal person stops. I am not a normal person. I’m a friend, a boss, and an idea man.',
+        'Grab the slider, click a scene, hit the arrow keys. Take your time. It’s art.',
+      scene: 'Scene',
+      commits: 'saves',
+      hint: 'drag it · click a scene · ← → to step',
+      aria: 'The movie of me building this',
+      prev: 'Previous scene',
+      next: 'Next scene',
+      scenes: {
+        foundation: { title: 'The Cold Open', blurb: 'A starfield and a hand-drawn compass thing for the top of the page. No pictures. I drew it with CODE. Boom.' },
+        canon: { title: 'Setting the Stage', blurb: 'The chapters, the little side menu, and all the smooth scrolling. The skeleton. Every great show has good bones.' },
+        realms: { title: 'My Greatest Hits', blurb: 'The fancy project cards, plus a search map you open with ⌘K. Like Google, but it’s all me.' },
+        journey: { title: 'The Origin Story', blurb: 'A sideways-scrolling timeline of my career and a spinny field of all my skills. There are a lot of skills.' },
+        voice: { title: 'The Other Mes', blurb: 'The whole site can talk in five different voices. Including this one. Especially this one.' },
+        sky: { title: 'Lights & Sound', blurb: 'Five skies that know what time it is, and little sounds the computer makes itself. No downloads. Magic.' },
+        recap: { title: 'The Creepy Part', blurb: 'A little panel that reads your computer and your city. I’m basically the NSA. A friendly NSA.' },
+        atelier: { title: 'Behind the Magic', blurb: 'This whole making-of page, the voice menu, the spinny compass, and a flock of birds when you message me.' },
+        polish: { title: 'The Final Cut', blurb: 'Making it work for everybody, making it fast, and hooking up the actual email. The boring important stuff.' },
+      },
     },
     stats: {
       hours: 'Hours of me',
@@ -295,7 +310,6 @@ export default {
       phases: 'Genius phases',
       voices: 'Voices (incl. mine)',
       lines: 'Lines, baby',
-      threejs: '3D stuff (cut)',
     },
     ledger: {
       intro:
@@ -339,13 +353,71 @@ export default {
         how: 'Scroll to the bottom of the contact part. It reads your computer, your screen, even your city. I’m basically the NSA. A friendly NSA.',
       },
     },
+    offmap: {
+      title: 'The Real Me (Get Comfortable)',
+      intro: 'There are three sides to me. Minimum. Pick one and click — I’ll tell you everything.',
+    },
+    personas: {
+      more: 'Tell me more',
+      less: 'Okay, enough',
+      storyteller: {
+        label: 'The Storyteller',
+        hook: 'I basically live inside stories.',
+        story: 'Lord of the Rings. Game of Thrones. Every superhero ever. A truly upsetting amount of One Piece. I look at software and I see a saga — that’s not weird, that’s vision. It’s also why this whole site is a story and not a boring list.',
+      },
+      filmmaker: {
+        label: 'The Filmmaker',
+        hook: 'I’m also a filmmaker. A real one.',
+        story: 'I’ve shot actual cinematic videos — cafés, weddings, short films. So when this site moves, that’s not luck, that’s an artist with an eye. People pay for this eye.',
+      },
+      wanderer: {
+        label: 'The Wanderer',
+        hook: 'And then I vanish into the mountains.',
+        story: 'No phone, no signal, just me and the trees and my thoughts, which are excellent. It keeps me grounded. And a grounded genius is the most dangerous kind of genius.',
+      },
+    },
     builtWith: 'Made with',
     manifesto: [
-      'I build real apps for real companies — banks, hospitals, the important ones. But this site? This one was just for me. No boss. No client. Just a man and his vision.',
-      'The goal was simple: somebody looks at this for ten seconds and they go, “wow, hire that guy immediately.” Every part had to be a moment. If it was boring, it wasn’t finished.',
-      'So I kept going past the finish line. Not because I had to. Because that’s who I am. I’m the world’s best developer. Probably. Don’t fact-check that.',
+      'Okay, real talk: this isn’t about impressing anybody. I didn’t build it for a boss. I built it because I have this thing where I cannot leave “normal” alone — I have to try the idea nobody tried, push the button nobody pushed, use the tech I haven’t used yet. The website was just my excuse.',
+      'I love this stuff. The code, the puzzles, the moment a giant tangled mess finally goes “click” — I chase the problems that are way too big for me, the ones that scare me a little, because that’s where it gets fun. Fear is just fun wearing a tie.',
+      'But underneath the showmanship? I’m dead serious about four things: owning my mistakes, clients who are thrilled they picked me, work that actually holds up, and details. So many details. Everything else up there is just me proving it. Boom.',
     ],
     sign: '— Michael. I mean, Manan. (It’s Manan.)',
+  },
+
+  voiceHall: {
+    title: 'The Improv Stage',
+    subtitle: 'Pick who narrates this whole thing. I do all the voices myself. I’m basically a chameleon, but for talking.',
+    searchPlaceholder: 'Search for a voice…  try “the office”, “boss”, “moo”',
+    nowNarrating: 'Currently me',
+    tryHint: 'Click a voice and — BOOM — the whole site starts talking like them. Even this part right here. Especially this part.',
+    close: 'Close (but don’t go)',
+    noResult: 'Nobody here by that name. And I know everybody. I’m a people person.',
+    sealedHint: 'Some voices are sealed, like a surprise party. Type the secret word anywhere on the page and they wake up. Surprise.',
+    found: '{{count}}/{{total}} secret voices found',
+    footerHint: 'enter to speak · esc to close',
+    categories: {
+      core: 'The Professionals',
+      office: 'The Office',
+      bestiary: 'The Animal Kingdom',
+    },
+    request: {
+      section: 'Summon',
+      cta: 'Summon a new voice',
+      ctaSub: 'Want somebody else to narrate this? Tell me who. I will make it happen. I am a people person AND a closer.',
+      back: 'Back',
+      persona: 'Whose voice?',
+      personaPlaceholder: 'Michael Scott (again) · a celebrity · me, but louder…',
+      email: 'Your email',
+      emailPlaceholder: 'your email — so I can personally reach out, like a friend',
+      note: 'Why them?',
+      notePlaceholder: 'make your case (I love a good pitch)',
+      send: 'Send it. Boom.',
+      sending: 'Summoning…',
+      done: 'Boom. Sent.',
+      doneSub: 'I’ll give “{{persona}}” some real thought. No promises. Okay, a small promise. Thank you, friend.',
+      error: 'Okay, that did not work. Check the name and the email. It’s gonna be fine. We’re a family.',
+    },
   },
 
   voice: {

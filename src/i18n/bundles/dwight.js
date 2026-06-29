@@ -276,16 +276,31 @@ export default {
   atelier: {
     eyebrow: 'The Schematics',
     title: 'How This Was Constructed',
-    confession: 'It was complete. I continued regardless. Superior soldiers do not rest.',
+    confession: 'It met every standard. None of them were mine. Mine are higher.',
     confessionSub:
-      'The site was operational and presentable approximately twenty commits ago. A lesser developer would have stood down. I did not stand down. I committed an additional one hundred hours, because “adequate” is the motto of the weak, and Schrutes do not surrender ground.',
-    timeline: {
-      title: 'The Surveillance Log',
-      range: 'Jun 20 – 28',
-      now: 'now',
-      doneFlag: 'Mission complete here',
+      'The site was operational and presentable approximately twenty commits ago. It satisfied every external standard. External standards are for personnel who require supervision. I do not. I held it to the Schrute standard — which is absolute — and committed an additional one hundred and fifty hours to details no inspector would ever detect, because I detect them. My eye misses nothing. A bear can smell a beehive from three miles. I can smell a misaligned pixel from my desk. Both facts are relevant.',
+    reel: {
+      title: 'The Surveillance Reel',
+      range: 'Jun 20 – 28 · 9 operations',
       caption:
-        'Each marker is a day of operations. The line ascends because I do not retreat. The gold marker indicates where a normal operative would cease. I am not a normal operative. I am Assistant Regional Manager.',
+        'This footage does not advance on its own. Drag the marker, select a frame, or use the arrow keys. A leader controls the playback. Proceed.',
+      scene: 'Operation',
+      commits: 'commits',
+      hint: 'drag · select a frame · ← → to advance',
+      aria: 'The build, operation by operation',
+      prev: 'Previous operation',
+      next: 'Next operation',
+      scenes: {
+        foundation: { title: 'Establish the Perimeter', blurb: 'A starfield and a hand-drawn Canvas2D astrolabe. Zero images. Constructed entirely from code. Efficient.' },
+        canon: { title: 'Chain of Command', blurb: 'The chapter structure, the side-rail, and the scroll choreography. Order. Hierarchy. Without it, chaos.' },
+        realms: { title: 'Territories Secured', blurb: 'The cinematic project plates and a searchable ⌘K map of all terrain. A leader knows the map.' },
+        journey: { title: 'Service Record Deployed', blurb: 'A pinned horizontal career timeline and an interactive orbital skill field. Documented. Verifiable.' },
+        voice: { title: 'Multiple Identities', blurb: 'A full i18next layer. The site speaks in five voices. I am fluent in all of them. Including beets.' },
+        sky: { title: 'Sky & Audio Systems', blurb: 'Five time-aware skies via SunCalc, and a Web Audio cue system generated live. Zero bytes downloaded. Resourceful.' },
+        recap: { title: 'Visitor Reconnaissance', blurb: 'A client-side panel that scans your device and uplink and pins your position. Nothing exfiltrated. This time.' },
+        atelier: { title: 'The Schematics', blurb: 'This making-of, the Voice Hall, the free-spin alidade, and a flock of ravens dispatched on send.' },
+        polish: { title: 'Final Inspection', blurb: 'Accessibility, reduced-motion protocols, a performance sweep, and the live transmission relay. No loose ends.' },
+      },
     },
     stats: {
       hours: 'Hours deployed',
@@ -293,7 +308,6 @@ export default {
       phases: 'Strategic phases',
       voices: 'Voices commanded',
       lines: 'Lines fortified',
-      threejs: 'Three.js (eliminated)',
     },
     ledger: {
       intro:
@@ -337,13 +351,71 @@ export default {
         how: 'At the base of the contact section, a panel scans your device, display, and network — and your city, with consent — then forges a unique sigil. Identity confirmed.',
       },
     },
+    offmap: {
+      title: 'The Man Behind the Manager',
+      intro: 'A superior man has multiple dimensions. I have three. Select one. Investigate.',
+    },
+    personas: {
+      more: 'Read the file',
+      less: 'Classify it',
+      storyteller: {
+        label: 'The Strategist',
+        hook: 'I do not watch sagas. I study them.',
+        story: 'Lord of the Rings — a documentary about loyalty and walking. Game of Thrones — a cautionary tale about poor succession planning. Anime — strategically superior storytelling. This is why the site is a map of realms. Tactics, not entertainment.',
+      },
+      filmmaker: {
+        label: 'The Filmmaker',
+        hook: 'I operate a camera with precision.',
+        story: 'I have produced cinematic footage for establishments and events. This is why the site moves correctly — every motion is deliberate, surveilled, and personally approved by me. An undisciplined animation is a security vulnerability.',
+      },
+      wanderer: {
+        label: 'The Survivalist',
+        hook: 'I retreat to the wilderness. No signal.',
+        story: 'Trekking. Off the grid. This is not a vacation — it is a readiness exercise. A man must be able to function away from the network. I return sharper. Nature does not coddle you, and neither do I.',
+      },
+    },
     builtWith: 'Constructed with',
     manifesto: [
-      'I construct production systems for serious institutions — finance, healthcare, logistics. Mission-critical. This site, however, answered to no authority but my own standards.',
-      'The objective was absolute: a recruiter must comprehend my superiority within ten seconds. Every section is a deliberate position. A static section is an undefended position. I do not leave positions undefended.',
-      'Therefore I advanced past completion. Not by requirement. By nature. Discipline. Loyalty. Fact.',
+      'A clarification regarding motive. This was not constructed to impress a recruiter. That is a fortunate side effect, like the manure on a beet farm. It was constructed because I possess an unrelenting compulsion to surpass the ordinary specification — to test a concept untested, to deploy technology I have not yet subjugated. The site was merely the proving ground.',
+      'I derive genuine satisfaction from this work: the logic, the problem, the precise instant a chaotic system submits to order. I pursue problems large enough to threaten me, because a threat sharpens a man. Comfort is how the body atrophies. The same is true of the mind.',
+      'Beneath the discipline, four principles are non-negotiable: accountability — I answer for everything; a client who is genuinely satisfied — I accept no other outcome; work that withstands assault; and attention to detail so total it borders on surveillance. Everything above is simply proof. Fact.',
     ],
     sign: '— Dwight K. Schrute. (Manan. It is Manan.)',
+  },
+
+  voiceHall: {
+    title: 'Voice Authorization',
+    subtitle: 'Select the voice cleared to narrate this chronicle. Choose correctly. Identity is everything.',
+    searchPlaceholder: 'Search the registry…  try “office”, “beets”, “moo”',
+    nowNarrating: 'Currently in command',
+    tryHint: 'Select a voice. The entire chronicle — this panel included — will immediately submit to it. There is no resistance.',
+    close: 'Dismiss',
+    noResult: 'No such voice exists in the registry. I have memorized the registry. There is no such voice.',
+    sealedHint: 'Certain voices are sealed for security. Type the correct password anywhere on the page to breach them.',
+    found: '{{count}}/{{total}} sealed voices breached',
+    footerHint: 'enter to speak · esc to close',
+    categories: {
+      core: 'Authorized Personnel',
+      office: 'The Office',
+      bestiary: 'Livestock',
+    },
+    request: {
+      section: 'Requisition',
+      cta: 'Requisition a new voice',
+      ctaSub: 'A voice is absent from the roster. This is a security gap. Report the candidate. I will investigate personally.',
+      back: 'Back',
+      persona: 'Identify the voice',
+      personaPlaceholder: 'a superior officer · a fellow farmer · a worthy adversary…',
+      email: 'Your email',
+      emailPlaceholder: 'your email — for the official record',
+      note: 'State your reasoning',
+      notePlaceholder: 'justify the requisition (strongly recommended)',
+      send: 'Submit requisition',
+      sending: 'Transmitting…',
+      done: 'Requisition logged',
+      doneSub: 'The candidate “{{persona}}” will be vetted thoroughly. Background check included. You have done your duty.',
+      error: 'Transmission failed. Verify the name and a valid email. Do not make me ask twice.',
+    },
   },
 
   voice: {

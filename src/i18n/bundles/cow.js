@@ -214,13 +214,28 @@ export default {
     confession: 'Moo moo moo. Moo moo moo moo.',
     confessionSub:
       'Moo moo moo moo moo moo moo moo moo moo moo. Moo moo moo moo moo, moo moo moo moo moo moo moo — moo moo moo moo moo moo moo moo moo.',
-    timeline: {
-      title: 'Moo Moo',
-      range: 'Moo 20 – 28',
-      now: 'moo',
-      doneFlag: 'Moo moo moo',
+    reel: {
+      title: 'Moo Moo Moo Moo',
+      range: 'Moo 20 – 28 · 9 moo',
       caption:
-        'Moo moo moo moo moo moo. Moo moo moo moo moo moo moo. Moo moo moo moo moo moo moo moo moo moo.',
+        'Moo moo moo moo moo. Moo moo moo, moo moo moo, moo moo ← →. Moo moo moo moo moo.',
+      scene: 'Moo',
+      commits: 'moo',
+      hint: 'moo · moo moo · ← → moo',
+      aria: 'Moo moo moo moo',
+      prev: 'Moo moo',
+      next: 'Moo moo',
+      scenes: {
+        foundation: { title: 'Moo', blurb: 'Moo moo moo moo moo moo moo moo. Moo moo.' },
+        canon: { title: 'Moo Moo', blurb: 'Moo moo moo, moo moo moo, moo moo moo moo moo.' },
+        realms: { title: 'Moo Moo Moo', blurb: 'Moo moo moo moo moo ⌘K moo moo moo moo.' },
+        journey: { title: 'Moo Moo', blurb: 'Moo moo moo moo moo moo moo moo moo moo.' },
+        voice: { title: 'Moo Moo Moo', blurb: 'Moo moo moo moo moo moo moo. Moo moo moo.' },
+        sky: { title: 'Moo Moo', blurb: 'Moo moo moo moo moo, moo moo moo moo moo moo.' },
+        recap: { title: 'Moo Moo Moo', blurb: 'Moo moo moo moo moo moo moo moo moo moo.' },
+        atelier: { title: 'Moo Moo', blurb: 'Moo moo moo moo, moo moo moo, moo moo moo moo.' },
+        polish: { title: 'Moo', blurb: 'Moo moo moo moo moo moo moo moo. Moo moo moo.' },
+      },
     },
     stats: {
       hours: 'Moo moo',
@@ -228,7 +243,6 @@ export default {
       phases: 'Moo moo',
       voices: 'Moo moo',
       lines: 'Moo moo moo',
-      threejs: 'Moo (moo)',
     },
     ledger: {
       intro: 'Moo moo moo moo moo. Moo moo moo moo moo moo moo moo.',
@@ -247,6 +261,17 @@ export default {
       raven: { title: 'Moo moo', how: 'Moo moo moo moo moo moo moo moo moo.' },
       recap: { title: 'Moo moo moo', how: 'Moo moo moo moo, moo moo moo moo moo moo.' },
     },
+    offmap: {
+      title: 'Moo Moo Moo',
+      intro: 'Moo moo moo moo. Moo moo moo moo moo.',
+    },
+    personas: {
+      more: 'Moo moo',
+      less: 'Moo',
+      storyteller: { label: 'Moo Moo', hook: 'Moo moo moo moo moo moo.', story: 'Moo moo moo moo moo, moo moo moo, moo moo moo moo. Moo moo moo moo moo moo moo.' },
+      filmmaker: { label: 'Moo Moo', hook: 'Moo moo moo moo moo.', story: 'Moo moo moo moo moo moo moo moo. Moo moo moo moo moo moo moo moo moo.' },
+      wanderer: { label: 'Moo Moo', hook: 'Moo moo moo moo.', story: 'Moo moo moo moo moo moo moo. Moo moo moo moo moo moo moo moo.' },
+    },
     builtWith: 'Moo moo',
     manifesto: [
       'Moo moo moo moo moo moo moo moo. Moo moo moo moo moo moo moo moo moo.',
@@ -263,6 +288,41 @@ export default {
 
   makingOf: {
     back: 'Moo moo moo moo',
+  },
+
+  voiceHall: {
+    title: 'Moo',
+    subtitle: 'Moo moo moo moo — moo moo moo moo moo moo moo.',
+    searchPlaceholder: 'Moo…  moo “moo”, “moo”, “moo”',
+    nowNarrating: 'Moo moo',
+    tryHint: 'Moo moo moo — moo moo moo, moo moo moo, moo moo moo moo moo moo.',
+    close: 'Moo',
+    noResult: 'Moo moo moo moo moo. Moo.',
+    sealedHint: 'Moo moo moo moo moo moo moo moo moo moo moo moo.',
+    found: '{{count}}/{{total}} moo moo',
+    footerHint: 'moo moo · moo moo',
+    categories: {
+      core: 'Moo',
+      office: 'Moo Moo',
+      bestiary: 'Moo Moo Moo',
+    },
+    request: {
+      section: 'Moo',
+      cta: 'Moo moo moo moo',
+      ctaSub: 'Moo moo moo moo moo moo moo? Moo moo moo moo moo. Moo.',
+      back: 'Moo',
+      persona: 'Moo moo?',
+      personaPlaceholder: 'Moo · moo moo · moo moo moo…',
+      email: 'Moo moo',
+      emailPlaceholder: 'moo moo — moo moo moo moo moo moo',
+      note: 'Moo moo?',
+      notePlaceholder: 'moo moo moo (moo)',
+      send: 'Moo moo moo',
+      sending: 'Moo…',
+      done: 'Moo moo moo',
+      doneSub: 'Moo moo “{{persona}}” moo moo moo moo. Moo.',
+      error: 'Moo moo moo moo. Moo moo moo moo moo moo moo, moo moo moo.',
+    },
   },
 
   voice: {

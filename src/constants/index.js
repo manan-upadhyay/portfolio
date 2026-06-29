@@ -36,7 +36,7 @@ export const personalInfo = {
   location: 'Ahmedabad, India',
   linkedin: 'https://www.linkedin.com/in/manan-upadhyay',
   github: 'https://github.com/manan-upadhyay',
-  resumeLink: '/resume.pdf',
+  resumeLink: '/Manan_Upadhyay_Resume.pdf',
   bio: `Full Stack Developer with 5+ years of experience building production web applications using React.js, Next.js, Node.js, TypeScript, Express.js, MongoDB, and PostgreSQL. Experienced across finance, healthcare, logistics, CRM/ERP, SaaS, media-heavy, and visualization-driven platforms. Strong in frontend architecture, performance optimization, API integration, authentication/RBAC, reusable UI systems, and end-to-end feature ownership.`,
   taglines: [
     'Production-Grade Web Platforms',

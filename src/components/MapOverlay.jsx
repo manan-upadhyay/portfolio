@@ -5,6 +5,7 @@ import { Search, FileText, Github, Linkedin, Sun, Moon, X, CornerDownLeft, Star,
 import { personalInfo, chapterList } from '../constants';
 import { scrollToSection } from '../lib/smoothScroll';
 import { pushOverlay, popOverlay } from '../lib/uiOverlay';
+import { track } from '../lib/analytics';
 import { useThemeStore } from '../store/useThemeStore';
 import { useVoiceStore } from '../store/useVoiceStore';
 import CompassRose from './CompassRose';
@@ -55,9 +56,9 @@ const MapOverlay = ({ open, onClose, activeId }) => {
 
   const actions = [
     { id: 'voices', label: t('map.actions.voices'), icon: Feather, run: () => useVoiceStore.getState().openHall() },
-    { id: 'resume', label: t('map.actions.resume'), icon: FileText, run: () => window.open(personalInfo.resumeLink, '_blank', 'noopener,noreferrer') },
-    { id: 'github', label: t('map.actions.github'), icon: Github, run: () => window.open(personalInfo.github, '_blank', 'noopener,noreferrer') },
-    { id: 'linkedin', label: t('map.actions.linkedin'), icon: Linkedin, run: () => window.open(personalInfo.linkedin, '_blank', 'noopener,noreferrer') },
+    { id: 'resume', label: t('map.actions.resume'), icon: FileText, run: () => { track('resume_open', { from: 'map' }); window.open(personalInfo.resumeLink, '_blank', 'noopener,noreferrer'); } },
+    { id: 'github', label: t('map.actions.github'), icon: Github, run: () => { track('channel_open', { channel: 'github', from: 'map' }); window.open(personalInfo.github, '_blank', 'noopener,noreferrer'); } },
+    { id: 'linkedin', label: t('map.actions.linkedin'), icon: Linkedin, run: () => { track('channel_open', { channel: 'linkedin', from: 'map' }); window.open(personalInfo.linkedin, '_blank', 'noopener,noreferrer'); } },
     { id: 'theme', label: isDark ? t('map.actions.themeLight') : t('map.actions.themeDark'), icon: isDark ? Sun : Moon, run: toggleTheme },
   ];
 
@@ -66,7 +67,7 @@ const MapOverlay = ({ open, onClose, activeId }) => {
   const pins = PINS.filter(match);
   const acts = q ? actions.filter((a) => a.label.toLowerCase().includes(q)) : actions;
 
-  const travel = (id) => { onClose(); setTimeout(() => scrollToSection(id), 120); };
+  const travel = (id) => { track('map_travel', { id }); onClose(); setTimeout(() => scrollToSection(id), 120); };
   const onSubmit = (e) => {
     e.preventDefault();
     if (pins[0]) travel(pins[0].id);

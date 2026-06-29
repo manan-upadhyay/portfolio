@@ -7,6 +7,7 @@ import { ErrorBoundary, SideRail, MapOverlay } from '../components';
 import { useExpedition } from '../hooks/useExpedition';
 import { restoreScroll } from '../lib/smoothScroll';
 import { sound } from '../lib/sound';
+import { track, trackOnce } from '../lib/analytics';
 
 const About = lazy(() => import('../sections/About'));
 const Experience = lazy(() => import('../sections/Experience'));
@@ -40,6 +41,7 @@ const Chronicle = () => {
   useEffect(() => {
     if (mapOpen === mapWasOpen.current) return;
     sound.playCue(mapOpen ? 'mapOpen' : 'mapClose');
+    if (mapOpen) track('map_open');
     mapWasOpen.current = mapOpen;
   }, [mapOpen]);
 
@@ -48,6 +50,7 @@ const Chronicle = () => {
     const onKey = (e) => {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
         e.preventDefault();
+        trackOnce('shortcut:map', 'shortcut_used', { combo: 'cmd+k' }); // keyboard power-user
         setMapOpen((o) => !o);
       }
     };

@@ -65,6 +65,7 @@ export default defineConfig(({ mode }) => {
             // Vendor chunks
             'react-vendor': ['react', 'react-dom'],
             'animation-vendor': ['framer-motion', 'gsap', 'lenis'],
+            'analytics-vendor': ['posthog-js', '@posthog/react'],
           },
         },
       },

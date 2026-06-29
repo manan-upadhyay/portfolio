@@ -9,6 +9,7 @@ import { scrollToSection } from '../lib/smoothScroll';
 import { useAstrolabe } from '../hooks/useAstrolabe';
 import { RefreshCcw } from 'lucide-react';
 import { sound } from '../lib/sound';
+import { track, trackOnce } from '../lib/analytics';
 import CompassRose from '../components/CompassRose';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -89,6 +90,21 @@ const Hero = () => {
   // Its needle speed drives the gear sound, so the gear turns as fast as the cursor
   // sweeps the alidade (and is silent at rest). Safe regardless of sound state.
   useAstrolabe(canvasRef, canvasWrapRef, bearingRef, resolvedTheme, sound.watch.setSpeed, astrolabeRef);
+
+  // Analytics — did they deliberately *play* with the needle? A pointerdown that
+  // lands inside the instrument's box (the needle follows/aims there) is the
+  // genuine signal; the passive cursor-follow is not. Once per session.
+  useEffect(() => {
+    const onDown = (e) => {
+      const r = canvasWrapRef.current?.getBoundingClientRect();
+      if (!r) return;
+      if (e.clientX >= r.left && e.clientX <= r.right && e.clientY >= r.top && e.clientY <= r.bottom) {
+        trackOnce('astrolabe_drag', 'astrolabe_drag');
+      }
+    };
+    window.addEventListener('pointerdown', onDown, { passive: true });
+    return () => window.removeEventListener('pointerdown', onDown);
+  }, []);
 
   // Reveal the masterpiece on first contact. Browser autoplay policy mutes the
   // intro-spin sound for everyone until a gesture unlocks audio — so the moment it
@@ -225,7 +241,7 @@ const Hero = () => {
             />
             <motion.button
               type="button"
-              onClick={() => astrolabeRef.current?.spin()}
+              onClick={() => { track('astrolabe_spin'); astrolabeRef.current?.spin(); }}
               data-cursor="hover"
               aria-label={t('hero.spin')}
               className="pointer-events-auto relative grid place-items-center w-11 h-11 rounded-full backdrop-blur-sm"
@@ -295,8 +311,8 @@ const Hero = () => {
           </p>
 
           <div className="hero-cta mt-9 flex flex-wrap items-center gap-5">
-            <button onClick={() => scrollToSection('about')} data-cursor="hover" className="btn-primary">{t('hero.ctaPrimary')}</button>
-            <button onClick={() => scrollToSection('contact')} data-cursor="hover" className="text-[15px] font-medium link-hover" style={{ color: 'var(--color-text)' }}>
+            <button onClick={() => { track('hero_cta', { target: 'about' }); scrollToSection('about'); }} data-cursor="hover" className="btn-primary">{t('hero.ctaPrimary')}</button>
+            <button onClick={() => { track('hero_cta', { target: 'contact' }); scrollToSection('contact'); }} data-cursor="hover" className="text-[15px] font-medium link-hover" style={{ color: 'var(--color-text)' }}>
               {t('hero.ctaSecondary')}
             </button>
           </div>

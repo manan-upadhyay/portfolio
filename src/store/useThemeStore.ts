@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 // @ts-expect-error — sky.js is plain JS (no types); the runtime shape is stable.
 import { resolveSkyMode, SKY_BASE } from '../lib/sky';
+import { track, registerContext } from '../lib/analytics';
 
 // Phase 3 — the theme is now a 5-mode "sky": `auto` (time-driven) resolves to one
 // of four palettes (dawn/day/dusk/night), each sitting on a light or dark base.
@@ -56,6 +57,8 @@ export const useThemeStore = create<ThemeState>()(
         const resolvedSky = resolveSky(mode);
         set({ mode, resolvedSky, resolvedTheme: baseOf(resolvedSky) });
         updateDocumentTheme(resolvedSky);
+        track('theme_changed', { mode, sky: resolvedSky });
+        registerContext({ sky_mode: mode });
       },
       toggleTheme: () => {
         get().setMode(FLIP[get().resolvedSky]);

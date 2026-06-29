@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { BookOpen, Clapperboard, Mountain, Plus, Minus } from 'lucide-react';
+import { track } from '../lib/analytics';
 
 /**
  * PersonaTriptych — "Off the map." The human behind the build as three doors, not
@@ -62,7 +63,8 @@ const PersonaTriptych = ({ personas }) => {
   return (
     <div className="persona-triptych">
       {personas.map((p, i) => (
-        <PersonaCard key={p.id} persona={p} open={open === i} onToggle={() => setOpen(open === i ? -1 : i)} />
+        <PersonaCard key={p.id} persona={p} open={open === i}
+          onToggle={() => { if (open !== i) track('persona_card_expand', { persona: p.id }); setOpen(open === i ? -1 : i); }} />
       ))}
     </div>
   );

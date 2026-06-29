@@ -8,6 +8,7 @@ import { SEALED_VOICES, voiceById } from '../i18n/voices';
 import { fmtCoord, localReading } from '../lib/visitor';
 import { useVisitor } from '../hooks/useVisitor';
 import { deviceHash, drawSigil } from '../lib/sigil';
+import { trackOnce } from '../lib/analytics';
 import ScrollReveal from './ScrollReveal';
 import SunArc from './SunArc';
 import Hovercard from './Hovercard';
@@ -244,7 +245,10 @@ const ExpeditionRecap = () => {
   useEffect(() => {
     const el = ref.current;
     if (!el) return undefined;
-    const io = new IntersectionObserver(([e]) => setInView(e.isIntersecting), { threshold: 0.2 });
+    const io = new IntersectionObserver(([e]) => {
+      setInView(e.isIntersecting);
+      if (e.isIntersecting) trackOnce('expedition_view', 'expedition_view'); // did they reach the recap?
+    }, { threshold: 0.2 });
     io.observe(el);
     return () => io.disconnect();
   }, []);

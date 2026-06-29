@@ -1,8 +1,9 @@
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { ArrowLeft } from 'lucide-react';
 import { ErrorBoundary } from '../components';
+import { track } from '../lib/analytics';
 
 const Atelier = lazy(() => import('../sections/Atelier'));
 
@@ -20,6 +21,9 @@ const PageLoader = () => (
  */
 const MakingOf = () => {
   const { t } = useTranslation();
+  // The Atelier is the "did they go behind the curtain?" signal (beyond the raw
+  // /making-of pageview — a named event keeps it in the same funnel vocabulary).
+  useEffect(() => { track('atelier_view'); }, []);
   return (
     <main className="pt-20">
       {/* The return doorway — sits where the journey's nav would be. */}

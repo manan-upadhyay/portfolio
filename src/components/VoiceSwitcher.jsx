@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { useVoiceStore } from '../store/useVoiceStore';
 import { useCoachmark } from '../store/useCoachmark';
 import { pushOverlay, popOverlay } from '../lib/uiOverlay';
+import { trackOnce } from '../lib/analytics';
 import { voices, SEALED_VOICES, POPOVER_SEALED_LIMIT, popoverVoices } from '../i18n/voices';
 import Hovercard from './Hovercard';
 
@@ -143,9 +144,9 @@ const VoiceSwitcher = ({ activeId }) => {
   const moreCount = voices.length - openVoices.length - sealed.length;
 
   const choose = (id) => { setVoice(id); setOpen(false); };
-  const toggleMenu = () => { markVoiceNoted(); releaseCoach('voice'); setOpen((o) => !o); };
+  const toggleMenu = () => { markVoiceNoted(); releaseCoach('voice'); if (!open) trackOnce('voice_switcher_open', 'voice_switcher_open'); setOpen((o) => !o); };
   const goHall = () => { setOpen(false); releaseCoach('voice'); openHall(); };
-  const fromNote = () => { releaseCoach('voice'); markVoiceNoted(); setOpen(true); };
+  const fromNote = () => { releaseCoach('voice'); markVoiceNoted(); trackOnce('voice_switcher_open', 'voice_switcher_open'); setOpen(true); };
 
   return (
     <div ref={rootRef} className="relative">

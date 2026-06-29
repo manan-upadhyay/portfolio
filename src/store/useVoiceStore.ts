@@ -3,6 +3,7 @@ import { persist } from 'zustand/middleware';
 import i18n, { loadVoice } from '../i18n';
 import { DEFAULT_VOICE, OPEN_VOICES, SEALED_VOICES } from '../i18n/voices';
 import { fireVoiceChange } from '../lib/voiceChange';
+import { track, registerContext } from '../lib/analytics';
 
 interface VoiceState {
   /** Active voice = i18next language id. */
@@ -43,6 +44,10 @@ export const useVoiceStore = create<VoiceState>()(
         }
         await i18n.changeLanguage(voice);
         set({ voice });
+        // Which voices visitors actually try → the dashboard derives both the
+        // distinct-count per session and the "favourite" (most-selected) voice.
+        track('voice_selected', { voice });
+        registerContext({ voice }); // keep the live voice on every later event
         fireVoiceChange(); // decode sound + per-text scramble as the copy transforms
       },
 
@@ -50,6 +55,7 @@ export const useVoiceStore = create<VoiceState>()(
         if (!SEALED_VOICES.includes(voice)) return false;
         if (get().unlocked.includes(voice)) return true;
         set({ unlocked: [...get().unlocked, voice] });
+        track('voice_unlocked', { voice }); // an easter-egg voice was discovered
         return true;
       },
 
@@ -57,7 +63,10 @@ export const useVoiceStore = create<VoiceState>()(
 
       hallOpen: false,
       hallSeen: false,
-      openHall: () => set({ hallOpen: true, hallSeen: true, voiceNoted: true }),
+      openHall: () => {
+        if (!get().hallOpen) track('voice_hall_open');
+        set({ hallOpen: true, hallSeen: true, voiceNoted: true });
+      },
       closeHall: () => set({ hallOpen: false }),
 
       voiceNoted: false,

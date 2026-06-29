@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { sound } from '../lib/sound';
+import { track, registerContext } from '../lib/analytics';
 
 // Phase 4 — UI-facing sound state. The audio engine (`src/lib/sound.js`) owns the
 // actual Web-Audio graph; this store holds the persisted *preferences* and the
@@ -33,6 +34,8 @@ export const useSoundStore = create<SoundState>()(
       unlocked: false,
       setEnabled: (v) => {
         set({ enabled: v });
+        track('sound_toggled', { enabled: v });
+        registerContext({ sound_enabled: v });
         sound.setEnabled(v);
         if (v) {
           sound.unlock(); // toggling on counts as a gesture

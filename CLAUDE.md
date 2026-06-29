@@ -224,6 +224,7 @@ clean, and it looks like a *moment* — not a list.
 | [DESIGN-SYSTEM.md](docs/chronicle/DESIGN-SYSTEM.md) | Color tokens, type scale, spacing, motion language, CSS utilities, component inventory, a11y |
 | [ARCHITECTURE.md](docs/chronicle/ARCHITECTURE.md) | Folder map, libraries, smooth-scroll/GSAP patterns, global shell, perf, verification |
 | [ASSETS.md](docs/chronicle/ASSETS.md) | "World Bible", filenames, dimensions, generation prompts |
+| [ANALYTICS.md](docs/chronicle/ANALYTICS.md) | Feature-adoption telemetry — the `analytics.js` wrapper, event catalog, PostHog dashboard setup |
 | [sections/00-hero.md](docs/chronicle/sections/00-hero.md) | Origin hero |
 | [sections/01-the-craft.md](docs/chronicle/sections/01-the-craft.md) | About |
 | [sections/02-the-journey.md](docs/chronicle/sections/02-the-journey.md) | Pinned horizontal experience |

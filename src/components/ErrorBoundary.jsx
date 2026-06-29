@@ -1,4 +1,5 @@
 import { Component } from 'react';
+import { captureError } from '../lib/analytics';
 
 /**
  * Isolates a subtree so a render-time failure (e.g. WebGL context creation
@@ -15,8 +16,10 @@ class ErrorBoundary extends Component {
     return { failed: true };
   }
 
-  componentDidCatch(error) {
+  componentDidCatch(error, info) {
     if (import.meta.env.DEV) console.warn('[ErrorBoundary] caught:', error?.message);
+    // Report to PostHog error tracking so a degraded subtree is visible in data.
+    captureError(error, { componentStack: info?.componentStack });
   }
 
   render() {

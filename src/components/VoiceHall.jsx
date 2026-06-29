@@ -6,6 +6,7 @@ import { useVoiceStore } from '../store/useVoiceStore';
 import { voicesByCategory, voiceById, SEALED_VOICES } from '../i18n/voices';
 import { playCue } from '../lib/sound';
 import { sendRaven, EMAIL_RE } from '../lib/raven';
+import { track } from '../lib/analytics';
 import { getLenis } from '../lib/smoothScroll';
 import { pushOverlay, popOverlay } from '../lib/uiOverlay';
 import Hovercard from './Hovercard';
@@ -88,6 +89,7 @@ const VoiceRequest = () => {
     const r = sendRef.current?.getBoundingClientRect();
     if (r) originRef.current = { x: r.left + r.width / 2, y: r.top + r.height / 2 };
     setState('sending');
+    track('voice_summon_submit', { persona: persona.trim().slice(0, 60) }); // a visitor asked for a new voice
     // Shared dispatch — same endpoint + flight/refused sound as the Contact form.
     const result = await sendRaven({
       name: `Voice request — ${persona.trim()}`.slice(0, 110),
@@ -96,6 +98,7 @@ const VoiceRequest = () => {
       inquiry: 'Voice request',
       company: '',
     });
+    track(result.ok ? 'voice_summon_success' : 'voice_summon_error');
     setState(result.ok ? 'done' : 'error');
   };
 

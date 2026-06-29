@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { motion, useReducedMotion } from 'framer-motion';
 import { Sparkles, Map, LayoutGrid, Route, Drama, CloudSun, Fingerprint, Feather, Gem, ChevronLeft, ChevronRight } from 'lucide-react';
 import { playCue } from '../lib/sound';
+import { trackOnce } from '../lib/analytics';
 
 /**
  * BuildReel — "The Director's Reel." The build, told as a film in nine scenes
@@ -36,6 +37,7 @@ const BuildReel = ({ data }) => {
   const select = (idx, cue = true) => {
     const i = Math.max(0, Math.min(n - 1, idx));
     if (i === activeRef.current) return;
+    trackOnce('buildreel_scrub', 'buildreel_scrub'); // did they direct the reel? (any frame change)
     activeRef.current = i;
     setActive(i);
     if (cue) {

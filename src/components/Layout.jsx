@@ -7,9 +7,12 @@ import { useThemeStore } from '../store/useThemeStore';
 import { useVoiceStore } from '../store/useVoiceStore';
 import { useSmoothScroll, getLenis } from '../lib/smoothScroll';
 import { useActiveSection } from '../hooks/useActiveSection';
+import { useEngagementAnalytics } from '../hooks/useEngagementAnalytics';
 import { useVisitStore } from '../hooks/useExpedition';
 import { sound } from '../lib/sound';
-import '../store/useSoundStore'; // rehydrate sound prefs into the engine at boot
+import { track, trackOnce, registerContext } from '../lib/analytics';
+import { readVisitor } from '../lib/visitor';
+import { useSoundStore } from '../store/useSoundStore'; // rehydrate sound prefs into the engine at boot
 import Cursor from './Cursor';
 import SkyControl from './SkyControl';
 import ControlCluster from './ControlCluster';
@@ -46,6 +49,7 @@ const Layout = () => {
   const { pathname } = useLocation();
   useSmoothScroll();
   const activeId = useActiveSection();
+  useEngagementAnalytics(activeId, pathname); // section_view + scroll_depth
 
   // Sound engine boot: arm the first-gesture unlock + preload the optional raven
   // sample (degrades to a synthesized flight if the file is absent).
@@ -54,13 +58,41 @@ const Layout = () => {
     sound.loadRaven();
     sound.loadBeds(); // preload the optional astrolabe + arsenal loop samples
     useVisitStore.getState().bump(); // count this visit (local tally for the recap)
+
+    // Analytics — "did they ever hear the site?" (fire-once on first unlock).
+    sound.onUnlock(() => track('sound_first_play'));
+
+    // Super properties — attached to EVERY event (incl. autocaptured clicks) so
+    // every chart/funnel can be sliced by device + initial prefs. Uses only the
+    // SYNCHRONOUS device snapshot (readVisitor) — no IP/geolocation call (PostHog
+    // derives country server-side). Voice/theme are kept fresh by their stores.
+    const v = readVisitor();
+    registerContext({
+      device_os: v.os,
+      device_browser: v.browser,
+      device_gpu: v.gpu,
+      device_cores: v.cores,
+      device_touch: v.touch,
+      screen_w: v.screen?.w ?? null,
+      screen_h: v.screen?.h ?? null,
+      language: v.language,
+      returning_visitor: useVisitStore.getState().visits > 1,
+      sound_enabled: useSoundStore.getState().enabled,
+      reduced_motion: window.matchMedia('(prefers-reduced-motion: reduce)').matches,
+      voice: useVoiceStore.getState().voice,
+    });
   }, []);
+
+  // Keep the resolved theme as a live super-property so every event/heatmap can
+  // be split by dark vs light.
+  useEffect(() => { registerContext({ theme: resolvedTheme }); }, [resolvedTheme]);
 
   // ⇧⌘V (⇧⌃V) — summon the Voice Hall. Global to every route.
   useEffect(() => {
     const onKey = (e) => {
       if ((e.metaKey || e.ctrlKey) && e.shiftKey && e.key.toLowerCase() === 'v') {
         e.preventDefault();
+        trackOnce('shortcut:hall', 'shortcut_used', { combo: 'shift+cmd+v' }); // keyboard power-user
         const { hallOpen, openHall, closeHall } = useVoiceStore.getState();
         (hallOpen ? closeHall : openHall)();
       }

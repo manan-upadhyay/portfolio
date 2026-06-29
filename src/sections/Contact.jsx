@@ -7,6 +7,7 @@ import { personalInfo, summon, chapters } from '../constants';
 import { ChapterHeading, ScrollReveal, ExpeditionRecap, RavenBurst, RavenNotice } from '../components';
 import { playCue } from '../lib/sound';
 import { sendRaven, EMAIL_RE } from '../lib/raven';
+import { track, trackOnce } from '../lib/analytics';
 
 // Presentational icon map — data (label/value/href) lives in constants.
 const CHANNEL_ICONS = { email: Mail, linkedin: Linkedin, github: Github, location: MapPin };
@@ -41,6 +42,7 @@ const CopyButton = ({ text }) => {
     try {
       await navigator.clipboard.writeText(text);
       setCopied(true);
+      track('email_copied'); // a quiet but strong contact-intent signal
       setTimeout(() => setCopied(false), 1800);
     } catch { /* clipboard blocked — the mailto link still works */ }
   };
@@ -115,6 +117,7 @@ const Contact = () => {
 
     setError('');
     setLoading(true);
+    track('contact_submit', { inquiry }); // the conversion attempt
     // Shared dispatch: posts, parses, and plays the flight/refused cue for us.
     const result = await sendRaven({
       name: form.name,
@@ -125,9 +128,11 @@ const Contact = () => {
     });
     if (result.ok) {
       setSuccess(true);
+      track('contact_success', { inquiry }); // the conversion — the headline metric
       setForm({ name: '', email: '', message: '' });
       setTimeout(() => setSuccess(false), 6000);
     } else {
+      track('contact_error', { code: result.code });
       failMsg(result.code); // sendRaven already played the 'error' cue
     }
     setLoading(false); // always clears — the loader can never hang
@@ -156,7 +161,7 @@ const Contact = () => {
             {inquiries.map((q) => {
               const active = q === inquiry;
               return (
-                <motion.button key={q} type="button" onClick={() => setInquiry(q)} data-cursor="hover"
+                <motion.button key={q} type="button" onClick={() => { if (q !== inquiry) track('inquiry_selected', { inquiry: q }); setInquiry(q); }} data-cursor="hover"
                   whileTap={{ scale: 0.94 }} transition={{ type: 'spring', stiffness: 400, damping: 20 }}
                   className="px-3.5 py-1.5 rounded-full text-[13px] font-medium border transition-colors"
                   style={{
@@ -174,7 +179,8 @@ const Contact = () => {
               so suppress the browser's native bubbles — otherwise an invalid
               type="email" value is caught natively and our custom error (and
               every voice's variant of it) never gets a chance to show. */}
-          <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-4 flex-1">
+          <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-4 flex-1"
+            onFocus={() => trackOnce('contact_form_start', 'contact_form_start', { inquiry })}>
             {/* Honeypot — visually hidden, off the tab order; a filled value = bot. */}
             <input
               ref={honeypotRef}
@@ -201,6 +207,7 @@ const Contact = () => {
                 {loading ? (<><Loader2 size={18} className="animate-spin" /> {t('contact.submitLoading')}</>) : (<>{t('contact.submitIdle')} <Send size={16} /></>)}
               </button>
               <a href={personalInfo.resumeLink} download={summon.resumeFileName} data-cursor="hover"
+                onClick={() => track('resume_open', { from: 'contact' })}
                 className="btn-secondary" aria-label={`${t('contact.resumeCta')} (PDF)`}>
                 <Download size={16} /> {t('contact.resumeCta')}
               </a>
@@ -265,7 +272,8 @@ const Contact = () => {
               if (key === 'email') {
                 return (
                   <div key={key} className="flex items-center gap-2 py-4 group">
-                    <a href={href} data-cursor="hover" className="flex items-center gap-4 flex-1 min-w-0">
+                    <a href={href} data-cursor="hover" className="flex items-center gap-4 flex-1 min-w-0"
+                      onClick={() => track('channel_open', { channel: key })}>
                       {IconBox}{Labels}{Arrow}
                     </a>
                     <CopyButton text={personalInfo.email} />
@@ -279,7 +287,8 @@ const Contact = () => {
                 </div>
               );
               return href ? (
-                <a key={key} href={href} target={href.startsWith('http') ? '_blank' : undefined} rel="noopener noreferrer" data-cursor="hover">{Row}</a>
+                <a key={key} href={href} target={href.startsWith('http') ? '_blank' : undefined} rel="noopener noreferrer" data-cursor="hover"
+                  onClick={() => track('channel_open', { channel: key })}>{Row}</a>
               ) : (
                 <div key={key}>{Row}</div>
               );

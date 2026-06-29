@@ -9,6 +9,7 @@ import { projects, chapters } from '../constants';
 import { ChapterHeading, ScrollReveal, Annotated } from '../components';
 import { useThemeStore } from '../store/useThemeStore';
 import { rememberScroll } from '../lib/smoothScroll';
+import { track, trackOnce } from '../lib/analytics';
 import { useNavigate } from 'react-router-dom';
 import Magnet from '../components/Magnet';
 
@@ -42,7 +43,9 @@ const Cover = ({ project, parallaxRef }) => {
 
   const [index, setIndex] = useState(0);
   const safe = count ? Math.min(index, count - 1) : 0;
-  const go = (dir) => setIndex((i) => (i + dir + count) % count);
+  // Analytics: did anyone actually browse a project's screenshot carousel?
+  const browse = () => trackOnce('carousel_open', 'carousel_open', { project: project.name });
+  const go = (dir) => { browse(); setIndex((i) => (i + dir + count) % count); };
 
   const [hasArt, setHasArt] = useState(false);
   useEffect(() => {
@@ -100,7 +103,7 @@ const Cover = ({ project, parallaxRef }) => {
           </button>
           <div className="pointer-events-auto absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2">
             {images.map((src, i) => (
-              <button key={src} type="button" onClick={() => setIndex(i)}
+              <button key={src} type="button" onClick={() => { browse(); setIndex(i); }}
                 aria-label={`Go to screenshot ${i + 1}`} aria-current={i === safe}
                 data-cursor="hover" className="carousel-dot" data-active={i === safe} />
             ))}
@@ -179,6 +182,7 @@ const RealmPlate = ({ project, index }) => {
                 {project.live_demo_link && (
                   <Magnet strength={0.25}>
                     <a href={project.live_demo_link} target="_blank" rel="noopener noreferrer" data-cursor="hover"
+                      onClick={() => track('project_link_open', { project: project.name, kind: 'live' })}
                       className="btn-primary">
                       {project.live_demo_label || t('works.enterRealm')} <ArrowUpRight size={16} />
                     </a>
@@ -186,6 +190,7 @@ const RealmPlate = ({ project, index }) => {
                 )}
                 {project.source_code_link && (
                   <a href={project.source_code_link} target="_blank" rel="noopener noreferrer" data-cursor="hover"
+                    onClick={() => track('project_link_open', { project: project.name, kind: 'source' })}
                     className="btn-secondary">
                     <Github size={16} /> {t('works.source')}
                   </a>
@@ -252,7 +257,7 @@ const Works = () => {
       {others.length > 0 && (
         <div className="mt-16">
           <div className="flex items-center justify-center mb-10">
-            <button onClick={() => setShowAll((v) => !v)} data-cursor="hover"
+            <button onClick={() => { if (!showAll) track('works_show_all'); setShowAll((v) => !v); }} data-cursor="hover"
               className="px-7 py-3 rounded-full font-semibold text-sm border-2 transition-all duration-300"
               style={{ borderColor: 'rgba(var(--color-ember-rgb),0.4)', color: 'var(--color-ember)', background: 'rgba(var(--color-ember-rgb),0.06)' }}>
               {showAll ? t('works.furl') : t('works.chartMore', { count: others.length })}

@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { Map } from 'lucide-react';
 import { scrollToSection, scrollToTop } from '../lib/smoothScroll';
+import { track } from '../lib/analytics';
 import { useThemeStore } from '../store/useThemeStore';
 import { chapterList } from '../constants';
 
@@ -118,7 +119,7 @@ const SideRail = ({ activeId, onOpenMap, visible }) => {
             active={activeId === c.id}
             expanded={expanded}
             ariaLabel={t(`chapters.${c.id}.label`)}
-            onClick={() => scrollToSection(c.id)}
+            onClick={() => { track('rail_nav', { id: c.id }); scrollToSection(c.id); }}
           />
         ))}
 

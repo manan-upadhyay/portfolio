@@ -9,6 +9,7 @@ import { skillCategories, chapters } from '../constants';
 import { ChapterHeading, CompassRose } from '../components';
 import { useThemeStore } from '../store/useThemeStore';
 import { sound, playCue } from '../lib/sound';
+import { track } from '../lib/analytics';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -40,6 +41,8 @@ const OrbitalField = () => {
   const fieldRef = useRef(null);
   const nodeRefs = useRef(new Map());
   const blipStep = useRef(0);
+  const hoveredTools = useRef(new Set()); // unique tools the visitor explored
+  const hoverSent = useRef(false);
 
   // Precompute each ring + its nodes' polar offsets (relative to centre).
   const rings = useMemo(() => skillCategories.map((cat, ci) => {
@@ -73,7 +76,15 @@ const OrbitalField = () => {
   useEffect(() => {
     const el = fieldRef.current;
     if (!el) return;
-    const io = new IntersectionObserver(([e]) => setInView(e.isIntersecting), { threshold: 0.04 });
+    const io = new IntersectionObserver(([e]) => {
+      setInView(e.isIntersecting);
+      // Analytics: when the arsenal scrolls away, report how many distinct tools
+      // the visitor actually hovered (0 = ignored). Once per session.
+      if (!e.isIntersecting && !hoverSent.current && hoveredTools.current.size > 0) {
+        hoverSent.current = true;
+        track('arsenal_tools_hovered', { count: hoveredTools.current.size });
+      }
+    }, { threshold: 0.04 });
     io.observe(el);
     return () => io.disconnect();
   }, []);
@@ -112,6 +123,7 @@ const OrbitalField = () => {
 
   const enter = (cat, key) => {
     if (key !== activeKey) playCue('blip', { step: blipStep.current++ }); // little arpeggio across the orbit
+    hoveredTools.current.add(key); // analytics: how many distinct tools were explored
     setActiveCat(cat); setActiveKey(key);
   };
   const leave = () => { setActiveCat(null); setActiveKey(null); };

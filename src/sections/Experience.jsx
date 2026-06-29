@@ -172,6 +172,12 @@ const Experience = () => {
         animation: tween,
         invalidateOnRefresh: true,
         anticipatePin: 1,
+        // This pin injects a large pin-spacer that shifts every section below it.
+        // Refresh it BEFORE later, position-dependent triggers (e.g. the Arsenal
+        // hum's `top bottom` start) so they always measure against the pinned page
+        // height. Without this, lazy-load order can let a later trigger refresh
+        // first and resolve its start mid-Journey (hum swells in the wrong place).
+        refreshPriority: 1,
         // Scroll magnet: each card is a waypoint the trail "sticks" to. Snapping
         // to evenly-spaced progress points (one per card) with inertia OFF kills
         // trackpad momentum so a flick settles onto the nearest card instead of

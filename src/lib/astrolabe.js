@@ -164,9 +164,13 @@ export function mountAstrolabe(canvas, wrap, { bearingEl, onSpeed } = {}) {
       c.fillStyle = ember;
       c.font = `600 ${Math.round(R * 0.07)}px "Plus Jakarta Sans", sans-serif`;
       c.textAlign = 'center'; c.textBaseline = 'middle';
+      // Letter radius sits just outside the outer ring (R). Proportional to R — and
+      // safely within the canvas half-extent (R / 0.9 ≈ 1.111·R) once the glyph's
+      // half-height is added — so the cardinals read identically at every size.
+      const lr = R * 1.06;
       [['N', 0, -1], ['E', 1, 0], ['S', 0, 1], ['W', -1, 0]].forEach(([l, dx, dy]) => {
         c.globalAlpha = pC * (l === 'N' ? 1 : 0.5);
-        c.fillText(l, dx * (R - 30), dy * (R - 30));
+        c.fillText(l, dx * lr, dy * lr);
       });
     }
 
@@ -227,14 +231,19 @@ export function mountAstrolabe(canvas, wrap, { bearingEl, onSpeed } = {}) {
         spinVel = 0;
         cur = Math.atan2(Math.sin(cur), Math.cos(cur)); // settle to a clean angle
       }
-    } else if (coarse || mouse.x === null) {
+    } else if (mouse.x === null) {
+      // No pointer yet — gentle idle drift. On a pointer device this lasts until
+      // the first cursor move; on touch, until the first tap (see `onTap`).
       cur += (-Math.PI / 2 + Math.sin(ts / 2600) * 0.5 - cur) * 0.04;
     } else {
+      // Track the pointer/last tap: ease the needle toward it (and report the
+      // motion, so the gear sound winds with the swing and falls silent at rest).
+      // On desktop this follows the live cursor; on mobile it swings to each tap.
       const target = Math.atan2(mouse.y - (rect.top + rect.height / 2), mouse.x - (rect.left + rect.width / 2));
       let d = target - cur;
       while (d > Math.PI) d -= TWO_PI;
       while (d < -Math.PI) d += TWO_PI;
-      cur += d * 0.08;
+      cur += d * (coarse ? 0.12 : 0.08); // a touch snappier on tap-driven devices
     }
     draw(ts);
 
@@ -265,7 +274,12 @@ export function mountAstrolabe(canvas, wrap, { bearingEl, onSpeed } = {}) {
   const ro = new ResizeObserver(setSize);
   ro.observe(wrap);
   const onMove = (e) => { mouse.x = e.clientX; mouse.y = e.clientY; };
+  // A tap aims the needle too — the key path on touch, where `pointermove` may
+  // never fire. The needle swings to wherever the visitor tapped (and the swing
+  // sounds the gear), giving mobile its own version of the cursor-tracking feel.
+  const onTap = (e) => { mouse.x = e.clientX; mouse.y = e.clientY; updateRect(); };
   window.addEventListener('pointermove', onMove);
+  window.addEventListener('pointerdown', onTap, { passive: true });
   window.addEventListener('scroll', updateRect, { passive: true });
   window.addEventListener('resize', updateRect);
   raf = requestAnimationFrame(loop); // runs once under reduced-motion (no reschedule)
@@ -286,6 +300,7 @@ export function mountAstrolabe(canvas, wrap, { bearingEl, onSpeed } = {}) {
     cancelAnimationFrame(raf);
     ro.disconnect();
     window.removeEventListener('pointermove', onMove);
+    window.removeEventListener('pointerdown', onTap);
     window.removeEventListener('scroll', updateRect);
     window.removeEventListener('resize', updateRect);
   };

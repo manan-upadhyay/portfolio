@@ -199,18 +199,22 @@ const Hero = () => {
         </motion.div>
       </div>
 
-      {/* Spin control — a subtle button pinned to the instrument's lower edge.
-          Clicking flicks the alidade into a free spin that winds up and coasts to
-          a natural stop (real flywheel friction).
+      {/* Spin control — a subtle button that flicks the alidade into a free spin
+          (winds up, coasts to a natural stop on real flywheel friction).
           Hidden under reduced motion, where the needle doesn't animate. Mirrors
-          the astrolabe's responsive box so it always sits on the rim. */}
+          the astrolabe's responsive box, then sits at the box's PIVOT (needle
+          centre) on mobile — where the instrument floats above the copy, so it
+          never lands on the title — and drops to the lower rim on desktop, where
+          the instrument lives off to the right in clear space. */}
       {!prefersReduced && (
         <div
           className="absolute z-20 pointer-events-none aspect-square left-1/2 -translate-x-1/2 top-[6%] w-[62vw] max-w-[280px]
                      md:left-auto md:translate-x-0 md:right-[4%] md:top-1/2 md:-translate-y-1/2 md:w-[min(44vw,560px)] md:max-w-none"
         >
 
-          <div className="absolute left-1/2 bottom-0 -translate-x-1/2 translate-y-1/2 w-11 h-11">
+          <div className="absolute left-1/2 -translate-x-1/2 w-11 h-11
+                          top-1/2 -translate-y-1/2
+                          md:top-auto md:bottom-0 md:translate-y-1/2">
             {/* Breathing attention halo (behind the button). */}
             <motion.span
               className="absolute inset-0 rounded-full pointer-events-none"

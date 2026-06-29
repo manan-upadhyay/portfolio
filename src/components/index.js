@@ -16,6 +16,7 @@ export { default as MapDivider } from './MapDivider';
 export { default as MapOverlay } from './MapOverlay';
 export { default as PersonaTriptych } from './PersonaTriptych';
 export { default as RavenBurst } from './RavenBurst';
+export { default as RavenNotice } from './RavenNotice';
 export { default as ScrollReveal } from './ScrollReveal';
 export { default as SideRail } from './SideRail';
 export { default as SkyControl } from './SkyControl';

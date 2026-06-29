@@ -4,42 +4,17 @@ import { useTranslation } from 'react-i18next';
 import { Mail, Linkedin, Github, MapPin, ArrowUpRight, Send, Loader2, Check, Download, Copy, Feather } from 'lucide-react';
 import { SectionWrapper } from '../hoc';
 import { personalInfo, summon, chapters } from '../constants';
-import { ChapterHeading, ScrollReveal, ExpeditionRecap, RavenBurst } from '../components';
+import { ChapterHeading, ScrollReveal, ExpeditionRecap, RavenBurst, RavenNotice } from '../components';
 import { playCue } from '../lib/sound';
+import { sendRaven, EMAIL_RE } from '../lib/raven';
 
 // Presentational icon map — data (label/value/href) lives in constants.
 const CHANNEL_ICONS = { email: Mail, linkedin: Linkedin, github: Github, location: MapPin };
-
-// The form POSTs to a server-side endpoint (Vercel function in prod, Vite dev
-// middleware locally) which holds the Resend API key. The key never touches the
-// client bundle. See api/send-raven.js + api/_lib/sendRaven.js.
-const RAVEN_ENDPOINT = '/api/send-raven';
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 // Pick a random variant, avoiding an immediate repeat of `not` for surprise.
 const pick = (arr, not) => {
   const pool = arr.length > 1 && not ? arr.filter((m) => m !== not) : arr;
   return pool[Math.floor(Math.random() * pool.length)];
-};
-
-/* Cinematic form feedback — a shaking "returned raven" notice (error) or a
-   settling success note. Shake/entrance run via Framer so they compose cleanly. */
-const RavenNotice = ({ type, children }) => {
-  const isError = type === 'error';
-  const reduce = useReducedMotion();
-  return (
-    <motion.div
-      role={isError ? 'alert' : 'status'}
-      className={`raven-notice ${isError ? 'raven-notice--error' : 'raven-notice--success'}`}
-      initial={{ opacity: 0, y: -6, scale: 0.98 }}
-      animate={{ opacity: 1, y: 0, scale: 1, x: isError && !reduce ? [0, -6, 6, -4, 4, -2, 0] : 0 }}
-      exit={{ opacity: 0, y: -6, scale: 0.98 }}
-      transition={{ type: 'spring', stiffness: 460, damping: 26, x: { duration: 0.5, ease: 'easeInOut' } }}
-    >
-      <span className="raven-notice__icon">{isError ? <Feather size={15} /> : <Check size={15} />}</span>
-      <p className="raven-notice__text">{children}</p>
-    </motion.div>
-  );
 };
 
 /* Idle / sending state for the status console — a subtle pulsing pip + a line of
@@ -119,54 +94,43 @@ const Contact = () => {
     setError('');
   };
 
-  // Pick a random on-theme error variant; interpolate {{email}} for the
+  // Set a random on-theme error variant; interpolate {{email}} for the
   // not-configured case (i18next skips interpolation inside returnObjects arrays).
-  const fail = (key) => {
+  // No sound here — the cue is owned by the caller (lib/raven for network
+  // failures, `failValidation` for client-side checks).
+  const failMsg = (key) => {
     const variants = t(`contact.errors.${key}`, { returnObjects: true });
     let msg = pick(variants, error);
     if (key === 'notConfigured') msg = msg.replace(/\{\{email\}\}/g, personalInfo.email);
     setError(msg);
-    playCue('error'); // the raven is refused
   };
+  // Client-side validation failure — message + the "raven refused" cue.
+  const failValidation = (key) => { failMsg(key); playCue('error'); };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSuccess(false);
-    if (!form.name || !form.email || !form.message) return fail('required');
-    if (!EMAIL_RE.test(form.email)) return fail('email');
+    if (!form.name || !form.email || !form.message) return failValidation('required');
+    if (!EMAIL_RE.test(form.email)) return failValidation('email');
 
     setError('');
     setLoading(true);
-    try {
-      const res = await fetch(RAVEN_ENDPOINT, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: form.name,
-          email: form.email,
-          message: form.message,
-          inquiry,
-          company: honeypotRef.current?.value || '',
-        }),
-      });
-      const data = await res.json().catch(() => ({}));
-
-      if (res.ok && data.ok) {
-        playCue('raven'); // the raven takes flight
-        setSuccess(true);
-        setForm({ name: '', email: '', message: '' });
-        setTimeout(() => setSuccess(false), 6000);
-      } else if (res.status === 503 || data.code === 'NOT_CONFIGURED') {
-        fail('notConfigured'); // server has no RESEND_API_KEY yet
-      } else {
-        fail('failed');
-      }
-    } catch (err) {
-      console.error('Raven dispatch failed:', err);
-      fail('failed');
-    } finally {
-      setLoading(false); // always clears — the loader can never hang
+    // Shared dispatch: posts, parses, and plays the flight/refused cue for us.
+    const result = await sendRaven({
+      name: form.name,
+      email: form.email,
+      message: form.message,
+      inquiry,
+      company: honeypotRef.current?.value || '',
+    });
+    if (result.ok) {
+      setSuccess(true);
+      setForm({ name: '', email: '', message: '' });
+      setTimeout(() => setSuccess(false), 6000);
+    } else {
+      failMsg(result.code); // sendRaven already played the 'error' cue
     }
+    setLoading(false); // always clears — the loader can never hang
   };
 
   const inputCls = 'form-field w-full py-3.5 px-4 rounded-xl outline-none border transition-colors duration-300';

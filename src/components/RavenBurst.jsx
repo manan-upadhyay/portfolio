@@ -97,9 +97,12 @@ function drawBird(ctx, b, col) {
  * RavenBurst — mount near the send button; pass its ref so the flock erupts from
  * the button. Fires once each time `active` flips true.
  * @param {boolean} active
- * @param {React.RefObject} originRef — the submit button
+ * @param {React.RefObject} originRef — the submit button (read live when it fires)
+ * @param {{x:number,y:number}} [origin] — explicit viewport launch point; use when
+ *        the button unmounts as it succeeds (e.g. a form that swaps to a "done"
+ *        panel), captured just before the swap. Takes precedence over `originRef`.
  */
-const RavenBurst = ({ active, originRef }) => {
+const RavenBurst = ({ active, originRef, origin }) => {
   const canvasRef = useRef(null);
   const rafRef = useRef(0);
   const firedRef = useRef(false);
@@ -126,10 +129,13 @@ const RavenBurst = ({ active, originRef }) => {
     const col = getComputedStyle(document.documentElement)
       .getPropertyValue('--btn-bg').trim() || '#1F1B16';
 
-    const el = originRef?.current;
     let cx = W / 2;
     let cy = H / 2;
-    if (el) {
+    const el = originRef?.current;
+    if (origin) {
+      cx = origin.x;
+      cy = origin.y;
+    } else if (el) {
       const r = el.getBoundingClientRect();
       cx = r.left + r.width / 2;
       cy = r.top + r.height / 2;
@@ -191,7 +197,7 @@ const RavenBurst = ({ active, originRef }) => {
     rafRef.current = requestAnimationFrame(frame);
 
     return () => cancelAnimationFrame(rafRef.current);
-  }, [active, originRef]);
+  }, [active, originRef, origin]);
 
   return createPortal(
     <canvas

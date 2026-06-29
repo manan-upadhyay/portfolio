@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Feather, Check, Lock, Info, ArrowRight } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useVoiceStore } from '../store/useVoiceStore';
+import { useCoachmark } from '../store/useCoachmark';
 import { voices, SEALED_VOICES, POPOVER_SEALED_LIMIT, popoverVoices } from '../i18n/voices';
 import Hovercard from './Hovercard';
 
@@ -73,6 +74,12 @@ const VoiceRow = ({ v, active, locked, onSelect }) => (
 // Sections that count as "deep enough in the journey" to surface the entice note.
 const NOTE_AT = ['arsenal', 'projects', 'contact'];
 
+// Module-scoped so it survives section changes AND route swaps (the cluster lives
+// in the shared shell and never remounts between routes): the entice note gets
+// exactly one turn per page load — like the Sound coachmark — rather than being
+// permanently suppressed by a persisted flag (which is why it "never showed").
+let enticeArmed = false;
+
 /**
  * Voice switcher — the left half of the bottom-right control cluster. A circular
  * quill button (gently pulsing until the visitor first opens the Hall) that pops a
@@ -85,10 +92,14 @@ const NOTE_AT = ['arsenal', 'projects', 'contact'];
  */
 const VoiceSwitcher = ({ activeId }) => {
   const { t } = useTranslation();
-  const { voice, setVoice, isUnlocked, openHall, voiceNoted, markVoiceNoted } = useVoiceStore();
+  const { voice, setVoice, isUnlocked, openHall, markVoiceNoted } = useVoiceStore();
+  const { active: activeCoach, request: requestCoach, release: releaseCoach } = useCoachmark();
   const [open, setOpen] = useState(false);
-  const [showNote, setShowNote] = useState(false);
   const rootRef = useRef(null);
+  const enticeTimers = useRef([]);
+  // The entice note shows only while this control owns the shared coachmark stage
+  // (and the menu is closed), so it never overlaps the Sound hint (see useCoachmark).
+  const showNote = activeCoach === 'voice' && !open;
 
   useEffect(() => {
     if (!open) return undefined;
@@ -102,12 +113,21 @@ const VoiceSwitcher = ({ activeId }) => {
   // One-time entice note — once the visitor is engaged (reached the Arsenal or
   // beyond), a catchy bubble invites them to try the voices. Auto-dismisses ~11s;
   // permanently dismissed once they engage with the control.
+  // Once the visitor reaches a deep section, claim the coachmark stage a beat
+  // later (which preempts the Sound hint — closing it if it's still up) and yield
+  // it after a spell. Timers are stored in a ref and cleared only on unmount, so
+  // ongoing scrolling (which changes `activeId`) can never cancel the note's show
+  // or its auto-dismiss mid-flight.
   useEffect(() => {
-    if (voiceNoted || open || !NOTE_AT.includes(activeId)) return undefined;
-    const inT = setTimeout(() => setShowNote(true), 700);
-    const outT = setTimeout(() => setShowNote(false), 11000);
-    return () => { clearTimeout(inT); clearTimeout(outT); };
-  }, [activeId, voiceNoted, open]);
+    if (enticeArmed || open || !NOTE_AT.includes(activeId)) return;
+    enticeArmed = true;
+    enticeTimers.current = [
+      setTimeout(() => requestCoach('voice'), 700),
+      setTimeout(() => releaseCoach('voice'), 11700),
+    ];
+  }, [activeId, open, requestCoach, releaseCoach]);
+
+  useEffect(() => () => enticeTimers.current.forEach(clearTimeout), []);
 
   // Teaser rows, all popover-eligible + code-ordered (see voices.js `popover` /
   // `popoverOrder`). Open voices first; sealed clues capped at the limit so the
@@ -121,9 +141,9 @@ const VoiceSwitcher = ({ activeId }) => {
   const moreCount = voices.length - openVoices.length - sealed.length;
 
   const choose = (id) => { setVoice(id); setOpen(false); };
-  const toggleMenu = () => { markVoiceNoted(); setShowNote(false); setOpen((o) => !o); };
-  const goHall = () => { setOpen(false); setShowNote(false); openHall(); };
-  const fromNote = () => { setShowNote(false); markVoiceNoted(); setOpen(true); };
+  const toggleMenu = () => { markVoiceNoted(); releaseCoach('voice'); setOpen((o) => !o); };
+  const goHall = () => { setOpen(false); releaseCoach('voice'); openHall(); };
+  const fromNote = () => { releaseCoach('voice'); markVoiceNoted(); setOpen(true); };
 
   return (
     <div ref={rootRef} className="relative">

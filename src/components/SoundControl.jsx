@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Volume2, VolumeX } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useSoundStore } from '../store/useSoundStore';
+import { useCoachmark } from '../store/useCoachmark';
 import { sound } from '../lib/sound';
 
 const JELLY = { type: 'spring', stiffness: 320, damping: 24, mass: 0.7 };
@@ -28,9 +29,12 @@ const EXPANDED = 248;
 const SoundControl = () => {
   const { t } = useTranslation();
   const { enabled, volume, unlocked, toggle, setVolume } = useSoundStore();
+  const { active: activeCoach, request: requestCoach, release: releaseCoach } = useCoachmark();
   const [expanded, setExpanded] = useState(false);
-  const [showNote, setShowNote] = useState(false);
   const liveBar = useRef(null);
+  // The hint is visible only while THIS control owns the shared coachmark stage,
+  // so it can never overlap the Voice entice note (see useCoachmark).
+  const showNote = activeCoach === 'sound';
   // Was the autoplay gate still shut at the moment this press began? Captured on
   // the button's own pointerdown (which fires before the global window unlock
   // listener), so the click handler can't be fooled by the gate opening mid-press.
@@ -42,32 +46,42 @@ const SoundControl = () => {
   // Coachmark: appears a beat after landing while still locked, and dismisses the
   // instant we leave the armed state (the gate opens, or the visitor mutes).
   useEffect(() => {
-    if (!armed) { setShowNote(false); return undefined; }
-    const inT = setTimeout(() => setShowNote(true), 1200);
-    return () => clearTimeout(inT);
-  }, [armed]);
+    if (!armed) { releaseCoach('sound'); return undefined; }
+    const inT = setTimeout(() => requestCoach('sound'), 1200);
+    return () => { clearTimeout(inT); releaseCoach('sound'); };
+  }, [armed, requestCoach, releaseCoach]);
 
   const capturePress = () => { pressLocked.current = !sound.isUnlocked(); };
 
   const onPress = () => {
     if (pressLocked.current) {
-      // First press while the browser gate is shut: this click is the unlock
-      // gesture. Open it and keep sound ON (the confirm cue is immediate proof),
-      // rather than muting. `unlock()` is idempotent if the global listener beat
-      // us to it; `toggle()` only runs to recover a muted-yet-locked edge case.
-      sound.unlock();
-      if (!enabled) toggle();
-      sound.playCue('confirm');
+      // First press while the browser gate is shut: this click IS the unlock
+      // gesture, and sound ends up ON either way (never a mute on a locked press).
+      if (!enabled) {
+        // muted + locked → enabling already unlocks the gate AND plays the confirm
+        // cue (see store.setEnabled), so this single call lands us in the live state.
+        toggle();
+      } else {
+        // armed (on-by-preference, locked) → open the gate and confirm audibly.
+        sound.unlock();
+        sound.playCue('confirm');
+      }
     } else {
+      // Past the gate the button is an ordinary mute/unmute toggle.
       toggle();
     }
   };
   const onVolume = (e) => setVolume(parseFloat(e.target.value));
 
+  // Expand the volume slider on hover — but only on devices that actually hover.
+  // On touch, a synthetic `mouseenter` (with no matching `mouseleave`) would leave
+  // the control stuck open; coarse pointers just tap the button to toggle.
+  const onEnter = () => { if (window.matchMedia('(hover: hover)').matches) setExpanded(true); };
+
   return (
     <div
       className="relative"
-      onMouseEnter={() => setExpanded(true)}
+      onMouseEnter={onEnter}
       onMouseLeave={() => setExpanded(false)}
     >
       {/* Armed-but-locked coachmark — a clear, action-first invitation pointing at

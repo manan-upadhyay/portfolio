@@ -2,4 +2,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://upadhyaymanan.in/sitemap.xml
+Sitemap: https://www.upadhyaymanan.in/sitemap.xml

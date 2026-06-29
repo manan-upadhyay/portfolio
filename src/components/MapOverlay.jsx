@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Search, FileText, Github, Linkedin, Sun, Moon, X, CornerDownLeft, Star, Feather } from 'lucide-react';
 import { personalInfo, chapterList } from '../constants';
 import { scrollToSection } from '../lib/smoothScroll';
+import { pushOverlay, popOverlay } from '../lib/uiOverlay';
 import { useThemeStore } from '../store/useThemeStore';
 import { useVoiceStore } from '../store/useVoiceStore';
 import CompassRose from './CompassRose';
@@ -45,10 +46,11 @@ const MapOverlay = ({ open, onClose, activeId }) => {
   useEffect(() => {
     if (!open) return;
     setQuery('');
+    pushOverlay(); // hush the hero astrolabe behind the blur
     const t = setTimeout(() => inputRef.current?.focus(), 60);
     const onKey = (e) => { if (e.key === 'Escape') onClose(); };
     window.addEventListener('keydown', onKey);
-    return () => { clearTimeout(t); window.removeEventListener('keydown', onKey); };
+    return () => { clearTimeout(t); window.removeEventListener('keydown', onKey); popOverlay(); };
   }, [open, onClose]);
 
   const actions = [

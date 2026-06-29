@@ -7,6 +7,7 @@ import { voicesByCategory, voiceById, SEALED_VOICES } from '../i18n/voices';
 import { playCue } from '../lib/sound';
 import { sendRaven, EMAIL_RE } from '../lib/raven';
 import { getLenis } from '../lib/smoothScroll';
+import { pushOverlay, popOverlay } from '../lib/uiOverlay';
 import Hovercard from './Hovercard';
 import RavenNotice from './RavenNotice';
 import RavenBurst from './RavenBurst';
@@ -193,6 +194,7 @@ const VoiceHall = () => {
     const root = document.documentElement;
     const prevOverflow = root.style.overflow;
     root.style.overflow = 'hidden';
+    pushOverlay(); // hush the hero astrolabe behind the blur
     const f = setTimeout(() => inputRef.current?.focus(), 60);
     const onKey = (e) => { if (e.key === 'Escape') closeHall(); };
     window.addEventListener('keydown', onKey);
@@ -201,6 +203,7 @@ const VoiceHall = () => {
       window.removeEventListener('keydown', onKey);
       root.style.overflow = prevOverflow;
       lenis?.start();
+      popOverlay();
     };
   }, [hallOpen, closeHall]);
 

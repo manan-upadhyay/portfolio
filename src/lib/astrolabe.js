@@ -6,6 +6,8 @@
 // All color is read live from CSS theme tokens, so re-mount on theme change to
 // re-read them (see `useAstrolabe`).
 
+import { isOverlayOpen } from './uiOverlay';
+
 // Deterministic PRNG so the constellation field is stable across renders.
 const makeRng = (seed) => {
   let s = seed % 2147483647;
@@ -212,6 +214,12 @@ export function mountAstrolabe(canvas, wrap, { bearingEl, onSpeed } = {}) {
     let frameSpeed = null; // explicit rad/s for the gear sound (free spin path)
     if (reduce) {
       cur = -Math.PI / 2;
+    } else if (introDone && isOverlayOpen()) {
+      // A menu/modal is in front (the instrument is blurred behind and no longer
+      // the focus). Go dormant: hold the needle still and report zero motion so
+      // the gear sound falls silent — cursor moves inside the overlay must not
+      // swing the alidade or make a sound.
+      frameSpeed = 0;
     } else if (!introDone) {
       // Dramatic multi-turn spin that decelerates into "up" (Origin).
       const pA = easeOut(seg(el, 0.95, 1.45));

@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Sunrise, Sun, Sunset, Moon, Clock, Check } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useThemeStore } from '../store/useThemeStore';
+import { pushOverlay, popOverlay } from '../lib/uiOverlay';
 import DayNightToggle from './DayNightToggle';
 
 const JELLY = { type: 'spring', stiffness: 320, damping: 24, mass: 0.7 };
@@ -27,11 +28,12 @@ const SkyControl = () => {
 
   useEffect(() => {
     if (!open) return;
+    pushOverlay(); // while the sky menu is open, hush the hero astrolabe behind it
     const onDown = (e) => { if (rootRef.current && !rootRef.current.contains(e.target)) setOpen(false); };
     const onKey = (e) => { if (e.key === 'Escape') setOpen(false); };
     document.addEventListener('pointerdown', onDown);
     window.addEventListener('keydown', onKey);
-    return () => { document.removeEventListener('pointerdown', onDown); window.removeEventListener('keydown', onKey); };
+    return () => { document.removeEventListener('pointerdown', onDown); window.removeEventListener('keydown', onKey); popOverlay(); };
   }, [open]);
 
   // The trigger always reflects the *resolved* sky so it reads as a live status.

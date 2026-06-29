@@ -4,6 +4,7 @@ import { Feather, Check, Lock, Info, ArrowRight } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useVoiceStore } from '../store/useVoiceStore';
 import { useCoachmark } from '../store/useCoachmark';
+import { pushOverlay, popOverlay } from '../lib/uiOverlay';
 import { voices, SEALED_VOICES, POPOVER_SEALED_LIMIT, popoverVoices } from '../i18n/voices';
 import Hovercard from './Hovercard';
 
@@ -103,11 +104,12 @@ const VoiceSwitcher = ({ activeId }) => {
 
   useEffect(() => {
     if (!open) return undefined;
+    pushOverlay(); // while the popover is open, hush the hero astrolabe behind it
     const onDown = (e) => { if (rootRef.current && !rootRef.current.contains(e.target)) setOpen(false); };
     const onKey = (e) => { if (e.key === 'Escape') setOpen(false); };
     document.addEventListener('pointerdown', onDown);
     window.addEventListener('keydown', onKey);
-    return () => { document.removeEventListener('pointerdown', onDown); window.removeEventListener('keydown', onKey); };
+    return () => { document.removeEventListener('pointerdown', onDown); window.removeEventListener('keydown', onKey); popOverlay(); };
   }, [open]);
 
   // One-time entice note — once the visitor is engaged (reached the Arsenal or

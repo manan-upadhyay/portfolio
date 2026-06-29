@@ -77,6 +77,14 @@ const VoiceRequest = () => {
   const [state, setState] = useState('idle'); // idle | sending | done | error
   const sendRef = useRef(null);     // the raven flock erupts from the Send button…
   const originRef = useRef(null);   // …whose centre we capture before it swaps out
+  const errRef = useRef(null);      // sentinel below the error — scrolled into view
+
+  // Reveal the error notice when it appears — it sits below the Send button, so on
+  // a short rail it can land out of view; scrollIntoView walks up whichever scroll
+  // container is active (the form on desktop, the stage on mobile).
+  useEffect(() => {
+    if (state === 'error') errRef.current?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  }, [state]);
 
   const submit = async (e) => {
     e.preventDefault();
@@ -155,6 +163,7 @@ const VoiceRequest = () => {
             <AnimatePresence>
               {state === 'error' && <RavenNotice type="error">{t('voiceHall.request.error')}</RavenNotice>}
             </AnimatePresence>
+            <span ref={errRef} aria-hidden="true" />
           </motion.form>
         )}
       </AnimatePresence>
@@ -211,6 +220,7 @@ const VoiceHall = () => {
       {hallOpen && (
         <motion.div className="fixed inset-0 z-[100] grid place-items-center p-4 sm:p-8"
           initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+          data-lenis-prevent
           role="dialog" aria-modal="true" aria-label={t('voiceHall.title')}>
           <div className="absolute inset-0" style={{ background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(12px)' }} onClick={closeHall} />
 

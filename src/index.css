@@ -1444,10 +1444,13 @@ h1, h2, h3, h4, h5, h6 {
   flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain;
   padding: 2px 16px 16px 20px;
 }
+/* Narrow screens: the two panes stack and the whole stage scrolls as ONE column,
+   so a tall summon form + its error notice can never spill past the modal. The
+   roster releases its own scroll to the stage. */
 @media (max-width: 859px) {
-  /* on narrow screens the roster is height-capped so the summon rail below it
-     stays in view without scrolling the whole list */
-  .voice-hall__voices { max-height: 38vh; }
+  .voice-hall__stage { overflow-y: auto; overscroll-behavior: contain; }
+  .voice-hall__voices { flex: none; max-height: none; overflow: visible; }
+  .voice-summon__form { overflow: visible; }
 }
 .voice-hall__group { padding-top: 8px; }
 .voice-hall__grouplabel {
@@ -1532,7 +1535,7 @@ h1, h2, h3, h4, h5, h6 {
 
 /* --- "Summon a Voice" — the persistent right rail --- */
 .voice-summon {
-  position: relative; overflow: hidden;
+  position: relative; overflow: hidden; min-height: 0;
   display: flex; flex-direction: column;
   border-top: 1px solid var(--color-card-border);
   background:
@@ -1550,7 +1553,12 @@ h1, h2, h3, h4, h5, h6 {
     radial-gradient(1px 1px at 52% 72%, rgba(var(--color-gold-rgb), 0.4), transparent);
 }
 .voice-summon > * { position: relative; z-index: 1; }
-.voice-summon__form { display: flex; flex-direction: column; gap: 10px; padding: 20px 20px 22px; }
+/* The form scrolls within the bounded rail (the ambient aura is a sibling, so it
+   stays put). On mobile the stage scrolls instead (overflow released above). */
+.voice-summon__form {
+  flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain;
+  display: flex; flex-direction: column; gap: 10px; padding: 20px 20px 22px;
+}
 .voice-summon__crest {
   display: grid; place-items: center;
   width: 38px; height: 38px; border-radius: 9999px;

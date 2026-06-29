@@ -44,7 +44,7 @@ Section components live in `src/sections/`; reusable widgets in `src/components/
 | 03 | The Arsenal | `sections/Tech.jsx` | `arsenal` | **Interactive orbital** skill field |
 | 04 | The Realms | `sections/Works.jsx` | `projects` | **Editorial cinematic** project plates |
 | 05 | Summon | `sections/Contact.jsx` | `contact` | Statement + form + channels |
-| —  | The Atelier *(coda)* | `sections/Atelier.jsx` | `atelier` | **Making-of** on its own route `/making-of` (not in the scroll spine): Canvas2D `BuildTimeline` + built/cut ledger + manifesto |
+| —  | The Atelier *(coda)* | `sections/Atelier.jsx` | `atelier` | **Making-of** on its own route `/making-of` (not in the scroll spine): the scrubbable `BuildReel` (the build as a film in nine scenes) + built/cut ledger + the `PersonaTriptych` ("off the map") + manifesto |
 
 **The Atelier is an unnumbered coda on its own route** (`/making-of`), not part
 of the six-chapter spine and no longer inline in the scroll page. The scroll

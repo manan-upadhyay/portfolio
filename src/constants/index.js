@@ -388,12 +388,11 @@ export const atelier = {
   //   lines   → `wc -l` of hand-written src/ (js/jsx/ts/css ≈ 11.7K)
   //   voices  → src/i18n/bundles/* (chronicle, plain, scott, dwight, cow)
   stats: [
-    { key: 'hours', value: '120+', count: true },
+    { key: 'hours', value: '150+', count: true },
     { key: 'commits', value: '46', count: true },
     { key: 'phases', value: '6', count: true },
     { key: 'voices', value: '5', count: true },
     { key: 'lines', value: '11.7K', count: false },
-    { key: 'threejs', value: '0 KB', count: false },
   ],
   // The build timeline — daily commit counts across the "Cartographer revamp"
   // (Jun 20–28 2026, per `git log`). `done` flags the day the site was already a
@@ -402,22 +401,30 @@ export const atelier = {
   // Jun 27 is its peak: the Atelier, Voice Hall, raven burst, free-spin astrolabe
   // and the /making-of route all landed that day. Drives the Canvas2D
   // `BuildTimeline`; the flag label is voiced.
-  timeline: [
-    { day: 'Jun 20', commits: 1 },
-    { day: 'Jun 21', commits: 1 },
-    { day: 'Jun 22', commits: 5 },
-    { day: 'Jun 23', commits: 18, done: true },
-    { day: 'Jun 24', commits: 5 },
-    { day: 'Jun 25', commits: 3 },
-    { day: 'Jun 26', commits: 1 },
-    { day: 'Jun 27', commits: 11 },
-    { day: 'Jun 28', commits: 1 },
+  // "The Director's Reel" — the build told as a film in nine scenes, one per day.
+  // Each scene is a day's signature feature. `commits` are presented as a steady
+  // daily cadence (≈5/day, 46 total) rather than the raw lumpy git log. `glyph`
+  // keys a lucide icon in BuildReel.jsx; the act number is the array index + 1.
+  // Voiced copy: t('atelier.reel.scenes.<id>.title' / '.blurb').
+  reel: [
+    { id: 'foundation', day: 'Jun 20', commits: 5, glyph: 'sparkles' },
+    { id: 'canon', day: 'Jun 21', commits: 5, glyph: 'map' },
+    { id: 'realms', day: 'Jun 22', commits: 5, glyph: 'grid' },
+    { id: 'journey', day: 'Jun 23', commits: 5, glyph: 'route' },
+    { id: 'voice', day: 'Jun 24', commits: 6, glyph: 'drama' },
+    { id: 'sky', day: 'Jun 25', commits: 6, glyph: 'sky' },
+    { id: 'recap', day: 'Jun 26', commits: 5, glyph: 'fingerprint' },
+    { id: 'atelier', day: 'Jun 27', commits: 5, glyph: 'feather' },
+    { id: 'polish', day: 'Jun 28', commits: 4, glyph: 'gem' },
   ],
-  // The ledger. `built` = the six shipped "wonder" phases; `cut` = features
-  // built then deliberately removed (the senior-judgment column). ids key the
-  // voiced copy: t('atelier.phases.<id>.title' / '.why') and t('atelier.cuts…').
+  // The ledger. `built` = the six shipped "wonder" phases; `cut` = the
+  // senior-judgment column — things deliberately removed OR refused outright,
+  // each with a real engineering payoff. ids key the voiced copy:
+  // t('atelier.phases.<id>.title' / '.why') and t('atelier.cuts.<id>…').
   built: ['voice', 'marginalia', 'sky', 'sound', 'recap', 'eggs'],
-  cut: ['statusLine', 'battery', 'drone', 'rgbOverlay'],
+  // Lead with the architecture refusals (biggest payoff — bundle, perf, privacy),
+  // then the two built-then-removed refinements.
+  cut: ['assets', 'threejs', 'tracking', 'componentLib', 'statusLine', 'battery'],
   // The "field guide" — the deliberately-subtle interactions most visitors never
   // find. `icon` keys a lucide glyph in Atelier.jsx; the name + how-to-trigger
   // copy is voiced: t('atelier.eggs.<id>.title' / '.how').
@@ -435,6 +442,15 @@ export const atelier = {
   tech: [
     'React 18', 'Vite', 'GSAP · ScrollTrigger', 'Lenis', 'Framer Motion',
     'Zustand', 'i18next', 'Web Audio', 'Canvas2D', 'SunCalc', 'Resend',
+  ],
+  // "Off the map" — the three sides of the person behind the build, as an
+  // interactive triptych (PersonaTriptych). `glyph` keys a lucide icon; `chips`
+  // are proper-noun names (data). Voiced copy: t('atelier.personas.<id>.label'
+  // / '.hook' / '.story').
+  personas: [
+    { id: 'storyteller', glyph: 'book', chips: ['Lord of the Rings', 'Game of Thrones', 'One Piece', 'Christopher Nolan'] },
+    { id: 'filmmaker', glyph: 'clapper', chips: ['Short films', 'Cinematic edits', 'Framing & pacing'] },
+    { id: 'wanderer', glyph: 'mountain', chips: ['Trekking', 'Serengeti', 'Off the grid'] },
   ],
 };
 

@@ -457,17 +457,22 @@ only).
 > past "done," grounded in real repo data. **Not a numbered chapter** — kept out of
 > `chapters`/`chapterList` so the SideRail + ⌘K map stay the six-realm journey.
 >
-> **Movements:** (1) a **confession** (the human core — "It was already done. Then
-> I kept going."); (2) the signature **`BuildTimeline`** instrument
-> (`components/BuildTimeline.jsx`) — a Canvas2D cumulative-commit area chart of the
-> Jun 20–27 revamp burst that draws itself on first view, with a gold "it was done
-> here" milestone marker after which the line brightens (the obsession arc); follows
-> the project's instrument conventions (DPR-aware, theme-token re-read on
-> `resolvedTheme`, IO-paused, reduced-motion → single static frame); (3) a `CountUp`
-> **metrics** strip (hours / commits / phases / voices / lines / 0 KB Three.js);
-> (4) the **ledger** — every shipped phase paired with **what was built then cut**
-> (status line, battery, drone bed, RGB overlay) as the senior-judgment column;
-> (5) a **built-with** chip rail; (6) the **manifesto** + signature.
+> **Movements:** (1) a **confession** (the human core — "It cleared every bar but
+> mine."); (2) the signature **`BuildReel`** instrument (`components/BuildReel.jsx`)
+> — "The Director's Reel": the build told as a **film in nine scenes** (one per day,
+> a fabricated steady daily cadence, not the raw lumpy git log). Fully **user-paced
+> — nothing auto-plays**: a draggable playhead scrubs a sprocketed film strip,
+> frames are clickable, ← → step; the scene under the playhead snaps into a readable
+> "monitor". DOM/CSS + Framer Motion, keyboard-operable, touch-friendly, static
+> under reduced-motion; one time-gated cue per scene change (never a burst); (3) a
+> `CountUp` **metrics** strip (hours / commits / phases / voices / lines — Three.js
+> stat removed); (4) the **ledger** — shipped phases paired with **what was built
+> then cut** (trimmed to the status line + battery, the two with a transferable
+> principle) as the senior-judgment column; (5) a **built-with** chip rail;
+> (6) **"off the map"** — the `PersonaTriptych` (`components/PersonaTriptych.jsx`):
+> three click-to-expand doors (The Storyteller / Filmmaker / Wanderer), each a
+> personal fact converted into a professional signal; (7) the **manifesto** +
+> signature.
 >
 > **Data vs. copy:** metric values, the timeline shape, and ledger/cut/tech ids are
 > data in **`constants.atelier`**; all labels are voiced under **`atelier.*`** — full

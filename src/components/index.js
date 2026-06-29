@@ -1,5 +1,5 @@
 // Reusable UI components — shared across sections. Import via `from '../components'`.
-export { default as BuildTimeline } from './BuildTimeline';
+export { default as BuildReel } from './BuildReel';
 export { default as ChapterHeading } from './ChapterHeading';
 export { default as CompassRose } from './CompassRose';
 export { default as ControlCluster } from './ControlCluster';
@@ -14,6 +14,7 @@ export { default as Magnet } from './Magnet';
 export { default as Marginalia, Annotated } from './Marginalia';
 export { default as MapDivider } from './MapDivider';
 export { default as MapOverlay } from './MapOverlay';
+export { default as PersonaTriptych } from './PersonaTriptych';
 export { default as RavenBurst } from './RavenBurst';
 export { default as ScrollReveal } from './ScrollReveal';
 export { default as SideRail } from './SideRail';

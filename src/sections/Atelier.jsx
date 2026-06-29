@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { Hammer, Scissors, Compass, RefreshCcw, AudioLines, CloudSun, Drama, Map, Send, Fingerprint } from 'lucide-react';
 import { SectionWrapper } from '../hoc';
 import { atelier } from '../constants';
-import { ChapterHeading, ScrollReveal, CountUp, BuildTimeline } from '../components';
+import { ChapterHeading, ScrollReveal, CountUp, BuildReel, PersonaTriptych } from '../components';
 
 /* lucide glyph per field-guide entry (icon id → component). */
 const EGG_ICONS = { compass: Compass, refresh: RefreshCcw, audio: AudioLines, sky: CloudSun, drama: Drama, map: Map, send: Send, fingerprint: Fingerprint };
@@ -45,13 +45,6 @@ const LedgerEntry = ({ title, why, kind }) => (
 const Atelier = () => {
   const { t } = useTranslation();
 
-  // The "done" milestone fraction → align the DOM flag with the canvas marker
-  // (canvas pads 10px each side; mirror that with a calc()).
-  const n = atelier.timeline.length;
-  const doneIdx = Math.max(0, atelier.timeline.findIndex((d) => d.done));
-  const doneFrac = n > 1 ? doneIdx / (n - 1) : 0;
-  const flagLeft = `calc(10px + ${doneFrac} * (100% - 20px))`;
-
   const manifesto = t('atelier.manifesto', { returnObjects: true });
 
   return (
@@ -64,23 +57,16 @@ const Atelier = () => {
         <p className="atelier-confession__sub mt-4">{t('atelier.confessionSub')}</p>
       </ScrollReveal>
 
-      {/* The build timeline instrument. */}
+      {/* The build reel — the build as a film in nine scenes you scrub. */}
       <ScrollReveal direction="up" delay={0.05} className="realm-card atelier-card mt-12 p-6 sm:p-8">
         <div className="flex items-baseline justify-between gap-4 flex-wrap">
-          <span className="chapter-eyebrow">{t('atelier.timeline.title')}</span>
-          <span className="atelier-card__hint exp-mono">{t('atelier.timeline.range')}</span>
+          <span className="chapter-eyebrow">{t('atelier.reel.title')}</span>
+          <span className="atelier-card__hint exp-mono">{t('atelier.reel.range')}</span>
         </div>
-        <div className="atelier-chart mt-5">
-          <BuildTimeline data={atelier.timeline} />
-          {/* the DOM "done" flag, aligned to the canvas marker */}
-          <div className="atelier-flag" style={{ left: flagLeft }}>
-            <span className="atelier-flag__dot" />
-            <span className="atelier-flag__label">{t('atelier.timeline.doneFlag')}</span>
-          </div>
-          <span className="atelier-chart__axis atelier-chart__axis--start">{atelier.timeline[0].day}</span>
-          <span className="atelier-chart__axis atelier-chart__axis--end">{t('atelier.timeline.now')}</span>
+        <div className="mt-6">
+          <BuildReel data={atelier.reel} />
         </div>
-        <p className="atelier-card__caption mt-5">{t('atelier.timeline.caption')}</p>
+        <p className="atelier-card__caption mt-6">{t('atelier.reel.caption')}</p>
       </ScrollReveal>
 
       {/* Headline metrics. */}
@@ -140,6 +126,17 @@ const Atelier = () => {
           {atelier.tech.map((name) => (
             <span key={name} className="atelier-chip exp-mono">{name}</span>
           ))}
+        </div>
+      </ScrollReveal>
+
+      {/* Off the map — the three sides of the person behind the build, as an
+          interactive triptych (story-love → the Chronicle form, the filmmaker's
+          eye → the motion, the wanderer → the counterweight). */}
+      <ScrollReveal direction="up" className="mt-14">
+        <span className="chapter-eyebrow">{t('atelier.offmap.title')}</span>
+        <p className="atelier-ledger__intro mt-4">{t('atelier.offmap.intro')}</p>
+        <div className="mt-7">
+          <PersonaTriptych personas={atelier.personas} />
         </div>
       </ScrollReveal>
 

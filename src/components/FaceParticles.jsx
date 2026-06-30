@@ -36,7 +36,7 @@ const rand = (a, b) => a + Math.random() * (b - a);
 const clamp = (x, a, b) => Math.max(a, Math.min(b, x));
 const easeOutCubic = (x) => 1 - Math.pow(1 - x, 3);
 
-const FaceParticles = ({ src = '/atelier/portrait.png' }) => {
+const FaceParticles = ({ src = '/atelier/portrait.webp' }) => {
   const reduce = useReducedMotion();
   const wrapRef = useRef(null);
   const canvasRef = useRef(null);

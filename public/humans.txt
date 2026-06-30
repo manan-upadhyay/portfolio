@@ -1,0 +1,12 @@
+/* TEAM */
+  Developer: Manan Upadhyay
+  Role: Senior Full Stack Developer (React.js, Next.js, Node.js, TypeScript)
+  Contact: upadhyaymanan01@gmail.com
+  Twitter: @upadhyaymanan
+  Location: Ahmedabad, India
+
+/* SITE */
+  Last update: 2026-06-30
+  Standards: HTML5, CSS3, ESNext
+  Components: React 18, Vite, GSAP, Lenis, Web Audio, PostHog, Vercel
+  Software: VS Code, Git

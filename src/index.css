@@ -1,5 +1,8 @@
-/* Self-hosted fonts — eliminates render-blocking chain to fonts.googleapis.com + fonts.gstatic.com */
-@import url("/fonts/fonts.css");
+/* Self-hosted fonts — eliminates render-blocking chain to fonts.googleapis.com + fonts.gstatic.com.
+   Imported from src/ (not /public) so Vite bundles the @font-face rules into the main CSS,
+   which the inline-css plugin then inlines into <head> — no runtime fonts.css round-trip.
+   The woff2 files stay in /public/fonts and are referenced by absolute /fonts/*.woff2 URLs. */
+@import "./fonts.css";
 
 @tailwind base;
 @tailwind components;
@@ -2872,6 +2875,7 @@ h1, h2, h3, h4, h5, h6 {
   color: var(--color-text-muted);
 }
 .raven-console__pip {
+  position: relative;
   width: 7px;
   height: 7px;
   border-radius: 9999px;
@@ -2879,9 +2883,25 @@ h1, h2, h3, h4, h5, h6 {
   background: var(--color-ember);
   animation: raven-pip 2.6s ease-in-out infinite;
 }
-.raven-console__line--sending .raven-console__pip { animation-duration: 0.9s; }
+.raven-console__pip::after {
+  content: '';
+  position: absolute;
+  inset: -5px;
+  border-radius: inherit;
+  background: rgba(var(--color-ember-rgb), 0.4);
+  animation: raven-pip-halo 2.6s ease-in-out infinite;
+  z-index: -1;
+}
+.raven-console__line--sending .raven-console__pip,
+.raven-console__line--sending .raven-console__pip::after { 
+  animation-duration: 0.9s; 
+}
 @keyframes raven-pip {
-  0%, 100% { opacity: 0.35; box-shadow: 0 0 0 0 rgba(var(--color-ember-rgb), 0.4); }
-  50%      { opacity: 1;    box-shadow: 0 0 0 5px rgba(var(--color-ember-rgb), 0); }
+  0%, 100% { opacity: 0.35; }
+  50%      { opacity: 1;    }
+}
+@keyframes raven-pip-halo {
+  0%, 100% { opacity: 1; transform: scale(0.4); }
+  50%      { opacity: 0; transform: scale(1); }
 }
 

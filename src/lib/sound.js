@@ -47,7 +47,7 @@ export const CONFIG = {
   beds: {
     hero: { peak: 0.5, sample: '/sounds/astrolabe.mp3' },   // Hero astrolabe loop
     arsenal: { peak: 0.12, sample: '/sounds/arsenal.mp3' },  // Arsenal ambience loop
-    lens: { peak: 0.025 },    // face-particle magic-lantern hover buzz
+    lens: { peak: 0.035 },    // face-particle magic-lantern hover buzz
     orbit: { peak: 0.45 },   // observatory constellation hover buzz (sibling, not same)
     reel: { peak: 0.16 },     // director's-reel film-transport whir (velocity-driven)
   },

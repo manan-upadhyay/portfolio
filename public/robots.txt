@@ -1,4 +1,5 @@
 # https://www.robotstxt.org/robotstxt.html
+# All crawlers — search engines and AI agents alike — are welcome.
 User-agent: *
 Allow: /
 

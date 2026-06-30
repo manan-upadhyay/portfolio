@@ -66,7 +66,7 @@ const SideRail = ({ activeId, onOpenMap, visible }) => {
   const { t } = useTranslation();
   const [expanded, setExpanded] = useState(false);
   const { resolvedTheme } = useThemeStore();
-  const crest = resolvedTheme === 'dark' ? '/logo-dark.png' : '/logo-light.png';
+  const crest = resolvedTheme === 'dark' ? '/logo-dark.png' : '/logo-light.webp';
 
   return (
     <motion.nav

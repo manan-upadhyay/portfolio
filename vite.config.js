@@ -54,10 +54,38 @@ export default defineConfig(({ mode }) => {
   }
 
   return {
-    plugins: [react(), ravenApiDev()],
+    plugins: [
+      react(), 
+      ravenApiDev(),
+      {
+        // Inline the built CSS into <head> to remove the render-blocking
+        // stylesheet request (LCP win). ASSUMPTION: this SPA emits a single CSS
+        // chunk — we concatenate any CSS assets by emit order, so if you ever
+        // code-split CSS (per-route lazy CSS), revisit cascade ordering here.
+        name: 'inline-css',
+        enforce: 'post',
+        generateBundle(opts, bundle) {
+          const cssKeys = Object.keys(bundle).filter((k) => bundle[k].fileName.endsWith('.css'));
+          if (cssKeys.length === 0) return;
+          if (cssKeys.length > 1) {
+            this.warn(`inline-css: ${cssKeys.length} CSS chunks found; concatenation order is not guaranteed.`);
+          }
+          const cssCode = cssKeys.map((k) => bundle[k].source).join('');
+          for (const k of cssKeys) delete bundle[k];
+          for (const key in bundle) {
+            if (bundle[key].fileName.endsWith('.html')) {
+              bundle[key].source = bundle[key].source
+                .replace(/<link[^>]*rel="stylesheet"[^>]*>/g, '')
+                .replace('</head>', `<style>${cssCode}</style></head>`);
+            }
+          }
+        }
+      }
+    ],
 
     // Build optimizations
     build: {
+      target: 'esnext',
       rollupOptions: {
         output: {
           // Manual chunks for better caching

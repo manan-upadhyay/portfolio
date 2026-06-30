@@ -10,6 +10,7 @@ export { default as DayNightToggle } from './DayNightToggle';
 export { default as EasterEggListener } from './EasterEggListener';
 export { default as ErrorBoundary } from './ErrorBoundary';
 export { default as ExpeditionRecap } from './ExpeditionRecap';
+export { default as FaceParticles } from './FaceParticles';
 export { default as Hovercard } from './Hovercard';
 export { default as Magnet } from './Magnet';
 export { default as Marginalia, Annotated } from './Marginalia';

@@ -45,6 +45,14 @@
   --color-parchment: #F5F0E6;
   --color-ink: #1F1B16;
 
+  /* Observatory legend — four distinct, on-theme category hues (cool → warm).
+     Dedicated tokens so the constellation reads as four colours, not three
+     near-identical embers (see .dark overrides for the starlit variants). */
+  --obs-origin: #4F46E5;   /* indigo  — Navigation */
+  --obs-craft:  #0E9C8A;   /* teal    — Interaction */
+  --obs-realms: #B8860B;   /* amber   — Projects */
+  --obs-intent: #C53D6A;   /* rose    — Contact intent */
+
   /* Background gradients */
   --gradient-bg: linear-gradient(135deg, #F8F3E9 0%, #F1E9D8 40%, #EADFC7 70%, #E3D6BC 100%);
   --gradient-hero: linear-gradient(180deg, #F8F3E9 0%, #F0E7D5 55%, #E7DAC2 100%);
@@ -99,6 +107,13 @@
   --color-gold-rgb: 217, 164, 65;
   --color-parchment: #E7DECF;
   --color-ink: #ECE7DB;
+
+  /* Observatory legend — brighter starlit variants that all pop on dark ground
+     and stay clearly distinct from one another. */
+  --obs-origin: #8B95F8;   /* periwinkle — Navigation */
+  --obs-craft:  #34D6C4;   /* aqua       — Interaction */
+  --obs-realms: #E7B53F;   /* gold       — Projects */
+  --obs-intent: #F4789C;   /* rose       — Contact intent */
 
   /* Background gradients */
   --gradient-bg: linear-gradient(135deg, #0B0F1A 0%, #141B2C 50%, #0B0F1A 100%);
@@ -1726,6 +1741,32 @@ h1, h2, h3, h4, h5, h6 {
 
 /* ===== The Atelier (coda — how this site was made) ===== */
 
+/* the cold open — text column with a faint astrolabe filling the open right */
+.atelier-hero { position: relative; }
+.atelier-hero__instrument {
+  position: absolute;
+  top: 50%;
+  right: clamp(-180px, -8vw, -60px);
+  transform: translateY(-50%);
+  width: clamp(340px, 44vw, 600px);
+  aspect-ratio: 1 / 1;
+  opacity: 0.55;
+  pointer-events: none;
+  z-index: -1;
+  -webkit-mask-image: radial-gradient(closest-side, #000 58%, transparent 100%);
+          mask-image: radial-gradient(closest-side, #000 58%, transparent 100%);
+}
+.atelier-instrument-svg { width: 100%; height: 100%; display: block; }
+.atelier-instrument-ring { transform-origin: 200px 200px; }
+.atelier-instrument-ring--a { animation: atelier-instrument-spin 170s linear infinite; }
+.atelier-instrument-ring--b { animation: atelier-instrument-spin 230s linear infinite reverse; }
+@keyframes atelier-instrument-spin { to { transform: rotate(360deg); } }
+/* keep clear of the text on narrower viewports */
+@media (max-width: 980px) { .atelier-hero__instrument { display: none; } }
+@media (prefers-reduced-motion: reduce) {
+  .atelier-instrument-ring--a, .atelier-instrument-ring--b { animation: none; }
+}
+
 /* the confession — the human core */
 .atelier-confession {
   font-size: clamp(24px, 4.4vw, 40px);
@@ -1786,6 +1827,44 @@ h1, h2, h3, h4, h5, h6 {
   color: var(--color-text);
 }
 .atelier-subhead { font-size: clamp(20px, 2.8vw, 27px); }
+
+/* Title hierarchy — the act eyebrow is the prominent PARENT marker; the
+   instrument sublabel is the clearly subordinate CHILD that pairs with a subhead. */
+.atelier-act__eyebrow {
+  font-size: 13px;
+  letter-spacing: 0.36em;
+  color: var(--color-gold);
+}
+.atelier-act__eyebrow::before { width: 40px; }
+
+.atelier-sublabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+.atelier-sublabel::before {
+  content: '';
+  width: 16px; height: 1px;
+  background: currentColor;
+  opacity: 0.55;
+}
+
+/* the instrument heading cluster + generous breath between stacked instruments */
+.atelier-instrument__head .atelier-subhead { margin-top: 11px; }
+.atelier-instrument__intro {
+  margin-top: 12px;
+  font-size: clamp(15px, 1.7vw, 17px);
+  line-height: 1.62;
+  max-width: 62ch;
+  color: var(--color-text-muted);
+}
+.atelier-instrument--gap { margin-top: clamp(64px, 9vw, 108px); }
 /* the vertical spine — runs through the numerals, connecting the acts (md+ only) */
 @media (min-width: 768px) {
   .atelier-act { padding-left: 56px; }
@@ -1836,7 +1915,7 @@ h1, h2, h3, h4, h5, h6 {
 /* ── The Director's Reel — the build as a film in nine scrubbable scenes ── */
 .reel { display: flex; flex-direction: column; gap: 18px; }
 
-/* the monitor — the scene currently under the playhead */
+/* the monitor — a viewfinder framing the scene under the playhead */
 .reel__monitor {
   position: relative;
   overflow: hidden;
@@ -1845,8 +1924,31 @@ h1, h2, h3, h4, h5, h6 {
   background:
     radial-gradient(120% 140% at 92% -20%, rgba(var(--color-ember-rgb), 0.10), transparent 55%),
     var(--gradient-card);
-  padding: 22px 24px;
+  /* inset vignette — darkens the corners like a lens, sells the "viewfinder" */
+  box-shadow: inset 0 0 90px -30px rgba(0, 0, 0, 0.55);
+  padding: 26px 28px;
   min-height: 168px;
+}
+/* corner framing brackets — the cinematographer's frame */
+.reel__corner {
+  position: absolute;
+  width: 14px; height: 14px;
+  border: 1.5px solid rgba(var(--color-gold-rgb), 0.5);
+  pointer-events: none;
+}
+.reel__corner--tl { top: 11px; left: 11px; border-right: 0; border-bottom: 0; border-top-left-radius: 3px; }
+.reel__corner--tr { top: 11px; right: 11px; border-left: 0; border-bottom: 0; border-top-right-radius: 3px; }
+.reel__corner--bl { bottom: 11px; left: 11px; border-right: 0; border-top: 0; border-bottom-left-radius: 3px; }
+.reel__corner--br { bottom: 11px; right: 11px; border-left: 0; border-top: 0; border-bottom-right-radius: 3px; }
+/* faint scanlines — a whisper of CRT/film texture, never busy */
+.reel__scanlines {
+  position: absolute; inset: 0;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.04) 0 1px,
+    transparent 1px 4px
+  );
+  pointer-events: none;
 }
 .reel__monitor-ghost {
   position: absolute;
@@ -1857,12 +1959,17 @@ h1, h2, h3, h4, h5, h6 {
   pointer-events: none;
 }
 .reel__monitor-head {
+  position: relative; z-index: 1;
   display: flex; align-items: baseline; justify-content: space-between;
   gap: 12px; flex-wrap: wrap;
 }
 .reel__scene-no { font-size: 11px; letter-spacing: 0.16em; color: var(--color-ember); }
 .reel__scene-meta { font-size: 11px; letter-spacing: 0.08em; color: var(--color-text-muted); }
-.reel__monitor-body { position: relative; margin-top: 14px; }
+/* grid-stack every scene in one cell → the monitor always reserves the tallest
+   scene's height, so scrubbing never reflows the page (no layout shift). */
+.reel__monitor-body { position: relative; z-index: 1; display: grid; margin-top: 14px; }
+.reel__scene { grid-area: 1 / 1; }
+.reel__scene:not(.is-active) { pointer-events: none; }
 .reel__monitor-icon {
   display: inline-flex;
   padding: 8px;
@@ -2195,13 +2302,13 @@ h1, h2, h3, h4, h5, h6 {
   line-height: 1.12;
   color: var(--color-text);
 }
-.observatory { display: flex; flex-direction: column; gap: 30px; }
+.observatory { display: flex; flex-direction: column; gap: clamp(40px, 6vw, 66px); }
 
 /* group colour tokens — shared by the index dots, readout meta + active stars */
-.observatory__group--origin, .observatory__readout-meta--origin { --g: var(--color-accent); }
-.observatory__group--craft,  .observatory__readout-meta--craft  { --g: var(--color-ember); }
-.observatory__group--realms, .observatory__readout-meta--realms { --g: var(--color-gold); }
-.observatory__group--intent, .observatory__readout-meta--intent { --g: var(--color-accent-secondary); }
+.observatory__group--origin, .observatory__readout-meta--origin { --g: var(--obs-origin); }
+.observatory__group--craft,  .observatory__readout-meta--craft  { --g: var(--obs-craft); }
+.observatory__group--realms, .observatory__readout-meta--realms { --g: var(--obs-realms); }
+.observatory__group--intent, .observatory__readout-meta--intent { --g: var(--obs-intent); }
 .observatory__legend-dot {
   width: 9px; height: 9px;
   border-radius: 9999px;
@@ -2244,10 +2351,10 @@ h1, h2, h3, h4, h5, h6 {
   filter: drop-shadow(0 0 3px var(--g, currentColor));
   transition: r 0.18s ease, opacity 0.18s ease;
 }
-.obs-node--origin { --g: var(--color-accent); }
-.obs-node--craft  { --g: var(--color-ember); }
-.obs-node--realms { --g: var(--color-gold); }
-.obs-node--intent { --g: var(--color-accent-secondary); }
+.obs-node--origin { --g: var(--obs-origin); }
+.obs-node--craft  { --g: var(--obs-craft); }
+.obs-node--realms { --g: var(--obs-realms); }
+.obs-node--intent { --g: var(--obs-intent); }
 .obs-orbit.has-active .obs-node__dot { opacity: 0.32; }
 .obs-node.is-active .obs-node__dot { opacity: 1; r: 6; filter: drop-shadow(0 0 9px var(--g)); }
 
@@ -2359,11 +2466,10 @@ h1, h2, h3, h4, h5, h6 {
 .observatory__chip:focus-visible { outline: 2px solid var(--color-gold); outline-offset: 2px; }
 
 /* the alert path — webhook signal-flow */
+/* the alert path — an open band, not another card (a thin rule sets it apart) */
 .observatory__signals {
-  padding: 20px;
-  border-radius: 18px;
-  background: var(--gradient-card);
-  border: 1px solid var(--color-card-border);
+  padding: 28px 0 0;
+  border-top: 1px solid var(--color-card-border);
 }
 .observatory__signals-title { font-size: 15px; font-weight: 600; color: var(--color-text); }
 .observatory__signals-caption {
@@ -2424,17 +2530,25 @@ h1, h2, h3, h4, h5, h6 {
   color: var(--color-text-muted);
 }
 
-/* the three instrument panels */
-.observatory__panels { display: grid; gap: 14px; grid-template-columns: 1fr; }
+/* the three capability panels — open editorial columns (not boxes), each opened
+   by a short gold tick over a hairline; airy gaps give the section room to breathe */
+.observatory__panels { display: grid; gap: 32px 40px; grid-template-columns: 1fr; }
 @media (min-width: 768px) { .observatory__panels { grid-template-columns: repeat(3, 1fr); } }
 .observatory__panel {
-  padding: 20px;
-  border-radius: 18px;
-  background: var(--gradient-card);
-  border: 1px solid var(--color-card-border);
+  position: relative;
+  padding: 24px 0 0;
+  border-top: 1px solid var(--color-card-border);
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
+}
+.observatory__panel::before {
+  content: "";
+  position: absolute;
+  top: -1px; left: 0;
+  width: 38px; height: 2px;
+  border-radius: 2px;
+  background: var(--color-gold);
 }
 .observatory__panel-icon {
   display: inline-flex;
@@ -2473,9 +2587,11 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* ── The Codebase Atlas — a VS-Code-flavoured tree in starlit tokens ── */
-.atlas { display: grid; gap: 18px; }
+.atlas { display: grid; gap: 18px; --atlas-h: 60vh; }
 @media (min-width: 860px) {
-  .atlas { grid-template-columns: minmax(0, 1fr) minmax(0, 300px); gap: 24px; align-items: start; }
+  /* both columns share one height so the tree scrolls within the side column's
+     frame instead of clipping or overrunning it */
+  .atlas { grid-template-columns: minmax(0, 1fr) minmax(0, 300px); gap: 24px; align-items: start; --atlas-h: clamp(440px, 60vh, 580px); }
 }
 
 /* the tree */
@@ -2484,8 +2600,9 @@ h1, h2, h3, h4, h5, h6 {
   border-radius: 14px;
   background: var(--color-card-bg);
   padding: 9px 7px;
-  max-height: 470px;
-  overflow: auto;
+  max-height: var(--atlas-h);
+  overflow-y: auto;
+  overscroll-behavior: contain;
   display: flex;
   flex-direction: column;
   gap: 1px;
@@ -2521,9 +2638,14 @@ h1, h2, h3, h4, h5, h6 {
   box-shadow: 0 0 6px var(--color-ember);
 }
 
-/* the side column — detail + hotspots + repo */
+/* the side column — detail + hotspots + repo. On desktop it owns the shared
+   height; the detail panel flexes so the rail + repo anchor to the bottom and
+   the column lines up exactly with the (scrolling) tree. */
 .atlas__side { display: flex; flex-direction: column; gap: 14px; }
-@media (min-width: 860px) { .atlas__side { position: sticky; top: 90px; } }
+@media (min-width: 860px) {
+  .atlas__side { position: sticky; top: 90px; height: var(--atlas-h); }
+  .atlas__detail { flex: 1 1 auto; overflow-y: auto; }
+}
 .atlas__detail {
   border: 1px solid var(--color-card-border);
   border-radius: 14px;
@@ -2590,6 +2712,27 @@ h1, h2, h3, h4, h5, h6 {
 @media (prefers-reduced-motion: reduce) {
   .atlas__chevron svg, .atlas__row, .atlas__hotspot, .atlas__repo { transition: none; }
 }
+
+/* the manifesto — text left, the character-assembled portrait filling the right */
+.atelier-manifesto-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  align-items: center;
+  gap: 32px;
+}
+@media (min-width: 1024px) {
+  .atelier-manifesto-row { grid-template-columns: minmax(0, 1fr) minmax(320px, 0.8fr); gap: 48px; }
+}
+.atelier-face {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  max-width: 460px;
+  margin: 0 auto;
+}
+.atelier-face__canvas { display: block; width: 100%; height: 100%; }
+/* on small screens the portrait sits below the text, a touch smaller */
+@media (max-width: 1023px) { .atelier-face { max-width: 320px; } }
 
 /* the manifesto */
 .atelier-manifesto { max-width: 64ch; }

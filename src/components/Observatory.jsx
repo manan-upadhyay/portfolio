@@ -1,8 +1,9 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion, useReducedMotion } from 'framer-motion';
 import { ShieldCheck, Search, Activity, AlertTriangle, GitBranch, ArrowRight } from 'lucide-react';
 import { atelier } from '../constants';
+import { playCue, sound } from '../lib/sound';
 import CountUp from './CountUp';
 
 /**
@@ -40,7 +41,7 @@ const Observatory = () => {
   // Flatten the grouped events into positioned nodes once, plus an id→node lookup
   // for the readout. Each group forms a contiguous coloured arc; a tiny per-node
   // radius jitter gives the field depth.
-  const { nodes, byId } = useMemo(() => {
+  const { nodes, byId, stepById } = useMemo(() => {
     const flat = constellation.groups.flatMap((g) => g.events.map((e) => ({ ...e, group: g.id })));
     const total = flat.length;
     const positioned = flat.map((node, i) => {
@@ -52,17 +53,40 @@ const Observatory = () => {
         y: +(CY + r * Math.sin(angle)).toFixed(2),
       };
     });
-    return { nodes: positioned, byId: Object.fromEntries(positioned.map((n) => [n.id, n])) };
+    return {
+      nodes: positioned,
+      byId: Object.fromEntries(positioned.map((n) => [n.id, n])),
+      stepById: Object.fromEntries(positioned.map((n, i) => [n.id, i])),
+    };
   }, [constellation]);
 
   const active = selected ? byId[selected] : null;
   const paused = !reduce && !!active; // freeze the orbit the moment a star is read
 
+  // Selecting an event (from a star OR its chip) lights it AND plays a pitched
+  // hover note — sweeping the field fast resolves to a little pentatonic melody
+  // rather than noise. Only fires on a genuinely new selection, so re-entering
+  // the same chip is silent.
+  const lastNote = useRef(null);
+  const pick = (id) => {
+    if (id !== lastNote.current) {
+      lastNote.current = id;
+      if (id != null) playCue('hoverNote', { step: stepById[id] ?? 0 });
+    }
+    setSelected(id);
+  };
+
+  // Continuous "orbit" buzz while the constellation field is hovered (sibling of
+  // the face-particle lens buzz). Stops on leave + unmount.
+  const enterField = () => sound.orbit.setLevel(1);
+  const leaveField = () => { sound.orbit.setLevel(0); pick(null); };
+  useEffect(() => () => sound.orbit.stop(), []);
+
   return (
     <div className="observatory">
       <div className="observatory__instrument">
         {/* The constellation — every named event orbiting the session-recap hub. */}
-        <div className="observatory__viz" onMouseLeave={() => setSelected(null)}>
+        <div className="observatory__viz" onMouseEnter={enterField} onMouseLeave={leaveField}>
           <svg
             className="observatory__sky"
             viewBox="0 0 400 400"
@@ -87,7 +111,7 @@ const Observatory = () => {
                 <g
                   key={node.id}
                   className={`obs-node obs-node--${node.group}${selected === node.id ? ' is-active' : ''}`}
-                  onMouseEnter={() => setSelected(node.id)}
+                  onMouseEnter={() => pick(node.id)}
                 >
                   <circle className="obs-node__hit" cx={node.x} cy={node.y} r={11} />
                   <circle className="obs-node__dot" cx={node.x} cy={node.y} r={3.4} />
@@ -125,7 +149,7 @@ const Observatory = () => {
 
         {/* The index — every instrumented event, grouped + colour-coded, always
             visible so discovery never requires a blind hover. */}
-        <div className="observatory__index" onMouseLeave={() => setSelected(null)}>
+        <div className="observatory__index" onMouseLeave={() => pick(null)}>
           <p className="observatory__index-hint">{t('atelier.observatory.indexHint')}</p>
           {constellation.groups.map((g) => (
             <div key={g.id} className={`observatory__group observatory__group--${g.id}`}>
@@ -141,9 +165,9 @@ const Observatory = () => {
                       type="button"
                       className={`observatory__chip exp-mono${selected === e.id ? ' is-active' : ''}`}
                       aria-pressed={selected === e.id}
-                      onMouseEnter={() => setSelected(e.id)}
-                      onFocus={() => setSelected(e.id)}
-                      onClick={() => setSelected(e.id)}
+                      onMouseEnter={() => pick(e.id)}
+                      onFocus={() => pick(e.id)}
+                      onClick={() => pick(e.id)}
                     >
                       {e.id}
                     </button>

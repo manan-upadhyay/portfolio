@@ -41,8 +41,11 @@ const BuildReel = ({ data }) => {
     activeRef.current = i;
     setActive(i);
     if (cue) {
+      // A sprocket detent per frame crossed; time-gated so a fast drag ratchets
+      // (tick-tick-tick) instead of bursting — the sound of dragging a pin across
+      // a film strip, not a melody.
       const now = performance.now();
-      if (now - lastCue.current > 110) { playCue('blip'); lastCue.current = now; }
+      if (now - lastCue.current > 70) { playCue('detent'); lastCue.current = now; }
     }
   };
 
@@ -55,7 +58,11 @@ const BuildReel = ({ data }) => {
 
   const onDown = (e) => { setDragging(true); trackRef.current?.setPointerCapture?.(e.pointerId); select(idxFromEvent(e)); };
   const onMove = (e) => { if (dragging) select(idxFromEvent(e)); };
-  const onUp = (e) => { setDragging(false); trackRef.current?.releasePointerCapture?.(e.pointerId); };
+  const onUp = (e) => {
+    if (dragging) playCue('settle'); // the strip coming to rest under the playhead
+    setDragging(false);
+    trackRef.current?.releasePointerCapture?.(e.pointerId);
+  };
   const onKey = (e) => {
     if (e.key === 'ArrowRight') { e.preventDefault(); select(active + 1); }
     else if (e.key === 'ArrowLeft') { e.preventDefault(); select(active - 1); }
@@ -70,24 +77,44 @@ const BuildReel = ({ data }) => {
 
   return (
     <div className="reel">
-      {/* the monitor — the scene currently under the playhead */}
+      {/* the monitor — a viewfinder framing the scene under the playhead */}
       <div className="reel__monitor">
+        {/* cinematic chrome: framing brackets, vignette, scanlines (decorative) */}
+        <span className="reel__corner reel__corner--tl" aria-hidden="true" />
+        <span className="reel__corner reel__corner--tr" aria-hidden="true" />
+        <span className="reel__corner reel__corner--bl" aria-hidden="true" />
+        <span className="reel__corner reel__corner--br" aria-hidden="true" />
+        <span className="reel__scanlines" aria-hidden="true" />
         <Glyph className="reel__monitor-ghost" aria-hidden="true" />
+
         <div className="reel__monitor-head">
           <span className="reel__scene-no exp-mono">{t('atelier.reel.scene')} {pad2(active + 1)} / {pad2(n)}</span>
           <span className="reel__scene-meta exp-mono">{scene.day} · {scene.commits} {t('atelier.reel.commits')}</span>
         </div>
-        <motion.div
-          key={scene.id}
-          className="reel__monitor-body"
-          initial={reduce ? false : { opacity: 0.4, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.26 }}
-        >
-          <span className="reel__monitor-icon" aria-hidden="true"><Glyph size={20} strokeWidth={1.5} /></span>
-          <h3 className="reel__scene-title">{sceneTitle}</h3>
-          <p className="reel__scene-blurb">{t(`atelier.reel.scenes.${scene.id}.blurb`)}</p>
-        </motion.div>
+
+        {/* All scenes are grid-stacked in one cell, so the monitor always reserves
+            the tallest scene's height — scrubbing never reflows the page. Only the
+            active scene is visible; the rest are inert sizers. */}
+        <div className="reel__monitor-body">
+          {data.map((s, i) => {
+            const SG = GLYPHS[s.glyph] ?? Sparkles;
+            const isActive = i === active;
+            return (
+              <motion.div
+                key={s.id}
+                className={`reel__scene${isActive ? ' is-active' : ''}`}
+                aria-hidden={!isActive}
+                initial={false}
+                animate={reduce ? { opacity: isActive ? 1 : 0 } : { opacity: isActive ? 1 : 0, y: isActive ? 0 : 8 }}
+                transition={{ duration: 0.26 }}
+              >
+                <span className="reel__monitor-icon" aria-hidden="true"><SG size={20} strokeWidth={1.5} /></span>
+                <h3 className="reel__scene-title">{t(`atelier.reel.scenes.${s.id}.title`)}</h3>
+                <p className="reel__scene-blurb">{t(`atelier.reel.scenes.${s.id}.blurb`)}</p>
+              </motion.div>
+            );
+          })}
+        </div>
       </div>
 
       {/* the film strip — the scrubber */}

@@ -35,9 +35,20 @@ export const CONFIG = {
   error: { peak: 0.16 },            // contact-form error tone (sleek two-note)
   glitch: { peak: 0.10 },           // voice-change decode
   blip: { peak: 0.11 },             // arsenal hover pluck
+  detent: { peak: 0.085 },          // build-reel sprocket tick (per frame crossed)
+  settle: { peak: 0.12 },           // build-reel playhead landing thunk
+  hoverNote: { peak: 0.085 },       // observatory analytics-chip hover note (pitched)
+  // ── Face-particle "gathering" — the grains rushing into the portrait. TWEAK ME:
+  //    • grains  = how many ticks (more = busier/faster-feeling)
+  //    • spread  = seconds the grains span — LOWER = faster, tighter rush
+  //    • freqMin/freqMax = pitch window in Hz (raise both = higher/brighter)
+  //    • peak    = loudness 0..1
+  assembleSwell: { peak: 0.07, grains: 34, spread: 0.95, freqMin: 1500, freqMax: 3800 },
   beds: {
     hero: { peak: 0.5, sample: '/sounds/astrolabe.mp3' },   // Hero astrolabe loop
     arsenal: { peak: 0.12, sample: '/sounds/arsenal.mp3' },  // Arsenal ambience loop
+    lens: { peak: 0.025 },    // face-particle magic-lantern hover buzz
+    orbit: { peak: 0.45 },   // observatory constellation hover buzz (sibling, not same)
   },
   raven: '/sounds/raven.mp3',       // Contact-send raven (one-shot sample)
 };
@@ -190,6 +201,48 @@ const CUES = {
     const f = scale[((step % scale.length) + scale.length) % scale.length];
     blip(t0, { freq: f, type: 'sine', dur: 0.13, peak: CONFIG.blip.peak, attack: 0.003 });
     blip(t0, { freq: f * 2, type: 'sine', dur: 0.07, peak: CONFIG.blip.peak * 0.34, attack: 0.002 });
+  },
+
+  // Build-reel scrub — a dry mechanical "detent": a film sprocket tooth catching
+  // as the playhead crosses a frame. A tight, pitch-stable bandpass noise tick
+  // over a faint low knock. Time-gated by the caller so a fast drag ratchets
+  // (tick-tick-tick) instead of bursting — the physics of dragging a pin across
+  // a sprocketed strip, not a melody.
+  detent(t0) {
+    swoosh(t0, { dur: 0.038, peak: CONFIG.detent.peak, type: 'bandpass', from: 2700, to: 1500, q: 7 });
+    blip(t0, { freq: 184, type: 'square', dur: 0.026, peak: CONFIG.detent.peak * 0.5, attack: 0.0008 });
+  },
+
+  // Build-reel landing — a soft, weighted "thunk" when the playhead settles onto
+  // a frame (pointer up / nav click): a short low triangle that drops a touch,
+  // with a brief lowpassed body. Reads as the strip coming to rest.
+  settle(t0) {
+    blip(t0, { freq: 132, type: 'triangle', dur: 0.13, peak: CONFIG.settle.peak, attack: 0.004, glideTo: 92 });
+    swoosh(t0, { dur: 0.09, peak: CONFIG.settle.peak * 0.4, type: 'lowpass', from: 760, to: 200, q: 0.7 });
+  },
+
+  // Observatory analytics hover — a soft glassy bell, pitched by the chip's index
+  // in its group across a pentatonic scale, so sweeping the field fast resolves to
+  // music (no two adjacent semitones, so it can never sound like noise). The
+  // caller passes { step } = the chip's running index.
+  hoverNote(t0, { step = 0 } = {}) {
+    const scale = [523.25, 587.33, 659.25, 783.99, 880, 1046.5, 1174.66]; // C-major pentatonic, octave+
+    const f = scale[((step % scale.length) + scale.length) % scale.length];
+    blip(t0, { freq: f, type: 'sine', dur: 0.2, peak: CONFIG.hoverNote.peak, attack: 0.004 });
+    blip(t0, { freq: f * 2, type: 'sine', dur: 0.1, peak: CONFIG.hoverNote.peak * 0.22, attack: 0.003 }); // airy octave
+  },
+
+  // Face-particle assembly — the gathering: a granular shower of tiny pitched ticks
+  // that thickens toward the settle, like thousands of grains rushing into place.
+  // No whoosh — pure grains. All knobs live in CONFIG.assembleSwell.
+  assembleSwell(t0) {
+    const c = CONFIG.assembleSwell;
+    for (let i = 0; i < c.grains; i++) {
+      const p = i / c.grains;
+      const dt = p * c.spread + Math.random() * 0.02;
+      const f = c.freqMin + Math.random() * (c.freqMax - c.freqMin);
+      blip(t0 + dt, { freq: f, type: 'sine', dur: 0.045, peak: c.peak * (0.35 + 0.65 * p), attack: 0.002 });
+    }
   },
 
   // Sound just turned on — a soft confirmation so the toggle is audible.
@@ -397,6 +450,66 @@ const watch = makeBed({
   },
 });
 
+// Face-particle magic-lantern hover buzz — a warm electric drone: a detuned
+// sawtooth pair (root + a fifth) through a bandpass that a slow LFO breathes,
+// plus a faint high partial. Driven on/off by the lens hover (setLevel 1/0).
+const lens = makeBed({
+  peak: CONFIG.beds.lens.peak,
+  build: () => {
+    const g = ctx.createGain(); g.gain.value = 0.0001;
+    const bp = ctx.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 320; bp.Q.value = 0.8;
+    const o1 = ctx.createOscillator(); o1.type = 'sawtooth'; o1.frequency.value = 82;
+    const o2 = ctx.createOscillator(); o2.type = 'sawtooth'; o2.frequency.value = 123; o2.detune.value = 7;
+    const o3 = ctx.createOscillator(); o3.type = 'sine'; o3.frequency.value = 548;
+    const sg = ctx.createGain(); sg.gain.value = 0.08;
+    const lfo = ctx.createOscillator(); lfo.frequency.value = 0.25;
+    const lfoG = ctx.createGain(); lfoG.gain.value = 95;
+    lfo.connect(lfoG).connect(bp.frequency);
+    o1.connect(bp); o2.connect(bp); o3.connect(sg).connect(bp);
+    bp.connect(g).connect(master);
+    [o1, o2, o3, lfo].forEach((o) => o.start());
+    return {
+      gain: g,
+      stop() {
+        const t = now();
+        g.gain.setTargetAtTime(0.0001, t, 0.2);
+        [o1, o2, o3, lfo].forEach((o) => { try { o.stop(t + 0.6); } catch { /* already stopped */ } });
+        setTimeout(() => { [o1, o2, o3, lfo, lfoG, sg, bp, g].forEach((n) => n.disconnect()); }, 800);
+      },
+    };
+  },
+});
+
+// Observatory constellation hover buzz — a sibling of `lens`, intentionally NOT
+// identical: cooler and airier (triangle root, a higher shimmer, lowpass instead
+// of bandpass), so the two surfaces feel related but distinct.
+const orbit = makeBed({
+  peak: CONFIG.beds.orbit.peak,
+  build: () => {
+    const g = ctx.createGain(); g.gain.value = 0.0001;
+    const lp = ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 300; lp.Q.value = 0.6;
+    const o1 = ctx.createOscillator(); o1.type = 'triangle'; o1.frequency.value = 65;
+    const o2 = ctx.createOscillator(); o2.type = 'sine'; o2.frequency.value = 98; o2.detune.value = 5;
+    const o3 = ctx.createOscillator(); o3.type = 'sine'; o3.frequency.value = 392;
+    const sg = ctx.createGain(); sg.gain.value = 0.06;
+    const lfo = ctx.createOscillator(); lfo.frequency.value = 0.16;
+    const lfoG = ctx.createGain(); lfoG.gain.value = 70;
+    lfo.connect(lfoG).connect(lp.frequency);
+    o1.connect(lp); o2.connect(lp); o3.connect(sg).connect(lp);
+    lp.connect(g).connect(master);
+    [o1, o2, o3, lfo].forEach((o) => o.start());
+    return {
+      gain: g,
+      stop() {
+        const t = now();
+        g.gain.setTargetAtTime(0.0001, t, 0.2);
+        [o1, o2, o3, lfo].forEach((o) => { try { o.stop(t + 0.6); } catch { /* already stopped */ } });
+        setTimeout(() => { [o1, o2, o3, lfo, lfoG, sg, lp, g].forEach((n) => n.disconnect()); }, 800);
+      },
+    };
+  },
+});
+
 /** Preload both ambient-bed loop samples (graceful if absent). */
 function loadBeds() {
   hum.loadSample();
@@ -414,6 +527,8 @@ function unlock() {
   applyMaster();
   hum.refresh();
   watch.refresh();
+  lens.refresh();
+  orbit.refresh();
   // On the very first unlock, fire any one-shot listeners (e.g. the hero spins
   // the astrolabe so the visitor is rewarded with the synced gear sound the
   // instant audio becomes legal — see Hero.jsx). Each runs at most once.
@@ -462,6 +577,8 @@ function setEnabled(v) {
   if (ctx) { applyMaster(); if (v && pageActive && ctx.state === 'suspended') ctx.resume().catch(() => {}); }
   hum.refresh();
   watch.refresh();
+  lens.refresh();
+  orbit.refresh();
 }
 
 function setVolume(v) {
@@ -498,6 +615,8 @@ export const sound = {
   loadBeds,
   hum,
   watch,
+  lens,
+  orbit,
   reduceMotion,
 };
 

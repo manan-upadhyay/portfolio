@@ -45,7 +45,9 @@ const CodebaseAtlas = () => {
   const { tree, hotspots, repo } = atelier.atlas;
   const { byId, parents } = useMemo(() => buildIndex(tree), [tree]);
 
-  const [expanded, setExpanded] = useState(() => new Set());
+  // src/ (and its engine room) start open — the tree should land full, not as a
+  // single collapsed folder over a sea of empty space.
+  const [expanded, setExpanded] = useState(() => new Set(['src', 'lib']));
   const [selected, setSelected] = useState(null);
   const rowRefs = useRef(new Map());
 
@@ -124,8 +126,9 @@ const CodebaseAtlas = () => {
 
   return (
     <div className="atlas">
-      {/* the tree — curated, annotated, collapsed by default */}
-      <div className="atlas__tree exp-mono" role="tree" aria-label={t('atelier.atlas.title')}>
+      {/* the tree — curated, annotated, src/ open by default. data-lenis-prevent
+          lets this nested column scroll natively (Lenis owns the page wheel). */}
+      <div className="atlas__tree exp-mono" role="tree" aria-label={t('atelier.atlas.title')} data-lenis-prevent>
         {rows.map((row, i) => {
           const { node, depth } = row;
           const isDir = !!node.children;

@@ -42,7 +42,6 @@ const STYLE = {
 function emit(method, accent, scope, args) {
   if (!HAS_CONSOLE) return;
   const fn = console[method] || console.log;
-  // eslint-disable-next-line no-console
   fn(`%c⟡ ${scope}`, accent, ...args);
 }
 
@@ -89,11 +88,8 @@ export function greet() {
   const body = 'color:#c9c4ba;font-size:12px;line-height:1.6';
   const key = 'color:#B88A2E;font-weight:600';
 
-  // eslint-disable-next-line no-console
   console.log('%c✦ THE CHRONICLE ✦', title);
-  // eslint-disable-next-line no-console
   console.log('%cYou found the margins of the map.', sub);
-  // eslint-disable-next-line no-console
   console.log(
     '%cA cartographer left notes here, traveller:\n' +
       '%c  ▸ the making-of waits at /making-of — the build, as a film.\n' +
@@ -101,7 +97,6 @@ export function greet() {
       '  ▸ to debug in the wild: %clocalStorage.setItem("chronicle:debug","1")%c then reload.',
     body, body, key, body,
   );
-  // eslint-disable-next-line no-console
   console.log(
     '%cCharting your own realm? The cartographer answers ravens — manantheassassin@gmail.com',
     sub,

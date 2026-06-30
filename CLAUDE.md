@@ -232,6 +232,8 @@ clean, and it looks like a *moment* — not a list.
 | [sections/04-the-realms.md](docs/chronicle/sections/04-the-realms.md) | Editorial project plates |
 | [sections/05-summon.md](docs/chronicle/sections/05-summon.md) | Contact |
 | [sections/06-map-overlay.md](docs/chronicle/sections/06-map-overlay.md) | Interactive map (⌘K) |
+| [sections/07-the-atelier.md](docs/chronicle/sections/07-the-atelier.md) | Making-of revamp (acts, Observatory interaction model, webhooks/alerting) |
+| [sections/08-codebase-atlas.md](docs/chronicle/sections/08-codebase-atlas.md) | Cinematic codebase explorer (new) |
 
 ---
 

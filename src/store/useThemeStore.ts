@@ -1,6 +1,5 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-// @ts-expect-error — sky.js is plain JS (no types); the runtime shape is stable.
 import { resolveSkyMode, SKY_BASE } from '../lib/sky';
 import { track, registerContext } from '../lib/analytics';
 

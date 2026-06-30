@@ -50,6 +50,21 @@ const CodebaseAtlas = () => {
   const [expanded, setExpanded] = useState(() => new Set(['src', 'lib']));
   const [selected, setSelected] = useState(null);
   const rowRefs = useRef(new Map());
+  const treeRef = useRef(null);
+
+  /* Boundary-aware scroll chaining — keep the wheel inside the tree while it can
+     still scroll that way; once it hits the top/bottom edge, hand the wheel back
+     to Lenis (drop data-lenis-prevent) so the page keeps moving. No more trap.
+     This fires before Lenis reads the attribute (React's root listener bubbles
+     ahead of Lenis's window listener), so the page never stalls for a frame. */
+  const onTreeWheel = useCallback((e) => {
+    const el = treeRef.current;
+    if (!el) return;
+    const atTop = el.scrollTop <= 0;
+    const atBottom = el.scrollTop + el.clientHeight >= el.scrollHeight - 1;
+    const pastEdge = (e.deltaY > 0 && atBottom) || (e.deltaY < 0 && atTop);
+    el.toggleAttribute('data-lenis-prevent', !pastEdge);
+  }, []);
 
   /* The visible rows, in display order, respecting which dirs are open. */
   const rows = useMemo(() => {
@@ -127,8 +142,9 @@ const CodebaseAtlas = () => {
   return (
     <div className="atlas">
       {/* the tree — curated, annotated, src/ open by default. data-lenis-prevent
-          lets this nested column scroll natively (Lenis owns the page wheel). */}
-      <div className="atlas__tree exp-mono" role="tree" aria-label={t('atelier.atlas.title')} data-lenis-prevent>
+          lets this nested column scroll natively (Lenis owns the page wheel); it's
+          toggled off at the top/bottom edge (onTreeWheel) so the page chains on. */}
+      <div ref={treeRef} onWheel={onTreeWheel} className="atlas__tree exp-mono" role="tree" aria-label={t('atelier.atlas.title')} data-lenis-prevent>
         {rows.map((row, i) => {
           const { node, depth } = row;
           const isDir = !!node.children;

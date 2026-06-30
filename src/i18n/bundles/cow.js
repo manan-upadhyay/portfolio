@@ -214,6 +214,7 @@ export default {
     confession: 'Moo moo moo. Moo moo moo moo.',
     confessionSub:
       'Moo moo moo moo moo moo moo moo moo moo moo. Moo moo moo moo moo, moo moo moo moo moo moo moo — moo moo moo moo moo moo moo moo moo.',
+    acts: { build: 'Moo Moo', engine: 'Moo Moo Moo', hidden: 'Moo Moo' },
     reel: {
       title: 'Moo Moo Moo Moo',
       range: 'Moo 20 – 30 · 10 moo',
@@ -269,9 +270,12 @@ export default {
       intro: 'Moo moo moo moo moo moo moo. Moo moo moo moo moo — moo moo, moo moo, moo moo moo — moo moo moo moo moo moo moo.',
       hub: 'moo moo moo',
       hubNote: 'Moo moo moo moo moo moo moo moo. Moo moo. Moo moo moo.',
+      indexHint: 'Moo moo moo moo moo. Moo moo moo, moo moo moo moo — moo moo moo moo moo moo.',
+      cadence: { once: 'Moo moo', repeat: 'Moo moo moo' },
       metrics: {
         events: 'Moo moo',
         superProps: 'Moo moo moo',
+        webhooks: 'Moo moo',
         dashboards: 'Moo moo',
         schemas: 'Moo moo',
       },
@@ -284,9 +288,23 @@ export default {
       panels: {
         privacy: { title: 'Moo moo moo', body: 'Moo moo moo moo moo, moo moo moo. Moo moo moo moo moo moo moo moo. Moo moo moo.' },
         discoverability: { title: 'Moo moo moo', body: 'Moo moo moo moo moo moo, moo moo moo moo, moo moo moo moo moo moo moo.' },
-        observability: { title: 'Moo moo', body: 'Moo moo moo moo moo, moo moo moo moo moo moo, moo moo moo moo moo moo moo.' },
+        observability: { title: 'Moo moo', body: 'Moo moo moo moo moo, moo moo moo moo moo moo, moo moo moo moo moo moo moo. Moo moo Discord.' },
+      },
+      webhooks: {
+        title: 'Moo moo moo',
+        caption: 'Moo moo moo moo moo, moo moo moo moo — moo moo Discord. Moo moo moo moo moo moo moo moo moo. Moo.',
+        hop: 'moo',
       },
       footnote: 'Moo moo moo, moo moo moo, moo moo — moo moo moo. Moo moo moo moo moo moo moo moo moo moo.',
+    },
+    atlas: {
+      eyebrow: 'Moo Moo',
+      title: 'Moo moo moo moo',
+      intro: 'Moo moo moo moo moo moo. Moo moo moo moo, moo moo moo moo — moo moo moo moo moo.',
+      hotspots: 'Moo moo',
+      prompt: 'Moo moo moo moo moo moo moo moo.',
+      why: 'Moo moo moo',
+      repoCta: 'Moo moo GitHub',
     },
     offmap: {
       title: 'Moo Moo Moo',

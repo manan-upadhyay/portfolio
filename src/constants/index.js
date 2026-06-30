@@ -473,28 +473,153 @@ export const atelier = {
     metrics: [
       { key: 'events', value: '33', count: true },
       { key: 'superProps', value: '13', count: true },
+      { key: 'webhooks', value: '2', count: true },
       { key: 'dashboards', value: '5', count: true },
       { key: 'schemas', value: '5', count: true },
     ],
     // The product-event constellation — the 33 named events grouped by the surface
-    // they instrument, all orbiting the `session_recap` hub. `names` are the real
-    // event ids (data); the group label is voiced (t('atelier.observatory.groups.<id>')).
+    // they instrument, all orbiting the `session_recap` hub. Each event is the real
+    // event id + `where` it fires (technical narration, EN-only — exempt from voice
+    // translation like the capability `tags`) + `once` (true = trackOnce, i.e. once
+    // per visit; absent = track, fires every occurrence — mirrors the real
+    // track()/trackOnce() calls). The group label is voiced
+    // (t('atelier.observatory.groups.<id>')); the cadence label is voiced under
+    // t('atelier.observatory.cadence.*').
     constellation: {
       hub: 'session_recap',
       groups: [
-        { id: 'origin', names: ['hero_cta', 'section_view', 'scroll_depth', 'rail_nav', 'map_open', 'map_travel', 'shortcut_used'] },
-        { id: 'craft', names: ['astrolabe_spin', 'astrolabe_drag', 'sound_first_play', 'sound_toggled', 'theme_changed', 'voice_selected', 'voice_switcher_open', 'voice_hall_open', 'voice_unlocked', 'voice_summon_submit', 'buildreel_scrub'] },
-        { id: 'realms', names: ['carousel_open', 'works_show_all', 'project_link_open', 'arsenal_tools_hovered', 'atelier_view', 'persona_card_expand', 'expedition_view'] },
-        { id: 'intent', names: ['contact_form_start', 'contact_submit', 'contact_success', 'contact_error', 'email_copied', 'channel_open', 'inquiry_selected', 'resume_open'] },
+        { id: 'origin', events: [
+          { id: 'hero_cta', where: 'Hero — primary call-to-action' },
+          { id: 'section_view', where: 'Each chapter as it enters view' },
+          { id: 'scroll_depth', where: 'Scroll-depth milestones (25/50/75/100%)' },
+          { id: 'rail_nav', where: 'SideRail chapter jump' },
+          { id: 'map_open', where: '⌘K map overlay opened' },
+          { id: 'map_travel', where: 'Travel to a realm from the map' },
+          { id: 'shortcut_used', where: 'A keyboard shortcut fired' },
+        ] },
+        { id: 'craft', events: [
+          { id: 'astrolabe_spin', where: 'Hero astrolabe nudged' },
+          { id: 'astrolabe_drag', where: 'Hero astrolabe free-spun by drag', once: true },
+          { id: 'sound_first_play', where: 'First gesture-unlocked sound cue' },
+          { id: 'sound_toggled', where: 'Sound master toggled' },
+          { id: 'theme_changed', where: 'Sky / theme mode changed' },
+          { id: 'voice_selected', where: 'A narrating voice chosen' },
+          { id: 'voice_switcher_open', where: 'Voice switcher popover opened', once: true },
+          { id: 'voice_hall_open', where: 'Voice Hall overlay opened' },
+          { id: 'voice_unlocked', where: 'A sealed voice unlocked' },
+          { id: 'voice_summon_submit', where: '“Summon a voice” request sent' },
+          { id: 'buildreel_scrub', where: 'Build reel scrubbed', once: true },
+        ] },
+        { id: 'realms', events: [
+          { id: 'carousel_open', where: 'A realm opened in the carousel', once: true },
+          { id: 'works_show_all', where: '“Show all realms” expanded' },
+          { id: 'project_link_open', where: 'A project link followed' },
+          { id: 'arsenal_tools_hovered', where: 'Arsenal skill orbit explored' },
+          { id: 'atelier_view', where: 'The Atelier (/making-of) reached' },
+          { id: 'persona_card_expand', where: 'A persona card opened' },
+          { id: 'expedition_view', where: 'Expedition recap revealed', once: true },
+        ] },
+        { id: 'intent', events: [
+          { id: 'contact_form_start', where: 'Contact form first focused', once: true },
+          { id: 'contact_submit', where: 'Contact form submitted' },
+          { id: 'contact_success', where: 'Raven sent successfully' },
+          { id: 'contact_error', where: 'Contact submission failed' },
+          { id: 'email_copied', where: 'Email address copied' },
+          { id: 'channel_open', where: 'A contact channel opened' },
+          { id: 'inquiry_selected', where: 'An inquiry type chosen' },
+          { id: 'resume_open', where: 'Résumé opened' },
+        ] },
       ],
     },
+    // The alert path — webhook routes that page Manan where he already is. `source`
+    // and `channel` are data (proper nouns); the framing is voiced under
+    // t('atelier.observatory.webhooks.*'). URLs are secrets and never rendered.
+    webhooks: [
+      { id: 'alerts', source: 'PostHog', channel: '#alerts', glyph: 'alert' },
+      { id: 'deploys', source: 'GitHub', channel: '#deploys', glyph: 'git' },
+    ],
     // The three instrument panels beneath the constellation. `glyph` keys a lucide
     // icon in Observatory.jsx; `tags` are proper-noun capability chips (data).
     // Voiced copy: t('atelier.observatory.panels.<id>.title' / '.body').
     panels: [
       { id: 'privacy', glyph: 'shield', tags: ['Cookieless', 'Anonymous', 'Do-Not-Track', 'Memory-only'] },
       { id: 'discoverability', glyph: 'search', tags: ['JSON-LD ×5', 'Open Graph', 'Person · WebSite · ProfilePage', 'Knowledge Panel'] },
-      { id: 'observability', glyph: 'activity', tags: ['Structured logger', 'Console banner', 'Error capture', 'Speed Insights'] },
+      { id: 'observability', glyph: 'activity', tags: ['Structured logger', 'Discord alerts', 'Error capture', 'Speed Insights'] },
+    ],
+  },
+  // "The Codebase Atlas" — a curated, annotated subset of the real repo tree (NOT
+  // the filesystem; depth/breadth chosen for story). Drives CodebaseAtlas.jsx.
+  // `blurb`/`signal` are technical narration (EN-only, exempt from voice like the
+  // capability `tags`); the framing copy is voiced under t('atelier.atlas.*').
+  // `glyph` keys a lucide icon map in the component; `hotspot: true` surfaces a node
+  // in the curated rail (its order is `hotspots` below). `repo` is the public source.
+  atlas: {
+    repo: 'https://github.com/manan-upadhyay/3d-portfolio',
+    hotspots: ['constants', 'i18n', 'analytics', 'sound', 'smoothScroll', 'hoc'],
+    tree: [
+      { id: 'src', name: 'src/', type: 'dir', glyph: 'folder', children: [
+        { id: 'constants', name: 'constants/index.js', type: 'file', glyph: 'braces', hotspot: true,
+          blurb: 'Every non-copy value — links, icons, map coordinates, chapter ids, project facts, skill names, stat values.',
+          signal: 'One source of truth for data. No magic numbers or stray literals scattered through components — change a fact once and the whole site follows.' },
+        { id: 'i18n', name: 'i18n/', type: 'dir', glyph: 'globe', hotspot: true,
+          blurb: 'Every visible string, in five switchable voices. chronicle is the complete base; the rest override only the keys that change.',
+          signal: 'All copy lives behind t(), so the entire site re-voices in one click — personality and translation are a data concern, never a code change.',
+          children: [
+            { id: 'bundles', name: 'bundles/', type: 'dir', glyph: 'globe',
+              blurb: 'chronicle · plain · scott · dwight · cow — one file per voice.',
+              signal: 'Adding a personality is adding a bundle; components are never touched.' },
+            { id: 'voices', name: 'voices.js', type: 'file', glyph: 'filecode',
+              blurb: 'The voice registry — categories, glyphs, and the unlock triggers for sealed voices.',
+              signal: 'The switcher scales to any number of voices off one registry.' },
+          ] },
+        { id: 'lib', name: 'lib/', type: 'dir', glyph: 'folder',
+          blurb: 'The engine room — framework-free modules, each owning exactly one concern.',
+          signal: 'Hard logic lives in plain modules, not tangled into components.',
+          children: [
+            { id: 'analytics', name: 'analytics.js', type: 'file', glyph: 'chart', hotspot: true,
+              blurb: 'A thin wrapper over the analytics vendor — track() / trackOnce() + super-properties.',
+              signal: 'Swappable by design: the whole app calls my wrapper, never the vendor SDK directly. Change provider in one file.' },
+            { id: 'sound', name: 'sound.js', type: 'file', glyph: 'audio', hotspot: true,
+              blurb: 'A Web-Audio cue system — synthesized blips, ADSR envelopes, one shared AudioContext.',
+              signal: 'Zero audio bytes shipped: the cues are generated math, gesture-unlocked, and muted under reduced-motion.' },
+            { id: 'smoothScroll', name: 'smoothScroll.js', type: 'file', glyph: 'scroll', hotspot: true,
+              blurb: 'Lenis smooth scroll, driven by the GSAP ticker.',
+              signal: 'One clock for everything: Lenis and ScrollTrigger share a single rAF, so scroll and animation never fight.' },
+            { id: 'sky', name: 'sky.js', type: 'file', glyph: 'filecode',
+              blurb: 'A SunCalc time→sky resolver; the auto theme reads the visitor’s real local time.',
+              signal: 'The “how did he know?” touch is pure math — no geolocation prompt.' },
+          ] },
+        { id: 'store', name: 'store/', type: 'dir', glyph: 'boxes',
+          blurb: 'Zustand slices — theme/sky, voice, sound, coachmark.',
+          signal: 'Tiny, persisted, one slice per concern — global state without a provider tree.' },
+        { id: 'hoc', name: 'hoc/SectionWrapper.jsx', type: 'file', glyph: 'layers', hotspot: true,
+          blurb: 'The standard section shell — padding, the anchor id, the stagger container.',
+          signal: 'Every section is lazy + Suspense + ErrorBoundary through one HOC: a failing section never white-screens the page.' },
+        { id: 'components', name: 'components/', type: 'dir', glyph: 'component',
+          blurb: 'Reusable widgets, flat, barrel-exported.',
+          signal: 'Shared visuals are components, never copy-paste — the DRY line held in practice.' },
+        { id: 'sections', name: 'sections/', type: 'dir', glyph: 'folder',
+          blurb: 'The six chapters plus this Atelier coda — one file each.',
+          signal: 'One section = one file, default-exported, wrapped by SectionWrapper.' },
+        { id: 'pages', name: 'pages/', type: 'dir', glyph: 'route',
+          blurb: 'Chronicle (/) and MakingOf (/making-of) — the two routes.',
+          signal: 'A two-route SPA sharing one shell; route-scoped chrome stays in its own page.' },
+        { id: 'indexcss', name: 'index.css', type: 'file', glyph: 'palette',
+          blurb: 'Theme tokens, utilities, and keyframes — the style source of truth.',
+          signal: 'All color is CSS variables across both themes; no raw hex in components.' },
+      ] },
+      { id: 'api', name: 'api/send-raven.js', type: 'file', glyph: 'server',
+        blurb: 'The serverless contact endpoint (Resend), with a matching Vite dev middleware.',
+        signal: 'The API key never reaches the browser — the form posts to my function, not the vendor.' },
+      { id: 'docs', name: 'docs/chronicle/', type: 'dir', glyph: 'doc',
+        blurb: 'The spec set — design system, architecture, and a doc per section.',
+        signal: 'Docs and code never diverge: changing canon updates its doc in the same commit.' },
+      { id: 'public', name: 'public/', type: 'dir', glyph: 'image',
+        blurb: 'Production assets only — favicons, og-image, logos, realm screenshots.',
+        signal: 'Brand source and archives stay out of the deploy, in /branding.' },
+      { id: 'vercel', name: 'vercel.json', type: 'file', glyph: 'settings',
+        blurb: 'The SPA rewrite (excluding /api).',
+        signal: '/making-of is directly shareable — deep links resolve back into the app.' },
     ],
   },
 };

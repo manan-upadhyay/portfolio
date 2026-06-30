@@ -21,8 +21,8 @@ older `docs/*.md` (pre-revamp template).
 | 04 | [The Realms](sections/04-the-realms.md) | `sections/Works.jsx` | built (editorial plates) |
 | 05 | [Summon](sections/05-summon.md) | `sections/Contact.jsx` | built (Resend contact) |
 | 06 | [The Map](sections/06-map-overlay.md) | `components/MapOverlay.jsx` | built (⌘K map) |
-| 07 | [The Atelier (revamp)](sections/07-the-atelier.md) | `sections/Atelier.jsx` + `components/Observatory.jsx` | built v1; **revamp specced (v2)** |
-| 08 | [The Codebase Atlas](sections/08-codebase-atlas.md) | `components/CodebaseAtlas.jsx` | specced, not built |
+| 07 | [The Atelier (revamp)](sections/07-the-atelier.md) | `sections/Atelier.jsx` + `components/Observatory.jsx` | **built (v2)** — acts + Observatory + webhooks |
+| 08 | [The Codebase Atlas](sections/08-codebase-atlas.md) | `components/CodebaseAtlas.jsx` | **built** (Atelier Act II) |
 
 Each section spec ends with **Acceptance criteria** — a section is done only when
 all boxes pass in dark+light, at 360/768/1280/1920, with reduced-motion + touch

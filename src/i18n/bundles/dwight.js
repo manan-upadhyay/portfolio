@@ -279,6 +279,7 @@ export default {
     confession: 'It met every standard. None of them were mine. Mine are higher.',
     confessionSub:
       'The site was operational and presentable approximately forty commits ago. It satisfied every external standard. External standards are for personnel who require supervision. I do not. I held it to the Schrute standard — which is absolute — and committed an additional two hundred hours to details no inspector would ever detect, because I detect them. I also installed surveillance: anonymous, cookieless telemetry that confirms which systems are in use. My eye misses nothing. A bear can smell a beehive from three miles. I can smell a misaligned pixel from my desk. Both facts are relevant.',
+    acts: { build: 'The Construction', engine: 'The Engine Room', hidden: 'Concealed Systems' },
     reel: {
       title: 'The Surveillance Reel',
       range: 'Jun 20 – 30 · 10 operations',
@@ -362,9 +363,12 @@ export default {
       intro: 'A system you do not monitor is a system in mutiny. I monitor. Anonymously, cookielessly, and with the visitor’s full consent withdrawn the instant they request it. This is not paranoia. This is leadership.',
       hub: 'the session dossier',
       hubNote: 'Every action consolidates into a single dossier, transmitted on departure. One file. Complete. Filed.',
+      indexHint: 'Each point of light is a logged event. Sweep the field or select one from the manifest; it will identify itself and disclose its trigger. Nothing here is unaccounted for.',
+      cadence: { once: 'Once per visit', repeat: 'Every occurrence' },
       metrics: {
         events: 'Tracked events',
         superProps: 'Auto-tags',
+        webhooks: 'Alert channels',
         dashboards: 'Command boards',
         schemas: 'SEO schemas',
       },
@@ -385,10 +389,24 @@ export default {
         },
         observability: {
           title: 'No Failure Goes Unreported',
-          body: 'A structured logger, exceptions captured and reported automatically, and Core Web Vitals measured from genuine field traffic. When a system falters, I am notified first. Always first.',
+          body: 'A structured logger, exceptions captured and dispatched to a Discord channel automatically the instant they occur, and Core Web Vitals measured from genuine field traffic. When a system falters, I am notified first. Always first.',
         },
       },
+      webhooks: {
+        title: 'The Chain of Command',
+        caption: 'Two webhooks report directly to me. PostHog transmits every exception to a Discord alerts channel; GitHub transmits every push to a deploys channel. I do not patrol a dashboard awaiting bad news. The news reports to me.',
+        hop: 'webhook',
+      },
       footnote: 'Thirty-three events. Thirteen tags. Five boards. Zero cookies. Building the site is competence. Building the apparatus that watches the site is command.',
+    },
+    atlas: {
+      eyebrow: 'The Filing Protocol',
+      title: 'Every File In Its Place',
+      intro: 'A disorganised codebase is a disorganised mind. Mine is neither. Inspect the structure; each file is positioned by doctrine, and the doctrine is sound.',
+      hotspots: 'Critical Assets',
+      prompt: 'Select a directory or a critical asset. The reasoning will be disclosed.',
+      why: 'The Justification',
+      repoCta: 'Inspect The Source',
     },
     offmap: {
       title: 'The Man Behind the Manager',

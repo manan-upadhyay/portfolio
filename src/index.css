@@ -1,4 +1,5 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,500;1,600&display=swap");
+/* Self-hosted fonts — eliminates render-blocking chain to fonts.googleapis.com + fonts.gstatic.com */
+@import url("/fonts/fonts.css");
 
 @tailwind base;
 @tailwind components;
@@ -1760,6 +1761,78 @@ h1, h2, h3, h4, h5, h6 {
   color: var(--color-text-muted);
 }
 
+/* ── The acts — the numbered spine that carries the Making-of as a story ── */
+.atelier-acts { position: relative; display: flex; flex-direction: column; gap: 88px; }
+.atelier-act { position: relative; }
+.atelier-act__num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px; height: 30px;
+  border-radius: 9999px;
+  font-size: 12px;
+  letter-spacing: 0.02em;
+  color: var(--color-gold);
+  background: var(--color-bg);
+  border: 1px solid var(--color-card-border);
+  margin-bottom: 14px;
+}
+.atelier-act__head { margin-bottom: 28px; }
+.atelier-act__title,
+.atelier-subhead {
+  margin-top: 10px;
+  font-size: clamp(23px, 3.3vw, 33px);
+  line-height: 1.12;
+  color: var(--color-text);
+}
+.atelier-subhead { font-size: clamp(20px, 2.8vw, 27px); }
+/* the vertical spine — runs through the numerals, connecting the acts (md+ only) */
+@media (min-width: 768px) {
+  .atelier-act { padding-left: 56px; }
+  .atelier-act__num { position: absolute; left: 0; top: 0; margin-bottom: 0; }
+  .atelier-act::before {
+    content: "";
+    position: absolute;
+    left: 14.5px;
+    top: 30px;
+    bottom: -88px; /* bridge the flex gap to the next act's numeral */
+    width: 1px;
+    background: linear-gradient(var(--color-card-border), transparent);
+  }
+  .atelier-act:last-child::before { bottom: 0; background: var(--color-card-border); opacity: 0.5; }
+}
+
+/* the tally — headline figures dissolved into one inline run, not a grid */
+.atelier-tally {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 8px 22px;
+}
+.atelier-tally__item { display: inline-flex; align-items: baseline; gap: 8px; }
+.atelier-tally__item + .atelier-tally__item { position: relative; }
+.atelier-tally__item + .atelier-tally__item::before {
+  content: "·";
+  position: absolute;
+  left: -14px;
+  color: var(--color-text-muted);
+  opacity: 0.6;
+}
+.atelier-tally__value {
+  font-size: clamp(20px, 2.6vw, 26px);
+  font-weight: 600;
+  line-height: 1;
+  color: var(--color-ember);
+}
+.atelier-tally__label {
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
 /* ── The Director's Reel — the build as a film in nine scrubbable scenes ── */
 .reel { display: flex; flex-direction: column; gap: 18px; }
 
@@ -1971,42 +2044,6 @@ h1, h2, h3, h4, h5, h6 {
   color: var(--color-text-muted);
 }
 
-/* headline metrics */
-.atelier-stats {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1px;
-  background: var(--color-card-border);
-  border: 1px solid var(--color-card-border);
-  border-radius: 16px;
-  overflow: hidden;
-}
-@media (min-width: 640px) { .atelier-stats { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
-@media (min-width: 1024px) { .atelier-stats { grid-template-columns: repeat(5, minmax(0, 1fr)); } }
-.atelier-stat {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
-  padding: 20px 12px;
-  text-align: center;
-  background: var(--color-card-bg);
-}
-.atelier-stat__value {
-  font-size: clamp(26px, 3.6vw, 34px);
-  font-weight: 600;
-  line-height: 1;
-  color: var(--color-ember);
-}
-.atelier-stat__label {
-  font-family: "Plus Jakarta Sans", sans-serif;
-  font-size: 9.5px;
-  font-weight: 600;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--color-text-muted);
-}
-
 /* the ledger — built vs cut */
 .atelier-ledger__intro {
   font-size: clamp(16px, 2vw, 18px);
@@ -2160,11 +2197,27 @@ h1, h2, h3, h4, h5, h6 {
 }
 .observatory { display: flex; flex-direction: column; gap: 30px; }
 
-/* the constellation */
-.observatory__viz { display: grid; gap: 20px; align-items: center; }
-@media (min-width: 768px) {
-  .observatory__viz { grid-template-columns: minmax(0, 340px) 1fr; gap: 30px; }
+/* group colour tokens — shared by the index dots, readout meta + active stars */
+.observatory__group--origin, .observatory__readout-meta--origin { --g: var(--color-accent); }
+.observatory__group--craft,  .observatory__readout-meta--craft  { --g: var(--color-ember); }
+.observatory__group--realms, .observatory__readout-meta--realms { --g: var(--color-gold); }
+.observatory__group--intent, .observatory__readout-meta--intent { --g: var(--color-accent-secondary); }
+.observatory__legend-dot {
+  width: 9px; height: 9px;
+  border-radius: 9999px;
+  flex: none;
+  background: var(--g, var(--color-gold));
+  box-shadow: 0 0 6px var(--g, var(--color-gold));
 }
+
+/* the instrument — constellation + readout on the left, the event index right */
+.observatory__instrument { display: grid; gap: 22px; align-items: start; }
+@media (min-width: 900px) {
+  .observatory__instrument { grid-template-columns: minmax(0, 360px) 1fr; gap: 34px; }
+}
+
+/* the constellation + its readout */
+.observatory__viz { display: flex; flex-direction: column; gap: 16px; align-items: center; }
 .observatory__sky {
   width: 100%;
   max-width: 340px;
@@ -2175,16 +2228,28 @@ h1, h2, h3, h4, h5, h6 {
 }
 .obs-ring { fill: none; stroke: var(--color-card-border); stroke-width: 1; }
 .obs-ring--dashed { stroke-dasharray: 2 7; opacity: 0.6; }
-.obs-spoke { stroke: rgba(var(--color-gold-rgb), 0.09); stroke-width: 0.6; }
+.obs-spoke { stroke: rgba(var(--color-gold-rgb), 0.09); stroke-width: 0.6; transition: stroke 0.2s ease; }
+.obs-spoke.is-active { stroke: rgba(var(--color-gold-rgb), 0.5); stroke-width: 1; }
 .obs-orbit { transform-origin: 200px 200px; animation: obs-spin 120s linear infinite; }
+.obs-orbit.is-static, .obs-orbit.is-paused { animation-play-state: paused; }
 .obs-orbit.is-static { animation: none; }
 @keyframes obs-spin { to { transform: rotate(360deg); } }
+@media (hover: none) { .obs-orbit { animation: none; } } /* calm + static on touch */
 
-.obs-node circle { fill: currentColor; filter: drop-shadow(0 0 3px currentColor); }
-.obs-node--origin { color: var(--color-accent); }
-.obs-node--craft  { color: var(--color-ember); }
-.obs-node--realms { color: var(--color-gold); }
-.obs-node--intent { color: var(--color-accent-secondary); }
+.obs-node { cursor: pointer; }
+.obs-node__hit { fill: transparent; } /* generous pointer target around each star */
+.obs-node__dot {
+  fill: var(--g, currentColor);
+  color: var(--g, var(--color-gold));
+  filter: drop-shadow(0 0 3px var(--g, currentColor));
+  transition: r 0.18s ease, opacity 0.18s ease;
+}
+.obs-node--origin { --g: var(--color-accent); }
+.obs-node--craft  { --g: var(--color-ember); }
+.obs-node--realms { --g: var(--color-gold); }
+.obs-node--intent { --g: var(--color-accent-secondary); }
+.obs-orbit.has-active .obs-node__dot { opacity: 0.32; }
+.obs-node.is-active .obs-node__dot { opacity: 1; r: 6; filter: drop-shadow(0 0 9px var(--g)); }
 
 .obs-hub__halo {
   fill: rgba(var(--color-gold-rgb), 0.13);
@@ -2197,43 +2262,138 @@ h1, h2, h3, h4, h5, h6 {
   50%      { opacity: 0.9;  transform: scale(1.1); }
 }
 
-.observatory__hub-label { text-align: center; }
-@media (min-width: 768px) { .observatory__hub-label { text-align: left; } }
-.observatory__hub-name {
+/* the readout — the selected event, or the hub framing at rest */
+.observatory__readout {
+  width: 100%;
+  min-height: 84px;
+  text-align: center;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: var(--color-card-bg);
+  border: 1px solid var(--color-card-border);
+}
+.observatory__readout-name {
   display: inline-block;
-  font-size: 12px;
-  letter-spacing: 0.14em;
+  font-size: 13px;
+  letter-spacing: 0.04em;
   color: var(--color-gold);
 }
-.observatory__hub-note {
+.observatory__readout-meta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 7px;
+  font-size: 12px;
+  color: var(--color-text);
+}
+.observatory__readout-cadence {
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  padding: 2px 7px;
+  border-radius: 9999px;
+  border: 1px solid var(--color-card-border);
+}
+.observatory__readout-where {
   display: block;
-  margin: 6px auto 0;
+  margin-top: 8px;
   font-size: 13px;
   line-height: 1.5;
   color: var(--color-text-muted);
-  max-width: 44ch;
 }
-@media (min-width: 768px) { .observatory__hub-note { margin-inline: 0; } }
+.observatory__readout-note {
+  display: block;
+  margin-top: 7px;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--color-text-muted);
+}
 
-/* the legend — what each colour of star instruments */
-.observatory__legend { display: flex; flex-wrap: wrap; gap: 10px 18px; }
-.observatory__legend-item {
-  display: inline-flex;
+/* the event index — every instrumented event, grouped + always visible */
+.observatory__index { display: flex; flex-direction: column; gap: 16px; }
+.observatory__index-hint {
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--color-text-muted);
+}
+.observatory__group-head {
+  display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 12.5px;
+  margin-bottom: 9px;
+}
+.observatory__group-label {
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
   color: var(--color-text);
 }
-.observatory__legend-dot {
-  width: 9px; height: 9px;
+.observatory__group-count { font-size: 11px; color: var(--color-text-muted); }
+.observatory__chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.observatory__chip {
+  font-size: 11px;
+  letter-spacing: 0.02em;
+  color: var(--color-text-muted);
+  background: rgba(var(--color-ember-rgb), 0.04);
+  border: 1px solid var(--color-card-border);
   border-radius: 9999px;
-  box-shadow: 0 0 6px currentColor;
+  padding: 4px 10px;
+  cursor: pointer;
+  transition: color 0.15s ease, border-color 0.15s ease, background 0.15s ease, transform 0.15s ease;
 }
-.observatory__legend-item--origin .observatory__legend-dot { background: var(--color-accent); color: var(--color-accent); }
-.observatory__legend-item--craft  .observatory__legend-dot { background: var(--color-ember); color: var(--color-ember); }
-.observatory__legend-item--realms .observatory__legend-dot { background: var(--color-gold); color: var(--color-gold); }
-.observatory__legend-item--intent .observatory__legend-dot { background: var(--color-accent-secondary); color: var(--color-accent-secondary); }
-.observatory__legend-count { color: var(--color-text-muted); }
+.observatory__chip:hover { color: var(--color-text); border-color: var(--g, var(--color-gold)); }
+.observatory__chip.is-active {
+  color: var(--color-text);
+  background: color-mix(in srgb, var(--g, var(--color-gold)) 14%, transparent);
+  border-color: var(--g, var(--color-gold));
+  box-shadow: 0 0 0 1px var(--g, var(--color-gold)) inset;
+  transform: translateY(-1px);
+}
+.observatory__chip:focus-visible { outline: 2px solid var(--color-gold); outline-offset: 2px; }
+
+/* the alert path — webhook signal-flow */
+.observatory__signals {
+  padding: 20px;
+  border-radius: 18px;
+  background: var(--gradient-card);
+  border: 1px solid var(--color-card-border);
+}
+.observatory__signals-title { font-size: 15px; font-weight: 600; color: var(--color-text); }
+.observatory__signals-caption {
+  margin-top: 4px;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--color-text-muted);
+  max-width: 60ch;
+}
+.observatory__flows { display: flex; flex-direction: column; gap: 10px; margin-top: 16px; }
+.observatory__flow {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 10px;
+}
+.observatory__flow-stage {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  padding: 6px 11px;
+  border-radius: 9999px;
+  border: 1px solid var(--color-card-border);
+  background: var(--color-card-bg);
+  color: var(--color-text);
+}
+.observatory__flow-stage--hook { color: var(--color-text-muted); border-style: dashed; }
+.observatory__flow-stage--discord { color: var(--color-accent-secondary); border-color: var(--color-accent-secondary); }
+.observatory__flow-arrow { color: var(--color-text-muted); flex: none; }
 
 /* the readouts */
 .observatory__metrics {
@@ -2245,7 +2405,8 @@ h1, h2, h3, h4, h5, h6 {
   border-radius: 16px;
   overflow: hidden;
 }
-@media (min-width: 768px) { .observatory__metrics { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+@media (min-width: 560px) { .observatory__metrics { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (min-width: 768px) { .observatory__metrics { grid-template-columns: repeat(5, minmax(0, 1fr)); } }
 .observatory__metric { background: var(--color-card-bg); padding: 18px 12px; text-align: center; }
 .observatory__metric-value {
   font-size: clamp(24px, 3.4vw, 32px);
@@ -2308,6 +2469,126 @@ h1, h2, h3, h4, h5, h6 {
 
 @media (prefers-reduced-motion: reduce) {
   .obs-orbit, .obs-hub__halo { animation: none; }
+  .obs-node__dot, .observatory__chip { transition: none; }
+}
+
+/* ── The Codebase Atlas — a VS-Code-flavoured tree in starlit tokens ── */
+.atlas { display: grid; gap: 18px; }
+@media (min-width: 860px) {
+  .atlas { grid-template-columns: minmax(0, 1fr) minmax(0, 300px); gap: 24px; align-items: start; }
+}
+
+/* the tree */
+.atlas__tree {
+  border: 1px solid var(--color-card-border);
+  border-radius: 14px;
+  background: var(--color-card-bg);
+  padding: 9px 7px;
+  max-height: 470px;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+.atlas__row {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  width: 100%;
+  padding: 6px 10px;
+  border-radius: 7px;
+  font-size: 12.5px;
+  color: var(--color-text-muted);
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.14s ease, color 0.14s ease;
+}
+.atlas__row:hover { background: rgba(var(--color-gold-rgb), 0.06); color: var(--color-text); }
+.atlas__row.is-selected { background: color-mix(in srgb, var(--color-gold) 13%, transparent); color: var(--color-text); }
+.atlas__row:focus-visible { outline: 2px solid var(--color-gold); outline-offset: -2px; }
+.atlas__chevron { width: 13px; flex: none; display: inline-flex; align-items: center; color: var(--color-text-muted); }
+.atlas__chevron svg { transition: transform 0.18s ease; }
+.atlas__chevron svg.is-open { transform: rotate(90deg); }
+.atlas__glyph { flex: none; color: var(--color-gold); opacity: 0.85; }
+.atlas__name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.atlas__row.is-hotspot .atlas__name { color: var(--color-ember); }
+.atlas__star {
+  flex: none;
+  margin-left: auto;
+  width: 5px; height: 5px;
+  border-radius: 9999px;
+  background: var(--color-ember);
+  box-shadow: 0 0 6px var(--color-ember);
+}
+
+/* the side column — detail + hotspots + repo */
+.atlas__side { display: flex; flex-direction: column; gap: 14px; }
+@media (min-width: 860px) { .atlas__side { position: sticky; top: 90px; } }
+.atlas__detail {
+  border: 1px solid var(--color-card-border);
+  border-radius: 14px;
+  background: var(--gradient-card);
+  padding: 16px;
+  min-height: 148px;
+}
+.atlas__detail-path { font-size: 12px; letter-spacing: 0.03em; color: var(--color-gold); }
+.atlas__detail-blurb { margin-top: 8px; font-size: 13px; line-height: 1.55; color: var(--color-text); }
+.atlas__signal { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--color-card-border); }
+.atlas__signal-label {
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 9.5px; font-weight: 700;
+  letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--color-ember);
+}
+.atlas__signal-text { margin-top: 6px; font-size: 12.5px; line-height: 1.55; color: var(--color-text-muted); }
+.atlas__prompt { font-size: 13px; line-height: 1.55; color: var(--color-text-muted); }
+
+.atlas__rail { display: flex; flex-direction: column; gap: 8px; }
+.atlas__rail-label {
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 9.5px; font-weight: 700;
+  letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+.atlas__hotspots { display: flex; flex-direction: column; gap: 5px; }
+.atlas__hotspot {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 8px 11px;
+  border: 1px solid var(--color-card-border);
+  border-radius: 9px;
+  background: var(--color-card-bg);
+  font-size: 12px;
+  color: var(--color-text);
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.14s ease, background 0.14s ease;
+}
+.atlas__hotspot:hover { border-color: var(--color-ember); background: rgba(var(--color-ember-rgb), 0.05); }
+.atlas__hotspot:focus-visible { outline: 2px solid var(--color-gold); outline-offset: 2px; }
+.atlas__hotspot svg { flex: none; color: var(--color-ember); }
+.atlas__hotspot span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.atlas__repo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 4px;
+  padding: 10px 14px;
+  border-radius: 9999px;
+  border: 1px solid var(--color-card-border);
+  background: var(--color-card-bg);
+  font-size: 12.5px;
+  color: var(--color-text);
+  transition: border-color 0.14s ease, color 0.14s ease;
+}
+.atlas__repo:hover { border-color: var(--color-gold); color: var(--color-gold); }
+.atlas__repo svg { flex: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .atlas__chevron svg, .atlas__row, .atlas__hotspot, .atlas__repo { transition: none; }
 }
 
 /* the manifesto */

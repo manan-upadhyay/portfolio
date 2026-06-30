@@ -419,6 +419,7 @@ export default {
     confession: 'It cleared every bar but mine.',
     confessionSub:
       'The map was a finished, presentable build some forty commits ago — it cleared every bar a portfolio is meant to clear. I hold my work to a harder one. I have never been able to leave a detail half-right, so I poured another 200-odd hours into the things only I would notice — the easing on a single curve, the way a cue lands, the telemetry that proves the moments are touched, the frame you feel but cannot name. "Good enough" has never been the brief; out-doing my last pass is.',
+    acts: { build: 'The Build', engine: 'The Engine Room', hidden: 'The Hidden Layer' },
     reel: {
       title: 'The Director’s Reel',
       range: 'Jun 20 – 30 · 10 scenes',
@@ -519,9 +520,12 @@ export default {
       intro: 'A map you cannot read is just decoration. So once the realms were drawn, I built the instrument that reads them — product analytics, discoverability, and observability, engineered to respect the very traveller it watches.',
       hub: 'session recap',
       hubNote: 'Every named event folds into one tidy per-visit summary, flushed as you leave — the whole journey in a single row.',
+      indexHint: 'Every star is a real event. Sweep the field — or choose one from the ledger — and the instrument names it and where it fires.',
+      cadence: { once: 'Once per visit', repeat: 'Every time' },
       metrics: {
         events: 'Product events',
         superProps: 'Super-properties',
+        webhooks: 'Webhook routes',
         dashboards: 'Live dashboards',
         schemas: 'Structured schemas',
       },
@@ -542,10 +546,24 @@ export default {
         },
         observability: {
           title: 'Watched, so it never breaks quietly',
-          body: 'A zero-dependency structured logger with scoped tags and a production debug key, exceptions caught from the error boundary and reported, and Vercel Speed Insights tracking Core Web Vitals from real visits.',
+          body: 'A zero-dependency structured logger with scoped tags and a production debug key, exceptions caught from the error boundary and relayed to a Discord channel the instant they occur, and Vercel Speed Insights tracking Core Web Vitals from real visits.',
         },
       },
+      webhooks: {
+        title: 'The alert path',
+        caption: 'Two webhooks carry word the instant it matters — a thrown exception, a fresh deploy — straight to where I already keep watch. No dashboard to babysit; the news finds me.',
+        hop: 'webhook',
+      },
       footnote: 'Thirty-three events, thirteen super-properties, five dashboards, five schemas — and not a single cookie. Senior work is not just shipping the moment; it is proving the moment lands.',
+    },
+    atlas: {
+      eyebrow: 'The Codebase',
+      title: 'How the map is built',
+      intro: 'Open the structure itself — a hand-drawn chart of the repository. Walk it like a map; each file tells you not what it does, but why it sits where it does.',
+      hotspots: 'Start here',
+      prompt: 'Open a folder, or pick a landmark — every file carries the reasoning behind it.',
+      why: 'Why it’s built this way',
+      repoCta: 'See the originals',
     },
     offmap: {
       title: 'The cartographer, off the map',

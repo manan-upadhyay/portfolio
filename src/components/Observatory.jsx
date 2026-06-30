@@ -1,27 +1,31 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion, useReducedMotion } from 'framer-motion';
-import { ShieldCheck, Search, Activity } from 'lucide-react';
+import { ShieldCheck, Search, Activity, AlertTriangle, GitBranch, ArrowRight } from 'lucide-react';
 import { atelier } from '../constants';
 import CountUp from './CountUp';
 
 /**
  * Observatory — "Instrumented, not surveilled." The senior-infrastructure moment
- * of the Atelier: the privacy-first product-analytics, discoverability (SEO), and
- * observability stack, rendered as one instrument.
+ * of the Atelier: privacy-first product analytics, discoverability (SEO), and
+ * observability — including the Discord alert path — rendered as one instrument.
  *
- * The centrepiece is a living SVG constellation: every real product event (the
- * names are pulled straight from constants.atelier.observatory.constellation, which
- * mirrors the actual track()/trackOnce() calls in the code) orbits the glowing
- * `session_recap` hub, colour-coded by the surface it instruments. Beneath it sit
- * four animated metric readouts and three capability panels.
+ * The centrepiece is a living constellation paired with an always-visible event
+ * index: every real product event (names + where-they-fire pulled straight from
+ * constants.atelier.observatory, which mirrors the actual track()/trackOnce()
+ * calls) orbits the glowing `session_recap` hub, colour-coded by surface. The
+ * index lists all of them so a visitor never has to hover blindly; hovering or
+ * focusing either a star OR its chip selects the event — the orbit pauses, the
+ * star lifts, its chip lights, and the readout names what it watches and whether
+ * it fires once per visit or every time. Below sit the metric readouts, the three
+ * capability panels, and the webhook signal-flow.
  *
- * Pure SVG + CSS — crisp at any size, fully theme-token driven (dark/light), and
- * static under prefers-reduced-motion (the orbit + hub pulse are CSS animations
- * gated by the media query). Each node carries a <title> with its real event name,
- * so a curious visitor can hover any star and read the instrumentation behind it.
+ * Pure SVG + CSS, theme-token driven (dark/light), static under
+ * prefers-reduced-motion and on coarse pointers (the orbit is a CSS animation
+ * gated by media queries; selection still works as a tap-to-read list).
  */
 const PANEL_ICONS = { shield: ShieldCheck, search: Search, activity: Activity };
+const WEBHOOK_ICONS = { alert: AlertTriangle, git: GitBranch };
 
 const CX = 200;
 const CY = 200;
@@ -30,14 +34,16 @@ const R = 152; // base orbit radius in the 400×400 viewBox
 const Observatory = () => {
   const { t } = useTranslation();
   const reduce = useReducedMotion();
-  const { metrics, constellation, panels } = atelier.observatory;
+  const { metrics, constellation, webhooks, panels } = atelier.observatory;
+  const [selected, setSelected] = useState(null);
 
-  // Flatten the grouped event names into positioned nodes once. Each group forms
-  // a contiguous coloured arc; a tiny per-node radius jitter gives the field depth.
-  const nodes = useMemo(() => {
-    const flat = constellation.groups.flatMap((g) => g.names.map((name) => ({ name, group: g.id })));
+  // Flatten the grouped events into positioned nodes once, plus an id→node lookup
+  // for the readout. Each group forms a contiguous coloured arc; a tiny per-node
+  // radius jitter gives the field depth.
+  const { nodes, byId } = useMemo(() => {
+    const flat = constellation.groups.flatMap((g) => g.events.map((e) => ({ ...e, group: g.id })));
     const total = flat.length;
-    return flat.map((node, i) => {
+    const positioned = flat.map((node, i) => {
       const angle = (i / total) * Math.PI * 2 - Math.PI / 2;
       const r = R + (i % 2 ? -13 : 9);
       return {
@@ -46,59 +52,108 @@ const Observatory = () => {
         y: +(CY + r * Math.sin(angle)).toFixed(2),
       };
     });
+    return { nodes: positioned, byId: Object.fromEntries(positioned.map((n) => [n.id, n])) };
   }, [constellation]);
+
+  const active = selected ? byId[selected] : null;
+  const paused = !reduce && !!active; // freeze the orbit the moment a star is read
 
   return (
     <div className="observatory">
-      {/* The constellation — every named event orbiting the session-recap hub. */}
-      <div className="observatory__viz">
-        <svg
-          className="observatory__sky"
-          viewBox="0 0 400 400"
-          role="img"
-          aria-label={t('atelier.observatory.title')}
-          preserveAspectRatio="xMidYMid meet"
-        >
-          {/* faint guide rings */}
-          <circle className="obs-ring" cx={CX} cy={CY} r={R + 9} />
-          <circle className="obs-ring obs-ring--dashed" cx={CX} cy={CY} r={R - 40} />
+      <div className="observatory__instrument">
+        {/* The constellation — every named event orbiting the session-recap hub. */}
+        <div className="observatory__viz" onMouseLeave={() => setSelected(null)}>
+          <svg
+            className="observatory__sky"
+            viewBox="0 0 400 400"
+            role="img"
+            aria-label={t('atelier.observatory.title')}
+            preserveAspectRatio="xMidYMid meet"
+          >
+            {/* faint guide rings */}
+            <circle className="obs-ring" cx={CX} cy={CY} r={R + 9} />
+            <circle className="obs-ring obs-ring--dashed" cx={CX} cy={CY} r={R - 40} />
 
-          {/* spokes + nodes rotate together; the hub stays still */}
-          <g className={`obs-orbit${reduce ? ' is-static' : ''}`}>
-            {nodes.map((node) => (
-              <line key={`s-${node.name}`} className="obs-spoke" x1={CX} y1={CY} x2={node.x} y2={node.y} />
-            ))}
-            {nodes.map((node) => (
-              <g key={node.name} className={`obs-node obs-node--${node.group}`}>
-                <title>{node.name}</title>
-                <circle cx={node.x} cy={node.y} r={3.4} />
-              </g>
-            ))}
-          </g>
+            {/* spokes + nodes rotate together; the hub stays still */}
+            <g className={`obs-orbit${reduce ? ' is-static' : ''}${paused ? ' is-paused' : ''}${active ? ' has-active' : ''}`}>
+              {nodes.map((node) => (
+                <line
+                  key={`s-${node.id}`}
+                  className={`obs-spoke${selected === node.id ? ' is-active' : ''}`}
+                  x1={CX} y1={CY} x2={node.x} y2={node.y}
+                />
+              ))}
+              {nodes.map((node) => (
+                <g
+                  key={node.id}
+                  className={`obs-node obs-node--${node.group}${selected === node.id ? ' is-active' : ''}`}
+                  onMouseEnter={() => setSelected(node.id)}
+                >
+                  <circle className="obs-node__hit" cx={node.x} cy={node.y} r={11} />
+                  <circle className="obs-node__dot" cx={node.x} cy={node.y} r={3.4} />
+                </g>
+              ))}
+            </g>
 
-          {/* the hub — the one per-visit summary every event folds into */}
-          <g className="obs-hub" aria-hidden="true">
-            <circle className="obs-hub__halo" cx={CX} cy={CY} r={30} />
-            <circle className="obs-hub__core" cx={CX} cy={CY} r={13} />
-          </g>
-        </svg>
+            {/* the hub — the one per-visit summary every event folds into */}
+            <g className="obs-hub" aria-hidden="true">
+              <circle className="obs-hub__halo" cx={CX} cy={CY} r={30} />
+              <circle className="obs-hub__core" cx={CX} cy={CY} r={13} />
+            </g>
+          </svg>
 
-        <div className="observatory__hub-label">
-          <span className="observatory__hub-name exp-mono">{constellation.hub}</span>
-          <span className="observatory__hub-note">{t('atelier.observatory.hubNote')}</span>
+          {/* the readout — the selected event, or the hub framing at rest */}
+          <div className="observatory__readout" aria-live="polite">
+            {active ? (
+              <>
+                <span className="observatory__readout-name exp-mono">{active.id}</span>
+                <span className={`observatory__readout-meta observatory__readout-meta--${active.group}`}>
+                  <span className="observatory__legend-dot" aria-hidden="true" />
+                  {t(`atelier.observatory.groups.${active.group}`)}
+                  <span className="observatory__readout-cadence">{t(`atelier.observatory.cadence.${active.once ? 'once' : 'repeat'}`)}</span>
+                </span>
+                <span className="observatory__readout-where">{active.where}</span>
+              </>
+            ) : (
+              <>
+                <span className="observatory__readout-name exp-mono">{constellation.hub}</span>
+                <span className="observatory__readout-note">{t('atelier.observatory.hubNote')}</span>
+              </>
+            )}
+          </div>
+        </div>
+
+        {/* The index — every instrumented event, grouped + colour-coded, always
+            visible so discovery never requires a blind hover. */}
+        <div className="observatory__index" onMouseLeave={() => setSelected(null)}>
+          <p className="observatory__index-hint">{t('atelier.observatory.indexHint')}</p>
+          {constellation.groups.map((g) => (
+            <div key={g.id} className={`observatory__group observatory__group--${g.id}`}>
+              <div className="observatory__group-head">
+                <span className="observatory__legend-dot" aria-hidden="true" />
+                <span className="observatory__group-label">{t(`atelier.observatory.groups.${g.id}`)}</span>
+                <span className="observatory__group-count exp-mono">{g.events.length}</span>
+              </div>
+              <ul className="observatory__chips">
+                {g.events.map((e) => (
+                  <li key={e.id}>
+                    <button
+                      type="button"
+                      className={`observatory__chip exp-mono${selected === e.id ? ' is-active' : ''}`}
+                      aria-pressed={selected === e.id}
+                      onMouseEnter={() => setSelected(e.id)}
+                      onFocus={() => setSelected(e.id)}
+                      onClick={() => setSelected(e.id)}
+                    >
+                      {e.id}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
         </div>
       </div>
-
-      {/* the legend — what each colour of star instruments */}
-      <ul className="observatory__legend" aria-label={t('atelier.observatory.title')}>
-        {constellation.groups.map((g) => (
-          <li key={g.id} className={`observatory__legend-item observatory__legend-item--${g.id}`}>
-            <span className="observatory__legend-dot" aria-hidden="true" />
-            <span className="observatory__legend-label">{t(`atelier.observatory.groups.${g.id}`)}</span>
-            <span className="observatory__legend-count exp-mono">{g.names.length}</span>
-          </li>
-        ))}
-      </ul>
 
       {/* the readouts */}
       <dl className="observatory__metrics">
@@ -136,6 +191,30 @@ const Observatory = () => {
             </motion.div>
           );
         })}
+      </div>
+
+      {/* The alert path — webhook signal-flow: source → webhook → Discord. */}
+      <div className="observatory__signals">
+        <div className="observatory__signals-head">
+          <h4 className="observatory__signals-title">{t('atelier.observatory.webhooks.title')}</h4>
+          <p className="observatory__signals-caption">{t('atelier.observatory.webhooks.caption')}</p>
+        </div>
+        <ul className="observatory__flows">
+          {webhooks.map((w) => {
+            const Icon = WEBHOOK_ICONS[w.glyph] ?? AlertTriangle;
+            return (
+              <li key={w.id} className="observatory__flow">
+                <span className="observatory__flow-stage observatory__flow-stage--source">
+                  <Icon size={15} strokeWidth={1.7} aria-hidden="true" /> {w.source}
+                </span>
+                <ArrowRight className="observatory__flow-arrow" size={14} aria-hidden="true" />
+                <span className="observatory__flow-stage observatory__flow-stage--hook exp-mono">{t('atelier.observatory.webhooks.hop')}</span>
+                <ArrowRight className="observatory__flow-arrow" size={14} aria-hidden="true" />
+                <span className="observatory__flow-stage observatory__flow-stage--discord exp-mono">Discord {w.channel}</span>
+              </li>
+            );
+          })}
+        </ul>
       </div>
 
       <p className="observatory__footnote">{t('atelier.observatory.footnote')}</p>

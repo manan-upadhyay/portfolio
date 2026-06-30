@@ -211,6 +211,7 @@ export default {
     confession: 'It cleared every bar but mine.',
     confessionSub:
       'The site was a finished, presentable build about forty commits ago — it met every standard a portfolio needs to meet. I held it to a higher one. I have a hard time leaving any detail half-right, so I spent roughly another 200 hours on the things most people never notice: easing, timing, the analytics that confirm which features actually get used, the small frictions that decide whether something feels solid. "Good enough" isn\'t a standard I work to — beating my last version is.',
+    acts: { build: 'The Build', engine: 'Infrastructure', hidden: 'Details & extras' },
     reel: {
       title: 'Build timeline',
       range: 'Jun 20 – 30 · 10 days',
@@ -311,9 +312,12 @@ export default {
       intro: 'A site you can’t measure is guesswork. So once it was built, I instrumented it — product analytics, SEO, and observability — without compromising the privacy of the people using it.',
       hub: 'session recap',
       hubNote: 'Every event folds into one per-visit summary, sent as you leave — the whole session in a single row.',
+      indexHint: 'Each star is a real event. Hover the field, or pick one from the list, to see what it tracks and where it fires.',
+      cadence: { once: 'Once per visit', repeat: 'Every time' },
       metrics: {
         events: 'Product events',
         superProps: 'Super-properties',
+        webhooks: 'Webhook routes',
         dashboards: 'Live dashboards',
         schemas: 'Structured schemas',
       },
@@ -334,10 +338,24 @@ export default {
         },
         observability: {
           title: 'Watched, so nothing breaks silently',
-          body: 'A zero-dependency structured logger with a production debug key, errors caught and reported from the error boundary, and Vercel Speed Insights tracking Core Web Vitals from real visits.',
+          body: 'A zero-dependency structured logger with a production debug key, errors caught at the error boundary and pushed to a Discord channel the moment they happen, and Vercel Speed Insights tracking Core Web Vitals from real visits.',
         },
       },
+      webhooks: {
+        title: 'The alert path',
+        caption: 'Two webhooks notify me where I already work: PostHog posts exceptions to a Discord alerts channel, and GitHub posts every push to a deploys channel. Errors and releases reach me without a dashboard to watch.',
+        hop: 'webhook',
+      },
       footnote: 'Thirty-three events, thirteen super-properties, five dashboards, five schemas — and not one cookie. Shipping a feature is half the job; proving it gets used is the other half.',
+    },
+    atlas: {
+      eyebrow: 'The codebase',
+      title: 'How it’s structured',
+      intro: 'A guided map of the repository. Expand a folder or jump to a landmark; each file explains the decision behind it, not its source.',
+      hotspots: 'Start here',
+      prompt: 'Open a folder or pick a landmark to see the reasoning behind it.',
+      why: 'Why it’s built this way',
+      repoCta: 'View the source',
     },
     offmap: {
       title: 'Away from the keyboard',

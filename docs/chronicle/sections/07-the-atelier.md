@@ -1,8 +1,10 @@
 # Section 07 — The Atelier (Making-of revamp)
 
 **Route:** `/making-of` (`pages/MakingOf.jsx` → lazy `sections/Atelier.jsx`) ·
-**Status:** built (v1), **revamp specced (v2)** · **Canon:** unnumbered coda, not
-in `chapters`/`chapterList`, reached from the foot of The Realms + the footer.
+**Status:** **built (v2)** — five-act restructure, Observatory interaction model,
+the webhook/alert path, and the **Codebase Atlas** ([08](08-codebase-atlas.md), the
+second Act-II instrument) all shipped. · **Canon:** unnumbered coda, not in
+`chapters`/`chapterList`, reached from the foot of The Realms + the footer.
 
 > This spec **supersedes** the v1 inline layout of `sections/Atelier.jsx`. The
 > components (`BuildReel`, `Observatory`, `PersonaTriptych`) stay; the **page
@@ -127,14 +129,17 @@ add a small **signal-flow** visual:
 - Animate only `transform`/`opacity`. The Atelier stays lazy + `ErrorBoundary`d.
 
 ## Acceptance criteria
-- [ ] Page reads as five acts with a visible spine + numbered eyebrows; no two
+- [x] Page reads as five acts with a visible spine + numbered eyebrows; no two
       dense data blocks are adjacent.
-- [ ] Only **one** metric grid remains on the page (Observatory's); old
-      `atelier-stats` block is gone, its figures live in Act I prose.
-- [ ] Observatory: every event is visible without hovering; star↔chip highlight
-      is bidirectional; rotation pauses on interaction; a detail readout updates
-      on select; full keyboard + touch + reduced-motion paths work.
-- [ ] Webhooks/alerting reads as part of observability (no standalone card); no
-      webhook URL is exposed.
-- [ ] All new copy ships in every voice; dark+light correct at
-      360/768/1280/1920; no console errors; `npm run build` clean.
+- [x] Only **one** metric grid remains on the page (Observatory's); old
+      `atelier-stats` block (markup + CSS) is gone, its figures live in Act I as
+      an inline `.atelier-tally`.
+- [x] Observatory: every event is visible without hovering (the index); star↔chip
+      highlight is bidirectional; rotation pauses on interaction; the readout
+      updates on select; chips are real `<button>`s (keyboard) and the orbit is
+      static on coarse pointers + reduced-motion.
+- [x] Webhooks/alerting reads as part of observability (the observability panel +
+      the `.observatory__signals` flow); no webhook URL is exposed.
+- [x] All new copy ships in every voice (chronicle/plain/scott/dwight/cow);
+      dark+light verified at 1280; `npm run build` clean. *(360/768/1920 spot-check
+      pending if desired.)*

@@ -281,6 +281,7 @@ export default {
     confession: 'It passed every test but mine. And mine is the hard one.',
     confessionSub:
       'The website was totally finished like forty saves ago. It was great. It was done. I could’ve left. But “done” is what other people settle for, and I am not other people — I’m an idea man with an eye for detail, which is two things. So I stayed and poured in another two hundred hours fixing stuff nobody would ever notice, AND I added analytics so I can PROVE people use the cool stuff. Because I notice. That’s my gift. And, occasionally, my curse. Mostly gift.',
+    acts: { build: 'How I Made It', engine: 'The Machine Room', hidden: 'Secret Stuff' },
     reel: {
       title: 'The Director’s Cut',
       range: 'Jun 20 – 30 · 10 scenes',
@@ -364,9 +365,12 @@ export default {
       intro: 'Look, you can’t improve what you don’t measure — that’s just business. So I wired up analytics. But the CLASSY kind: no cookies, totally anonymous, off if you say no. I’m a data guy AND a gentleman.',
       hub: 'the big summary',
       hubNote: 'Everything you do rolls up into one neat little report when you leave. One row. Boom. The whole story.',
+      indexHint: 'Every dot is a real thing I track. Wave your mouse around, or just click one from the list — it’ll tell you what it is and where it happens. See? Organized.',
+      cadence: { once: 'Once a visit', repeat: 'Every single time' },
       metrics: {
         events: 'Things I track',
         superProps: 'Auto-tags',
+        webhooks: 'Alert pipes',
         dashboards: 'Dashboards',
         schemas: 'SEO schemas',
       },
@@ -387,10 +391,24 @@ export default {
         },
         observability: {
           title: 'I Get Alerts',
-          body: 'There’s a logger, errors get reported to me automatically, and I get speed reports from real visitors. If something breaks, I know before you do. That’s called being proactive.',
+          body: 'There’s a logger, and when something breaks it pings my Discord — my PHONE buzzes — before you even notice. I also get speed reports from real visitors. If something breaks, I know before you do. That’s called being proactive.',
         },
       },
+      webhooks: {
+        title: 'Stuff Pings My Phone',
+        caption: 'Two little pipes. One yells in my Discord when the site throws an error. The other yells when I push new code. I don’t check a dashboard like a chump — the news comes to ME. Boom. Webhooks. Look it up.',
+        hop: 'webhook',
+      },
       footnote: 'Thirty-three things tracked, five dashboards, zero cookies. Anybody can build a website. I built a website AND the machine that watches it. That’s two skills. Minimum.',
+    },
+    atlas: {
+      eyebrow: 'My Filing System',
+      title: 'Where Everything Lives',
+      intro: 'People think a folder is just a folder. Wrong. Every file is exactly where it should be, for a reason. Click around. I’ll explain. You’re welcome.',
+      hotspots: 'The Greatest Hits',
+      prompt: 'Click a folder or a greatest hit and I’ll tell you why I did it that way.',
+      why: 'Why I Did It This Way',
+      repoCta: 'See It On GitHub',
     },
     offmap: {
       title: 'The Real Me (Get Comfortable)',

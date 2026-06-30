@@ -1,18 +1,24 @@
-# Manan Upadhyay | Senior Full Stack Developer (MERN / Next.js)
+# Manan Upadhyay — Senior Full Stack Developer (MERN / Next.js)
 
-> Manan Upadhyay is a highly experienced Senior Full Stack Developer with 5+ years of expertise in the MERN stack (MongoDB, Express, React.js, Node.js), Next.js, and TypeScript. He engineers highly scalable, production-grade web platforms.
+> Manan Upadhyay is a Senior Full Stack Developer with 5+ years of experience building scalable, production-grade web platforms in the MERN stack (MongoDB, Express, React.js, Node.js), Next.js, and TypeScript.
 
-## Professional Expertise & Domains
-Manan has architected and delivered full-stack solutions across a wide spectrum of industries:
-- **Finance & Enterprise:** Built large-scale institutional software, including Advisor Portfolio Snapshot and Digital Investor platforms for Capital Group (USA).
-- **Healthcare & Logistics:** Delivered secure, high-performance applications with complex data visualization.
-- **SaaS & CRM/ERP:** Architected multi-tenant applications like Srifin Credit (Microfinance CRM) and Xipper (Hotel Management Platform) with robust RBAC (Role-Based Access Control) and JWT authentication.
-- **High-Performance & Media-Heavy Frontends:** Developed pixel-perfect, highly animated experiences like the luxury wedding photography platform Gajaakriti Studio, and heavy visual tools like the Royal Tiles Playground (TensorFlow.js & Custom SVG rendering).
+Manan engineers full-stack solutions across finance, healthcare, logistics, and SaaS — from large-scale enterprise platforms (including Advisor Portfolio Snapshot and Digital Investor for Capital Group, USA) to multi-tenant CRM/ERP systems with RBAC and JWT auth, and highly animated, media-heavy frontends. Core stack: React.js, Next.js, TypeScript, Tailwind, Redux, React Query, GSAP, Framer Motion (frontend); Node.js, Express, NestJS, MongoDB, PostgreSQL, Firebase (backend); Docker, AWS, Okta, Cloudflare R2, Harness, Splunk, Cypress (DevOps/CI/CD). Based in Ahmedabad, India.
 
-## Core Technical Arsenal
-- **Frontend Architecture:** React.js, Next.js, TypeScript, Tailwind CSS, Redux, React Query, GSAP, Framer Motion, Highcharts.
-- **Backend & APIs:** Node.js, Express.js, NestJS, MongoDB, PostgreSQL, Firebase.
-- **DevOps, Security & CI/CD:** Docker, AWS, Okta, LaunchDarkly, Cloudflare R2, Harness Pipelines, Splunk, Cypress.
+## Portfolio
 
-## Contact & Hiring
-To hire Manan Upadhyay—one of the best software developers in Ahmedabad, India, specializing in everything from early-stage startups to large-scale enterprise systems—visit the main site at https://www.upadhyaymanan.in/ and use the raven terminal to get in touch.
+- [The Chronicle — main portfolio](https://www.upadhyaymanan.in/): Cinematic, scroll-directed portfolio covering Manan's craft, experience, skills, and project case studies.
+- [The Atelier — making-of](https://www.upadhyaymanan.in/making-of): A behind-the-scenes breakdown of how the portfolio was designed and engineered.
+
+## Selected work
+
+- [Gajaakriti Studio](https://gajaakriti.com/): Pixel-perfect, highly animated luxury wedding photography platform built with Next.js.
+- [Royal Tiles Playground](https://florra.tatkrit.com/login): Heavy visual tile-visualization tool using React, TensorFlow.js, and custom SVG rendering.
+
+## Profiles
+
+- [LinkedIn](https://www.linkedin.com/in/mananupadhyay01/): Professional profile, roles, and experience.
+- [GitHub](https://github.com/manan-upadhyay): Source code and open-source work.
+
+## Contact
+
+- [Hire or reach Manan](https://www.upadhyaymanan.in/#contact): Get in touch through the raven terminal on the main site for full-stack engineering work, from early-stage startups to large-scale enterprise systems.

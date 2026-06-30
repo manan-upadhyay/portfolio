@@ -49,6 +49,7 @@ export const CONFIG = {
     arsenal: { peak: 0.12, sample: '/sounds/arsenal.mp3' },  // Arsenal ambience loop
     lens: { peak: 0.025 },    // face-particle magic-lantern hover buzz
     orbit: { peak: 0.45 },   // observatory constellation hover buzz (sibling, not same)
+    reel: { peak: 0.16 },     // director's-reel film-transport whir (velocity-driven)
   },
   raven: '/sounds/raven.mp3',       // Contact-send raven (one-shot sample)
 };
@@ -510,6 +511,54 @@ const orbit = makeBed({
   },
 });
 
+// Director's-reel film transport — the sound of dragging film across a gate:
+// a sliding hiss (noise → bandpass) + a low motor hum + a touch of flutter/wow,
+// all behind a motion gate that is SILENT at rest and swells with scrub velocity.
+// Driven live by the reel's playhead speed via setSpeed(posUnitsPerSec); the
+// faster you scrub, the louder + brighter the transport. Built once on first
+// interaction; setSpeed(0) at rest keeps it inaudible without tearing down.
+const REEL_FULL_SPEED = 2.4;  // pos-units/sec at which the whir reaches full
+const reel = makeBed({
+  peak: CONFIG.beds.reel.peak,
+  build: () => {
+    const g = ctx.createGain(); g.gain.value = 0.0001;
+    const motion = ctx.createGain(); motion.gain.value = 0.0001; // gate: silent until moving
+
+    const src = ctx.createBufferSource(); src.buffer = noise; src.loop = true;
+    const bp = ctx.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 1700; bp.Q.value = 0.8;
+    const hissG = ctx.createGain(); hissG.gain.value = 0.6;
+    src.connect(bp).connect(hissG).connect(motion);
+
+    const motor = ctx.createOscillator(); motor.type = 'sawtooth'; motor.frequency.value = 72;
+    const motorLp = ctx.createBiquadFilter(); motorLp.type = 'lowpass'; motorLp.frequency.value = 150; motorLp.Q.value = 0.5;
+    const motorG = ctx.createGain(); motorG.gain.value = 0.16;
+    motor.connect(motorLp).connect(motorG).connect(motion);
+
+    const flutter = ctx.createOscillator(); flutter.type = 'sine'; flutter.frequency.value = 8;
+    const flutterG = ctx.createGain(); flutterG.gain.value = 140;
+    flutter.connect(flutterG).connect(bp.frequency);
+
+    motion.connect(g).connect(master);
+    [motor, flutter].forEach((o) => o.start()); src.start();
+    return {
+      gain: g,
+      setSpeed(v) {
+        const s = Math.min(Math.abs(v) / REEL_FULL_SPEED, 1);
+        const t = now();
+        motion.gain.setTargetAtTime(0.0001 + s, t, 0.05);
+        bp.frequency.setTargetAtTime(1100 + s * 2800, t, 0.05); // brighter the faster you scrub
+      },
+      stop() {
+        const t = now();
+        g.gain.setTargetAtTime(0.0001, t, 0.2);
+        try { src.stop(t + 0.6); } catch { /* already stopped */ }
+        [motor, flutter].forEach((o) => { try { o.stop(t + 0.6); } catch { /* already stopped */ } });
+        setTimeout(() => { [src, bp, hissG, motor, motorLp, motorG, flutter, flutterG, motion, g].forEach((nd) => nd.disconnect()); }, 800);
+      },
+    };
+  },
+});
+
 /** Preload both ambient-bed loop samples (graceful if absent). */
 function loadBeds() {
   hum.loadSample();
@@ -529,6 +578,7 @@ function unlock() {
   watch.refresh();
   lens.refresh();
   orbit.refresh();
+  reel.refresh();
   // On the very first unlock, fire any one-shot listeners (e.g. the hero spins
   // the astrolabe so the visitor is rewarded with the synced gear sound the
   // instant audio becomes legal — see Hero.jsx). Each runs at most once.
@@ -579,6 +629,7 @@ function setEnabled(v) {
   watch.refresh();
   lens.refresh();
   orbit.refresh();
+  reel.refresh();
 }
 
 function setVolume(v) {
@@ -617,6 +668,7 @@ export const sound = {
   watch,
   lens,
   orbit,
+  reel,
   reduceMotion,
 };
 

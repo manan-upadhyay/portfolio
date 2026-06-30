@@ -222,7 +222,7 @@ export default {
         'Moo moo moo moo moo. Moo moo moo, moo moo moo, moo moo ← →. Moo moo moo moo moo.',
       scene: 'Moo',
       commits: 'moo',
-      hint: 'moo · moo moo · ← → moo',
+      hint: 'moo moo moo moo · moo moo · ← → moo',
       aria: 'Moo moo moo moo',
       prev: 'Moo moo',
       next: 'Moo moo',

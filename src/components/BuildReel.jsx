@@ -1,85 +1,178 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion, useReducedMotion } from 'framer-motion';
-import { Sparkles, Map, LayoutGrid, Route, Drama, CloudSun, Fingerprint, Feather, Gem, Activity, ChevronLeft, ChevronRight } from 'lucide-react';
-import { playCue } from '../lib/sound';
+import { Sparkles, Map, LayoutGrid, Route, Drama, CloudSun, Fingerprint, Feather, Gem, Activity, ChevronLeft, ChevronRight, MoveHorizontal } from 'lucide-react';
+import { playCue, sound } from '../lib/sound';
 import { trackOnce } from '../lib/analytics';
 
 /**
- * BuildReel — "The Director's Reel." The build, told as a film in nine scenes
- * (one per day). The visitor is the editor: there is NO auto-play. A draggable
- * playhead scrubs a film strip, frames are clickable, and ← → keys step through.
- * Whatever scene the playhead lands on snaps into the "monitor" above, large and
- * readable, one at a time. A single soft cue fires per scene change (time-gated
- * so a fast drag ratchets gently instead of bursting).
+ * BuildReel — "The Director's Reel." The build, told as a film, one scene per day.
  *
- * Leans into the filmmaker identity (sprocketed strip, scene slate, frame
- * counter). Pure DOM/CSS + Framer Motion — crisp text, fully keyboard-operable,
- * touch-friendly (horizontal scrub, vertical page-scroll preserved), and static
- * under prefers-reduced-motion.
+ * Interaction (revamped): a continuous, physics-eased playhead. On desktop the
+ * playhead simply FOLLOWS the cursor across the strip — no click or drag required
+ * (the whole point is instant discoverability); on touch you slide a finger across
+ * it. The playhead springs toward the pointer with weight, and its live velocity
+ * drives a film-transport whir (sound.reel) while crossing frames ticks a sprocket
+ * detent and coming to rest thunks a settle. On first scroll-into-view it does a
+ * one-time auto-sweep so the motion itself advertises "you can move this."
+ *
+ * Pure DOM/CSS + a single rAF that runs ONLY while moving (then stops): the
+ * playhead position is written straight to the DOM (no per-frame React render);
+ * only the active scene index is state. Keyboard (slider role, ← → / Home / End),
+ * frame clicks, reduced-motion (instant, silent) and touch are all handled.
  *
  * Props:
  *  - data: [{ id, day, commits, glyph }] (from constants.atelier.reel)
  */
 const GLYPHS = { sparkles: Sparkles, map: Map, grid: LayoutGrid, route: Route, drama: Drama, sky: CloudSun, fingerprint: Fingerprint, feather: Feather, gem: Gem, activity: Activity };
 const pad2 = (x) => String(x).padStart(2, '0');
+const clamp = (x, a, b) => Math.max(a, Math.min(b, x));
 
 const BuildReel = ({ data }) => {
   const { t } = useTranslation();
   const reduce = useReducedMotion();
   const n = data.length;
   const [active, setActive] = useState(0);
-  const [dragging, setDragging] = useState(false);
-  const trackRef = useRef(null);
-  const activeRef = useRef(0);   // mirror of `active` (avoids stale closures)
-  const lastCue = useRef(0);     // timestamp gate so scrubbing never bursts sound
 
-  const select = (idx, cue = true) => {
-    const i = Math.max(0, Math.min(n - 1, idx));
-    if (i === activeRef.current) return;
-    trackOnce('buildreel_scrub', 'buildreel_scrub'); // did they direct the reel? (any frame change)
-    activeRef.current = i;
-    setActive(i);
-    if (cue) {
-      // A sprocket detent per frame crossed; time-gated so a fast drag ratchets
-      // (tick-tick-tick) instead of bursting — the sound of dragging a pin across
-      // a film strip, not a melody.
+  const rootRef = useRef(null);
+  const trackRef = useRef(null);
+  const playheadRef = useRef(null);
+  const fillRef = useRef(null);
+
+  const pos = useRef(0.5 / n);       // smoothed playhead position 0..1
+  const target = useRef(0.5 / n);    // where the pointer wants it
+  const prevPos = useRef(pos.current);
+  const raf = useRef(0);
+  const running = useRef(false);
+  const activeRef = useRef(0);
+  const lastCue = useRef(0);
+  const restFrames = useRef(0);
+  const moved = useRef(false);       // moved since last rest → play a settle
+  const bedUp = useRef(false);
+  const rect = useRef(null);
+  const introDone = useRef(false);
+  const introTimer = useRef(0);
+
+  const ease = reduce ? 1 : 0.2;
+
+  const ensureBed = () => { if (!bedUp.current) { bedUp.current = true; sound.reel.setLevel(1); } };
+
+  const writeDOM = () => {
+    if (playheadRef.current) playheadRef.current.style.left = `${pos.current * 100}%`;
+    if (fillRef.current) fillRef.current.style.transform = `scaleX(${pos.current})`;
+  };
+
+  const syncActive = () => {
+    const i = clamp(Math.floor(pos.current * n), 0, n - 1);
+    if (i !== activeRef.current) {
+      activeRef.current = i;
+      setActive(i);
+      trackOnce('buildreel_scrub', 'buildreel_scrub'); // did they direct the reel?
       const now = performance.now();
-      if (now - lastCue.current > 70) { playCue('detent'); lastCue.current = now; }
+      if (now - lastCue.current > 55) { playCue('detent'); lastCue.current = now; } // sprocket tick
     }
   };
 
-  const idxFromEvent = (e) => {
-    const el = trackRef.current;
-    if (!el) return 0;
-    const r = el.getBoundingClientRect();
-    return Math.floor(((e.clientX - r.left) / r.width) * n);
+  const loop = () => {
+    const tgt = target.current;
+    const next = pos.current + (tgt - pos.current) * ease;
+    pos.current = next;
+    const vel = next - prevPos.current;   // pos-units per frame
+    prevPos.current = next;
+    writeDOM();
+    syncActive();
+    if (!reduce) sound.reel.setSpeed(vel * 60); // → pos-units/sec drives the whir
+    if (Math.abs(vel) > 0.0008) moved.current = true;
+
+    const atRest = Math.abs(tgt - next) < 0.0006 && Math.abs(vel) < 0.0004;
+    if (atRest) {
+      restFrames.current += 1;
+      if (restFrames.current > 3) {            // settle → snap, hush the whir, STOP
+        pos.current = tgt; writeDOM(); syncActive();
+        sound.reel.setSpeed(0);
+        if (moved.current) { playCue('settle'); moved.current = false; }
+        running.current = false;
+        return;
+      }
+    } else restFrames.current = 0;
+    raf.current = requestAnimationFrame(loop);
   };
 
-  const onDown = (e) => { setDragging(true); trackRef.current?.setPointerCapture?.(e.pointerId); select(idxFromEvent(e)); };
-  const onMove = (e) => { if (dragging) select(idxFromEvent(e)); };
-  const onUp = (e) => {
-    if (dragging) playCue('settle'); // the strip coming to rest under the playhead
-    setDragging(false);
-    trackRef.current?.releasePointerCapture?.(e.pointerId);
+  const ensureLoop = () => {
+    if (running.current) return;
+    running.current = true;
+    restFrames.current = 0;
+    raf.current = requestAnimationFrame(loop);
   };
+
+  const updateRect = () => { rect.current = trackRef.current?.getBoundingClientRect() || null; };
+  const aimAtX = (clientX) => {
+    const r = rect.current || trackRef.current?.getBoundingClientRect();
+    if (!r) return;
+    target.current = clamp((clientX - r.left) / r.width, 0, 1);
+    ensureBed();
+    ensureLoop();
+  };
+  const aimAtFrame = (i) => {
+    target.current = (clamp(i, 0, n - 1) + 0.5) / n;
+    ensureBed();
+    ensureLoop();
+  };
+
+  const onEnter = () => updateRect();                 // cache geometry, don't grab yet
+  const onMove = (e) => aimAtX(e.clientX);            // hover (desktop) / drag (touch)
+  const onDown = (e) => { updateRect(); trackRef.current?.setPointerCapture?.(e.pointerId); aimAtX(e.clientX); };
+  const onUp = (e) => trackRef.current?.releasePointerCapture?.(e.pointerId);
   const onKey = (e) => {
-    if (e.key === 'ArrowRight') { e.preventDefault(); select(active + 1); }
-    else if (e.key === 'ArrowLeft') { e.preventDefault(); select(active - 1); }
-    else if (e.key === 'Home') { e.preventDefault(); select(0); }
-    else if (e.key === 'End') { e.preventDefault(); select(n - 1); }
+    if (e.key === 'ArrowRight') { e.preventDefault(); aimAtFrame(activeRef.current + 1); }
+    else if (e.key === 'ArrowLeft') { e.preventDefault(); aimAtFrame(activeRef.current - 1); }
+    else if (e.key === 'Home') { e.preventDefault(); aimAtFrame(0); }
+    else if (e.key === 'End') { e.preventDefault(); aimAtFrame(n - 1); }
   };
+
+  // First reveal: a one-time auto-sweep to the end and back — the motion teaches
+  // the interaction. Skipped (static) under reduced-motion. Cleans up everything.
+  useEffect(() => {
+    writeDOM();
+    const root = rootRef.current;
+    if (!root) return undefined;
+    const onResize = () => updateRect();
+    window.addEventListener('resize', onResize);
+
+    let io = null;
+    if (!reduce) {
+      io = new IntersectionObserver((ents) => {
+        if (ents.some((e) => e.isIntersecting) && !introDone.current) {
+          introDone.current = true;
+          ensureBed();
+          target.current = (n - 0.5) / n;           // sweep to the last scene…
+          ensureLoop();
+          introTimer.current = window.setTimeout(() => { target.current = 0.5 / n; ensureLoop(); }, 950); // …then back to scene 1
+          io.disconnect();
+        }
+      }, { threshold: 0.4 });
+      io.observe(root);
+    }
+    return () => {
+      window.removeEventListener('resize', onResize);
+      io?.disconnect();
+      clearTimeout(introTimer.current);
+      cancelAnimationFrame(raf.current);
+      running.current = false;
+      sound.reel.stop();
+      bedUp.current = false;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [reduce, n]);
 
   const scene = data[active];
   const Glyph = GLYPHS[scene.glyph] ?? Sparkles;
   const sceneTitle = t(`atelier.reel.scenes.${scene.id}.title`);
-  const playheadPct = ((active + 0.5) / n) * 100;
 
   return (
-    <div className="reel">
+    <div className="reel" ref={rootRef}>
       {/* the monitor — a viewfinder framing the scene under the playhead */}
       <div className="reel__monitor">
-        {/* cinematic chrome: framing brackets, vignette, scanlines (decorative) */}
         <span className="reel__corner reel__corner--tl" aria-hidden="true" />
         <span className="reel__corner reel__corner--tr" aria-hidden="true" />
         <span className="reel__corner reel__corner--bl" aria-hidden="true" />
@@ -92,9 +185,8 @@ const BuildReel = ({ data }) => {
           <span className="reel__scene-meta exp-mono">{scene.day} · {scene.commits} {t('atelier.reel.commits')}</span>
         </div>
 
-        {/* All scenes are grid-stacked in one cell, so the monitor always reserves
-            the tallest scene's height — scrubbing never reflows the page. Only the
-            active scene is visible; the rest are inert sizers. */}
+        {/* Scenes are grid-stacked in one cell → the monitor reserves the tallest
+            scene's height, so scrubbing never reflows the page (no layout shift). */}
         <div className="reel__monitor-body">
           {data.map((s, i) => {
             const SG = GLYPHS[s.glyph] ?? Sparkles;
@@ -117,11 +209,11 @@ const BuildReel = ({ data }) => {
         </div>
       </div>
 
-      {/* the film strip — the scrubber */}
+      {/* the film transport — move across it to scrub */}
       <div className="reel__strip">
         <div
           ref={trackRef}
-          className={`reel__track${dragging ? ' is-dragging' : ''}`}
+          className="reel__track"
           role="slider"
           tabIndex={0}
           aria-label={t('atelier.reel.aria')}
@@ -129,12 +221,14 @@ const BuildReel = ({ data }) => {
           aria-valuemax={n}
           aria-valuenow={active + 1}
           aria-valuetext={`${sceneTitle} — ${scene.day}`}
-          onPointerDown={onDown}
+          onPointerEnter={onEnter}
           onPointerMove={onMove}
+          onPointerDown={onDown}
           onPointerUp={onUp}
           onPointerCancel={onUp}
           onKeyDown={onKey}
         >
+          <span className="reel__fill" ref={fillRef} aria-hidden="true" />
           {data.map((s, i) => {
             const FG = GLYPHS[s.glyph] ?? Sparkles;
             return (
@@ -144,7 +238,7 @@ const BuildReel = ({ data }) => {
                 tabIndex={-1}
                 aria-hidden="true"
                 className={`reel__frame${i === active ? ' is-active' : ''}${i < active ? ' is-past' : ''}`}
-                onClick={() => select(i)}
+                onClick={() => aimAtFrame(i)}
               >
                 <span className="reel__frame-no exp-mono">{pad2(i + 1)}</span>
                 <span className="reel__frame-glyph"><FG size={15} strokeWidth={1.5} /></span>
@@ -152,21 +246,21 @@ const BuildReel = ({ data }) => {
               </button>
             );
           })}
-          <motion.span
-            className="reel__playhead"
-            aria-hidden="true"
-            animate={{ left: `${playheadPct}%` }}
-            transition={reduce ? { duration: 0 } : { type: 'spring', stiffness: 420, damping: 34 }}
-          />
+          <span className="reel__playhead" ref={playheadRef} aria-hidden="true">
+            <span className="reel__playhead-knob" />
+          </span>
         </div>
       </div>
 
       <div className="reel__hint">
-        <button type="button" className="reel__nav" onClick={() => select(active - 1)} disabled={active === 0} aria-label={t('atelier.reel.prev')}>
+        <button type="button" className="reel__nav" onClick={() => aimAtFrame(activeRef.current - 1)} disabled={active === 0} aria-label={t('atelier.reel.prev')}>
           <ChevronLeft size={16} />
         </button>
-        <span className="reel__hint-text exp-mono">{t('atelier.reel.hint')}</span>
-        <button type="button" className="reel__nav" onClick={() => select(active + 1)} disabled={active === n - 1} aria-label={t('atelier.reel.next')}>
+        <span className="reel__hint-text exp-mono">
+          <MoveHorizontal className="reel__hint-ptr" size={14} aria-hidden="true" />
+          {t('atelier.reel.hint')}
+        </span>
+        <button type="button" className="reel__nav" onClick={() => aimAtFrame(activeRef.current + 1)} disabled={active === n - 1} aria-label={t('atelier.reel.next')}>
           <ChevronRight size={16} />
         </button>
       </div>

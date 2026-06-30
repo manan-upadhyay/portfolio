@@ -427,7 +427,7 @@ export default {
         'Drag the playhead, click a frame, or use the arrow keys to move through the build one scene at a time.',
       scene: 'Scene',
       commits: 'commits',
-      hint: 'drag the strip · click a frame · ← → to step',
+      hint: 'move across to scrub · click a frame · ← → to step',
       aria: 'The build, scene by scene',
       prev: 'Previous scene',
       next: 'Next scene',

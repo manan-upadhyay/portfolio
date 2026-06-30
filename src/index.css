@@ -1994,67 +1994,99 @@ h1, h2, h3, h4, h5, h6 {
   max-width: 56ch;
 }
 
-/* the film strip — sprocketed scrubber */
-.reel__strip { position: relative; }
+/* the film transport — a continuous-scrub strip (move across to drive the playhead) */
+.reel__strip { position: relative; padding-top: 4px; }
 .reel__track {
   position: relative;
+  height: 78px;
+  box-sizing: border-box;
   display: flex;
-  gap: 6px;
-  padding: 12px 0;
+  gap: 4px;
+  padding: 14px 6px;
+  border-radius: 11px;
+  border: 1px solid var(--color-card-border);
+  background:
+    linear-gradient(to bottom, rgba(0,0,0,0.18), transparent 24%, transparent 76%, rgba(0,0,0,0.18)),
+    rgba(var(--color-ember-rgb), 0.03);
   touch-action: pan-y;       /* horizontal scrub is ours; vertical scroll passes through */
   outline: none;
-  cursor: pointer;
+  cursor: ew-resize;          /* signals horizontal scrubbing */
   user-select: none;
+  overflow: hidden;
 }
-.reel__track.is-dragging { cursor: grabbing; }
-.reel__track:focus-visible { box-shadow: 0 0 0 2px rgba(var(--color-ember-rgb), 0.5); border-radius: 10px; }
-/* perforation rows top + bottom (film sprockets) */
+.reel__track:focus-visible { box-shadow: 0 0 0 2px rgba(var(--color-gold-rgb), 0.55); }
+/* running sprocket perforations top + bottom — film threaded through a gate */
 .reel__track::before, .reel__track::after {
-  content: ""; position: absolute; left: 0; right: 0; height: 5px;
-  background-image: repeating-linear-gradient(to right, var(--color-card-border) 0 6px, transparent 6px 15px);
-  opacity: 0.55; pointer-events: none;
+  content: ""; position: absolute; left: 0; right: 0; height: 6px;
+  background-image: repeating-linear-gradient(to right, var(--color-card-border) 0 5px, transparent 5px 14px);
+  background-size: 14px 6px;
+  opacity: 0.5; pointer-events: none;
+  animation: reel-sprockets 0.9s linear infinite;
 }
-.reel__track::before { top: 1px; }
-.reel__track::after { bottom: 1px; }
+.reel__track::before { top: 2px; }
+.reel__track::after { bottom: 2px; }
+@keyframes reel-sprockets { to { background-position-x: -14px; } }
 
-.reel__frame {
-  position: relative;
-  flex: 1 1 0;
-  min-width: 0;
-  display: flex; flex-direction: column; align-items: center; gap: 4px;
-  padding: 11px 4px;
-  border-radius: 8px;
-  border: 1px solid var(--color-card-border);
-  background: rgba(var(--color-ember-rgb), 0.03);
-  color: var(--color-text-muted);
-  transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease, transform 0.2s ease;
-}
-.reel__frame.is-past { color: var(--color-text); border-color: rgba(var(--color-ember-rgb), 0.22); }
-.reel__frame.is-active {
-  color: var(--color-text);
-  border-color: rgba(var(--color-gold-rgb), 0.6);
-  background: rgba(var(--color-ember-rgb), 0.12);
-  transform: translateY(-2px);
-  box-shadow: 0 0 0 1px rgba(var(--color-gold-rgb), 0.3), 0 10px 22px -14px rgba(0, 0, 0, 0.6);
-}
-.reel__frame-no { font-size: 10px; letter-spacing: 0.1em; }
-.reel__frame-glyph { opacity: 0.75; }
-.reel__frame.is-active .reel__frame-glyph { color: var(--color-ember); opacity: 1; }
-.reel__frame-day { font-size: 9px; letter-spacing: 0.03em; }
-@media (max-width: 560px) { .reel__frame-day { display: none; } .reel__frame { padding: 12px 2px; } }
-
-.reel__playhead {
-  position: absolute;
-  top: 4px; bottom: 4px;
-  width: 2px;
-  transform: translateX(-50%);
-  background: linear-gradient(to bottom, transparent, var(--color-gold), transparent);
-  box-shadow: 0 0 8px rgba(var(--color-gold-rgb), 0.7);
+/* progress fill — how far through the build you've scrubbed (behind the frames) */
+.reel__fill {
+  position: absolute; left: 0; top: 0; bottom: 0; width: 100%;
+  transform-origin: left center; transform: scaleX(0);
+  background: linear-gradient(90deg, rgba(var(--color-ember-rgb), 0.10), rgba(var(--color-gold-rgb), 0.18));
   pointer-events: none;
 }
 
+.reel__frame {
+  position: relative; z-index: 1;
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  color: var(--color-text-muted);
+  transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+.reel__frame.is-past { color: var(--color-text); }
+.reel__frame.is-active {
+  color: var(--color-text);
+  border-color: rgba(var(--color-gold-rgb), 0.5);
+  background: rgba(var(--color-ember-rgb), 0.12);
+  transform: translateY(-1px);
+}
+.reel__frame-no { font-size: 10px; letter-spacing: 0.1em; }
+.reel__frame-glyph { opacity: 0.7; }
+.reel__frame.is-active .reel__frame-glyph { color: var(--color-ember); opacity: 1; }
+.reel__frame-day { font-size: 9px; letter-spacing: 0.03em; }
+@media (max-width: 560px) { .reel__frame-day { display: none; } }
+
+/* the playhead — a glowing line with a grabbable thumb (signals "move me") */
+.reel__playhead {
+  position: absolute;
+  top: 0; bottom: 0; left: 0;
+  width: 2px; z-index: 3;
+  transform: translateX(-50%);
+  background: linear-gradient(to bottom, transparent, var(--color-gold), transparent);
+  box-shadow: 0 0 10px rgba(var(--color-gold-rgb), 0.8);
+  pointer-events: none;
+  will-change: left;
+}
+.reel__playhead-knob {
+  position: absolute; top: 50%; left: 50%;
+  width: 14px; height: 14px;
+  transform: translate(-50%, -50%);
+  border-radius: 9999px;
+  background: var(--color-gold);
+  box-shadow: 0 0 0 3px rgba(var(--color-gold-rgb), 0.18), 0 0 12px rgba(var(--color-gold-rgb), 0.6);
+  animation: reel-knob-pulse 2.4s ease-in-out infinite;
+}
+@keyframes reel-knob-pulse {
+  0%, 100% { box-shadow: 0 0 0 3px rgba(var(--color-gold-rgb), 0.18), 0 0 12px rgba(var(--color-gold-rgb), 0.55); }
+  50%      { box-shadow: 0 0 0 6px rgba(var(--color-gold-rgb), 0.06), 0 0 16px rgba(var(--color-gold-rgb), 0.7); }
+}
+
 .reel__hint { display: flex; align-items: center; justify-content: center; gap: 14px; }
-.reel__hint-text { font-size: 10.5px; letter-spacing: 0.04em; color: var(--color-text-muted); }
+.reel__hint-text { display: inline-flex; align-items: center; gap: 8px; font-size: 10.5px; letter-spacing: 0.04em; color: var(--color-text-muted); }
+.reel__hint-ptr { color: var(--color-gold); animation: reel-ptr 1.8s ease-in-out infinite; }
+@keyframes reel-ptr { 0%, 100% { transform: translateX(-3px); } 50% { transform: translateX(3px); } }
 .reel__nav {
   display: inline-flex;
   padding: 6px;
@@ -2066,6 +2098,11 @@ h1, h2, h3, h4, h5, h6 {
 }
 .reel__nav:hover:not(:disabled) { background: rgba(var(--color-ember-rgb), 0.12); border-color: rgba(var(--color-ember-rgb), 0.4); }
 .reel__nav:disabled { opacity: 0.35; cursor: default; }
+
+@media (prefers-reduced-motion: reduce) {
+  .reel__track::before, .reel__track::after,
+  .reel__playhead-knob, .reel__hint-ptr { animation: none; }
+}
 
 /* ── Off the map — the persona triptych ── */
 .persona-triptych {

@@ -289,7 +289,7 @@ export default {
         'Grab the slider, click a scene, hit the arrow keys. Take your time. It’s art.',
       scene: 'Scene',
       commits: 'saves',
-      hint: 'drag it · click a scene · ← → to step',
+      hint: 'just slide across it · click a scene · ← → to step',
       aria: 'The movie of me building this',
       prev: 'Previous scene',
       next: 'Next scene',

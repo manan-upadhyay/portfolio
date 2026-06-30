@@ -287,7 +287,7 @@ export default {
         'This footage does not advance on its own. Drag the marker, select a frame, or use the arrow keys. A leader controls the playback. Proceed.',
       scene: 'Operation',
       commits: 'commits',
-      hint: 'drag · select a frame · ← → to advance',
+      hint: 'glide across to scrub · select a frame · ← → to advance',
       aria: 'The build, operation by operation',
       prev: 'Previous operation',
       next: 'Next operation',

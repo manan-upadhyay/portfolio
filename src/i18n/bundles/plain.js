@@ -219,7 +219,7 @@ export default {
         'Drag the marker, click a day, or use the arrow keys to step through what shipped, one day at a time.',
       scene: 'Day',
       commits: 'commits',
-      hint: 'drag · click a day · ← → to step',
+      hint: 'move across to scrub · click a day · ← → to step',
       aria: 'The build, day by day',
       prev: 'Previous day',
       next: 'Next day',

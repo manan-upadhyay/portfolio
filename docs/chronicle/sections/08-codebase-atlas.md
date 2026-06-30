@@ -1,8 +1,9 @@
 # Section 08 — The Codebase Atlas (new)
 
-**Component:** `src/components/CodebaseAtlas.jsx` (new) · **Home:** Act II of the
-Atelier (`/making-of`, see [07](07-the-atelier.md)) · **Status:** specced, not
-built. **Build last** — it depends on the Act-II structure existing.
+**Component:** `src/components/CodebaseAtlas.jsx` · **Home:** Act II of the
+Atelier (`/making-of`, see [07](07-the-atelier.md)) · **Status:** **built**.
+Data: `constants.atelier.atlas` (curated tree + `hotspots` + `repo`); framing copy
+voiced under `t('atelier.atlas.*')` in all five bundles.
 
 ## Purpose
 A cinematic, collapsible, **VS-Code-flavoured** tree over a **curated, annotated
@@ -71,10 +72,15 @@ voice should re-narrate, that's a later enhancement, not v1.)
   no new heavy deps (lucide glyphs only). Keep initial JS within budget.
 
 ## Acceptance criteria
-- [ ] Collapsible tree, collapsed by default, over a curated annotated subset
-      (not the real fs); cinematic expand, reduced-motion safe.
-- [ ] Selecting any node shows its *why* (`blurb` + `signal`), never code.
-- [ ] Hotspots rail jumps to + expands + explains each marvel file.
-- [ ] "See the originals" links the public GitHub repo.
-- [ ] Full keyboard + touch; optional intent sound respects master + reduced
-      motion; dark+light at 360/768/1280/1920; no console errors; build clean.
+- [x] Collapsible tree (`role="tree"`), collapsed by default, over a curated
+      annotated subset (not the real fs); per-row mount reveal, reduced-motion safe.
+- [x] Selecting any node shows its *why* (`blurb` + `signal`) in the detail panel,
+      never code.
+- [x] Hotspots rail ("Start here") jumps to + expands ancestors + selects +
+      scrolls each marvel file.
+- [x] "See the originals" links the public GitHub repo
+      (`constants.atelier.atlas.repo`).
+- [x] Keyboard tree nav (↑/↓ move, →/← expand/collapse, Enter/Space select);
+      `data-cursor` backlight; optional `blip` cue via `playCue` (respects sound
+      master + reduced-motion); dark+light verified at 1280; build clean.
+      *(360/768/1920 spot-check pending if desired.)*

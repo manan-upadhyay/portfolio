@@ -2627,11 +2627,9 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* ── The Codebase Atlas — a VS-Code-flavoured tree in starlit tokens ── */
-.atlas { display: grid; gap: 18px; --atlas-h: 60vh; }
+.atlas { display: grid; gap: 18px; }
 @media (min-width: 860px) {
-  /* both columns share one height so the tree scrolls within the side column's
-     frame instead of clipping or overrunning it */
-  .atlas { grid-template-columns: minmax(0, 1fr) minmax(0, 300px); gap: 24px; align-items: start; --atlas-h: clamp(440px, 60vh, 580px); }
+  .atlas { grid-template-columns: minmax(0, 1fr) minmax(0, 300px); gap: 24px; align-items: start; }
 }
 
 /* the tree */
@@ -2640,7 +2638,6 @@ h1, h2, h3, h4, h5, h6 {
   border-radius: 14px;
   background: var(--color-card-bg);
   padding: 9px 7px;
-  max-height: var(--atlas-h);
   overflow-y: auto;
   overscroll-behavior: contain;
   display: flex;
@@ -2678,12 +2675,10 @@ h1, h2, h3, h4, h5, h6 {
   box-shadow: 0 0 6px var(--color-ember);
 }
 
-/* the side column — detail + hotspots + repo. On desktop it owns the shared
-   height; the detail panel flexes so the rail + repo anchor to the bottom and
-   the column lines up exactly with the (scrolling) tree. */
+/* the side column — detail + hotspots + repo. */
 .atlas__side { display: flex; flex-direction: column; gap: 14px; }
 @media (min-width: 860px) {
-  .atlas__side { position: sticky; top: 90px; height: var(--atlas-h); }
+  .atlas__side { position: sticky; top: 90px; }
   .atlas__detail { flex: 1 1 auto; overflow-y: auto; }
 }
 .atlas__detail {

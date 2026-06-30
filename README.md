@@ -75,3 +75,5 @@ copy, brand, and "The Chronicle" narrative are proprietary work of Manan
 Upadhyay. Read it and learn from it — but copying, forking-and-reskinning, or
 reusing it as a starting point for another site is not permitted. See
 [`LICENSE`](./LICENSE) for the full terms and how to request permission.
+
+<!-- Trigger deployment - 30 June 2026 11:13 AM -->

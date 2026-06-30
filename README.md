@@ -66,3 +66,12 @@ RESEND_FROM="Name <hi@domain.com>" # verified sender (onboarding@resend.dev for 
 
 Locally, `npm run dev` serves `POST /api/send-raven` via a Vite middleware that
 runs the same handler Vercel uses in production.
+
+## License
+
+**All rights reserved.** This repository is published publicly for demonstration
+and portfolio review, **not** as a template or for reuse. The source, design,
+copy, brand, and "The Chronicle" narrative are proprietary work of Manan
+Upadhyay. Read it and learn from it — but copying, forking-and-reskinning, or
+reusing it as a starting point for another site is not permitted. See
+[`LICENSE`](./LICENSE) for the full terms and how to request permission.

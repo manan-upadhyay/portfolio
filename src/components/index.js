@@ -14,6 +14,7 @@ export { default as Magnet } from './Magnet';
 export { default as Marginalia, Annotated } from './Marginalia';
 export { default as MapDivider } from './MapDivider';
 export { default as MapOverlay } from './MapOverlay';
+export { default as Observatory } from './Observatory';
 export { default as PersonaTriptych } from './PersonaTriptych';
 export { default as RavenBurst } from './RavenBurst';
 export { default as RavenNotice } from './RavenNotice';

@@ -384,44 +384,47 @@ export const atelier = {
   // Headline instrument metrics. `value` is data; the label is voiced
   // (t('atelier.stats.<key>')). `count` cells animate via CountUp; literals
   // (e.g. "0 KB") render as-is. Sourced from `git log` + the file census:
-  //   commits → `git log --since=2026-06-20 --oneline | wc -l` (the revamp, 46)
-  //   lines   → `wc -l` of hand-written src/ (js/jsx/ts/css ≈ 11.7K)
+  //   commits → `git log --since=2026-06-20 --oneline | wc -l` (the revamp, 63)
+  //   lines   → `wc -l` of hand-written src/ (js/jsx/ts/css ≈ 13K)
   //   voices  → src/i18n/bundles/* (chronicle, plain, scott, dwight, cow)
   stats: [
-    { key: 'hours', value: '150+', count: true },
-    { key: 'commits', value: '46', count: true },
-    { key: 'phases', value: '6', count: true },
+    { key: 'hours', value: '200+', count: true },
+    { key: 'commits', value: '63', count: true },
+    { key: 'phases', value: '7', count: true },
     { key: 'voices', value: '5', count: true },
-    { key: 'lines', value: '11.7K', count: false },
+    { key: 'lines', value: '13K', count: false },
   ],
   // The build timeline — daily commit counts across the "Cartographer revamp"
-  // (Jun 20–28 2026, per `git log`). `done` flags the day the site was already a
+  // (Jun 20–30 2026, per `git log`). `done` flags the day the site was already a
   // presentable, cinematic build (Jun 23 — procedural hero, chapter canon, mobile
-  // pass) — everything after is the obsession arc (the six "wonder" phases), and
+  // pass) — everything after is the obsession arc (the seven "wonder" phases), and
   // Jun 27 is its peak: the Atelier, Voice Hall, raven burst, free-spin astrolabe
-  // and the /making-of route all landed that day. Drives the Canvas2D
-  // `BuildTimeline`; the flag label is voiced.
-  // "The Director's Reel" — the build told as a film in nine scenes, one per day.
+  // and the /making-of route all landed that day. The final scene (Jun 29–30) is
+  // the post-ship hardening: product analytics, structured-data SEO, the bespoke
+  // logger + console banner. Drives the Canvas2D `BuildTimeline`; the flag label
+  // is voiced.
+  // "The Director's Reel" — the build told as a film in ten scenes, one per day.
   // Each scene is a day's signature feature. `commits` are presented as a steady
-  // daily cadence (≈5/day, 46 total) rather than the raw lumpy git log. `glyph`
+  // daily cadence (≈6/day, 63 total) rather than the raw lumpy git log. `glyph`
   // keys a lucide icon in BuildReel.jsx; the act number is the array index + 1.
   // Voiced copy: t('atelier.reel.scenes.<id>.title' / '.blurb').
   reel: [
-    { id: 'foundation', day: 'Jun 20', commits: 5, glyph: 'sparkles' },
-    { id: 'canon', day: 'Jun 21', commits: 5, glyph: 'map' },
-    { id: 'realms', day: 'Jun 22', commits: 5, glyph: 'grid' },
-    { id: 'journey', day: 'Jun 23', commits: 5, glyph: 'route' },
-    { id: 'voice', day: 'Jun 24', commits: 6, glyph: 'drama' },
-    { id: 'sky', day: 'Jun 25', commits: 6, glyph: 'sky' },
-    { id: 'recap', day: 'Jun 26', commits: 5, glyph: 'fingerprint' },
-    { id: 'atelier', day: 'Jun 27', commits: 5, glyph: 'feather' },
-    { id: 'polish', day: 'Jun 28', commits: 4, glyph: 'gem' },
+    { id: 'foundation', day: 'Jun 20', commits: 6, glyph: 'sparkles' },
+    { id: 'canon', day: 'Jun 21', commits: 6, glyph: 'map' },
+    { id: 'realms', day: 'Jun 22', commits: 6, glyph: 'grid' },
+    { id: 'journey', day: 'Jun 23', commits: 6, glyph: 'route' },
+    { id: 'voice', day: 'Jun 24', commits: 7, glyph: 'drama' },
+    { id: 'sky', day: 'Jun 25', commits: 7, glyph: 'sky' },
+    { id: 'recap', day: 'Jun 26', commits: 6, glyph: 'fingerprint' },
+    { id: 'atelier', day: 'Jun 27', commits: 6, glyph: 'feather' },
+    { id: 'polish', day: 'Jun 28', commits: 6, glyph: 'gem' },
+    { id: 'observatory', day: 'Jun 29–30', commits: 7, glyph: 'activity' },
   ],
   // The ledger. `built` = the six shipped "wonder" phases; `cut` = the
   // senior-judgment column — things deliberately removed OR refused outright,
   // each with a real engineering payoff. ids key the voiced copy:
   // t('atelier.phases.<id>.title' / '.why') and t('atelier.cuts.<id>…').
-  built: ['voice', 'marginalia', 'sky', 'sound', 'recap', 'eggs'],
+  built: ['voice', 'marginalia', 'sky', 'sound', 'recap', 'eggs', 'telemetry'],
   // Lead with the architecture refusals (biggest payoff — bundle, perf, privacy),
   // then the two built-then-removed refinements.
   cut: ['assets', 'threejs', 'tracking', 'componentLib', 'statusLine', 'battery'],
@@ -437,11 +440,13 @@ export const atelier = {
     { id: 'map', icon: 'map' },
     { id: 'raven', icon: 'send' },
     { id: 'recap', icon: 'fingerprint' },
+    { id: 'console', icon: 'terminal' },
   ],
   // "Built with" — proper-noun tech names are data, rendered as chips.
   tech: [
     'React 18', 'Vite', 'GSAP · ScrollTrigger', 'Lenis', 'Framer Motion',
     'Zustand', 'i18next', 'Web Audio', 'Canvas2D', 'SunCalc', 'Resend',
+    'PostHog', 'Vercel Analytics', 'Speed Insights',
   ],
   // "Off the map" — the three sides of the person behind the build, as an
   // interactive triptych (PersonaTriptych). `glyph` keys a lucide icon; `chips`
@@ -452,6 +457,46 @@ export const atelier = {
     { id: 'filmmaker', glyph: 'clapper', chips: ['Short films', 'Cinematic edits', 'Framing & pacing'] },
     { id: 'wanderer', glyph: 'mountain', chips: ['Trekking', 'Serengeti', 'Off the grid'] },
   ],
+  // "The Observatory" — the senior-infrastructure showcase: product analytics,
+  // structured-data SEO, and observability, framed as one instrument. This is
+  // NON-COPY data only (real event names, counts, capability chips); every label
+  // is voiced under t('atelier.observatory.*'). Drives the Observatory component.
+  // Sourced from the live code:
+  //   events     → grep of track()/trackOnce()/capture() across src (33 named
+  //                product events; session_recap is the aggregating hub).
+  //   superProps → registerContext() in components/Layout.jsx (13 properties).
+  //   schemas    → JSON-LD @type blocks in index.html (WebSite, ProfilePage,
+  //                Person, Organization, PostalAddress).
+  //   dashboards → PostHog (funnels, cohorts, retention, weekly alerts).
+  observatory: {
+    // The instrument readouts — `value` is data; `count` cells animate via CountUp.
+    metrics: [
+      { key: 'events', value: '33', count: true },
+      { key: 'superProps', value: '13', count: true },
+      { key: 'dashboards', value: '5', count: true },
+      { key: 'schemas', value: '5', count: true },
+    ],
+    // The product-event constellation — the 33 named events grouped by the surface
+    // they instrument, all orbiting the `session_recap` hub. `names` are the real
+    // event ids (data); the group label is voiced (t('atelier.observatory.groups.<id>')).
+    constellation: {
+      hub: 'session_recap',
+      groups: [
+        { id: 'origin', names: ['hero_cta', 'section_view', 'scroll_depth', 'rail_nav', 'map_open', 'map_travel', 'shortcut_used'] },
+        { id: 'craft', names: ['astrolabe_spin', 'astrolabe_drag', 'sound_first_play', 'sound_toggled', 'theme_changed', 'voice_selected', 'voice_switcher_open', 'voice_hall_open', 'voice_unlocked', 'voice_summon_submit', 'buildreel_scrub'] },
+        { id: 'realms', names: ['carousel_open', 'works_show_all', 'project_link_open', 'arsenal_tools_hovered', 'atelier_view', 'persona_card_expand', 'expedition_view'] },
+        { id: 'intent', names: ['contact_form_start', 'contact_submit', 'contact_success', 'contact_error', 'email_copied', 'channel_open', 'inquiry_selected', 'resume_open'] },
+      ],
+    },
+    // The three instrument panels beneath the constellation. `glyph` keys a lucide
+    // icon in Observatory.jsx; `tags` are proper-noun capability chips (data).
+    // Voiced copy: t('atelier.observatory.panels.<id>.title' / '.body').
+    panels: [
+      { id: 'privacy', glyph: 'shield', tags: ['Cookieless', 'Anonymous', 'Do-Not-Track', 'Memory-only'] },
+      { id: 'discoverability', glyph: 'search', tags: ['JSON-LD ×5', 'Open Graph', 'Person · WebSite · ProfilePage', 'Knowledge Panel'] },
+      { id: 'observability', glyph: 'activity', tags: ['Structured logger', 'Console banner', 'Error capture', 'Speed Insights'] },
+    ],
+  },
 };
 
 // Education

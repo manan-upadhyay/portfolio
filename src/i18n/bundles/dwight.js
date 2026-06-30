@@ -44,7 +44,7 @@ export default {
     services: {
       frontend: { title: 'Interface Superiority', description: 'Production UIs with React, Next.js, TypeScript and reusable systems. The interface is the first line of defense. It will not fall.' },
       backend: { title: 'Core Infrastructure', description: 'Scalable APIs with Node, Express, NestJS, JWT/OAuth and RBAC. The foundation. Without it the structure collapses. Mine does not.' },
-      performance: { title: 'Maximum Efficiency', description: 'Code-splitting, caching, CDN, Core Web Vitals. Wasted time is weakness. I do not tolerate weakness.' },
+      performance: { title: 'Maximum Efficiency & Visibility', description: 'Code-splitting, caching, CDN, Core Web Vitals. Wasted time is weakness. I do not tolerate weakness. Structured-data SEO ensures the search engines file me correctly. Fast and findable.' },
       fullstack: { title: 'Total Command', description: 'End-to-end ownership, requisition to production monitoring. I control the entire chain. There are no gaps in my perimeter.' },
     },
     stats: {
@@ -278,10 +278,10 @@ export default {
     title: 'How This Was Constructed',
     confession: 'It met every standard. None of them were mine. Mine are higher.',
     confessionSub:
-      'The site was operational and presentable approximately twenty commits ago. It satisfied every external standard. External standards are for personnel who require supervision. I do not. I held it to the Schrute standard — which is absolute — and committed an additional one hundred and fifty hours to details no inspector would ever detect, because I detect them. My eye misses nothing. A bear can smell a beehive from three miles. I can smell a misaligned pixel from my desk. Both facts are relevant.',
+      'The site was operational and presentable approximately forty commits ago. It satisfied every external standard. External standards are for personnel who require supervision. I do not. I held it to the Schrute standard — which is absolute — and committed an additional two hundred hours to details no inspector would ever detect, because I detect them. I also installed surveillance: anonymous, cookieless telemetry that confirms which systems are in use. My eye misses nothing. A bear can smell a beehive from three miles. I can smell a misaligned pixel from my desk. Both facts are relevant.',
     reel: {
       title: 'The Surveillance Reel',
-      range: 'Jun 20 – 28 · 9 operations',
+      range: 'Jun 20 – 30 · 10 operations',
       caption:
         'This footage does not advance on its own. Drag the marker, select a frame, or use the arrow keys. A leader controls the playback. Proceed.',
       scene: 'Operation',
@@ -300,6 +300,7 @@ export default {
         recap: { title: 'Visitor Reconnaissance', blurb: 'A client-side panel that scans your device and uplink and pins your position. Nothing exfiltrated. This time.' },
         atelier: { title: 'The Schematics', blurb: 'This making-of, the Voice Hall, the free-spin alidade, and a flock of ravens dispatched on send.' },
         polish: { title: 'Final Inspection', blurb: 'Accessibility, reduced-motion protocols, a performance sweep, and the live transmission relay. No loose ends.' },
+        observatory: { title: 'The Surveillance Apparatus', blurb: 'After deployment I installed the watch: anonymous, cookieless telemetry confirming which systems are used, structured-data SEO so the search engines file me correctly, and a logger that reports failures the instant they occur. A leader monitors everything.' },
       },
     },
     stats: {
@@ -350,6 +351,44 @@ export default {
         title: 'Visitor Reconnaissance',
         how: 'At the base of the contact section, a panel scans your device, display, and network — and your city, with consent — then forges a unique sigil. Identity confirmed.',
       },
+      console: {
+        title: 'Encrypted Field Notes',
+        how: 'Open the DevTools console. A classified gold-lettered briefing awaits, with intelligence on the sealed identities and a debug override for field operations. Standard protocol. Read it. Do not delete it.',
+      },
+    },
+    observatory: {
+      eyebrow: 'The Watch',
+      title: 'Surveillance. Anonymous. Superior.',
+      intro: 'A system you do not monitor is a system in mutiny. I monitor. Anonymously, cookielessly, and with the visitor’s full consent withdrawn the instant they request it. This is not paranoia. This is leadership.',
+      hub: 'the session dossier',
+      hubNote: 'Every action consolidates into a single dossier, transmitted on departure. One file. Complete. Filed.',
+      metrics: {
+        events: 'Tracked events',
+        superProps: 'Auto-tags',
+        dashboards: 'Command boards',
+        schemas: 'SEO schemas',
+      },
+      groups: {
+        origin: 'Movement',
+        craft: 'Engagement',
+        realms: 'Territories',
+        intent: 'Contact attempts',
+      },
+      panels: {
+        privacy: {
+          title: 'Anonymous. By Protocol.',
+          body: 'No accounts. No cookies. Nothing retained between visits. The instant a browser signals Do-Not-Track, surveillance ceases. No consent banner is deployed, because there is nothing to consent to. Discipline.',
+        },
+        discoverability: {
+          title: 'Correctly Filed',
+          body: 'Five structured schemas — Person, WebSite, ProfilePage, Organization, address — plus link previews and a designated application-name, so the search engines classify me with precision. A record must be unambiguous.',
+        },
+        observability: {
+          title: 'No Failure Goes Unreported',
+          body: 'A structured logger, exceptions captured and reported automatically, and Core Web Vitals measured from genuine field traffic. When a system falters, I am notified first. Always first.',
+        },
+      },
+      footnote: 'Thirty-three events. Thirteen tags. Five boards. Zero cookies. Building the site is competence. Building the apparatus that watches the site is command.',
     },
     offmap: {
       title: 'The Man Behind the Manager',

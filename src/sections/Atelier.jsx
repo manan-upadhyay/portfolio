@@ -1,12 +1,12 @@
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
-import { Hammer, Scissors, Compass, RefreshCcw, AudioLines, CloudSun, Drama, Map, Send, Fingerprint } from 'lucide-react';
+import { Hammer, Scissors, Compass, RefreshCcw, AudioLines, CloudSun, Drama, Map, Send, Fingerprint, Terminal } from 'lucide-react';
 import { SectionWrapper } from '../hoc';
 import { atelier } from '../constants';
-import { ChapterHeading, ScrollReveal, CountUp, BuildReel, PersonaTriptych } from '../components';
+import { ChapterHeading, ScrollReveal, CountUp, BuildReel, Observatory, PersonaTriptych } from '../components';
 
 /* lucide glyph per field-guide entry (icon id → component). */
-const EGG_ICONS = { compass: Compass, refresh: RefreshCcw, audio: AudioLines, sky: CloudSun, drama: Drama, map: Map, send: Send, fingerprint: Fingerprint };
+const EGG_ICONS = { compass: Compass, refresh: RefreshCcw, audio: AudioLines, sky: CloudSun, drama: Drama, map: Map, send: Send, fingerprint: Fingerprint, terminal: Terminal };
 
 /* One field-guide entry — a subtle interaction + how/where to trigger it. */
 const EggCard = ({ icon, title, how }) => {
@@ -102,6 +102,18 @@ const Atelier = () => {
               ))}
             </ul>
           </div>
+        </div>
+      </ScrollReveal>
+
+      {/* The Observatory — the senior-infrastructure showcase: privacy-first
+          product analytics, discoverability (SEO), and observability as one
+          instrument, with the live event constellation at its heart. */}
+      <ScrollReveal direction="up" className="mt-16">
+        <span className="chapter-eyebrow">{t('atelier.observatory.eyebrow')}</span>
+        <h3 className="observatory__heading font-chronicle mt-3">{t('atelier.observatory.title')}</h3>
+        <p className="atelier-ledger__intro mt-4">{t('atelier.observatory.intro')}</p>
+        <div className="mt-8">
+          <Observatory />
         </div>
       </ScrollReveal>
 

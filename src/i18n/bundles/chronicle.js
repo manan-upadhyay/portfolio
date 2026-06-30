@@ -60,7 +60,7 @@ export default {
     services: {
       frontend: { title: 'Frontend Architecture', description: 'Production-grade UIs with React.js, Next.js, TypeScript, and reusable component systems.' },
       backend: { title: 'Backend Development', description: 'Scalable APIs with Node.js, Express.js, NestJS, REST, JWT/OAuth, and RBAC.' },
-      performance: { title: 'Performance Optimization', description: 'Code-splitting, caching, CDN strategies, lazy loading, and Core Web Vitals tuning.' },
+      performance: { title: 'Performance & Discoverability', description: 'Code-splitting, caching, CDN strategies, lazy loading, Core Web Vitals tuning, and structured-data SEO that machines and humans both read.' },
       fullstack: { title: 'Full Stack Delivery', description: 'End-to-end ownership from requirement grooming to production monitoring.' },
     },
     // Stat-band labels (keyed by the stat `key` in constants; values are data).
@@ -418,10 +418,10 @@ export default {
     title: 'How the map was drawn',
     confession: 'It cleared every bar but mine.',
     confessionSub:
-      'The map was a finished, presentable build some twenty commits ago — it cleared every bar a portfolio is meant to clear. I hold my work to a harder one. I have never been able to leave a detail half-right, so I poured another 150-odd hours into the things only I would notice — the easing on a single curve, the way a cue lands, the frame you feel but cannot name. "Good enough" has never been the brief; out-doing my last pass is.',
+      'The map was a finished, presentable build some forty commits ago — it cleared every bar a portfolio is meant to clear. I hold my work to a harder one. I have never been able to leave a detail half-right, so I poured another 200-odd hours into the things only I would notice — the easing on a single curve, the way a cue lands, the telemetry that proves the moments are touched, the frame you feel but cannot name. "Good enough" has never been the brief; out-doing my last pass is.',
     reel: {
       title: 'The Director’s Reel',
-      range: 'Jun 20 – 28 · 9 scenes',
+      range: 'Jun 20 – 30 · 10 scenes',
       caption:
         'Drag the playhead, click a frame, or use the arrow keys to move through the build one scene at a time.',
       scene: 'Scene',
@@ -440,6 +440,7 @@ export default {
         recap: { title: 'The Traveler’s Read', blurb: 'A client-side instrument that reads your device and connection and pins you on a live map — nothing stored, nothing sent.' },
         atelier: { title: 'The Atelier & the Raven', blurb: 'The making-of route, the Voice Hall, the free-spin astrolabe, and a flock of ravens that bursts across the screen on send.' },
         polish: { title: 'The Finishing Pass', blurb: 'Accessibility, reduced-motion fallbacks, a performance sweep, and the live, server-side contact backend.' },
+        observatory: { title: 'The Observatory', blurb: 'After the map was drawn, I instrumented it — privacy-first product analytics, structured-data SEO, and a bespoke logger with a console banner for the curious.' },
       },
     },
     stats: {
@@ -462,11 +463,12 @@ export default {
       sound: { title: 'Interactive sound', why: 'A Web Audio system of synthesized cues (zero bytes) that reward intent, never motion — default-on, silenced under reduced-motion.' },
       recap: { title: 'The Expedition recap', why: 'A cinematic instrument that reads your device and connection client-side and pins you on a live polar map — nothing stored, nothing sent.' },
       eggs: { title: 'Voice easter eggs', why: 'Type a secret word anywhere and a sealed personality wakes — Scott, Dwight, a cow — each authored in full character.' },
+      telemetry: { title: 'Telemetry & discoverability', why: 'Thirty-three product events folding into one per-visit session recap, thirteen super-properties, and five PostHog dashboards — all cookieless, anonymous, and silenced under Do-Not-Track. Beside it, structured-data SEO and a bespoke logger. The instrument answers "are the moments touched?" without harvesting a thing about who touches them.' },
     },
     cuts: {
       assets: { title: 'A folder of images, GIFs & audio files', why: 'Almost none of this site is shipped media. The hero astrolabe is drawn in Canvas2D, the starfield is pure CSS, and every interface sound is synthesised live through the Web Audio API. The whole feedback layer ships as code, not megabytes — a smaller bundle, fewer network round-trips, and a faster first paint.' },
       threejs: { title: 'Three.js & the whole WebGL layer', why: 'An early build leaned on a 3D library for depth. I tore it out and rebuilt the same sense of space with layered CSS, parallax, and a hand-drawn Canvas2D astrolabe — dropping a heavy dependency and keeping the initial JS well under budget. Depth, without the download.' },
-      tracking: { title: 'Analytics scripts, cookie banners & trackers', why: 'The session recap reads your device entirely in your own browser, makes a single optional lookup for your city, and stores nothing. Respecting the visitor was worth more than the data a tracker would have harvested.' },
+      tracking: { title: 'Cookie banners, cross-session tracking & surveillance analytics', why: 'The site does measure itself — but the senior call was how. PostHog runs cookieless (memory-only persistence), fully anonymous (no accounts, no identify(), no cross-session identity), and hard-disabled the instant Do-Not-Track is set. No consent banner, because there is nothing to consent to: nothing is sold, nothing follows you off the page. The analytics serve the craft — which moments get touched — not the surveillance.' },
       componentLib: { title: 'A pre-built UI kit or paid template', why: 'Every component here is bespoke — Tailwind for layout, CSS variables for theme, nothing lifted from a library. More work, but full pixel control and none of the bloat or that unmistakable look-alike-template feel.' },
       statusLine: { title: 'The “how did he know?” status line', why: 'Region + moon phase near the hero. Built, reviewed, cut — it edged from wonder toward creepy, and the time-driven palette already carried the magic.' },
       battery: { title: 'The battery readout', why: 'Removed: the Battery Status API lies on some platforms (macOS Chrome reports 100% while charging). A card that “reads you” must never show data it cannot trust.' },
@@ -506,6 +508,44 @@ export default {
         title: 'The traveller’s read',
         how: 'At the foot of Summon, an instrument panel reads your own device, screen, and connection — and, with your blessing, your city — then mints a one-of-a-kind sigil from it.',
       },
+      console: {
+        title: 'The cartographer’s ledger',
+        how: 'Open the browser’s DevTools console — the cartographer left a gold-lettered greeting, clues to the sealed voices and the margins of the map, and a debug key for travellers who want to look under the hood in the wild.',
+      },
+    },
+    observatory: {
+      eyebrow: 'The Observatory',
+      title: 'Instrumented, not surveilled',
+      intro: 'A map you cannot read is just decoration. So once the realms were drawn, I built the instrument that reads them — product analytics, discoverability, and observability, engineered to respect the very traveller it watches.',
+      hub: 'session recap',
+      hubNote: 'Every named event folds into one tidy per-visit summary, flushed as you leave — the whole journey in a single row.',
+      metrics: {
+        events: 'Product events',
+        superProps: 'Super-properties',
+        dashboards: 'Live dashboards',
+        schemas: 'Structured schemas',
+      },
+      groups: {
+        origin: 'Origin & wayfinding',
+        craft: 'The craft',
+        realms: 'The realms',
+        intent: 'Intent & summons',
+      },
+      panels: {
+        privacy: {
+          title: 'Privacy-first by design',
+          body: 'PostHog runs cookieless and fully anonymous — no accounts, no identify(), memory-only persistence — and hard-disables the moment Do-Not-Track is set. No consent banner, because there is nothing to consent to.',
+        },
+        discoverability: {
+          title: 'Built to be found',
+          body: 'Five JSON-LD schemas (Person, WebSite, ProfilePage, Organization, address), Open Graph and Twitter cards, canonical URLs, and an application-name that claims the Google Knowledge Panel — so machines and humans read it the same way.',
+        },
+        observability: {
+          title: 'Watched, so it never breaks quietly',
+          body: 'A zero-dependency structured logger with scoped tags and a production debug key, exceptions caught from the error boundary and reported, and Vercel Speed Insights tracking Core Web Vitals from real visits.',
+        },
+      },
+      footnote: 'Thirty-three events, thirteen super-properties, five dashboards, five schemas — and not a single cookie. Senior work is not just shipping the moment; it is proving the moment lands.',
     },
     offmap: {
       title: 'The cartographer, off the map',

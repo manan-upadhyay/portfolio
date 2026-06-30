@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion, useReducedMotion } from 'framer-motion';
-import { Sparkles, Map, LayoutGrid, Route, Drama, CloudSun, Fingerprint, Feather, Gem, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Sparkles, Map, LayoutGrid, Route, Drama, CloudSun, Fingerprint, Feather, Gem, Activity, ChevronLeft, ChevronRight } from 'lucide-react';
 import { playCue } from '../lib/sound';
 import { trackOnce } from '../lib/analytics';
 
@@ -21,7 +21,7 @@ import { trackOnce } from '../lib/analytics';
  * Props:
  *  - data: [{ id, day, commits, glyph }] (from constants.atelier.reel)
  */
-const GLYPHS = { sparkles: Sparkles, map: Map, grid: LayoutGrid, route: Route, drama: Drama, sky: CloudSun, fingerprint: Fingerprint, feather: Feather, gem: Gem };
+const GLYPHS = { sparkles: Sparkles, map: Map, grid: LayoutGrid, route: Route, drama: Drama, sky: CloudSun, fingerprint: Fingerprint, feather: Feather, gem: Gem, activity: Activity };
 const pad2 = (x) => String(x).padStart(2, '0');
 
 const BuildReel = ({ data }) => {

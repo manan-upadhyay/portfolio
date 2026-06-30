@@ -46,7 +46,7 @@ export default {
     services: {
       frontend: { title: 'Making Things Look Great', description: 'Production UIs with React, Next.js and TypeScript. If it’s not pretty, it’s not done. I have an eye for these things.' },
       backend: { title: 'The Behind-the-Scenes Stuff', description: 'Scalable APIs with Node, Express, NestJS, JWT/OAuth and RBAC — the plumbing nobody sees but everybody needs.' },
-      performance: { title: 'Making It Fast', description: 'Code-splitting, caching, CDNs, Core Web Vitals. Nobody likes waiting. I hate waiting. So I make it fast.' },
+      performance: { title: 'Fast AND Findable', description: 'Code-splitting, caching, CDNs, Core Web Vitals — nobody likes waiting and I HATE waiting. Plus the SEO schema stuff so Google actually knows who I am. Speed and fame. Both.' },
       fullstack: { title: 'Doing It All', description: 'End to end, soup to nuts, grooming to production. I wear all the hats. I love hats.' },
     },
     stats: {
@@ -280,10 +280,10 @@ export default {
     title: 'How I Made This',
     confession: 'It passed every test but mine. And mine is the hard one.',
     confessionSub:
-      'The website was totally finished like twenty saves ago. It was great. It was done. I could’ve left. But “done” is what other people settle for, and I am not other people — I’m an idea man with an eye for detail, which is two things. So I stayed and poured in another hundred and fifty hours fixing stuff nobody would ever notice, because I notice. That’s my gift. And, occasionally, my curse. Mostly gift.',
+      'The website was totally finished like forty saves ago. It was great. It was done. I could’ve left. But “done” is what other people settle for, and I am not other people — I’m an idea man with an eye for detail, which is two things. So I stayed and poured in another two hundred hours fixing stuff nobody would ever notice, AND I added analytics so I can PROVE people use the cool stuff. Because I notice. That’s my gift. And, occasionally, my curse. Mostly gift.',
     reel: {
       title: 'The Director’s Cut',
-      range: 'Jun 20 – 28 · 9 scenes',
+      range: 'Jun 20 – 30 · 10 scenes',
       caption:
         'Grab the slider, click a scene, hit the arrow keys. Take your time. It’s art.',
       scene: 'Scene',
@@ -302,6 +302,7 @@ export default {
         recap: { title: 'The Creepy Part', blurb: 'A little panel that reads your computer and your city. I’m basically the NSA. A friendly NSA.' },
         atelier: { title: 'Behind the Magic', blurb: 'This whole making-of page, the voice menu, the spinny compass, and a flock of birds when you message me.' },
         polish: { title: 'The Final Cut', blurb: 'Making it work for everybody, making it fast, and hooking up the actual email. The boring important stuff.' },
+        observatory: { title: 'The Surveillance Van (Polite Version)', blurb: 'After it was done I added analytics so I can SEE which parts you click — but the nice kind, no cookies, totally anonymous. Plus SEO so Google knows who I am, and a secret message in the console. I think of everything.' },
       },
     },
     stats: {
@@ -352,6 +353,44 @@ export default {
         title: 'The Creepy Part',
         how: 'Scroll to the bottom of the contact part. It reads your computer, your screen, even your city. I’m basically the NSA. A friendly NSA.',
       },
+      console: {
+        title: 'The Secret Menu',
+        how: 'Open the DevTools console — you know, F12, the developer thing. There’s a whole gold message waiting for you with secret hints. I left it there. For the smart ones. Like you.',
+      },
+    },
+    observatory: {
+      eyebrow: 'The Numbers Guy',
+      title: 'I Watch. But Politely.',
+      intro: 'Look, you can’t improve what you don’t measure — that’s just business. So I wired up analytics. But the CLASSY kind: no cookies, totally anonymous, off if you say no. I’m a data guy AND a gentleman.',
+      hub: 'the big summary',
+      hubNote: 'Everything you do rolls up into one neat little report when you leave. One row. Boom. The whole story.',
+      metrics: {
+        events: 'Things I track',
+        superProps: 'Auto-tags',
+        dashboards: 'Dashboards',
+        schemas: 'SEO schemas',
+      },
+      groups: {
+        origin: 'Getting around',
+        craft: 'The fun stuff',
+        realms: 'My projects',
+        intent: 'Trying to reach me',
+      },
+      panels: {
+        privacy: {
+          title: 'No Cookies. None.',
+          body: 'It’s anonymous, there’s no login, nothing’s saved between visits, and the second your browser says “don’t track me,” I don’t. No annoying cookie popup, because there’s nothing to pop up about.',
+        },
+        discoverability: {
+          title: 'Google Knows Me',
+          body: 'Five of those fancy schema things, the link previews, the whole nine yards — so when you search me, Google puts my face in that little box on the right. The box! I’m in the box!',
+        },
+        observability: {
+          title: 'I Get Alerts',
+          body: 'There’s a logger, errors get reported to me automatically, and I get speed reports from real visitors. If something breaks, I know before you do. That’s called being proactive.',
+        },
+      },
+      footnote: 'Thirty-three things tracked, five dashboards, zero cookies. Anybody can build a website. I built a website AND the machine that watches it. That’s two skills. Minimum.',
     },
     offmap: {
       title: 'The Real Me (Get Comfortable)',

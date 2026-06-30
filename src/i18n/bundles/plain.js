@@ -210,10 +210,10 @@ export default {
     title: 'How this site was built',
     confession: 'It cleared every bar but mine.',
     confessionSub:
-      'The site was a finished, presentable build about twenty commits ago — it met every standard a portfolio needs to meet. I held it to a higher one. I have a hard time leaving any detail half-right, so I spent roughly another 150 hours on the things most people never notice: easing, timing, the small frictions that decide whether something feels solid. "Good enough" isn\'t a standard I work to — beating my last version is.',
+      'The site was a finished, presentable build about forty commits ago — it met every standard a portfolio needs to meet. I held it to a higher one. I have a hard time leaving any detail half-right, so I spent roughly another 200 hours on the things most people never notice: easing, timing, the analytics that confirm which features actually get used, the small frictions that decide whether something feels solid. "Good enough" isn\'t a standard I work to — beating my last version is.',
     reel: {
       title: 'Build timeline',
-      range: 'Jun 20 – 28 · 9 days',
+      range: 'Jun 20 – 30 · 10 days',
       caption:
         'Drag the marker, click a day, or use the arrow keys to step through what shipped, one day at a time.',
       scene: 'Day',
@@ -232,6 +232,7 @@ export default {
         recap: { title: 'Session recap', blurb: 'A client-side panel that reads device and connection details and maps your location — nothing stored or sent.' },
         atelier: { title: 'Making-of & send animation', blurb: 'The /making-of page, the voice picker, the interactive hero, and the bird animation on form send.' },
         polish: { title: 'Polish & backend', blurb: 'Accessibility, reduced-motion support, a performance pass, and the live contact backend.' },
+        observatory: { title: 'Analytics & SEO', blurb: 'After the site was built, I instrumented it — privacy-first product analytics, structured-data SEO, and a custom logger with a console banner for anyone who opens DevTools.' },
       },
     },
     stats: {
@@ -254,11 +255,12 @@ export default {
       sound: { title: 'Sound design', why: 'A Web Audio cue system (synthesized, zero asset weight); default-on, muted under reduced-motion.' },
       recap: { title: 'Session recap', why: 'A client-side panel that reads device + connection details and maps your location — nothing stored or sent.' },
       eggs: { title: 'Hidden voices', why: 'Type a trigger word to unlock additional personality voices, each fully written.' },
+      telemetry: { title: 'Analytics & SEO', why: 'Thirty-three product events feeding a single per-visit session recap, thirteen super-properties, and five PostHog dashboards — all cookieless, anonymous, and disabled under Do-Not-Track. Plus structured-data SEO and a custom logger. It answers "are these features actually used?" without tracking who uses them.' },
     },
     cuts: {
       assets: { title: 'Image, GIF and audio files', why: 'Very little of this site is shipped media. The hero is rendered in Canvas2D, the starfield is CSS, and the interface sounds are generated at runtime with the Web Audio API. Shipping the feedback layer as code instead of files means a smaller bundle, fewer requests, and faster loads.' },
       threejs: { title: 'Three.js and WebGL', why: 'An early version used a 3D library for depth. I removed it and recreated the effect with layered CSS, parallax, and a Canvas2D astrolabe — cutting a large dependency and keeping the initial JS bundle small.' },
-      tracking: { title: 'Analytics, cookie banners and trackers', why: 'The session panel reads your device locally, makes one optional request for your city, and stores nothing. Visitor privacy mattered more than collecting data.' },
+      tracking: { title: 'Cookie banners, cross-session tracking and surveillance analytics', why: 'The site does measure itself — but the decision was how. PostHog runs cookieless (memory-only), fully anonymous (no accounts, no identify()), and turns off completely when Do-Not-Track is set. No consent banner, because there is nothing to consent to: no cookies, no cross-session identity, nothing sold. The analytics measure which features get used, not who uses them.' },
       componentLib: { title: 'A pre-built UI kit or template', why: 'Every component is custom-built with Tailwind and CSS variables — no component library. It is more work, but it means full control over the design and no template bloat.' },
       statusLine: { title: 'Location/moon status line', why: 'Built and reviewed, then removed — it felt invasive, and the time-based theme already delivered the effect.' },
       battery: { title: 'Battery readout', why: 'Removed because the Battery Status API returns inaccurate values on some platforms; unreliable data has no place in a "reads your device" panel.' },
@@ -298,6 +300,44 @@ export default {
         title: 'Visitor readout',
         how: 'At the bottom of the contact section, a panel reads your device, screen, and connection (and your city, if you allow it) and generates a unique sigil.',
       },
+      console: {
+        title: 'Console greeting',
+        how: 'Open your browser’s DevTools console — there’s a styled greeting, hints toward the hidden voices and the making-of page, and a debug key for inspecting things in production.',
+      },
+    },
+    observatory: {
+      eyebrow: 'Analytics & SEO',
+      title: 'Instrumented, not surveilled',
+      intro: 'A site you can’t measure is guesswork. So once it was built, I instrumented it — product analytics, SEO, and observability — without compromising the privacy of the people using it.',
+      hub: 'session recap',
+      hubNote: 'Every event folds into one per-visit summary, sent as you leave — the whole session in a single row.',
+      metrics: {
+        events: 'Product events',
+        superProps: 'Super-properties',
+        dashboards: 'Live dashboards',
+        schemas: 'Structured schemas',
+      },
+      groups: {
+        origin: 'Navigation',
+        craft: 'Interaction',
+        realms: 'Projects',
+        intent: 'Contact intent',
+      },
+      panels: {
+        privacy: {
+          title: 'Privacy-first by design',
+          body: 'PostHog runs cookieless and anonymous — no accounts, memory-only persistence — and disables itself when Do-Not-Track is set. No consent banner, because there’s nothing to consent to.',
+        },
+        discoverability: {
+          title: 'Built to be found',
+          body: 'Five JSON-LD schemas (Person, WebSite, ProfilePage, Organization, address), Open Graph and Twitter cards, canonical URLs, and an application-name for Google’s Knowledge Panel.',
+        },
+        observability: {
+          title: 'Watched, so nothing breaks silently',
+          body: 'A zero-dependency structured logger with a production debug key, errors caught and reported from the error boundary, and Vercel Speed Insights tracking Core Web Vitals from real visits.',
+        },
+      },
+      footnote: 'Thirty-three events, thirteen super-properties, five dashboards, five schemas — and not one cookie. Shipping a feature is half the job; proving it gets used is the other half.',
     },
     offmap: {
       title: 'Away from the keyboard',

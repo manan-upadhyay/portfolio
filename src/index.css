@@ -2149,6 +2149,167 @@ h1, h2, h3, h4, h5, h6 {
   color: var(--color-text);
 }
 
+/* ── The Observatory — "instrumented, not surveilled" ─────────────────────────
+   The senior-infrastructure moment: a living SVG event-constellation + readouts
+   + capability panels. All theme-token driven; the orbit/pulse are CSS animations
+   gated by prefers-reduced-motion (and the component's .is-static fallback). */
+.observatory__heading {
+  font-size: clamp(23px, 3.3vw, 33px);
+  line-height: 1.12;
+  color: var(--color-text);
+}
+.observatory { display: flex; flex-direction: column; gap: 30px; }
+
+/* the constellation */
+.observatory__viz { display: grid; gap: 20px; align-items: center; }
+@media (min-width: 768px) {
+  .observatory__viz { grid-template-columns: minmax(0, 340px) 1fr; gap: 30px; }
+}
+.observatory__sky {
+  width: 100%;
+  max-width: 340px;
+  margin: 0 auto;
+  display: block;
+  aspect-ratio: 1 / 1;
+  overflow: visible;
+}
+.obs-ring { fill: none; stroke: var(--color-card-border); stroke-width: 1; }
+.obs-ring--dashed { stroke-dasharray: 2 7; opacity: 0.6; }
+.obs-spoke { stroke: rgba(var(--color-gold-rgb), 0.09); stroke-width: 0.6; }
+.obs-orbit { transform-origin: 200px 200px; animation: obs-spin 120s linear infinite; }
+.obs-orbit.is-static { animation: none; }
+@keyframes obs-spin { to { transform: rotate(360deg); } }
+
+.obs-node circle { fill: currentColor; filter: drop-shadow(0 0 3px currentColor); }
+.obs-node--origin { color: var(--color-accent); }
+.obs-node--craft  { color: var(--color-ember); }
+.obs-node--realms { color: var(--color-gold); }
+.obs-node--intent { color: var(--color-accent-secondary); }
+
+.obs-hub__halo {
+  fill: rgba(var(--color-gold-rgb), 0.13);
+  transform-origin: 200px 200px;
+  animation: obs-pulse 3.6s ease-in-out infinite;
+}
+.obs-hub__core { fill: var(--color-gold); filter: drop-shadow(0 0 8px rgba(var(--color-gold-rgb), 0.8)); }
+@keyframes obs-pulse {
+  0%, 100% { opacity: 0.45; transform: scale(0.9); }
+  50%      { opacity: 0.9;  transform: scale(1.1); }
+}
+
+.observatory__hub-label { text-align: center; }
+@media (min-width: 768px) { .observatory__hub-label { text-align: left; } }
+.observatory__hub-name {
+  display: inline-block;
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  color: var(--color-gold);
+}
+.observatory__hub-note {
+  display: block;
+  margin: 6px auto 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--color-text-muted);
+  max-width: 44ch;
+}
+@media (min-width: 768px) { .observatory__hub-note { margin-inline: 0; } }
+
+/* the legend — what each colour of star instruments */
+.observatory__legend { display: flex; flex-wrap: wrap; gap: 10px 18px; }
+.observatory__legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12.5px;
+  color: var(--color-text);
+}
+.observatory__legend-dot {
+  width: 9px; height: 9px;
+  border-radius: 9999px;
+  box-shadow: 0 0 6px currentColor;
+}
+.observatory__legend-item--origin .observatory__legend-dot { background: var(--color-accent); color: var(--color-accent); }
+.observatory__legend-item--craft  .observatory__legend-dot { background: var(--color-ember); color: var(--color-ember); }
+.observatory__legend-item--realms .observatory__legend-dot { background: var(--color-gold); color: var(--color-gold); }
+.observatory__legend-item--intent .observatory__legend-dot { background: var(--color-accent-secondary); color: var(--color-accent-secondary); }
+.observatory__legend-count { color: var(--color-text-muted); }
+
+/* the readouts */
+.observatory__metrics {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1px;
+  background: var(--color-card-border);
+  border: 1px solid var(--color-card-border);
+  border-radius: 16px;
+  overflow: hidden;
+}
+@media (min-width: 768px) { .observatory__metrics { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+.observatory__metric { background: var(--color-card-bg); padding: 18px 12px; text-align: center; }
+.observatory__metric-value {
+  font-size: clamp(24px, 3.4vw, 32px);
+  font-weight: 600;
+  line-height: 1;
+  color: var(--color-ember);
+}
+.observatory__metric-label {
+  margin-top: 7px;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+/* the three instrument panels */
+.observatory__panels { display: grid; gap: 14px; grid-template-columns: 1fr; }
+@media (min-width: 768px) { .observatory__panels { grid-template-columns: repeat(3, 1fr); } }
+.observatory__panel {
+  padding: 20px;
+  border-radius: 18px;
+  background: var(--gradient-card);
+  border: 1px solid var(--color-card-border);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.observatory__panel-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px; height: 34px;
+  border-radius: 10px;
+  color: var(--color-gold);
+  background: rgba(var(--color-gold-rgb), 0.10);
+  border: 1px solid var(--color-card-border);
+}
+.observatory__panel-title { font-size: 15px; font-weight: 600; color: var(--color-text); }
+.observatory__panel-body { font-size: 13px; line-height: 1.55; color: var(--color-text-muted); }
+.observatory__panel-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+.observatory__tag {
+  padding: 4px 9px;
+  border-radius: 9999px;
+  font-size: 10.5px;
+  letter-spacing: 0.04em;
+  color: var(--color-text-muted);
+  background: rgba(var(--color-ember-rgb), 0.05);
+  border: 1px solid var(--color-card-border);
+}
+.observatory__footnote {
+  font-size: 13.5px;
+  line-height: 1.55;
+  max-width: 72ch;
+  color: var(--color-text-muted);
+  border-left: 2px solid var(--color-gold);
+  padding-left: 14px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .obs-orbit, .obs-hub__halo { animation: none; }
+}
+
 /* the manifesto */
 .atelier-manifesto { max-width: 64ch; }
 .atelier-manifesto__p {

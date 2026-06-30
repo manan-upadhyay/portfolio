@@ -43,7 +43,7 @@ export default {
     services: {
       frontend: { title: 'Moo', description: 'Moo moo moo moo moo moo moo moo moo.' },
       backend: { title: 'Moo Moo', description: 'Moo moo moo moo, moo moo moo moo.' },
-      performance: { title: 'Moo Moo Moo', description: 'Moo moo moo moo moo moo moo.' },
+      performance: { title: 'Moo Moo Moo Moo', description: 'Moo moo moo moo moo moo moo. Moo moo moo moo moo moo.' },
       fullstack: { title: 'Moooo', description: 'Moo moo moo moo moo moo moo moo.' },
     },
     stats: {
@@ -216,7 +216,7 @@ export default {
       'Moo moo moo moo moo moo moo moo moo moo moo. Moo moo moo moo moo, moo moo moo moo moo moo moo — moo moo moo moo moo moo moo moo moo.',
     reel: {
       title: 'Moo Moo Moo Moo',
-      range: 'Moo 20 – 28 · 9 moo',
+      range: 'Moo 20 – 30 · 10 moo',
       caption:
         'Moo moo moo moo moo. Moo moo moo, moo moo moo, moo moo ← →. Moo moo moo moo moo.',
       scene: 'Moo',
@@ -235,6 +235,7 @@ export default {
         recap: { title: 'Moo Moo Moo', blurb: 'Moo moo moo moo moo moo moo moo moo moo.' },
         atelier: { title: 'Moo Moo', blurb: 'Moo moo moo moo, moo moo moo, moo moo moo moo.' },
         polish: { title: 'Moo', blurb: 'Moo moo moo moo moo moo moo moo. Moo moo moo.' },
+        observatory: { title: 'Moo Moo Moo', blurb: 'Moo moo moo moo, moo moo moo moo moo — moo moo moo, moo moo moo moo. Moo moo moo moo moo moo.' },
       },
     },
     stats: {
@@ -260,6 +261,32 @@ export default {
       map: { title: 'Moo', how: 'Moo moo ⌘K moo moo moo moo.' },
       raven: { title: 'Moo moo', how: 'Moo moo moo moo moo moo moo moo moo.' },
       recap: { title: 'Moo moo moo', how: 'Moo moo moo moo, moo moo moo moo moo moo.' },
+      console: { title: 'Moo moo', how: 'Moo moo moo moo (DevTools) — moo moo moo moo, moo moo moo moo moo.' },
+    },
+    observatory: {
+      eyebrow: 'Moo Moo',
+      title: 'Moo moo, moo moo moo',
+      intro: 'Moo moo moo moo moo moo moo. Moo moo moo moo moo — moo moo, moo moo, moo moo moo — moo moo moo moo moo moo moo.',
+      hub: 'moo moo moo',
+      hubNote: 'Moo moo moo moo moo moo moo moo. Moo moo. Moo moo moo.',
+      metrics: {
+        events: 'Moo moo',
+        superProps: 'Moo moo moo',
+        dashboards: 'Moo moo',
+        schemas: 'Moo moo',
+      },
+      groups: {
+        origin: 'Moo moo',
+        craft: 'Moo moo',
+        realms: 'Moo moo',
+        intent: 'Moo moo moo',
+      },
+      panels: {
+        privacy: { title: 'Moo moo moo', body: 'Moo moo moo moo moo, moo moo moo. Moo moo moo moo moo moo moo moo. Moo moo moo.' },
+        discoverability: { title: 'Moo moo moo', body: 'Moo moo moo moo moo moo, moo moo moo moo, moo moo moo moo moo moo moo.' },
+        observability: { title: 'Moo moo', body: 'Moo moo moo moo moo, moo moo moo moo moo moo, moo moo moo moo moo moo moo.' },
+      },
+      footnote: 'Moo moo moo, moo moo moo, moo moo — moo moo moo. Moo moo moo moo moo moo moo moo moo moo.',
     },
     offmap: {
       title: 'Moo Moo Moo',

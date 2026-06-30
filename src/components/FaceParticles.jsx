@@ -197,7 +197,7 @@ const FaceParticles = ({ src = '/atelier/portrait.webp' }) => {
     //    only within a feathered radius under the cursor (the rest stays glyphs) ──
     let hovering = false, mx = 0, my = 0, hoverRaf = 0;
     const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
-    const lensR = () => Math.min(W, H) * 0.4;
+    const lensR = () => Math.min(W, H) * 0.25;
 
     // Pre-render the source once with a film grade (contrast + slight desaturation +
     // warm wash + vignette) — this is what the lens reveals.

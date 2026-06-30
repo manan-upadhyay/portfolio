@@ -221,6 +221,7 @@ clean, and it looks like a *moment* — not a list.
 | Doc | What it governs |
 |---|---|
 | [LEGENDARY-ROADMAP.md](docs/chronicle/LEGENDARY-ROADMAP.md) | Planned "wonder" features — decisions, rationale, open questions, task tracking |
+| [TACTILE-MOMENTS.md](docs/chronicle/TACTILE-MOMENTS.md) | Phase 8 — deliberate intent-gated interactions (TM-1…TM-9): astrolabe sky-scrub, kinetic headings, contextual cursor, voice-aware portrait, etc. Source of truth for that set |
 | [DESIGN-SYSTEM.md](docs/chronicle/DESIGN-SYSTEM.md) | Color tokens, type scale, spacing, motion language, CSS utilities, component inventory, a11y |
 | [ARCHITECTURE.md](docs/chronicle/ARCHITECTURE.md) | Folder map, libraries, smooth-scroll/GSAP patterns, global shell, perf, verification |
 | [ASSETS.md](docs/chronicle/ASSETS.md) | "World Bible", filenames, dimensions, generation prompts |

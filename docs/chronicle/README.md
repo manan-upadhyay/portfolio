@@ -24,6 +24,11 @@ older `docs/*.md` (pre-revamp template).
 | 07 | [The Atelier (revamp)](sections/07-the-atelier.md) | `sections/Atelier.jsx` + `components/Observatory.jsx` | **built (v2)** — acts + Observatory + webhooks |
 | 08 | [The Codebase Atlas](sections/08-codebase-atlas.md) | `components/CodebaseAtlas.jsx` | **built** (Atelier Act II) |
 
+## Reports (dated snapshots)
+Time-ranged analytics + beta feedback live under [`reports/`](reports/) — see its
+[README](reports/README.md) for layout and naming. These are point-in-time
+snapshots, not evergreen canon; new ones are added dated, never overwritten.
+
 Each section spec ends with **Acceptance criteria** — a section is done only when
 all boxes pass in dark+light, at 360/768/1280/1920, with reduced-motion + touch
 fallbacks, no console errors, and a clean `npm run build`.

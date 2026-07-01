@@ -48,6 +48,7 @@ via autocapture — the list below is our *intentional* product events.)
 | `scroll_depth` | `useEngagementAnalytics` | `pct` 25/50/75/100 | **how far they scroll** |
 | `hero_cta` | `Hero` | `target` about/contact | which entry CTA starts the journey? |
 | `astrolabe_drag` / `astrolabe_spin` | `Hero` | — | played with / spun the astrolabe? |
+| `astrolabe_sky_set` | `Hero` (TM-1 bezel) | `sky` dawn/day/dusk/night | set the sky by turning the bezel? |
 | `sound_first_play` | `Layout` (`sound.onUnlock`) | — | heard the site? |
 | `sound_toggled` | `useSoundStore` | `enabled` | muted/unmuted? |
 | `voice_switcher_open` | `VoiceSwitcher` | — | used the voice menu? |

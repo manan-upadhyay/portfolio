@@ -5,6 +5,7 @@ import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { personalInfo, chapters } from '../constants';
 import { useThemeStore } from '../store/useThemeStore';
+import { SKY_ORDER, SKY_BASE } from '../lib/sky';
 import { scrollToSection } from '../lib/smoothScroll';
 import { useAstrolabe } from '../hooks/useAstrolabe';
 import { RefreshCcw } from 'lucide-react';
@@ -14,9 +15,43 @@ import CompassRose from '../components/CompassRose';
 
 gsap.registerPlugin(ScrollTrigger);
 
+// Hero legibility scrim, as a function of the resolved RGB + base, so the live
+// layer and the TM-1 continuous-crossfade preview layers build the EXACT same
+// gradient (gradients can't CSS-transition, so the scrub crossfades two layers).
+const scrimGradient = (rgb, dark) =>
+  dark
+    ? `linear-gradient(90deg, rgba(${rgb},0.93) 0%, rgba(${rgb},0.55) 40%, rgba(${rgb},0) 70%)`
+    : `linear-gradient(90deg, rgba(${rgb},0.92) 0%, rgba(${rgb},0.5) 42%, rgba(${rgb},0) 72%)`;
+
+// Continuous theme-token interpolation for the sky scrub — lets the CONTENT (text,
+// vignette, scrim) cross-fade in lock-step with the wheel, not just on release.
+// Theme color tokens that are worth interpolating live (everything the hero shows).
+const LERP_TOKENS = ['--color-primary', '--color-text', '--color-text-muted', '--color-ember', '--color-gold', '--color-card-border'];
+const _lerp = (a, b, t) => a + (b - a) * t;
+const parseColor = (s = '') => {
+  s = s.trim();
+  if (s[0] === '#') {
+    const h = s.length === 4 ? s.slice(1).split('').map((c) => c + c).join('') : s.slice(1);
+    const n = parseInt(h, 16);
+    return [(n >> 16) & 255, (n >> 8) & 255, n & 255, 1];
+  }
+  const m = s.match(/[\d.]+/g) || [0, 0, 0];
+  return [+m[0], +m[1], +m[2], m[3] !== undefined ? +m[3] : 1];
+};
+const mixColor = (from, to, t) => {
+  const a = parseColor(from), b = parseColor(to);
+  const r = Math.round(_lerp(a[0], b[0], t)), g = Math.round(_lerp(a[1], b[1], t)), bl = Math.round(_lerp(a[2], b[2], t));
+  const al = _lerp(a[3], b[3], t);
+  return al < 1 ? `rgba(${r}, ${g}, ${bl}, ${al.toFixed(3)})` : `rgb(${r}, ${g}, ${bl})`;
+};
+const mixTriple = (from, to, t) => {
+  const a = (from || '0,0,0').split(','), b = (to || '0,0,0').split(',');
+  return `${Math.round(_lerp(+a[0], +b[0], t))}, ${Math.round(_lerp(+a[1], +b[1], t))}, ${Math.round(_lerp(+a[2], +b[2], t))}`;
+};
+
 const Hero = () => {
   const { t, i18n } = useTranslation();
-  const { resolvedTheme } = useThemeStore();
+  const { resolvedTheme, resolvedSky, setMode } = useThemeStore();
   const isDark = resolvedTheme === 'dark';
   const prefersReduced = useReducedMotion();
   const [phraseIdx, setPhraseIdx] = useState(0);
@@ -28,6 +63,18 @@ const Hero = () => {
   const canvasWrapRef = useRef(null);
   const bearingRef = useRef(null);
   const astrolabeRef = useRef(null);
+
+  // TM-1 continuous sky cross-dissolve — a stack of preview layers above the real
+  // backdrop + scrim that crossfade in lock-step with the ring's rotation, driven
+  // imperatively (no per-frame React re-render). `skyArt` holds each sky's gradient
+  // + scrim, probed once from CSS (never duplicated in JS). The real theme commits
+  // only when the ring settles, so there's no hard mid-rotation swap/flash.
+  const skyArt = useRef(null);
+  const previewRef = useRef(null); // container — opacity is the backdrop preview's on/off
+  const bpARef = useRef(null);     // backdrop "from" layer
+  const bpBRef = useRef(null);     // backdrop "to" layer (opacity = crossfade t)
+  const previewOn = useRef(false);
+  const lastSeg = useRef(null);
 
   // `t(returnObjects)` hands back a fresh array every render — memoize per voice
   // so it's a stable reference (otherwise the rotation effect churns). `t`'s
@@ -86,10 +133,107 @@ const Hero = () => {
     return () => ctx.revert();
   }, []);
 
-  // The living astrolabe (Canvas2D). Re-mounts on theme change to re-read tokens.
-  // Its needle speed drives the gear sound, so the gear turns as fast as the cursor
-  // sweeps the alidade (and is silent at rest). Safe regardless of sound state.
-  useAstrolabe(canvasRef, canvasWrapRef, bearingRef, resolvedTheme, sound.watch.setSpeed, astrolabeRef);
+  // Probe each sky's gradients + tokens from CSS once. Day/night live on `:root`/
+  // `.dark` (not a `.light` class), so a detached probe div can't match them — we
+  // must read off `<html>` itself (which IS `:root`). Do it synchronously (mutate →
+  // read → restore, no paint in between) so there's no flash.
+  useEffect(() => {
+    const html = document.documentElement;
+    const savedClass = html.getAttribute('class') || '';
+    const savedSky = html.dataset.sky;
+    const art = {};
+    for (const sky of SKY_ORDER) {
+      const base = SKY_BASE[sky];
+      html.classList.remove('light', 'dark');
+      html.classList.add(base);
+      html.dataset.sky = sky;
+      const cs = getComputedStyle(html);
+      art[sky] = {
+        backdrop: cs.getPropertyValue('--hero-backdrop').trim(),
+        scrimRgb: cs.getPropertyValue('--hero-scrim-rgb').trim(),
+        dark: base === 'dark',
+        tok: LERP_TOKENS.reduce((o, k) => { o[k] = cs.getPropertyValue(k).trim(); return o; }, {}),
+      };
+    }
+    html.setAttribute('class', savedClass);   // restore the committed theme atomically
+    if (savedSky) html.dataset.sky = savedSky;
+    skyArt.current = art;
+  }, []);
+
+  // Imperative continuous crossfade — called every frame of a scrub (no React
+  // re-render). `pos` is the float stop position; integer part = "from" sky,
+  // fractional part = crossfade amount toward the next sky.
+  const applyScrub = (pos) => {
+    const art = skyArt.current;
+    const cont = previewRef.current;
+    const host = rootRef.current;
+    if (!art || !cont || !host) return;
+    if (!previewOn.current) {       // first frame of a scrub → reveal the backdrop preview
+      previewOn.current = true;
+      cont.style.transition = 'none';
+      cont.style.opacity = '1';
+    }
+    const f = Math.floor(pos);
+    const tt = pos - f;
+    const from = art[SKY_ORDER[((f % 4) + 4) % 4]];
+    const to = art[SKY_ORDER[(((f + 1) % 4) + 4) % 4]];
+    // Backdrop is a gradient (can't be a var) → cross-fade two layers.
+    if (lastSeg.current !== f) {
+      lastSeg.current = f;
+      if (bpARef.current) bpARef.current.style.background = from.backdrop;
+      if (bpBRef.current) bpBRef.current.style.background = to.backdrop;
+    }
+    if (bpBRef.current) bpBRef.current.style.opacity = String(tt);
+    // Everything else is token-based → interpolate the tokens on the hero section
+    // (scoped, so only the hero subtree recalcs) → CONTENT + scrim + vignette bottom
+    // all cross-dissolve in lock-step with the wheel.
+    for (let i = 0; i < LERP_TOKENS.length; i++) {
+      const k = LERP_TOKENS[i];
+      host.style.setProperty(k, mixColor(from.tok[k], to.tok[k], tt));
+    }
+    host.style.setProperty('--hero-scrim-rgb', mixTriple(from.scrimRgb, to.scrimRgb, tt));
+  };
+
+  // The ring has come to rest on a stop → commit the real theme, then clear the
+  // scoped token overrides (committed theme's vars take over — identical to the last
+  // interpolated frame, so seamless) and fade the backdrop preview out.
+  const commitSky = (idx) => {
+    const sky = SKY_ORDER[idx];
+    if (sky) { setMode(sky); track('astrolabe_sky_set', { sky }); }
+    const host = rootRef.current;
+    if (host) {
+      LERP_TOKENS.forEach((k) => host.style.removeProperty(k));
+      host.style.removeProperty('--hero-scrim-rgb');
+    }
+    const cont = previewRef.current;
+    if (cont) { cont.style.transition = 'opacity 0.45s ease'; cont.style.opacity = '0'; }
+    previewOn.current = false;
+    lastSeg.current = null;
+  };
+
+  // The living astrolabe (Canvas2D). Mounts once and re-tints in place on theme
+  // change (no remount). The needle gear + the ring grind are distinct sounds.
+  useAstrolabe(canvasRef, canvasWrapRef, bearingRef, resolvedSky, {
+    onSpeed: (speed, source) => {
+      if (source === 'bezel') { sound.grind.setSpeed(speed); sound.watch.setSpeed(0); }
+      else { sound.watch.setSpeed(speed); sound.grind.setSpeed(0); }
+    },
+    onScrub: applyScrub,                          // continuous cross-dissolve
+    onDetent: () => sound.playCue('detent'),      // tactile tick per stop crossed
+    onSkyCommit: commitSky,                        // commit on settle
+    ringLabel: t('hero.ringLabel'),
+    controlsRef: astrolabeRef,
+  });
+
+  // Voice-aware curved label — update the on-ring guidance when the voice changes.
+  useEffect(() => { astrolabeRef.current?.setLabel(t('hero.ringLabel')); }, [t]);
+
+  // Keep the resting bezel aligned to the live sky (on mount + whenever the sky
+  // changes — via the scrub itself, the SkyControl menu, or `auto` re-resolving).
+  useEffect(() => {
+    const i = SKY_ORDER.indexOf(resolvedSky);
+    if (i >= 0) astrolabeRef.current?.setStop(i);
+  }, [resolvedSky]);
 
   // Analytics — did they deliberately *play* with the needle? A pointerdown that
   // lands inside the instrument's box (the needle follows/aims there) is the
@@ -134,13 +278,13 @@ const Hero = () => {
         trigger: rootRef.current,
         start: 'top top',
         end: 'bottom top',
-        onUpdate: (self) => sound.watch.setLevel(1 - self.progress),
-        onLeave: () => sound.watch.setLevel(0),
-        onLeaveBack: () => sound.watch.setLevel(1),
+        onUpdate: (self) => { const l = 1 - self.progress; sound.watch.setLevel(l); sound.grind.setLevel(l); },
+        onLeave: () => { sound.watch.setLevel(0); sound.grind.setLevel(0); },
+        onLeaveBack: () => { sound.watch.setLevel(1); sound.grind.setLevel(1); },
       });
-      sound.watch.setLevel(1 - st.progress);
+      const l0 = 1 - st.progress; sound.watch.setLevel(l0); sound.grind.setLevel(l0);
     }, rootRef);
-    return () => { sound.watch.stop(); ctx.revert(); };
+    return () => { sound.watch.stop(); sound.grind.stop(); ctx.revert(); };
   }, []);
 
   const firstName = personalInfo.name.split(' ')[0];
@@ -177,24 +321,20 @@ const Hero = () => {
       {/* Legibility scrim — darkens the copy side, leaves the instrument lit. */}
       <div
         className="absolute inset-0 z-[1] pointer-events-none"
-        style={{
-          background: isDark
-            ? 'linear-gradient(90deg, rgba(var(--hero-scrim-rgb),0.93) 0%, rgba(var(--hero-scrim-rgb),0.55) 40%, rgba(var(--hero-scrim-rgb),0) 70%)'
-            : 'linear-gradient(90deg, rgba(var(--hero-scrim-rgb),0.92) 0%, rgba(var(--hero-scrim-rgb),0.5) 42%, rgba(var(--hero-scrim-rgb),0) 72%)',
-        }}
+        style={{ background: scrimGradient('var(--hero-scrim-rgb)', isDark) }}
       />
-      <div className="cinematic-vignette" style={{ zIndex: 2 }} />
 
-      {/* Seamless hand-off — pin the lower edge to the exact page background
-          (`--color-primary`) so the vignette's edge-darkening doesn't leave a
-          seam against the sections below. Below the astrolabe (z-3) so the
-          instrument stays crisp. */}
-      {isDark && (
-        <div
-          className="absolute inset-x-0 bottom-0 z-[2] pointer-events-none h-1/3"
-          style={{ background: 'linear-gradient(to bottom, transparent 0%, var(--color-primary) 96%)' }}
-        />
-      )}
+      {/* TM-1 continuous sky preview — the BACKDROP gradient can't be a CSS var, so
+          it cross-fades via two layers above the real backdrop (opacity-driven by
+          applyScrub). The scrim + all content track the wheel via interpolated
+          tokens on the hero section, so they need no preview layer. Hidden until a
+          scrub begins; fades out on commit. */}
+      <div ref={previewRef} className="absolute inset-0 z-[1] pointer-events-none" style={{ opacity: 0 }}>
+        <div ref={bpARef} className="absolute inset-0" style={{ opacity: 1 }} />
+        <div ref={bpBRef} className="absolute inset-0" style={{ opacity: 0 }} />
+      </div>
+
+      <div className="cinematic-vignette" style={{ zIndex: 2 }} />
 
       {/* ===== The astrolabe ===== */}
       <div
@@ -274,7 +414,11 @@ const Hero = () => {
       </div>
 
       {/* ===== Copy ===== */}
-      <div ref={copyRef} className="relative z-10 h-full max-w-7xl mx-auto px-6 sm:px-12 flex flex-col justify-end pb-28 md:justify-center md:pb-0">
+      {/* pointer-events-none so the full-width copy column doesn't sit on top of
+          the astrolabe (z-3) and steal its pointer events — that overlap was why
+          the bezel only grabbed near "E" (where the ring pokes past this column)
+          and why hovering there thrashed. Interactive children opt back in. */}
+      <div ref={copyRef} className="relative z-10 h-full max-w-7xl mx-auto px-6 sm:px-12 flex flex-col justify-end pb-28 md:justify-center md:pb-0 pointer-events-none">
         <div className="max-w-xl">
           <div className="hero-eyebrow chapter-eyebrow mb-5">{t('common.chapterLabel')} {chapters.origin.no} · {t('chapters.origin.label')}</div>
 
@@ -310,7 +454,7 @@ const Hero = () => {
             {t('hero.hook')}
           </p>
 
-          <div className="hero-cta mt-9 flex flex-wrap items-center gap-5">
+          <div className="hero-cta mt-9 flex flex-wrap items-center gap-5 pointer-events-auto">
             <button onClick={() => { track('hero_cta', { target: 'about' }); scrollToSection('about'); }} data-cursor="hover" className="btn-primary">{t('hero.ctaPrimary')}</button>
             <button onClick={() => { track('hero_cta', { target: 'contact' }); scrollToSection('contact'); }} data-cursor="hover" className="text-[15px] font-medium link-hover" style={{ color: 'var(--color-text)' }}>
               {t('hero.ctaSecondary')}

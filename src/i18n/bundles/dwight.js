@@ -25,6 +25,13 @@ export default {
     ctaSecondary: 'Contact HQ →',
     scroll: 'Descend',
     spin: 'Free-spin it',
+    ringLabel: 'Rotate · change the sky',
+    guide: {
+      title: 'The astrolabe. Standard issue.',
+      needle: 'The needle tracks you. As I track a deer.',
+      spin: 'Spin the rose. Demonstrate authority.',
+      ring: 'Rotate the outer ring to change the sky. Fact.',
+    },
   },
 
   about: {

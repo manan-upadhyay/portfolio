@@ -27,6 +27,13 @@ export default {
     ctaSecondary: 'Call me →',
     scroll: 'Scroll, please',
     spin: 'Give it a whirl',
+    ringLabel: 'Turn it · the sky moves',
+    guide: {
+      title: 'The astrolabe. Boom.',
+      needle: 'The needle follows you. Like a loyal employee.',
+      spin: 'Spin the rose. Go on. Spun.',
+      ring: 'Turn the outer ring to change the sky. Not a metaphor.',
+    },
   },
 
   about: {

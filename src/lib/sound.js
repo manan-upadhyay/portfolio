@@ -50,6 +50,7 @@ export const CONFIG = {
     lens: { peak: 0.035 },    // face-particle magic-lantern hover buzz
     orbit: { peak: 0.45 },   // observatory constellation hover buzz (sibling, not same)
     reel: { peak: 0.16 },     // director's-reel film-transport whir (velocity-driven)
+    grind: { peak: 0.5 },     // bezel sky-scrub grind — heavier sibling of the needle gear
   },
   raven: '/sounds/raven.mp3',       // Contact-send raven (one-shot sample)
 };
@@ -451,6 +452,64 @@ const watch = makeBed({
   },
 });
 
+// Bezel sky-scrub grind — a SIBLING of the needle gear but heavier + coarser, so
+// turning the ring sounds related yet clearly distinct from sweeping the needle:
+// a deeper rumble + a slow, gritty low-mid "stone cog" catch (fewer, bigger teeth
+// than the 26-tooth needle gear), driven by the ring's angular speed. Silent at
+// rest. Hero-local; its level follows the same scroll fade as the needle gear.
+const GRIND_TEETH = 26;       // same tooth count as the needle gear → reads as a gear,
+const GRIND_MAX_HZ = 38;      // not a slow cog; the timbre (below) is what differs.
+const GRIND_FULL_SPEED = 7;   // ring rad/s at which the grind reaches full volume
+const grind = makeBed({
+  peak: CONFIG.beds.grind.peak,
+  build: () => {
+    const g = ctx.createGain(); g.gain.value = 0.0001;
+    const motion = ctx.createGain(); motion.gain.value = 0.0001; // gate: silent at rest
+
+    // Heavy low rumble — the stone ring turning (lower + darker than the gear).
+    const rumble = ctx.createOscillator(); rumble.type = 'sawtooth'; rumble.frequency.value = 42;
+    const rumLp = ctx.createBiquadFilter(); rumLp.type = 'lowpass'; rumLp.frequency.value = 130; rumLp.Q.value = 0.6;
+    const rumG = ctx.createGain(); rumG.gain.value = 0.05;
+    rumble.connect(rumLp).connect(rumG).connect(motion);
+
+    // Gritty mid grind — noise through a low-mid bandpass pair, gated by a slow saw
+    // LFO whose rate is the ring's revolving speed (coarse, woody — not the gear's
+    // bright high tick).
+    const src = ctx.createBufferSource(); src.buffer = noise; src.loop = true;
+    const bp = ctx.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 430; bp.Q.value = 3.2;
+    const bp2 = ctx.createBiquadFilter(); bp2.type = 'bandpass'; bp2.frequency.value = 820; bp2.Q.value = 2.4;
+    const gate = ctx.createGain(); gate.gain.value = 0.5;
+    const lfo = ctx.createOscillator(); lfo.type = 'sawtooth'; lfo.frequency.value = 0.0001;
+    const lfoAmt = ctx.createGain(); lfoAmt.gain.value = -0.55; // inverted → catch + decay
+    lfo.connect(lfoAmt).connect(gate.gain);
+    src.connect(bp).connect(gate);
+    src.connect(bp2).connect(gate);
+    gate.connect(motion);
+
+    motion.connect(g);
+    g.connect(master);
+    [rumble, lfo].forEach((o) => o.start()); src.start();
+    return {
+      gain: g,
+      setSpeed(radPerSec) {
+        const speed = Math.abs(radPerSec) || 0;
+        const t = now();
+        const clickHz = Math.min((speed / TWO_PI) * GRIND_TEETH, GRIND_MAX_HZ);
+        lfo.frequency.setTargetAtTime(Math.max(clickHz, 0.0001), t, 0.05);
+        const m = Math.min(speed / GRIND_FULL_SPEED, 1);
+        motion.gain.setTargetAtTime(0.0001 + m, t, 0.08);
+      },
+      stop() {
+        const t = now();
+        g.gain.setTargetAtTime(0.0001, t, 0.2);
+        try { src.stop(t + 0.6); } catch { /* already stopped */ }
+        [rumble, lfo].forEach((o) => { try { o.stop(t + 0.6); } catch { /* already stopped */ } });
+        setTimeout(() => { [rumble, rumLp, rumG, motion, src, bp, bp2, gate, lfo, lfoAmt, g].forEach((n) => n.disconnect()); }, 800);
+      },
+    };
+  },
+});
+
 // Face-particle magic-lantern hover buzz — a warm electric drone: a detuned
 // sawtooth pair (root + a fifth) through a bandpass that a slow LFO breathes,
 // plus a faint high partial. Driven on/off by the lens hover (setLevel 1/0).
@@ -669,6 +728,7 @@ export const sound = {
   lens,
   orbit,
   reel,
+  grind,
   reduceMotion,
 };
 

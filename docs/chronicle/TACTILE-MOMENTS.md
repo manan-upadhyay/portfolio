@@ -50,7 +50,7 @@ Each feature has a stable ID (`TM-n`) — **reference these IDs across chats/ses
 
 | ID | Feature | Tier | Net-new sound? | New deps |
 |----|---------|------|----------------|----------|
-| **TM-1** | Astrolabe bezel — scrub time-of-day / sky | 1 (ship) | reuse `detent` + `watch` | none |
+| **TM-1** | Astrolabe bezel — scrub time-of-day / sky ✅ **implemented** | 1 (ship) | reuse `detent` + `watch` | none |
 | **TM-2** | Velocity-reactive chapter headings | 1 (ship) | none (silent) | none |
 | **TM-3** | Contextual character cursor | 1 (ship) | none (silent) | none |
 | **TM-7** | Voice-aware glyph ramp on `FaceParticles` | 1 (ship) | none | none |
@@ -163,6 +163,129 @@ the “interactive” cursor with `data-cursor="hover"`** (already used on Hero 
 ---
 
 ## TM-1 — Astrolabe bezel: scrub time-of-day / sky · Tier 1
+
+> **Status: IMPLEMENTED + iteration 2** (pending manual drag-verification on a
+> real pointer device — build + lint + headless render are clean; the rotate-drag,
+> sparks, crossfade and hover-affordance can't be click-tested here, no automation
+> driver). Touches `astrolabe.js`, `useAstrolabe.js`, `Hero.jsx`.
+>
+> **Locked decisions:**
+> - **D1 → options object.** `useAstrolabe(canvasRef, wrapRef, bearingRef,
+>   skyKey, { onSpeed, onDetent, onSkyCommit, controlsRef })`.
+> - **D2 → commit to manual.** A scrub leaves `auto` (calls `setMode(sky)`).
+> - **Deviation (scroll-safety):** rotate-drag is **fine-pointer only**
+>   (`!reduce && !coarse`). Coarse/touch keeps tap-to-aim + native scroll + the
+>   `SkyControl` menu — a rotate-drag can't be disambiguated from a scroll-drag.
+>
+> **Iteration 6 — performance audit + the "frozen needle" crash fix:**
+> - **CRITICAL — rAF loop could die:** the loop had no error guard, so a single
+>   throw in any frame (`draw`/`onScrub`/`onSpeed`) killed the whole loop — the
+>   needle froze while the last sound level stayed on ("needle stuck + sound keeps
+>   coming"). Now the loop body is wrapped in try/catch, `prevTs` always advances
+>   (dt can't explode), and it always reschedules. The loop can no longer die.
+> - **Per-frame cost cuts:** removed the needle's `shadowBlur` (a per-frame canvas
+>   shadow is one of the most expensive 2D ops) → cheap translucent-underlay glow;
+>   batched the **72 tick strokes → 2**, and the 9 constellation lines → 1.
+> - **Pause when off-screen:** an IntersectionObserver stops the rAF loop while the
+>   instrument is scrolled out of view (no wasted redraws; frees the page's frame
+>   budget), and resumes it on return.
+> - No `console.*` anywhere in the feature. NB: dev (`localhost:5173`) is always
+>   far laggier than prod (StrictMode double-invoke, no minify, HMR) — judge perf
+>   on `npm run preview`.
+>
+> **Iteration 5 — day sky was missing from the cycle:** day/night live on `:root`/
+> `.dark` (not a `.light` class), so the detached probe `<div>` couldn't match day
+> and it inherited the current theme. Probe now reads off `<html>` (which IS
+> `:root`) synchronously (mutate → read → restore, no flash). All four skies resolve
+> distinctly; the light phase is back to 50%.
+>
+> **Iteration 4 — continuous crossfade + curved label + sound (from third test):**
+> - **Theme change is now a CONTINUOUS cross-dissolve tied to the rotation** (no
+>   more per-detent snap + flash). The engine fires `onScrub(scrubPos)` every frame
+>   of a scrub (drag **and** the post-release settle); Hero drives an imperative
+>   4-layer preview stack (2 backdrop + 2 scrim, opacity-only, **no React re-render
+>   per frame**) whose crossfade `t` = the fractional stop position. So transition
+>   speed = rotation speed. The **real theme commits only when the ring comes to
+>   rest** (`onSkyCommit` on settle), under the preview, which then fades out (0.45s)
+>   to reveal the identical committed sky — seamless. Released mid-turn → the ring
+>   eases to the nearest stop and the crossfade completes to it.
+>   - Per-sky gradients are **probed once from CSS** (a hidden element matching the
+>     `.light/.dark[data-sky]` selectors) — never duplicated in JS.
+>   - This also fixes the white flash (the old per-detent `setMode` + ghost is gone)
+>     AND is cheaper (no per-detent `getComputedStyle`/React state churn).
+> - **Curved guidance label** replaces the overlapping guide card: `mountAstrolabe`
+>   pre-renders `ringLabel` ("turn to change the sky") as curved text on the top arc
+>   + a sci-fi arc-with-arrowheads cue, blitted as a sprite (no per-frame curved
+>   fillText). Theme-adaptive `--color-text` ink (legible on light AND dark),
+>   present-but-quiet, brightens on hover. Voice-aware via `setLabel` + `hero.ringLabel`
+>   (all five voices). No DOM overlay.
+> - **Ring glow feathered:** the hover glow is now a soft radial band centred on the
+>   rim (feathered both sides) + a crisp definition line — not a hard double stroke.
+> - **Grind sound:** teeth raised 9 → 26 (same as the needle) so it reads as a gear,
+>   not a slow cog; the heavier rumble + low-mid grind timbre is what stays distinct.
+>
+> **Iteration 3 — performance + UX from second real-device test (perf is the
+> hard line: smoothness wins over any feature):**
+> - **Root-cause of "only grabs near E" + lag:** the hero **copy column** (`z-10`,
+>   `max-w-7xl mx-auto`, full-width) sat ON TOP of the canvas (`z-3`), so pointer
+>   events only reached the ring where it poked past the column (near E), and the
+>   stacked-layer overlap thrashed on hover. Fix: copy column is now
+>   `pointer-events-none` with interactive children (`.hero-cta`) opted back in —
+>   the whole ring is grabbable and the overlap stops thrashing.
+> - **Drag-time jank:** `onBezelMove` was calling `getBoundingClientRect()` every
+>   pointermove (forced layout per move). Geometry (`dragCx/dragCy`) is now cached
+>   once at grab. Also: cursor is written only on change (`lastCursor`), and the
+>   per-frame hover read uses the cached `rect`.
+> - **White-flash on day↔night:** the scrim RGB flips light↔dark on an inline
+>   gradient (can't CSS-transition), snapping a near-white wash in. Now Hero also
+>   captures the **outgoing scrim** and cross-dissolves it (a second ghost layer)
+>   — but only on a base flip. The `scrimGradient()` helper builds both the live
+>   layer and the ghost from the same recipe (DRY).
+> - **Discoverability redo:** the two rotation arrows were removed (they read as
+>   *needle* controls). Hover now glows the **ring itself** (double-stroke ember +
+>   brighter ticks) — unambiguously "this ring turns". Plus a one-time, session-
+>   gated **guide caption** (desktop) naming all three interactions (needle / spin
+>   / ring), copy in all five voices under `hero.guide.*`. *(Tunable: it can
+>   overlap the voice entice-note in the lower-right; reposition if needed.)*
+> - **Distinct ring sound:** the ring no longer shares the needle's gear. New
+>   `sound.grind` bed (`sound.js`) — a heavier, coarser sibling (lower rumble +
+>   slow low-mid "stone cog", 9 teeth vs the gear's 26). The engine tags
+>   `onSpeed(speed, source)`; Hero routes `'bezel' → grind`, `'needle' → watch`,
+>   each silencing the other. `grind` level follows the same hero scroll fade.
+>
+> **Iteration 2 — fixes + polish from first real-device test:**
+> - **Bug (drag dropped / needle stayed locked / only worked at the right edge):**
+>   move/up listeners were on the *canvas*, so a pointer that left the small box
+>   lost events and the `pointerup` (→ `dragging=false`) was missed. Now the down
+>   handler attaches **window-level** `pointermove`/`pointerup`/`pointercancel`
+>   for the drag's duration and removes them on release.
+> - **Bug (text selection while turning):** drag sets `document.body.style.user
+>   Select='none'` (+ webkit) and `preventDefault()`s the pointerdown; restored on
+>   release + in `destroy()`.
+> - **Live "time-travel" crossfade (was: nothing visible until release, then a
+>   hard swap):** the sky now commits **live per detent** during the drag, not on
+>   release. This required the instrument to **stop remounting on theme change** —
+>   `mountAstrolabe` now exposes `refresh()` (re-reads CSS tokens in place) and
+>   `useAstrolabe` mounts once + calls `refresh()` on `skyKey` change, so a base
+>   flip mid-drag no longer tears down the drag. The page cross-dissolves via the
+>   existing token transitions; Hero additionally captures the **outgoing
+>   `--hero-backdrop` gradient** and fades it out over the new one (an
+>   `AnimatePresence` ghost layer) so the hero sky itself cross-dissolves
+>   (gradients can't CSS-transition).
+> - **Discoverability:** on hover over the bezel annulus the engine draws two
+>   clockwise rotation arrows + a faint rim glow (`affordA`, eased) and sets a
+>   `grab` cursor; a one-time **first-visit invite pulse** (sessionStorage-gated,
+>   ~3.4s after assembly) plays the same affordance so the ring reads as a dial.
+> - **Sparks:** velocity-driven embers thrown off the rim while turning — pooled
+>   (≤80), additive, real-ish physics (tangential launch + gravity + air drag +
+>   fade). Emitted in the move handler, integrated/culled in the loop.
+> - **Grind sound:** reuses the existing `watch` gear bed — the bezel's angular
+>   speed feeds `onSpeed → sound.watch.setSpeed`, so the gear/grind winds with the
+>   turn and is silent at rest (no net-new timbre; dilution rule). Detent ticks
+>   per stop via `sound.playCue('detent')`.
+> - **Note:** the bezel tick pattern has a 30°/5° period, so the *resting* ring
+>   looks identical at every stop; the live turn + sparks + crossfade + detent are
+>   the feedback, so no separate "you-are-here" marker is needed.
 
 **Concept.** Tie the site's best interaction to its best system. Today the needle
 *follows* the cursor and can be flicked into a free spin. Add a second affordance:

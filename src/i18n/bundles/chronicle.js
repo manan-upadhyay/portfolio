@@ -40,6 +40,13 @@ export default {
     ctaSecondary: 'Summon me →',
     scroll: 'Scroll',
     spin: 'Spin the alidade',
+    ringLabel: 'Turn to change the sky',
+    guide: {
+      title: 'Your astrolabe',
+      needle: 'The needle follows your hand',
+      spin: 'Spin the compass rose',
+      ring: 'Turn the outer ring to change the sky',
+    },
   },
 
   about: {

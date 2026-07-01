@@ -24,6 +24,13 @@ export default {
     ctaSecondary: 'Moo →',
     scroll: 'Moo',
     spin: 'Moo moo moo',
+    ringLabel: 'Moo moo moo moo',
+    guide: {
+      title: 'Moo',
+      needle: 'Moo moo moo moo',
+      spin: 'Moo moo moo',
+      ring: 'Moo moo moo moo moo moo',
+    },
   },
 
   about: {

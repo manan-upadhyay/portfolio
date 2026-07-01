@@ -28,6 +28,13 @@ export default {
     ctaPrimary: 'View my work',
     ctaSecondary: 'Contact me →',
     spin: 'Spin the pointer',
+    ringLabel: 'Drag to change the theme',
+    guide: {
+      title: 'The astrolabe',
+      needle: 'Move your mouse to aim the needle',
+      spin: 'Click the button to spin it',
+      ring: 'Drag the outer ring to change the theme',
+    },
   },
 
   about: {

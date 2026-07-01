@@ -448,7 +448,7 @@ export default {
     tryHint: 'Select a voice. The entire chronicle — this panel included — will immediately submit to it. There is no resistance.',
     close: 'Dismiss',
     noResult: 'No such voice exists in the registry. I have memorized the registry. There is no such voice.',
-    sealedHint: 'Certain voices are sealed for security. Type the correct password anywhere on the page to breach them.',
+    sealedHint: 'Certain voices are sealed for security. Select one and supply its password — or type the correct password anywhere on the page — to breach them.',
     found: '{{count}}/{{total}} sealed voices breached',
     footerHint: 'enter to speak · esc to close',
     categories: {
@@ -477,6 +477,12 @@ export default {
 
   voice: {
     menuSub: 'Identify the narrator. Assign a voice. Proceed.',
+    sealedHint: 'Select a sealed voice and',
+    sealedTypeHint: 'supply the correct password.',
+    cluePlaceholder: 'Enter the password…',
+    clueSubmit: 'Breach',
+    clueAria: 'Answer the clue: {{hint}}',
+    clueWrong: 'Incorrect. Access denied. Reread the clue. Do not fail again.',
     more: '{{count}} more concealed. Locate them. That is an order.',
   },
 

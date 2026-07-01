@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Feather, Check, Lock, Info, ArrowRight } from 'lucide-react';
+import { Feather, Check, Lock, Info, ArrowRight, ChevronDown } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useVoiceStore } from '../store/useVoiceStore';
 import { useCoachmark } from '../store/useCoachmark';
@@ -8,6 +8,7 @@ import { pushOverlay, popOverlay } from '../lib/uiOverlay';
 import { trackOnce } from '../lib/analytics';
 import { voices, SEALED_VOICES, POPOVER_SEALED_LIMIT, popoverVoices } from '../i18n/voices';
 import Hovercard from './Hovercard';
+import ClueUnlock from './ClueUnlock';
 
 const JELLY = { type: 'spring', stiffness: 320, damping: 24, mass: 0.7 };
 
@@ -23,55 +24,88 @@ const infoBody = (info) => (
 
 // One row in the popover. Open/unlocked → label + selectable, ticked when active.
 // Sealed (locked) → the iconic quote + a "Clue —" line + an ⓘ reference popover.
-const VoiceRow = ({ v, active, locked, onSelect }) => (
-  <div
-    className="relative flex items-start gap-1 px-2 py-1.5 rounded-xl transition-colors"
-    style={{ background: active ? 'rgba(var(--color-ember-rgb),0.12)' : 'transparent' }}
-  >
-    <button
-      type="button"
-      role="menuitemradio"
-      aria-checked={active}
-      aria-disabled={locked || undefined}
-      data-cursor="hover"
-      onClick={locked ? undefined : onSelect}
-      className="flex items-start gap-2.5 text-left min-w-0 flex-1 px-1"
-      style={{ cursor: locked ? 'default' : 'pointer', opacity: locked ? 0.65 : 1 }}
-    >
-      <span className="mt-0.5 grid place-items-center w-4 flex-shrink-0">
-        {locked ? (
-          <Lock size={12} style={{ color: 'var(--color-text-muted)' }} />
-        ) : active ? (
-          <Check size={13} style={{ color: 'var(--color-ember)' }} />
-        ) : (
-          <span className="w-1.5 h-1.5 rounded-full" style={{ background: 'var(--color-card-border)' }} />
-        )}
-      </span>
-      <span className="min-w-0">
-        <span
-          className="block text-[13px] font-medium leading-tight truncate"
-          style={{ color: active ? 'var(--color-ember)' : 'var(--color-text)', fontStyle: locked ? 'italic' : 'normal' }}
-        >
-          {locked ? v.sample : v.label}
-        </span>
-        <span className="block text-[11px] leading-snug mt-0.5" style={{ color: 'var(--color-text-muted)' }}>
-          {locked ? `Clue — ${v.hint}` : v.sample}
-        </span>
-      </span>
-    </button>
+// Tapping a sealed row expands the touch-friendly `ClueUnlock` field right here —
+// so it works with no hardware keyboard and is never a dead tap.
+const VoiceRow = ({ v, active, locked, onSelect }) => {
+  const [answering, setAnswering] = useState(false);
+  useEffect(() => { if (!locked) setAnswering(false); }, [locked]);
 
-    {v.info && (
-      <Hovercard
-        className="mt-1 grid place-items-center w-5 h-5 rounded-full flex-shrink-0"
-        width={210}
-        ariaLabel={`What is this voice? ${v.info.name}, ${v.info.source}`}
-        content={infoBody(v.info)}
-      >
-        <Info size={13} style={{ color: 'var(--color-text-muted)' }} />
-      </Hovercard>
-    )}
-  </div>
-);
+  return (
+    <div
+      className="relative rounded-xl transition-colors"
+      style={{
+        // Active = the ember wash. Expanded-for-typing gets a DISTINCT recessed
+        // "well" (neutral fill + hairline outline) so it never reads as selected.
+        background: active
+          ? 'rgba(var(--color-ember-rgb),0.12)'
+          : answering
+            ? 'color-mix(in srgb, var(--color-primary) 55%, transparent)'
+            : 'transparent',
+        boxShadow: answering && !active ? 'inset 0 0 0 1px var(--color-card-border)' : 'none',
+      }}
+    >
+      <div className="flex items-start gap-1 px-2 py-1.5">
+        <button
+          type="button"
+          role="menuitemradio"
+          aria-checked={active}
+          aria-expanded={locked ? answering : undefined}
+          data-cursor="hover"
+          onClick={locked ? () => setAnswering((o) => !o) : onSelect}
+          className="flex items-start gap-2.5 text-left min-w-0 flex-1 px-1"
+          style={{ opacity: locked && !answering ? 0.7 : 1 }}
+        >
+          <span className="mt-0.5 grid place-items-center w-4 flex-shrink-0">
+            {locked ? (
+              <Lock size={12} style={{ color: 'var(--color-text-muted)' }} />
+            ) : active ? (
+              <Check size={13} style={{ color: 'var(--color-ember)' }} />
+            ) : (
+              <span className="w-1.5 h-1.5 rounded-full" style={{ background: 'var(--color-card-border)' }} />
+            )}
+          </span>
+          <span className="min-w-0 flex-1">
+            <span
+              className="block text-[13px] font-medium leading-tight truncate"
+              style={{ color: active ? 'var(--color-ember)' : 'var(--color-text)', fontStyle: locked ? 'italic' : 'normal' }}
+            >
+              {locked ? v.sample : v.label}
+            </span>
+            <span className="block text-[11px] leading-snug mt-0.5" style={{ color: 'var(--color-text-muted)' }}>
+              {locked ? `Clue — ${v.hint}` : v.sample}
+            </span>
+          </span>
+          {locked && (
+            <ChevronDown
+              size={13}
+              className="mt-0.5 flex-shrink-0 transition-transform"
+              style={{ color: 'var(--color-text-muted)', transform: answering ? 'rotate(180deg)' : 'none' }}
+            />
+          )}
+        </button>
+
+        {v.info && (
+          <Hovercard
+            className="mt-1 grid place-items-center w-5 h-5 rounded-full flex-shrink-0"
+            width={210}
+            ariaLabel={`What is this voice? ${v.info.name}, ${v.info.source}`}
+            content={infoBody(v.info)}
+          >
+            <Info size={13} style={{ color: 'var(--color-text-muted)' }} />
+          </Hovercard>
+        )}
+      </div>
+
+      <AnimatePresence initial={false}>
+        {locked && answering && (
+          <div className="px-3 pb-1.5">
+            <ClueUnlock key="unlock" voice={v} onUnlocked={() => setAnswering(false)} />
+          </div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+};
 
 // Sections that count as "deep enough in the journey" to surface the entice note.
 const NOTE_AT = ['arsenal', 'projects', 'contact'];

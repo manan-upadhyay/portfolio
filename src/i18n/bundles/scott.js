@@ -450,7 +450,7 @@ export default {
     tryHint: 'Click a voice and — BOOM — the whole site starts talking like them. Even this part right here. Especially this part.',
     close: 'Close (but don’t go)',
     noResult: 'Nobody here by that name. And I know everybody. I’m a people person.',
-    sealedHint: 'Some voices are sealed, like a surprise party. Type the secret word anywhere on the page and they wake up. Surprise.',
+    sealedHint: 'Some voices are sealed, like a surprise party. Tap one and answer its clue — or type the secret word anywhere on the page — and they wake up. Surprise.',
     found: '{{count}}/{{total}} secret voices found',
     footerHint: 'enter to speak · esc to close',
     categories: {
@@ -479,6 +479,12 @@ export default {
 
   voice: {
     menuSub: 'Who tells this story? Me, ideally. I’m great at stories.',
+    sealedHint: 'Tap a sealed one and',
+    sealedTypeHint: 'answer the clue. Boom. Surprise.',
+    cluePlaceholder: 'Type the answer…',
+    clueSubmit: 'Boom',
+    clueAria: 'Answer the clue: {{hint}}',
+    clueWrong: 'Nope. Not the word. It’s okay, guessing is a process.',
     more: '{{count}} more voices. Like a party. In here.',
   },
 

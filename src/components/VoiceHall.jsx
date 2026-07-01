@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, X, Lock, Check, Info, CornerDownLeft, Feather, Sparkles, Send, Loader2 } from 'lucide-react';
+import { Search, X, Lock, Check, ChevronDown, Info, CornerDownLeft, Feather, Sparkles, Send, Loader2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useVoiceStore } from '../store/useVoiceStore';
 import { voicesByCategory, voiceById, SEALED_VOICES } from '../i18n/voices';
@@ -10,6 +10,7 @@ import { track } from '../lib/analytics';
 import { getLenis } from '../lib/smoothScroll';
 import { pushOverlay, popOverlay } from '../lib/uiOverlay';
 import Hovercard from './Hovercard';
+import ClueUnlock from './ClueUnlock';
 import RavenNotice from './RavenNotice';
 import RavenBurst from './RavenBurst';
 
@@ -30,43 +31,65 @@ const infoBody = (info) => (
 // + label, selectable. The active narrator is marked with the ember border/wash
 // plus a small corner tick (the prominent "Now narrating" read lives in the fixed
 // spotlight above the list). Sealed → a wax-seal lock + the iconic quote + a
-// "Clue —" line + an ⓘ reference tooltip.
-const VoiceChip = ({ v, active, locked, onSelect }) => (
-  <motion.div variants={ITEM} className="voice-chip" data-active={active} data-locked={locked}>
-    <button
-      type="button"
-      role="option"
-      aria-selected={active}
-      aria-disabled={locked || undefined}
-      data-cursor="hover"
-      onClick={locked ? undefined : onSelect}
-      className="voice-chip__hit"
-      style={{ cursor: locked ? 'default' : 'pointer' }}
-    >
-      <span className="voice-chip__glyph">
-        {locked ? <Lock size={14} /> : <span className="font-chronicle">{v.glyph}</span>}
-      </span>
-      <span className="min-w-0 flex-1">
-        <span className="voice-chip__label" style={{ fontStyle: locked ? 'italic' : 'normal' }}>
-          {locked ? v.sample : v.label}
-        </span>
-        <span className="voice-chip__sub">{locked ? `Clue — ${v.hint}` : v.sample}</span>
-      </span>
-      {active && <span className="voice-chip__tick" aria-hidden="true"><Check size={12} /></span>}
-    </button>
+// "Clue —" line + an ⓘ reference tooltip. Tapping a sealed plate expands the
+// touch-friendly `ClueUnlock` field (the only unlock path on phones), so a locked
+// row is never a dead tap.
+const VoiceChip = ({ v, active, locked, onSelect }) => {
+  const [answering, setAnswering] = useState(false);
+  // Collapse the field once the voice opens (locked → false on the next render).
+  useEffect(() => { if (!locked) setAnswering(false); }, [locked]);
 
-    {v.info && (
-      <Hovercard
-        className="voice-chip__info"
-        width={210}
-        ariaLabel={`What is this voice? ${v.info.name}, ${v.info.source}`}
-        content={infoBody(v.info)}
-      >
-        <Info size={13} />
-      </Hovercard>
-    )}
-  </motion.div>
-);
+  return (
+    <motion.div variants={ITEM} className="voice-chip" data-active={active} data-locked={locked} data-answering={answering || undefined}>
+      {/* header row — button + info stay on one line; the clue field expands as a
+          separate block BELOW so the info icon never reflows to a new line (which
+          caused the content shift + janky open/close). */}
+      <div className="voice-chip__top">
+        <button
+          type="button"
+          role="option"
+          aria-selected={active}
+          aria-expanded={locked ? answering : undefined}
+          data-cursor="hover"
+          onClick={locked ? () => setAnswering((o) => !o) : onSelect}
+          className="voice-chip__hit"
+        >
+          <span className="voice-chip__glyph">
+            {locked ? <Lock size={14} /> : <span className="font-chronicle">{v.glyph}</span>}
+          </span>
+          <span className="min-w-0 flex-1">
+            <span className="voice-chip__label" style={{ fontStyle: locked ? 'italic' : 'normal' }}>
+              {locked ? v.sample : v.label}
+            </span>
+            <span className="voice-chip__sub">{locked ? `Clue — ${v.hint}` : v.sample}</span>
+          </span>
+          {active ? (
+            <span className="voice-chip__tick" aria-hidden="true"><Check size={12} /></span>
+          ) : locked ? (
+            <span className="voice-chip__caret" data-open={answering || undefined} aria-hidden="true"><ChevronDown size={14} /></span>
+          ) : null}
+        </button>
+
+        {v.info && (
+          <Hovercard
+            className="voice-chip__info"
+            width={210}
+            ariaLabel={`What is this voice? ${v.info.name}, ${v.info.source}`}
+            content={infoBody(v.info)}
+          >
+            <Info size={13} />
+          </Hovercard>
+        )}
+      </div>
+
+      <AnimatePresence initial={false}>
+        {locked && answering && (
+          <ClueUnlock key="unlock" voice={v} onUnlocked={() => setAnswering(false)} />
+        )}
+      </AnimatePresence>
+    </motion.div>
+  );
+};
 
 /* The "Summon a Voice" panel — lives in the Hall's persistent right rail (always
    visible, no scrolling to reach it). A premium, framed invitation with the form

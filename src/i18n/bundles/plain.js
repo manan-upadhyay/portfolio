@@ -135,7 +135,7 @@ export default {
     tryHint: 'Pick a voice — the whole site, this panel included, re-reads itself in that style.',
     close: 'Close',
     noResult: 'No matching voice.',
-    sealedHint: 'Hidden voices unlock when you type their secret word anywhere on the page.',
+    sealedHint: 'Tap a hidden voice and answer its clue to unlock it — or type the secret word anywhere on the page.',
     found: '{{count}}/{{total}} found',
     footerHint: 'enter to select · esc to close',
     categories: {
@@ -396,6 +396,12 @@ export default {
 
   voice: {
     menuSub: 'Change the writing voice of the whole site.',
+    sealedHint: 'Tap a hidden voice and',
+    sealedTypeHint: 'answer its clue to unlock it.',
+    cluePlaceholder: 'Type your answer…',
+    clueSubmit: 'Unlock',
+    clueAria: 'Answer the clue: {{hint}}',
+    clueWrong: 'That’s not it — check the clue and try again.',
     more: '{{count}} more in the Voice Hall',
     openHall: 'Browse all voices',
     hallTeaserSome: '{{count}} hidden voices to find',

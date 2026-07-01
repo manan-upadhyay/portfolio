@@ -343,7 +343,7 @@ export default {
     tryHint: 'Moo moo moo — moo moo moo, moo moo moo, moo moo moo moo moo moo.',
     close: 'Moo',
     noResult: 'Moo moo moo moo moo. Moo.',
-    sealedHint: 'Moo moo moo moo moo moo moo moo moo moo moo moo.',
+    sealedHint: 'Moo moo moo moo moo moo moo — moo moo moo moo moo moo moo moo.',
     found: '{{count}}/{{total}} moo moo',
     footerHint: 'moo moo · moo moo',
     categories: {
@@ -375,6 +375,12 @@ export default {
     menuSub: 'Moo moo moo — moo moo?',
     pinned: 'Moo Moo Moo',
     sealed: 'Moo Moo',
+    sealedHint: 'Moo moo moo, moo',
+    sealedTypeHint: 'moo moo moo moo.',
+    cluePlaceholder: 'Moo moo moo…',
+    clueSubmit: 'Moo',
+    clueAria: 'Moo moo moo: {{hint}}',
+    clueWrong: 'Moo. Moo moo moo moo moo.',
     more: 'Moo {{count}} moo',
   },
 };

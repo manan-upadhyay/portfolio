@@ -1463,13 +1463,23 @@ h1, h2, h3, h4, h5, h6 {
   flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain;
   padding: 2px 16px 16px 20px;
 }
-/* Narrow screens: the two panes stack and the whole stage scrolls as ONE column,
-   so a tall summon form + its error notice can never spill past the modal. The
-   roster releases its own scroll to the stage. */
+/* Narrow screens: abandon the two-pane grid entirely. Left column + summon rail
+   become plain stacked blocks and the whole stage scrolls as ONE column, so no
+   inner flex-fill can collapse a row and spill its content over a sibling (which
+   is what overlapped the roster before). Every nested scroll/fill is released to
+   the single stage scroller. */
 @media (max-width: 859px) {
-  .voice-hall__stage { overflow-y: auto; overscroll-behavior: contain; }
-  .voice-hall__voices { flex: none; max-height: none; overflow: visible; }
-  .voice-summon__form { overflow: visible; }
+  .voice-hall__stage {
+    display: block; overflow-y: auto; overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+  .voice-hall__left { display: block; }
+  .voice-hall__nowfixed { padding: 6px 16px 0; }
+  .voice-hall__voices { flex: none; max-height: none; overflow: visible; padding: 2px 16px 10px; }
+  /* NOTE: the .voice-summon mobile overrides live AFTER the .voice-summon base
+     rules (below), not here — otherwise source order lets the later base rule
+     win at equal specificity and the summon form keeps its own inner scroll,
+     which traps the touch drag and blocks scrolling back up to the roster. */
 }
 .voice-hall__group { padding-top: 8px; }
 .voice-hall__grouplabel {
@@ -1511,7 +1521,7 @@ h1, h2, h3, h4, h5, h6 {
 
 .voice-chip {
   position: relative;
-  display: flex; align-items: flex-start;
+  display: flex; flex-direction: column;
   border: 1px solid var(--color-card-border);
   border-radius: 14px;
   background:
@@ -1520,6 +1530,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 .voice-chip[data-active="true"] { border-color: rgba(var(--color-ember-rgb), 0.55); background: rgba(var(--color-ember-rgb), 0.1); box-shadow: 0 0 22px rgba(var(--color-ember-rgb), 0.16); }
 .voice-chip[data-locked="false"]:hover { border-color: rgba(var(--color-ember-rgb), 0.45); transform: translateY(-2px); box-shadow: 0 8px 22px rgba(0, 0, 0, 0.16); }
+.voice-chip__top { display: flex; align-items: flex-start; }
 .voice-chip__hit { display: flex; align-items: flex-start; gap: 12px; flex: 1; min-width: 0; text-align: left; padding: 13px; }
 /* monogram medallion — a small gold-rimmed serif mark */
 .voice-chip__glyph {
@@ -1551,6 +1562,33 @@ h1, h2, h3, h4, h5, h6 {
 }
 .voice-chip__info { margin: 11px 11px 0 0; display: grid; place-items: center; width: 22px; height: 22px; border-radius: 9999px; color: var(--color-text-muted); flex-shrink: 0; }
 .voice-chip__info:hover { color: var(--color-ember); }
+/* caret on a sealed chip — signals the row expands into an answer field */
+.voice-chip__caret { display: grid; place-items: center; flex-shrink: 0; align-self: center; width: 20px; height: 20px; color: var(--color-text-muted); transition: transform 0.2s ease, color 0.2s ease; }
+.voice-chip__caret[data-open] { transform: rotate(180deg); color: var(--color-ember); }
+.voice-chip[data-locked="true"]:hover .voice-chip__caret { color: var(--color-ember); }
+
+/* --- Inline "answer the clue" unlock — the touch-friendly sealed-voice path.
+   Shared by the Voice Hall chips and the compact popover rows. --- */
+.clue-unlock { width: 100%; overflow: hidden; }
+.voice-chip .clue-unlock { padding: 0 13px 13px; } /* block below the header row */
+.clue-unlock__row {
+  display: flex; align-items: center; gap: 8px;
+  border: 1px solid var(--color-card-border); border-radius: 10px;
+  background: color-mix(in srgb, var(--color-card-bg) 60%, transparent);
+  padding: 4px 4px 4px 11px; transition: border-color 0.18s ease;
+}
+.clue-unlock__row:focus-within { border-color: rgba(var(--color-ember-rgb), 0.55); }
+.clue-unlock__row[data-wrong] { border-color: rgba(var(--color-error-rgb), 0.6); animation: clue-shake 0.32s ease; }
+.clue-unlock__input { flex: 1; min-width: 0; background: transparent; border: none; outline: none; font-size: 13px; color: var(--color-text); padding: 6px 0; }
+.clue-unlock__input::placeholder { color: var(--color-text-muted); }
+.clue-unlock__go {
+  display: grid; place-items: center; flex-shrink: 0; width: 30px; height: 30px; border-radius: 8px;
+  color: var(--color-ember); background: rgba(var(--color-ember-rgb), 0.14);
+  border: 1px solid rgba(var(--color-ember-rgb), 0.4); transition: background 0.18s ease;
+}
+.clue-unlock__go:hover { background: rgba(var(--color-ember-rgb), 0.24); }
+.clue-unlock__wrong { display: block; margin-top: 6px; font-size: 11px; color: var(--color-error); }
+@keyframes clue-shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-4px); } 75% { transform: translateX(4px); } }
 
 /* --- "Summon a Voice" — the persistent right rail --- */
 .voice-summon {
@@ -1638,6 +1676,16 @@ h1, h2, h3, h4, h5, h6 {
 @keyframes summon-pop { 0% { transform: scale(0.2); opacity: 0; } 70% { transform: scale(1.15); } 100% { transform: scale(1); opacity: 1; } }
 .voice-summon__donetitle { font-size: 19px; font-weight: 600; color: var(--color-ember); }
 .voice-summon__donesub { font-size: 12.5px; line-height: 1.45; max-width: 36ch; color: var(--color-text-muted); }
+
+/* Narrow screens: the summon rail is NOT its own scroll region — it flows inside
+   the single stage scroller so a drag anywhere scrolls the whole modal (back up
+   to the roster). Placed after the base .voice-summon rules so it wins on source
+   order at equal specificity. */
+@media (max-width: 859px) {
+  .voice-summon { overflow: visible; }
+  .voice-summon__form { flex: none; min-height: 0; overflow: visible; padding: 18px 16px 20px; }
+  .voice-summon__done { flex: none; }
+}
 /* ===== Raven notice (cinematic form feedback) ===== */
 .raven-notice {
   display: flex;

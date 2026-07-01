@@ -1,6 +1,7 @@
 // Reusable UI components — shared across sections. Import via `from '../components'`.
 export { default as BuildReel } from './BuildReel';
 export { default as ChapterHeading } from './ChapterHeading';
+export { default as ClueUnlock } from './ClueUnlock';
 export { default as CodebaseAtlas } from './CodebaseAtlas';
 export { default as CompassRose } from './CompassRose';
 export { default as ControlCluster } from './ControlCluster';
